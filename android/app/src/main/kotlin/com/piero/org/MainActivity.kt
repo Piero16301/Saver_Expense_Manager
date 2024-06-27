@@ -1,4 +1,4 @@
-package com.piero.org.saver_expense_manager
+package com.piero.saver.expense.manager
 
 import io.flutter.embedding.android.FlutterActivity
 
