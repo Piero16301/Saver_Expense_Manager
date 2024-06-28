@@ -1,0 +1,7 @@
+{
+    "@@locale": "it",
+    "counterAppBarTitle": "Contatore",
+    "@counterAppBarTitle": {
+        "description": "Titolo della barra dell'applicazione per la pagina del contatore"
+    }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "269318126118",
+    "project_id": "saver-expense-manager",
+    "storage_bucket": "saver-expense-manager.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:269318126118:android:335f2197a0aa83f9fb04e7",
+        "android_client_info": {
+          "package_name": "com.piero.saver.expense.manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCr0Q9aOOiIOra_Jkown14_Omv8v0rlWpo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
