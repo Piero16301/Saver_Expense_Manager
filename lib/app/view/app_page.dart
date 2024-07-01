@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class AppPage extends StatelessWidget {
@@ -8,6 +9,11 @@ class AppPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const AppView();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AppCubit>(create: (_) => AppCubit()),
+      ],
+      child: const AppView(),
+    );
   }
 }

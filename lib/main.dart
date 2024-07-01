@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/material.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/bootstrap.dart';
@@ -17,9 +16,6 @@ Future<void> main() async {
   // Configure Firebase Auth providers
   FirebaseUIAuth.configureProviders([
     EmailAuthProvider(),
-    GoogleProvider(
-      clientId: '',
-    ),
   ]);
 
   // Bootstrap the app
