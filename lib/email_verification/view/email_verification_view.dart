@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,34 +5,23 @@ import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+class EmailVerificationView extends StatelessWidget {
+  const EmailVerificationView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          SignInScreen(
+          EmailVerificationScreen(
             actions: [
-              AuthStateChangeAction(
-                (context, state) {
-                  final user = switch (state) {
-                    SignedIn(user: final user) => user,
-                    UserCreated(credential: final cred) => cred.user,
-                    _ => null,
-                  };
-
-                  debugPrint('User: $user');
-
-                  switch (user) {
-                    case User(emailVerified: true):
-                      context.goNamed('home');
-                    case User(emailVerified: false, email: final String _):
-                      context.goNamed('email-verification');
-                  }
-                },
-              ),
+              EmailVerifiedAction(() {
+                context.goNamed('home');
+              }),
+              AuthCancelledAction((context) {
+                FirebaseUIAuth.signOut(context: context);
+                context.goNamed('login');
+              }),
             ],
           ),
           const ChangeThemeLogin(),
@@ -51,7 +39,7 @@ class ChangeThemeLogin extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => Positioned(
-        bottom: 20,
+        top: 60,
         right: 20,
         child: IconButton(
           onPressed: context.read<AppCubit>().changeTheme,
@@ -78,7 +66,7 @@ class ChangeLanguageLogin extends StatelessWidget {
     };
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => Positioned(
-        bottom: 20,
+        top: 60,
         left: 20,
         child: TextButton(
           onPressed: () => changeLanguageDialog(context),
