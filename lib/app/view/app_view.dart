@@ -41,7 +41,11 @@ class _AppViewState extends State<AppView> {
         ],
         supportedLocales: AppLocalizations.supportedLocales,
         locale: Locale(state.language),
-        theme: themes[state.theme],
+        theme: themes['light'],
+        darkTheme: themes['dark'],
+        themeAnimationCurve: Curves.easeInOut,
+        themeAnimationDuration: const Duration(milliseconds: 500),
+        themeMode: state.theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
       ),
     );
   }
