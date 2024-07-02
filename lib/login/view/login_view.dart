@@ -84,6 +84,7 @@ class ChangeLanguageLogin extends StatelessWidget {
             };
             final language = languages[locale.languageCode]!;
             return SimpleDialogOption(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
               onPressed: () {
                 context.read<AppCubit>().changeLanguage(locale.languageCode);
                 Navigator.pop(context);
