@@ -51,18 +51,18 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCr0Q9aOOiIOra_Jkown14_Omv8v0rlWpo',
-    appId: '1:269318126118:android:335f2197a0aa83f9fb04e7',
+    appId: '1:269318126118:android:19c0edc290b70b9dfb04e7',
     messagingSenderId: '269318126118',
     projectId: 'saver-expense-manager',
-    storageBucket: 'saver-expense-manager.appspot.com',
+    storageBucket: 'saver-expense-manager.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCliGUV5JtQkDDsIqFK_SXW9HzUzI8S63Y',
-    appId: '1:269318126118:ios:1d8f718ed629bdbcfb04e7',
+    appId: '1:269318126118:ios:8e18429726277974fb04e7',
     messagingSenderId: '269318126118',
     projectId: 'saver-expense-manager',
-    storageBucket: 'saver-expense-manager.appspot.com',
-    iosBundleId: 'com.piero.saver.expense.manager',
+    storageBucket: 'saver-expense-manager.firebasestorage.app',
+    iosBundleId: 'com.pmorales.saver.expense.manager',
   );
 }

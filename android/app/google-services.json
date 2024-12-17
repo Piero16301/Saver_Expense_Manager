@@ -2,14 +2,14 @@
   "project_info": {
     "project_number": "269318126118",
     "project_id": "saver-expense-manager",
-    "storage_bucket": "saver-expense-manager.appspot.com"
+    "storage_bucket": "saver-expense-manager.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:269318126118:android:335f2197a0aa83f9fb04e7",
+        "mobilesdk_app_id": "1:269318126118:android:19c0edc290b70b9dfb04e7",
         "android_client_info": {
-          "package_name": "com.piero.saver.expense.manager"
+          "package_name": "com.pmorales.saver.expense.manager"
         }
       },
       "oauth_client": [],
