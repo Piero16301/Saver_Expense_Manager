@@ -10,8 +10,16 @@ final appLightTheme = ThemeData(
     seedColor: seedColor,
     brightness: Brightness.light,
   ),
+  snackBarTheme: SnackBarThemeData(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+    behavior: SnackBarBehavior.floating,
+    showCloseIcon: true,
+    contentTextStyle: GoogleFonts.nunito(),
+  ),
   useMaterial3: true,
-  fontFamily: GoogleFonts.firaSans().fontFamily,
+  fontFamily: GoogleFonts.nunito().fontFamily,
 );
 
 final appDarkTheme = ThemeData(
@@ -19,6 +27,14 @@ final appDarkTheme = ThemeData(
     seedColor: seedColor,
     brightness: Brightness.dark,
   ),
+  snackBarTheme: SnackBarThemeData(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+    behavior: SnackBarBehavior.floating,
+    showCloseIcon: true,
+    contentTextStyle: GoogleFonts.nunito(),
+  ),
   useMaterial3: true,
-  fontFamily: GoogleFonts.firaSans().fontFamily,
+  fontFamily: GoogleFonts.nunito().fontFamily,
 );

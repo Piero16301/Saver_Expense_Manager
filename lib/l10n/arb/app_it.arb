@@ -1,7 +1,28 @@
 {
     "@@locale": "it",
+
     "selectLanguage": "Seleziona la lingua",
+    "@selectLanguage": {},
     "english": "🇺🇸 Inglese",
+    "@english": {},
     "spanish": "🇪🇸 Spagnolo",
-    "italian": "🇮🇹 Italiano"
+    "@spanish": {},
+    "italian": "🇮🇹 Italiano",
+    "@italian": {},
+
+    "homeTitle": "Gestore delle spese",
+    "@homeTitle": {},
+    "homeSubtitle": "Tieni traccia delle tue spese",
+    "@homeSubtitle": {},
+
+    "profileTitle": "Profilo",
+    "@profileTitle": {},
+    "displayNameChanged": "Il nome utente è stato cambiato in {newName}",
+    "@displayNameChanged": {
+        "placeholders": {
+            "newName": {
+                "type": "String"
+            }
+        }
+    }
 }

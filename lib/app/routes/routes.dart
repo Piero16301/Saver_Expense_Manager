@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/email_verification/email_verification.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/login/login.dart';
+import 'package:saver_expense_manager/profile/profile.dart';
 
 GoRouter goRouter() {
   const unauthenticatedRoutes = <String>{
@@ -42,6 +43,13 @@ GoRouter goRouter() {
         name: 'home',
         path: '/',
         builder: (context, state) => const HomePage(),
+        routes: [
+          GoRoute(
+            name: 'profile',
+            path: 'profile',
+            builder: (context, state) => const ProfilePage(),
+          ),
+        ],
       ),
     ],
     debugLogDiagnostics: true,

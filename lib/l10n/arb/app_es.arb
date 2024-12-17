@@ -1,7 +1,28 @@
 {
     "@@locale": "es",
+
     "selectLanguage": "Seleccionar Idioma",
+    "@selectLanguage": {},
     "english": "🇺🇸 Inglés",
+    "@english": {},
     "spanish": "🇪🇸 Español",
-    "italian": "🇮🇹 Italiano"
+    "@spanish": {},
+    "italian": "🇮🇹 Italiano",
+    "@italian": {},
+
+    "homeTitle": "Gestor de Gastos",
+    "@homeTitle": {},
+    "homeSubtitle": "Mantén un registro de tus gastos",
+    "@homeSubtitle": {},
+
+    "profileTitle": "Perfil",
+    "@profileTitle": {},
+    "displayNameChanged": "El nombre de usuario ha sido cambiado a {newName}",
+    "@displayNameChanged": {
+        "placeholders": {
+            "newName": {
+                "type": "String"
+            }
+        }
+    }
 }

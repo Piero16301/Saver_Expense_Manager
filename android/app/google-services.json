@@ -12,7 +12,20 @@
           "package_name": "com.pmorales.saver.expense.manager"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "269318126118-ldqma0i1qb6cdhnusohsnlkbd64i96rs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pmorales.saver.expense.manager",
+            "certificate_hash": "604bf17fa78d9628960db26cd5dd15ccd9047540"
+          }
+        },
+        {
+          "client_id": "269318126118-54eh6vkdnfggcl9jv43ds7pcd927gd34.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCr0Q9aOOiIOra_Jkown14_Omv8v0rlWpo"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "269318126118-54eh6vkdnfggcl9jv43ds7pcd927gd34.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "269318126118-7t1rqm8oho4m39a01tlvavd8735559dn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pmorales.saver.expense.manager"
+              }
+            }
+          ]
         }
       }
     }

@@ -65,4 +65,11 @@ class DefaultFirebaseOptions {
     storageBucket: 'saver-expense-manager.firebasestorage.app',
     iosBundleId: 'com.pmorales.saver.expense.manager',
   );
+
+  static const String googleClientId =
+      '269318126118-54eh6vkdnfggcl9jv43ds7pcd927gd34.apps.googleusercontent.'
+      'com';
+
+  static const String googleRedirectUri =
+      'https://saver-expense-manager.firebaseapp.com/__/auth/handler';
 }

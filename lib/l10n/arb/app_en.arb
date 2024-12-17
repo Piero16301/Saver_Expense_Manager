@@ -1,7 +1,28 @@
 {
     "@@locale": "en",
+
     "selectLanguage": "Select Language",
+    "@selectLanguage": {},
     "english": "🇺🇸 English",
+    "@english": {},
     "spanish": "🇪🇸 Spanish",
-    "italian": "🇮🇹 Italian"
+    "@spanish": {},
+    "italian": "🇮🇹 Italian",
+    "@italian": {},
+
+    "homeTitle": "Expense Manager",
+    "@homeTitle": {},
+    "homeSubtitle": "Keep track of your expenses",
+    "@homeSubtitle": {},
+
+    "profileTitle": "Profile",
+    "@profileTitle": {},
+    "displayNameChanged": "The username has been changed to {newName}",
+    "@displayNameChanged": {
+        "placeholders": {
+            "newName": {
+                "type": "String"
+            }
+        }
+    }
 }
