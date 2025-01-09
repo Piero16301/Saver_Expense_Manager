@@ -2,20 +2,26 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.homeTitle),
+        title: Image.asset('assets/images/logo_no_bg.png', height: 40),
         centerTitle: true,
+        leading: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ChangeThemeButton(),
+            ChangeLanguageButton(),
+          ],
+        ),
+        leadingWidth: 100,
         actions: [
           IconButton(
             icon: user?.photoURL == null

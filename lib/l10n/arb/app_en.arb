@@ -9,6 +9,12 @@
     "@spanish": {},
     "italian": "🇮🇹 Italian",
     "@italian": {},
+    "englishFlag": "🇺🇸",
+    "@englishFlag": {},
+    "spanishFlag": "🇪🇸",
+    "@spanishFlag": {},
+    "italianFlag": "🇮🇹",
+    "@italianFlag": {},
 
     "homeTitle": "Expense Manager",
     "@homeTitle": {},
