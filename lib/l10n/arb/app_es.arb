@@ -24,5 +24,13 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "confirmLogoutTitle": "Cerrar Sesión",
+    "@confirmLogoutTitle": {},
+    "confirmLogoutMessage": "¿Estás seguro de que deseas cerrar sesión?",
+    "@confirmLogoutMessage": {},
+    "logoutCancel": "Cancelar",
+    "@logoutCancel": {},
+    "logoutConfirm": "Cerrar Sesión",
+    "@logoutConfirm": {}
 }

@@ -24,5 +24,13 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "confirmLogoutTitle": "Disconnettersi",
+    "@confirmLogoutTitle": {},
+    "confirmLogoutMessage": "Sei sicuro di voler uscire?",
+    "@confirmLogoutMessage": {},
+    "logoutCancel": "Annulla",
+    "@logoutCancel": {},
+    "logoutConfirm": "Disconnettersi",
+    "@logoutConfirm": {}
 }

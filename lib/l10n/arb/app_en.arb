@@ -24,5 +24,13 @@
                 "type": "String"
             }
         }
-    }
+    },
+    "confirmLogoutTitle": "Logout",
+    "@confirmLogoutTitle": {},
+    "confirmLogoutMessage": "Are you sure you want to logout?",
+    "@confirmLogoutMessage": {},
+    "logoutCancel": "Cancel",
+    "@logoutCancel": {},
+    "logoutConfirm": "Logout",
+    "@logoutConfirm": {}
 }

@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class HomeView extends StatelessWidget {
@@ -8,6 +10,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -15,7 +18,12 @@ class HomeView extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.person),
+            icon: user?.photoURL == null
+                ? const Icon(Icons.person)
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Image.network(highResPicture(user!.photoURL)),
+                  ),
             onPressed: () => context.pushNamed('profile'),
           ),
         ],
