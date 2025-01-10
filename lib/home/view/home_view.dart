@@ -16,14 +16,7 @@ class HomeView extends StatelessWidget {
       appBar: AppBar(
         title: Image.asset('assets/images/logo_no_bg.png', height: 40),
         centerTitle: true,
-        leading: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ChangeThemeButton(),
-            ChangeLanguageButton(),
-          ],
-        ),
-        leadingWidth: 100,
+        leading: const ChangeThemeButton(),
         actions: [
           IconButton(
             icon: user?.photoURL == null
@@ -38,7 +31,7 @@ class HomeView extends StatelessWidget {
       ),
       body: const SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
               CircularChartHome(),
@@ -63,7 +56,11 @@ class _CircularChartHomeState extends State<CircularChartHome> {
 
   @override
   void initState() {
-    _tooltipBehavior = TooltipBehavior(enable: true);
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+      animationDuration: 500,
+      duration: 1000,
+    );
     _chartData = <ChartData>[
       const ChartData(
         id: '1',
@@ -132,21 +129,23 @@ class _CircularChartHomeState extends State<CircularChartHome> {
         isVisible: true,
         position: LegendPosition.bottom,
       ),
-      series: _buildPieSeries(),
+      series: _buildDoughnutSeries(),
       tooltipBehavior: _tooltipBehavior,
     );
   }
 
-  List<PieSeries<ChartData, String>> _buildPieSeries() {
-    return <PieSeries<ChartData, String>>[
-      PieSeries<ChartData, String>(
+  List<DoughnutSeries<ChartData, String>> _buildDoughnutSeries() {
+    return <DoughnutSeries<ChartData, String>>[
+      DoughnutSeries<ChartData, String>(
         dataSource: _chartData,
         xValueMapper: (ChartData data, _) => data.name,
         yValueMapper: (ChartData data, _) => data.value,
         dataLabelMapper: (ChartData data, _) => data.name,
-        startAngle: 90,
-        endAngle: 90,
+        animationDuration: 500,
+        innerRadius: '40%',
+        legendIconType: LegendIconType.diamond,
         explode: true,
+        explodeIndex: 0,
         dataLabelSettings: const DataLabelSettings(
           isVisible: true,
           labelPosition: ChartDataLabelPosition.outside,

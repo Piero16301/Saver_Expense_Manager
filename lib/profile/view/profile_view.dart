@@ -17,6 +17,9 @@ class ProfileView extends StatelessWidget {
       appBar: AppBar(
         title: Text(l10n.profileTitle),
         centerTitle: true,
+        actions: const [
+          ChangeLanguageButton(),
+        ],
       ),
       body: SafeArea(
         child: Padding(
