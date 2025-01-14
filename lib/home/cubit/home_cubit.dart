@@ -6,5 +6,7 @@ part 'home_state.dart';
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(const HomeState());
 
-  Future<void> loadPokemons(String next) async {}
+  void toggleSelectedIndex(int index) {
+    emit(state.copyWith(selectedIndex: index));
+  }
 }

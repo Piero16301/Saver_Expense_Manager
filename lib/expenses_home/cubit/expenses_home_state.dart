@@ -1,22 +1,22 @@
-part of 'home_cubit.dart';
+part of 'expenses_home_cubit.dart';
 
-class HomeState extends Equatable {
-  const HomeState({
+class ExpensesHomeState extends Equatable {
+  const ExpensesHomeState({
     this.selectedIndex = 0,
   });
 
   final int selectedIndex;
 
-  HomeState copyWith({
+  ExpensesHomeState copyWith({
     int? selectedIndex,
   }) {
-    return HomeState(
+    return ExpensesHomeState(
       selectedIndex: selectedIndex ?? this.selectedIndex,
     );
   }
 
   @override
-  List<Object?> get props => [
+  List<Object> get props => [
         selectedIndex,
       ];
 }

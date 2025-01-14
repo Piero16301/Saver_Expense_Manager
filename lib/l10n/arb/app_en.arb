@@ -20,6 +20,10 @@
     "@homeTitle": {},
     "homeSubtitle": "Keep track of your expenses",
     "@homeSubtitle": {},
+    "homeExpensesTitle": "Expenses",
+    "@homeExpensesTitle": {},
+    "homeIncomeTitle": "Income",
+    "@homeIncomeTitle": {},
 
     "profileTitle": "Profile",
     "@profileTitle": {},

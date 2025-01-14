@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rive/rive.dart' hide Image;
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/home/home.dart';
+import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/models/models.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -32,123 +35,126 @@ class HomeView extends StatelessWidget {
       body: const SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              CircularChartHome(),
-            ],
+          child: Placeholder(),
+        ),
+      ),
+      bottomNavigationBar: const BottomNavigationBarHome(),
+    );
+  }
+}
+
+class BottomNavigationBarHome extends StatefulWidget {
+  const BottomNavigationBarHome({super.key});
+
+  @override
+  State<BottomNavigationBarHome> createState() =>
+      _BottomNavigationBarHomeState();
+}
+
+class _BottomNavigationBarHomeState extends State<BottomNavigationBarHome> {
+  List<SMIBool> riveIconInputs = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) => Container(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        margin: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: List.generate(
+            _buildNavItems(context).length,
+            (index) {
+              final riveIcon = _buildNavItems(context)[index].rive;
+              return GestureDetector(
+                onTap: () {
+                  riveIconInputs[index].change(true);
+                  Future<void>.delayed(
+                    const Duration(seconds: 1),
+                    () => riveIconInputs[index].change(false),
+                  );
+                  context.read<HomeCubit>().toggleSelectedIndex(index);
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.only(bottom: 2),
+                      height: 4,
+                      width: state.selectedIndex == index ? 20 : 0,
+                      decoration: BoxDecoration(
+                        color: state.selectedIndex == index
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.7),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(2)),
+                      ),
+                    ),
+                    SizedBox.square(
+                      dimension: 30,
+                      child: Opacity(
+                        opacity: state.selectedIndex == index ? 1 : 0.7,
+                        child: RiveAnimation.asset(
+                          riveIcon.src,
+                          artboard: riveIcon.artboard,
+                          onInit: (artboard) {
+                            final controller =
+                                StateMachineController.fromArtboard(
+                              artboard,
+                              riveIcon.stateMachineName,
+                            );
+                            artboard.addController(controller!);
+                            riveIconInputs.add(
+                              controller.findInput<bool>('hover')! as SMIBool,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Text(
+                      _buildNavItems(context)[index].title,
+                      style: TextStyle(
+                        color: state.selectedIndex == index
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.7),
+                        fontWeight: state.selectedIndex == index
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
     );
   }
-}
 
-class CircularChartHome extends StatefulWidget {
-  const CircularChartHome({super.key});
+  List<NavItem> _buildNavItems(BuildContext context) {
+    final l10n = context.l10n;
 
-  @override
-  State<CircularChartHome> createState() => _CircularChartHomeState();
-}
-
-class _CircularChartHomeState extends State<CircularChartHome> {
-  late TooltipBehavior _tooltipBehavior;
-  late List<ChartData> _chartData;
-
-  @override
-  void initState() {
-    _tooltipBehavior = TooltipBehavior(
-      enable: true,
-      animationDuration: 500,
-      duration: 1000,
-    );
-    _chartData = <ChartData>[
-      const ChartData(
-        id: '1',
-        name: 'Transporte',
-        value: 50,
+    return [
+      NavItem(
+        title: l10n.homeExpensesTitle,
+        rive: RiveSrc(
+          src: 'assets/animations/animated-icons.riv',
+          artboard: 'arrow-down',
+          stateMachineName: 'State Machine 1',
+        ),
       ),
-      const ChartData(
-        id: '2',
-        name: 'Entretenimiento',
-        value: 75,
-      ),
-      const ChartData(
-        id: '3',
-        name: 'Salud',
-        value: 30,
-      ),
-      const ChartData(
-        id: '4',
-        name: 'Educación',
-        value: 90,
-      ),
-      const ChartData(
-        id: '5',
-        name: 'Vivienda',
-        value: 120,
-      ),
-      const ChartData(
-        id: '6',
-        name: 'Ropa',
-        value: 45,
-      ),
-      const ChartData(
-        id: '7',
-        name: 'Viajes',
-        value: 60,
-      ),
-      const ChartData(
-        id: '8',
-        name: 'Regalos',
-        value: 20,
-      ),
-      const ChartData(
-        id: '9',
-        name: 'Mascotas',
-        value: 35,
-      ),
-      const ChartData(
-        id: '10',
-        name: 'Otros',
-        value: 25,
-      ),
-    ];
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _chartData.clear();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SfCircularChart(
-      legend: const Legend(
-        isVisible: true,
-        position: LegendPosition.bottom,
-      ),
-      series: _buildDoughnutSeries(),
-      tooltipBehavior: _tooltipBehavior,
-    );
-  }
-
-  List<DoughnutSeries<ChartData, String>> _buildDoughnutSeries() {
-    return <DoughnutSeries<ChartData, String>>[
-      DoughnutSeries<ChartData, String>(
-        dataSource: _chartData,
-        xValueMapper: (ChartData data, _) => data.name,
-        yValueMapper: (ChartData data, _) => data.value,
-        dataLabelMapper: (ChartData data, _) => data.name,
-        animationDuration: 500,
-        innerRadius: '40%',
-        legendIconType: LegendIconType.diamond,
-        explode: true,
-        explodeIndex: 0,
-        dataLabelSettings: const DataLabelSettings(
-          isVisible: true,
-          labelPosition: ChartDataLabelPosition.outside,
+      NavItem(
+        title: l10n.homeIncomeTitle,
+        rive: RiveSrc(
+          src: 'assets/animations/animated-icons.riv',
+          artboard: 'arrow-up',
+          stateMachineName: 'arrowUP',
         ),
       ),
     ];
