@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rive/rive.dart' hide Image;
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/expenses_home/expenses_home.dart';
 import 'package:saver_expense_manager/home/home.dart';
+import 'package:saver_expense_manager/income_home/income_home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/models/models.dart';
 
@@ -15,31 +17,53 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Image.asset('assets/images/logo_no_bg.png', height: 40),
-        centerTitle: true,
-        leading: const ChangeThemeButton(),
-        actions: [
-          IconButton(
-            icon: user?.photoURL == null
-                ? const Icon(Icons.person)
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Image.network(highResPicture(user!.photoURL)),
-                  ),
-            onPressed: () => context.pushNamed('profile'),
-          ),
-        ],
-      ),
-      body: const SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: Placeholder(),
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) => Scaffold(
+        appBar: AppBar(
+          title: Image.asset('assets/images/logo_no_bg.png', height: 40),
+          centerTitle: true,
+          leading: const ChangeThemeButton(),
+          actions: [
+            IconButton(
+              icon: user?.photoURL == null
+                  ? const Icon(Icons.person)
+                  : ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Image.network(highResPicture(user!.photoURL)),
+                    ),
+              onPressed: () => context.pushNamed('profile'),
+            ),
+          ],
         ),
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 500),
+              transitionBuilder: (child, animation) => FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+              child: _getSelectedBody(state.selectedIndex),
+            ),
+          ),
+        ),
+        bottomNavigationBar: const BottomNavigationBarHome(),
       ),
-      bottomNavigationBar: const BottomNavigationBarHome(),
     );
+  }
+
+  Widget _getSelectedBody(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return const ExpensesHomePage();
+      case 1:
+        return const Placeholder();
+      case 2:
+        return const IncomeHomePage();
+      default:
+        return const SizedBox();
+    }
   }
 }
 
@@ -145,7 +169,15 @@ class _BottomNavigationBarHomeState extends State<BottomNavigationBarHome> {
         title: l10n.homeExpensesTitle,
         rive: RiveSrc(
           src: 'assets/animations/animated-icons.riv',
-          artboard: 'arrow-down',
+          artboard: 'arrow-up',
+          stateMachineName: 'arrowUP',
+        ),
+      ),
+      NavItem(
+        title: l10n.homeBalanceTitle,
+        rive: RiveSrc(
+          src: 'assets/animations/animated-icons.riv',
+          artboard: 'arrow-path',
           stateMachineName: 'State Machine 1',
         ),
       ),
@@ -153,8 +185,8 @@ class _BottomNavigationBarHomeState extends State<BottomNavigationBarHome> {
         title: l10n.homeIncomeTitle,
         rive: RiveSrc(
           src: 'assets/animations/animated-icons.riv',
-          artboard: 'arrow-up',
-          stateMachineName: 'arrowUP',
+          artboard: 'arrow-down',
+          stateMachineName: 'State Machine 1',
         ),
       ),
     ];

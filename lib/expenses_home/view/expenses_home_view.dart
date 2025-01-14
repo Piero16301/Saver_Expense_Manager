@@ -1,133 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/models/models.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ExpensesHomeView extends StatelessWidget {
   const ExpensesHomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            ChartExpensesHome(),
+    return const Column(
+      children: [
+        DoughnutCircularChart(
+          data: [
+            ChartData(
+              id: '1',
+              name: 'Transporte',
+              value: 50,
+            ),
+            ChartData(
+              id: '2',
+              name: 'Entretenimiento',
+              value: 75,
+            ),
+            ChartData(
+              id: '3',
+              name: 'Salud',
+              value: 30,
+            ),
+            ChartData(
+              id: '4',
+              name: 'Educación',
+              value: 90,
+            ),
+            ChartData(
+              id: '5',
+              name: 'Vivienda',
+              value: 120,
+            ),
+            ChartData(
+              id: '6',
+              name: 'Ropa',
+              value: 45,
+            ),
+            ChartData(
+              id: '7',
+              name: 'Viajes',
+              value: 60,
+            ),
+            ChartData(
+              id: '8',
+              name: 'Regalos',
+              value: 20,
+            ),
+            ChartData(
+              id: '9',
+              name: 'Mascotas',
+              value: 35,
+            ),
+            ChartData(
+              id: '10',
+              name: 'Otros',
+              value: 25,
+            ),
           ],
         ),
-      ),
+      ],
     );
-  }
-}
-
-class ChartExpensesHome extends StatefulWidget {
-  const ChartExpensesHome({super.key});
-
-  @override
-  State<ChartExpensesHome> createState() => _ChartExpensesHomeState();
-}
-
-class _ChartExpensesHomeState extends State<ChartExpensesHome> {
-  late TooltipBehavior _tooltipBehavior;
-  late List<ChartData> _chartData;
-
-  @override
-  void initState() {
-    _tooltipBehavior = TooltipBehavior(
-      enable: true,
-      animationDuration: 500,
-      duration: 1000,
-    );
-    _chartData = <ChartData>[
-      const ChartData(
-        id: '1',
-        name: 'Transporte',
-        value: 50,
-      ),
-      const ChartData(
-        id: '2',
-        name: 'Entretenimiento',
-        value: 75,
-      ),
-      const ChartData(
-        id: '3',
-        name: 'Salud',
-        value: 30,
-      ),
-      const ChartData(
-        id: '4',
-        name: 'Educación',
-        value: 90,
-      ),
-      const ChartData(
-        id: '5',
-        name: 'Vivienda',
-        value: 120,
-      ),
-      const ChartData(
-        id: '6',
-        name: 'Ropa',
-        value: 45,
-      ),
-      const ChartData(
-        id: '7',
-        name: 'Viajes',
-        value: 60,
-      ),
-      const ChartData(
-        id: '8',
-        name: 'Regalos',
-        value: 20,
-      ),
-      const ChartData(
-        id: '9',
-        name: 'Mascotas',
-        value: 35,
-      ),
-      const ChartData(
-        id: '10',
-        name: 'Otros',
-        value: 25,
-      ),
-    ];
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _chartData.clear();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SfCircularChart(
-      legend: const Legend(
-        isVisible: true,
-        position: LegendPosition.bottom,
-      ),
-      series: _buildDoughnutSeries(),
-      tooltipBehavior: _tooltipBehavior,
-    );
-  }
-
-  List<DoughnutSeries<ChartData, String>> _buildDoughnutSeries() {
-    return <DoughnutSeries<ChartData, String>>[
-      DoughnutSeries<ChartData, String>(
-        dataSource: _chartData,
-        xValueMapper: (ChartData data, _) => data.name,
-        yValueMapper: (ChartData data, _) => data.value,
-        dataLabelMapper: (ChartData data, _) => data.name,
-        animationDuration: 500,
-        innerRadius: '40%',
-        legendIconType: LegendIconType.diamond,
-        explode: true,
-        explodeIndex: 0,
-        dataLabelSettings: const DataLabelSettings(
-          isVisible: true,
-          labelPosition: ChartDataLabelPosition.outside,
-        ),
-      ),
-    ];
   }
 }

@@ -24,6 +24,8 @@
     "@homeExpensesTitle": {},
     "homeIncomeTitle": "Entrate",
     "@homeIncomeTitle": {},
+    "homeBalanceTitle": "Bilancio",
+    "@homeBalanceTitle": {},
 
     "profileTitle": "Profilo",
     "@profileTitle": {},
