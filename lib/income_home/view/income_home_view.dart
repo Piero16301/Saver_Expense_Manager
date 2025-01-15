@@ -12,19 +12,29 @@ class IncomeHomeView extends StatelessWidget {
         DoughnutCircularChart(
           data: [
             ChartData(
-              id: '1',
               name: 'Salario',
               value: 50,
+              color: '#FF4285F4',
             ),
             ChartData(
-              id: '2',
               name: 'Bonos',
               value: 75,
+              color: 'FFEA4335',
             ),
             ChartData(
-              id: '3',
               name: 'Inversiones',
               value: 90,
+              color: 'FFFBBC05',
+            ),
+            ChartData(
+              name: 'Otros',
+              value: 25,
+              color: 'FF34A853',
+            ),
+            ChartData(
+              name: 'Ahorros',
+              value: 10,
+              color: 'FF9C27B0',
             ),
           ],
         ),

@@ -2,7 +2,7 @@ part of 'home_cubit.dart';
 
 class HomeState extends Equatable {
   const HomeState({
-    this.selectedIndex = 0,
+    this.selectedIndex = 1,
   });
 
   final int selectedIndex;

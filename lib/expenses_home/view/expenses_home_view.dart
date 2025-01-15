@@ -12,54 +12,29 @@ class ExpensesHomeView extends StatelessWidget {
         DoughnutCircularChart(
           data: [
             ChartData(
-              id: '1',
               name: 'Transporte',
               value: 50,
+              color: '#FF4285F4',
             ),
             ChartData(
-              id: '2',
               name: 'Entretenimiento',
               value: 75,
+              color: 'FFEA4335',
             ),
             ChartData(
-              id: '3',
               name: 'Salud',
               value: 30,
+              color: 'FFFBBC05',
             ),
             ChartData(
-              id: '4',
               name: 'Educación',
               value: 90,
+              color: 'FF34A853',
             ),
             ChartData(
-              id: '5',
               name: 'Vivienda',
               value: 120,
-            ),
-            ChartData(
-              id: '6',
-              name: 'Ropa',
-              value: 45,
-            ),
-            ChartData(
-              id: '7',
-              name: 'Viajes',
-              value: 60,
-            ),
-            ChartData(
-              id: '8',
-              name: 'Regalos',
-              value: 20,
-            ),
-            ChartData(
-              id: '9',
-              name: 'Mascotas',
-              value: 35,
-            ),
-            ChartData(
-              id: '10',
-              name: 'Otros',
-              value: 25,
+              color: 'FF9C27B0',
             ),
           ],
         ),

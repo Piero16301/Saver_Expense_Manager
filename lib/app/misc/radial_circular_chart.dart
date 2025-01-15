@@ -3,19 +3,21 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/models/models.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class DoughnutCircularChart extends StatefulWidget {
-  const DoughnutCircularChart({
+class RadialCircularChart extends StatefulWidget {
+  const RadialCircularChart({
     required this.data,
+    this.image,
     super.key,
   });
 
   final List<ChartData> data;
+  final String? image;
 
   @override
-  State<DoughnutCircularChart> createState() => _DoughnutCircularChartState();
+  State<RadialCircularChart> createState() => _RadialCircularChartState();
 }
 
-class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
+class _RadialCircularChartState extends State<RadialCircularChart> {
   late TooltipBehavior _tooltipBehavior;
 
   @override
@@ -24,6 +26,7 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
       enable: true,
       animationDuration: 500,
       duration: 1000,
+      format: 'point.x : point.y%',
     );
     super.initState();
   }
@@ -40,23 +43,40 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
         isVisible: true,
         position: LegendPosition.bottom,
       ),
-      series: _buildDoughnutSeries(),
+      series: _buildRadialSeries(),
       tooltipBehavior: _tooltipBehavior,
+      annotations: [
+        CircularChartAnnotation(
+          height: '90%',
+          width: '90%',
+          widget: ClipRRect(
+            borderRadius: BorderRadius.circular(60),
+            child: widget.image == null
+                ? const Icon(Icons.person, size: 100)
+                : Image.network(
+                    widget.image!,
+                    fit: BoxFit.cover,
+                    height: 100,
+                    width: 100,
+                  ),
+          ),
+        ),
+      ],
     );
   }
 
-  List<DoughnutSeries<ChartData, String>> _buildDoughnutSeries() {
-    return <DoughnutSeries<ChartData, String>>[
-      DoughnutSeries<ChartData, String>(
+  List<RadialBarSeries<ChartData, String>> _buildRadialSeries() {
+    return <RadialBarSeries<ChartData, String>>[
+      RadialBarSeries<ChartData, String>(
         dataSource: widget.data,
         xValueMapper: (ChartData data, _) => data.name,
         yValueMapper: (ChartData data, _) => data.value,
         dataLabelMapper: (ChartData data, _) => data.name,
         animationDuration: 500,
-        innerRadius: '40%',
-        legendIconType: LegendIconType.diamond,
-        explode: true,
-        explodeIndex: 0,
+        maximumValue: 100,
+        radius: '100%',
+        cornerStyle: CornerStyle.endCurve,
+        legendIconType: LegendIconType.circle,
         pointColorMapper: (data, index) => HexColor.fromHex(data.color),
         dataLabelSettings: const DataLabelSettings(
           isVisible: true,

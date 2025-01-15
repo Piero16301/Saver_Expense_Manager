@@ -8,14 +8,14 @@ part of 'chart_data.dart';
 
 ChartData _$ChartDataFromJson(Map<String, dynamic> json) {
   return ChartData(
-    id: json['id'] as String? ?? '',
     name: json['name'] as String? ?? '',
-    value: (json['value'] as num?)?.toDouble() ?? 0,
+    value: (json['value'] as num?)?.toDouble() ?? 0.0,
+    color: json['color'] as String? ?? '',
   );
 }
 
 Map<String, dynamic> _$ChartDataToJson(ChartData instance) => <String, dynamic>{
-      'id': instance.id,
       'name': instance.name,
       'value': instance.value,
+      'color': instance.color,
     };

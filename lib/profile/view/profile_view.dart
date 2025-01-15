@@ -33,7 +33,7 @@ class ProfileView extends StatelessWidget {
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(80),
                       child: Image.network(
-                        highResPicture(user!.photoURL),
+                        highResPicture(user!.photoURL)!,
                       ),
                     ),
             ),

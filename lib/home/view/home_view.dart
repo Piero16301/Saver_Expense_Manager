@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rive/rive.dart' hide Image;
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/balance_home/balance_home.dart';
 import 'package:saver_expense_manager/expenses_home/expenses_home.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/income_home/income_home.dart';
@@ -29,7 +30,7 @@ class HomeView extends StatelessWidget {
                   ? const Icon(Icons.person)
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(50),
-                      child: Image.network(highResPicture(user!.photoURL)),
+                      child: Image.network(highResPicture(user!.photoURL)!),
                     ),
               onPressed: () => context.pushNamed('profile'),
             ),
@@ -58,7 +59,7 @@ class HomeView extends StatelessWidget {
       case 0:
         return const ExpensesHomePage();
       case 1:
-        return const Placeholder();
+        return const BalanceHomePage();
       case 2:
         return const IncomeHomePage();
       default:

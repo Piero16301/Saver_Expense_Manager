@@ -3,14 +3,14 @@ import 'package:equatable/equatable.dart';
 part 'chart_data.g.dart';
 
 /// {@template chart_data}
-/// Chart data model
+/// A class that represents a chart data in the app.
 /// {@endtemplate}
 class ChartData extends Equatable {
   /// {@macro chart_data}
   const ChartData({
-    required this.id,
     required this.name,
     required this.value,
+    required this.color,
   });
 
   /// Creates an instance of [ChartData] from a [Map]
@@ -20,26 +20,19 @@ class ChartData extends Equatable {
   /// Creates a [Map] from an instance of [ChartData]
   Map<String, dynamic> toJson() => _$ChartDataToJson(this);
 
-  /// Chart data id
-  final String id;
-
   /// Chart data name
   final String name;
 
   /// Chart data value
   final double value;
 
-  /// Empty chart data
-  static const empty = ChartData(
-    id: '',
-    name: '',
-    value: 0,
-  );
+  /// Chart data color
+  final String color;
 
   @override
   List<Object> get props => [
-        id,
         name,
         value,
+        color,
       ];
 }
