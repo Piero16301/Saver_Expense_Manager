@@ -19,6 +19,7 @@ class Movement extends Equatable {
     required this.category,
     required this.company,
     required this.price,
+    required this.type,
   });
 
   /// Creates an instance of [Movement] from a [Map]
@@ -28,32 +29,35 @@ class Movement extends Equatable {
   /// Creates a [Map] from an instance of [Movement]
   Map<String, dynamic> toJson() => _$MovementToJson(this);
 
-  /// Chart data id
+  /// Movement id
   final String id;
 
-  /// Chart data created at
+  /// Movement created at
   final DateTime createdAt;
 
-  /// Chart data updated at
+  /// Movement updated at
   final DateTime updatedAt;
 
-  /// Chart data name
+  /// Movement name
   final String name;
 
-  /// Chart data description
+  /// Movement description
   final String description;
 
-  /// Chart data date
+  /// Movement date
   final String date;
 
-  /// Chart data category
+  /// Movement category
   final Category category;
 
-  /// Chart data company
+  /// Movement company
   final String company;
 
-  /// Chart data price
+  /// Movement price
   final double price;
+
+  /// Movement type
+  final MovementType type;
 
   @override
   List<Object> get props => [
@@ -66,5 +70,8 @@ class Movement extends Equatable {
         category,
         company,
         price,
+        type,
       ];
 }
+
+enum MovementType { income, expense }
