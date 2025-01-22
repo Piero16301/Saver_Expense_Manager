@@ -2,21 +2,21 @@ part of 'expenses_home_cubit.dart';
 
 class ExpensesHomeState extends Equatable {
   const ExpensesHomeState({
-    this.selectedIndex = 0,
+    this.monthSelected,
   });
 
-  final int selectedIndex;
+  final DateTime? monthSelected;
 
   ExpensesHomeState copyWith({
-    int? selectedIndex,
+    DateTime? monthSelected,
   }) {
     return ExpensesHomeState(
-      selectedIndex: selectedIndex ?? this.selectedIndex,
+      monthSelected: monthSelected ?? this.monthSelected,
     );
   }
 
   @override
-  List<Object> get props => [
-        selectedIndex,
+  List<Object?> get props => [
+        monthSelected,
       ];
 }

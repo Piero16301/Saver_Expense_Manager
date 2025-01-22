@@ -8,7 +8,7 @@ class ExpensesHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ExpensesHomeCubit(),
+      create: (_) => ExpensesHomeCubit()..init(),
       child: const ExpensesHomeView(),
     );
   }
