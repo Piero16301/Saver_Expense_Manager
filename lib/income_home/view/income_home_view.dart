@@ -7,10 +7,10 @@ class IncomeHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
         DoughnutCircularChart(
-          data: [
+          data: const [
             ChartData(
               name: 'Salario',
               value: 50,
@@ -37,6 +37,15 @@ class IncomeHomeView extends StatelessWidget {
               color: 'FF9C27B0',
             ),
           ],
+          category: Category(
+            id: '1',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+            name: 'Salario',
+            color: '#FF4285F4',
+          ),
+          total: 936729,
+          percentage: 25,
         ),
       ],
     );

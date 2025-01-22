@@ -6,10 +6,16 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 class DoughnutCircularChart extends StatefulWidget {
   const DoughnutCircularChart({
     required this.data,
+    required this.category,
+    required this.total,
+    required this.percentage,
     super.key,
   });
 
   final List<ChartData> data;
+  final Category category;
+  final double total;
+  final double percentage;
 
   @override
   State<DoughnutCircularChart> createState() => _DoughnutCircularChartState();
@@ -42,6 +48,49 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
       ),
       series: _buildDoughnutSeries(),
       tooltipBehavior: _tooltipBehavior,
+      annotations: [
+        CircularChartAnnotation(
+          height: '90%',
+          width: '90%',
+          widget: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                widget.category.name,
+                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              Text(
+                moneyFormat.format(widget.total),
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+              Text(
+                '${widget.percentage.toInt()}%',
+                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 5),
+              SizedBox(
+                height: 20,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                  onPressed: () {},
+                  child: Text(
+                    'Detalles',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -53,7 +102,7 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
         yValueMapper: (ChartData data, _) => data.value,
         dataLabelMapper: (ChartData data, _) => data.name,
         animationDuration: 500,
-        innerRadius: '40%',
+        innerRadius: '60%',
         legendIconType: LegendIconType.diamond,
         explode: true,
         explodeIndex: 0,

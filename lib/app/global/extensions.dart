@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 extension HexColor on Color {
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional
@@ -18,3 +19,5 @@ extension HexColor on Color {
       '${g.toInt().toRadixString(16).padLeft(2, '0')}'
       '${b.toInt().toRadixString(16).padLeft(2, '0')}';
 }
+
+final moneyFormat = NumberFormat('###,###,###,###.00');
