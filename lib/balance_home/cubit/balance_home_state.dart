@@ -2,21 +2,21 @@ part of 'balance_home_cubit.dart';
 
 class BalanceHomeState extends Equatable {
   const BalanceHomeState({
-    this.selectedIndex = 0,
+    this.monthSelected,
   });
 
-  final int selectedIndex;
+  final DateTime? monthSelected;
 
   BalanceHomeState copyWith({
-    int? selectedIndex,
+    DateTime? monthSelected,
   }) {
     return BalanceHomeState(
-      selectedIndex: selectedIndex ?? this.selectedIndex,
+      monthSelected: monthSelected ?? this.monthSelected,
     );
   }
 
   @override
-  List<Object> get props => [
-        selectedIndex,
+  List<Object?> get props => [
+        monthSelected,
       ];
 }

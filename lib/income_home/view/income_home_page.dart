@@ -8,7 +8,7 @@ class IncomeHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => IncomeHomeCubit(),
+      create: (_) => IncomeHomeCubit()..init(),
       child: const IncomeHomeView(),
     );
   }

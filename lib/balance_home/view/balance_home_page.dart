@@ -8,7 +8,7 @@ class BalanceHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => BalanceHomeCubit(),
+      create: (_) => BalanceHomeCubit()..init(),
       child: const BalanceHomeView(),
     );
   }

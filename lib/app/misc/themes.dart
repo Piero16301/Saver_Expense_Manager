@@ -18,6 +18,13 @@ final appLightTheme = ThemeData(
     showCloseIcon: true,
     contentTextStyle: GoogleFonts.nunito(),
   ),
+  cardTheme: CardTheme(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    color: seedColor.withValues(alpha: 0.3),
+    elevation: 0,
+  ),
   useMaterial3: true,
   fontFamily: GoogleFonts.nunito().fontFamily,
 );
@@ -34,6 +41,13 @@ final appDarkTheme = ThemeData(
     behavior: SnackBarBehavior.floating,
     showCloseIcon: true,
     contentTextStyle: GoogleFonts.nunito(),
+  ),
+  cardTheme: CardTheme(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    color: seedColor.withValues(alpha: 0.3),
+    elevation: 0,
   ),
   useMaterial3: true,
   fontFamily: GoogleFonts.nunito().fontFamily,

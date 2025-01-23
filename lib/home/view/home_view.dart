@@ -81,12 +81,18 @@ class _BottomNavigationBarHomeState extends State<BottomNavigationBarHome> {
 
   @override
   Widget build(BuildContext context) {
+    final theme =
+        context.select<AppCubit, String>((cubit) => cubit.state.theme);
+
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) => Container(
         padding: const EdgeInsets.symmetric(vertical: 5),
         margin: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
+          color: theme == 'light'
+              ? Theme.of(context).primaryColor
+              : Theme.of(context).colorScheme.inversePrimary,
+          // color: Color.fromRGBO(59, 105, 57, 1),
           borderRadius: const BorderRadius.all(Radius.circular(20)),
         ),
         child: Row(
