@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:saver_expense_manager/expenses_home/expenses_home.dart';
+import 'package:saver_expense_manager/home/expenses_home/expenses_home.dart';
 
 class ExpensesHomePage extends StatelessWidget {
   const ExpensesHomePage({super.key});

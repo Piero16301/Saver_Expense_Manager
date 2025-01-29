@@ -17,9 +17,10 @@ class Movement extends Equatable {
     required this.description,
     required this.date,
     required this.category,
-    required this.company,
     required this.price,
     required this.type,
+    this.company = '',
+    this.attachments = const <String>[],
   });
 
   /// Creates an instance of [Movement] from a [Map]
@@ -50,14 +51,17 @@ class Movement extends Equatable {
   /// Movement category
   final Category category;
 
-  /// Movement company
-  final String company;
-
   /// Movement price
   final double price;
 
   /// Movement type
   final MovementType type;
+
+  /// Movement company
+  final String company;
+
+  /// Movement attachments
+  final List<String> attachments;
 
   @override
   List<Object> get props => [
@@ -68,9 +72,10 @@ class Movement extends Equatable {
         description,
         date,
         category,
-        company,
         price,
         type,
+        company,
+        attachments,
       ];
 }
 

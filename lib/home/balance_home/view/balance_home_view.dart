@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/balance_home/balance_home.dart';
+import 'package:saver_expense_manager/home/balance_home/balance_home.dart';
 import 'package:saver_expense_manager/models/models.dart';
 
 class BalanceHomeView extends StatelessWidget {

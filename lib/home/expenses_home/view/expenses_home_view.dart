@@ -1,48 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/income_home/income_home.dart';
+import 'package:saver_expense_manager/home/expenses_home/expenses_home.dart';
 import 'package:saver_expense_manager/models/models.dart';
 
-class IncomeHomeView extends StatelessWidget {
-  const IncomeHomeView({super.key});
+class ExpensesHomeView extends StatelessWidget {
+  const ExpensesHomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<IncomeHomeCubit, IncomeHomeState>(
+    return BlocBuilder<ExpensesHomeCubit, ExpensesHomeState>(
       builder: (context, state) => Column(
         children: [
           MonthSelector(
             monthSelected: state.monthSelected!,
-            onBack: () => context.read<IncomeHomeCubit>().previousMonth(),
-            onForward: () => context.read<IncomeHomeCubit>().nextMonth(),
-            onChangeMonth: context.read<IncomeHomeCubit>().changeMonth,
+            onBack: () => context.read<ExpensesHomeCubit>().previousMonth(),
+            onForward: () => context.read<ExpensesHomeCubit>().nextMonth(),
+            onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
           ),
           DoughnutCircularChart(
             data: const [
               ChartData(
-                name: 'Salario',
+                name: 'Transporte',
                 value: 50,
                 color: '#FF4285F4',
               ),
               ChartData(
-                name: 'Bonos',
+                name: 'Entretenimiento',
                 value: 75,
                 color: 'FFEA4335',
               ),
               ChartData(
-                name: 'Inversiones',
-                value: 90,
+                name: 'Salud',
+                value: 30,
                 color: 'FFFBBC05',
               ),
               ChartData(
-                name: 'Otros',
-                value: 25,
+                name: 'Educación',
+                value: 90,
                 color: 'FF34A853',
               ),
               ChartData(
-                name: 'Ahorros',
-                value: 10,
+                name: 'Vivienda',
+                value: 120,
                 color: 'FF9C27B0',
               ),
             ],
@@ -50,11 +50,11 @@ class IncomeHomeView extends StatelessWidget {
               id: '1',
               createdAt: DateTime.now(),
               updatedAt: DateTime.now(),
-              name: 'Salario',
+              name: 'Transporte',
               color: '#FF4285F4',
             ),
-            total: 936729,
-            percentage: 25,
+            total: 264981,
+            percentage: 65,
           ),
         ],
       ),

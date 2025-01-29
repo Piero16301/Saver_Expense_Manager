@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:saver_expense_manager/email_verification/email_verification.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/login/login.dart';
-import 'package:saver_expense_manager/profile/profile.dart';
 
 GoRouter goRouter() {
   const unauthenticatedRoutes = <String>{
