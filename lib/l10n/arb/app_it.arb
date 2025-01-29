@@ -26,6 +26,12 @@
     "@homeIncomeTitle": {},
     "homeBalanceTitle": "Bilancio",
     "@homeBalanceTitle": {},
+    "homeAddMovement": "Aggiungi movimento",
+    "@homeAddMovement": {},
+    "homeAddExpense": "Aggiungi spesa",
+    "@homeAddExpense": {},
+    "homeAddIncome": "Aggiungi entrata",
+    "@homeAddIncome": {},
 
     "profileTitle": "Profilo",
     "@profileTitle": {},

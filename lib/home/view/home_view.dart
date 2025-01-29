@@ -114,16 +114,18 @@ class AddMovementBottomSheet extends StatelessWidget {
 
     return Container(
       width: double.infinity,
+      height: 200,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: Stack(
-        alignment: Alignment.topCenter,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 20,
         children: [
-          Positioned(
-            top: 0,
+          Center(
             child: GestureDetector(
               onTap: () => Navigator.of(context).pop(),
               child: Container(
@@ -137,6 +139,82 @@ class AddMovementBottomSheet extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+          Text(
+            context.l10n.homeAddMovement,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Row(
+            spacing: 20,
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 60,
+                  child: FilledButton.tonal(
+                    style: ButtonStyle(
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: Row(
+                      spacing: 10,
+                      children: [
+                        const Icon(Icons.money_off, size: 25),
+                        Expanded(
+                          child: Text(
+                            context.l10n.homeAddExpense,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: 60,
+                  child: FilledButton.tonal(
+                    style: ButtonStyle(
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      padding: WidgetStateProperty.all(
+                        const EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: Row(
+                      spacing: 10,
+                      children: [
+                        const Icon(Icons.attach_money, size: 25),
+                        Expanded(
+                          child: Text(
+                            context.l10n.homeAddIncome,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

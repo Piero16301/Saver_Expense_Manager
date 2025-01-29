@@ -26,6 +26,12 @@
     "@homeIncomeTitle": {},
     "homeBalanceTitle": "Balance",
     "@homeBalanceTitle": {},
+    "homeAddMovement": "Add movement",
+    "@homeAddMovement": {},
+    "homeAddExpense": "Add expense",
+    "@homeAddExpense": {},
+    "homeAddIncome": "Add income",
+    "@homeAddIncome": {},
 
     "profileTitle": "Profile",
     "@profileTitle": {},
