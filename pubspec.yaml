@@ -26,7 +26,7 @@ dependencies:
   mat_month_picker_dialog: ^1.1.2
   shared_preferences: ^2.5.1
   syncfusion_flutter_charts: ^28.1.41
-  syncfusion_flutter_core: ^28.1.41
+  syncfusion_flutter_core: ^28.2.3
   user_api:
     path: packages/user_api
   user_api_remote:
