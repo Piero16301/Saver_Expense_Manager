@@ -2,26 +2,26 @@ part of 'app_cubit.dart';
 
 class AppState extends Equatable {
   const AppState({
-    this.language = 'es',
-    this.theme = 'light',
+    this.locale,
+    this.darkTheme,
   });
 
-  final String language;
-  final String theme;
+  final Locale? locale;
+  final bool? darkTheme;
 
   AppState copyWith({
-    String? language,
-    String? theme,
+    Locale? locale,
+    bool? darkTheme,
   }) {
     return AppState(
-      language: language ?? this.language,
-      theme: theme ?? this.theme,
+      locale: locale ?? this.locale,
+      darkTheme: darkTheme ?? this.darkTheme,
     );
   }
 
   @override
-  List<Object> get props => [
-        language,
-        theme,
+  List<Object?> get props => [
+        locale,
+        darkTheme,
       ];
 }

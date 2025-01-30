@@ -109,9 +109,6 @@ class AddMovementBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme =
-        context.select<AppCubit, String>((cubit) => cubit.state.theme);
-
     return Container(
       width: double.infinity,
       height: 200,
@@ -132,9 +129,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                 width: 40,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: theme == 'light'
-                      ? Theme.of(context).primaryColor
-                      : Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).buttonTheme.colorScheme!.primary,
                   borderRadius: const BorderRadius.all(Radius.circular(2)),
                 ),
               ),

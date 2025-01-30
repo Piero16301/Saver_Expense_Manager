@@ -14,6 +14,7 @@ Category _$CategoryFromJson(Map<String, dynamic> json) {
     updatedAt: DateTime.parse(json['updatedAt'] as String? ?? defaultDatetime)
         .toLocal(),
     name: json['name'] as String? ?? '',
+    icon: json['icon'] as String? ?? '',
     color: json['color'] as String? ?? '',
   );
 }
@@ -23,5 +24,6 @@ Map<String, dynamic> _$CategoryToJson(Category instance) => <String, dynamic>{
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
       'name': instance.name,
+      'icon': instance.icon,
       'color': instance.color,
     };

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:saver_expense_manager/app/app.dart';
+import 'package:user_api/src/models/models.dart';
 
 part 'category.g.dart';
 
@@ -13,6 +13,7 @@ class Category extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.name,
+    required this.icon,
     required this.color,
   });
 
@@ -35,6 +36,9 @@ class Category extends Equatable {
   /// Category name
   final String name;
 
+  /// Category icon
+  final String icon;
+
   /// Category color
   final String color;
 
@@ -44,6 +48,7 @@ class Category extends Equatable {
         createdAt,
         updatedAt,
         name,
+        icon,
         color,
       ];
 }

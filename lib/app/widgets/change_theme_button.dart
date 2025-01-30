@@ -9,10 +9,10 @@ class ChangeThemeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => IconButton(
-        onPressed: context.read<AppCubit>().changeTheme,
+        onPressed: context.read<AppCubit>().toggleTheme,
         alignment: Alignment.center,
         icon: Icon(
-          state.theme == 'light' ? Icons.nightlight_round : Icons.wb_sunny,
+          (state.darkTheme ?? false) ? Icons.wb_sunny : Icons.nightlight_round,
           size: 30,
         ),
       ),

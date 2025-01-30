@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/models/models.dart';
+import 'package:user_api/src/models/models.dart';
 
 part 'movement.g.dart';
 
@@ -79,4 +78,11 @@ class Movement extends Equatable {
       ];
 }
 
-enum MovementType { income, expense }
+/// An enum that represents the type of movement
+enum MovementType {
+  /// Represents an income movement
+  income,
+
+  /// Represents an expense movement
+  expense,
+}

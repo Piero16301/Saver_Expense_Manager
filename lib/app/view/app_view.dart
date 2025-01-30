@@ -5,11 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-final themes = <String, ThemeData>{
-  'light': appLightTheme,
-  'dark': appDarkTheme,
-};
-
 class AppView extends StatefulWidget {
   const AppView({super.key});
 
@@ -40,12 +35,13 @@ class _AppViewState extends State<AppView> {
           ...AppLocalizations.localizationsDelegates,
         ],
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: Locale(state.language),
-        theme: themes['light'],
-        darkTheme: themes['dark'],
+        locale: state.locale,
+        theme: appLightTheme,
+        darkTheme: appDarkTheme,
         themeAnimationCurve: Curves.easeInOut,
         themeAnimationDuration: const Duration(milliseconds: 500),
-        themeMode: state.theme == 'dark' ? ThemeMode.dark : ThemeMode.light,
+        themeMode:
+            (state.darkTheme ?? false) ? ThemeMode.dark : ThemeMode.light,
       ),
     );
   }

@@ -20,7 +20,7 @@ class ChangeLanguageButton extends StatelessWidget {
         icon: SizedBox.square(
           dimension: 30,
           child: Text(
-            languages[state.language]!,
+            languages[(state.locale ?? const Locale('en')).languageCode]!,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 20),
           ),
