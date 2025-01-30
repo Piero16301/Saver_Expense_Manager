@@ -9,6 +9,34 @@ class ExpensesHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = [
+      const ChartData(
+        name: 'Transporte',
+        value: 15000.75,
+        color: '#FF4285F4',
+      ),
+      const ChartData(
+        name: 'Entretenimiento',
+        value: 27500.50,
+        color: 'FFEA4335',
+      ),
+      const ChartData(
+        name: 'Salud',
+        value: 13000.25,
+        color: 'FFFBBC05',
+      ),
+      const ChartData(
+        name: 'Educación',
+        value: 19000.80,
+        color: 'FF34A853',
+      ),
+      const ChartData(
+        name: 'Vivienda',
+        value: 32000.40,
+        color: 'FF9C27B0',
+      ),
+    ];
+
     return BlocBuilder<ExpensesHomeCubit, ExpensesHomeState>(
       builder: (context, state) => Column(
         children: [
@@ -18,43 +46,13 @@ class ExpensesHomeView extends StatelessWidget {
             onForward: () => context.read<ExpensesHomeCubit>().nextMonth(),
             onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
           ),
+          TotalSpent(data: data),
           DoughnutCircularChart(
-            data: const [
-              ChartData(
-                name: 'Transporte',
-                value: 50,
-                color: '#FF4285F4',
-              ),
-              ChartData(
-                name: 'Entretenimiento',
-                value: 75,
-                color: 'FFEA4335',
-              ),
-              ChartData(
-                name: 'Salud',
-                value: 30,
-                color: 'FFFBBC05',
-              ),
-              ChartData(
-                name: 'Educación',
-                value: 90,
-                color: 'FF34A853',
-              ),
-              ChartData(
-                name: 'Vivienda',
-                value: 120,
-                color: 'FF9C27B0',
-              ),
-            ],
-            category: Category(
-              id: '1',
-              createdAt: DateTime.now(),
-              updatedAt: DateTime.now(),
-              name: 'Transporte',
-              color: '#FF4285F4',
-            ),
-            total: 264981,
-            percentage: 65,
+            data: data,
+            explodeIndex: state.explodeIndex,
+            onPointTap: (p0) => context
+                .read<ExpensesHomeCubit>()
+                .changeExplodeIndex(p0.pointIndex),
           ),
         ],
       ),

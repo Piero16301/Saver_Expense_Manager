@@ -1,36 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/models/models.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DoughnutCircularChart extends StatefulWidget {
   const DoughnutCircularChart({
     required this.data,
-    required this.category,
-    required this.total,
-    required this.percentage,
+    this.explodeIndex = 0,
+    this.onPointTap,
     super.key,
   });
 
   final List<ChartData> data;
-  final Category category;
-  final double total;
-  final double percentage;
+  final int explodeIndex;
+  final void Function(ChartPointDetails)? onPointTap;
 
   @override
   State<DoughnutCircularChart> createState() => _DoughnutCircularChartState();
 }
 
 class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
-  late TooltipBehavior _tooltipBehavior;
-
   @override
   void initState() {
-    _tooltipBehavior = TooltipBehavior(
-      enable: true,
-      animationDuration: 500,
-      duration: 1000,
-    );
     super.initState();
   }
 
@@ -41,13 +33,15 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return SfCircularChart(
-      legend: const Legend(
+      series: _buildDoughnutSeries(),
+      legend: Legend(
         isVisible: true,
         position: LegendPosition.bottom,
+        textStyle: Theme.of(context).textTheme.labelSmall,
       ),
-      series: _buildDoughnutSeries(),
-      tooltipBehavior: _tooltipBehavior,
       annotations: [
         CircularChartAnnotation(
           height: '90%',
@@ -56,17 +50,17 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                widget.category.name,
+                widget.data[widget.explodeIndex].name,
                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               Text(
-                moneyFormat.format(widget.total),
+                moneyFormat.format(widget.data[widget.explodeIndex].value),
                 style: Theme.of(context).textTheme.labelLarge,
               ),
               Text(
-                '${widget.percentage.toInt()}%',
+                '${_percentage.toInt()}%',
                 style: Theme.of(context).textTheme.labelSmall!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -80,7 +74,7 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
                   ),
                   onPressed: () {},
                   child: Text(
-                    'Detalles',
+                    l10n.homeDetails,
                     style: Theme.of(context).textTheme.labelMedium!.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -94,6 +88,12 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
     );
   }
 
+  double get _percentage {
+    return widget.data[widget.explodeIndex].value /
+        widget.data.map((e) => e.value).reduce((a, b) => a + b) *
+        100;
+  }
+
   List<DoughnutSeries<ChartData, String>> _buildDoughnutSeries() {
     return <DoughnutSeries<ChartData, String>>[
       DoughnutSeries<ChartData, String>(
@@ -103,9 +103,10 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
         dataLabelMapper: (ChartData data, _) => data.name,
         animationDuration: 500,
         innerRadius: '60%',
-        legendIconType: LegendIconType.diamond,
+        legendIconType: LegendIconType.circle,
         explode: true,
-        explodeIndex: 0,
+        explodeIndex: widget.explodeIndex,
+        onPointTap: widget.onPointTap,
         pointColorMapper: (data, index) => HexColor.fromHex(data.color),
         dataLabelSettings: const DataLabelSettings(
           isVisible: true,

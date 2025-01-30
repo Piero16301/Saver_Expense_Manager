@@ -16,6 +16,10 @@ class ExpensesHomeCubit extends Cubit<ExpensesHomeState> {
     emit(state.copyWith(monthSelected: DateTime(month.year, month.month)));
   }
 
+  void changeExplodeIndex(int? index) {
+    emit(state.copyWith(explodeIndex: index));
+  }
+
   void nextMonth() {
     final monthSelected = state.monthSelected!;
     if (monthSelected.month == 12) {
