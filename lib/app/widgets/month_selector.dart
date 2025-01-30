@@ -26,42 +26,50 @@ class MonthSelector extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Card(
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              padding: const EdgeInsets.only(left: 10),
-              onPressed: backEnabled ? onBack : null,
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () async {
-                  await showMonthPicker(
-                    context: context,
-                    initialDate: monthSelected,
-                    firstDate: minDate,
-                    lastDate: DateTime.now(),
-                  ).then(
-                    onChangeMonth,
-                  );
-                },
-                child: Text(
-                  DateFormat('MMMM yyyy', language)
-                      .format(monthSelected)
-                      .toUpperCase(),
-                  style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                  textAlign: TextAlign.center,
+      child: SizedBox(
+        height: 50,
+        child: Card(
+          child: Row(
+            children: [
+              SizedBox.square(
+                dimension: 40,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back_ios, size: 20),
+                  onPressed: backEnabled ? onBack : null,
                 ),
               ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.arrow_forward_ios),
-              onPressed: forwardEnabled ? onForward : null,
-            ),
-          ],
+              Expanded(
+                child: GestureDetector(
+                  onTap: () async {
+                    await showMonthPicker(
+                      context: context,
+                      initialDate: monthSelected,
+                      firstDate: minDate,
+                      lastDate: DateTime.now(),
+                    ).then(
+                      onChangeMonth,
+                    );
+                  },
+                  child: Text(
+                    DateFormat('MMMM yyyy', language)
+                        .format(monthSelected)
+                        .toUpperCase(),
+                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              SizedBox.square(
+                dimension: 40,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios, size: 20),
+                  onPressed: forwardEnabled ? onForward : null,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

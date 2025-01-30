@@ -46,7 +46,7 @@ class ExpensesHomeView extends StatelessWidget {
             onForward: () => context.read<ExpensesHomeCubit>().nextMonth(),
             onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
           ),
-          TotalSpent(data: data),
+          TotalSpentChart(data: data),
           DoughnutCircularChart(
             data: data,
             explodeIndex: state.explodeIndex,
@@ -54,6 +54,7 @@ class ExpensesHomeView extends StatelessWidget {
                 .read<ExpensesHomeCubit>()
                 .changeExplodeIndex(p0.pointIndex),
           ),
+          CategoriesListChart(data: data),
         ],
       ),
     );

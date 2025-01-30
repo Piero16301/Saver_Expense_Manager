@@ -3,8 +3,8 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/models/models.dart';
 
-class TotalSpent extends StatelessWidget {
-  const TotalSpent({
+class TotalSpentChart extends StatelessWidget {
+  const TotalSpentChart({
     required this.data,
     super.key,
   });
