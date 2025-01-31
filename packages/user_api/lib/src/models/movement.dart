@@ -17,7 +17,6 @@ class Movement extends Equatable {
     required this.date,
     required this.category,
     required this.price,
-    required this.type,
     this.company = '',
     this.attachments = const <String>[],
   });
@@ -53,9 +52,6 @@ class Movement extends Equatable {
   /// Movement price
   final double price;
 
-  /// Movement type
-  final MovementType type;
-
   /// Movement company
   final String company;
 
@@ -72,17 +68,7 @@ class Movement extends Equatable {
         date,
         category,
         price,
-        type,
         company,
         attachments,
       ];
-}
-
-/// An enum that represents the type of movement
-enum MovementType {
-  /// Represents an income movement
-  income,
-
-  /// Represents an expense movement
-  expense,
 }

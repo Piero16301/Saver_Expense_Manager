@@ -16,6 +16,7 @@ Category _$CategoryFromJson(Map<String, dynamic> json) {
     name: json['name'] as String? ?? '',
     icon: json['icon'] as String? ?? '',
     color: json['color'] as String? ?? '',
+    type: _$CategoryTypeFromJson(json['type'] as String? ?? ''),
   );
 }
 
@@ -26,4 +27,18 @@ Map<String, dynamic> _$CategoryToJson(Category instance) => <String, dynamic>{
       'name': instance.name,
       'icon': instance.icon,
       'color': instance.color,
+      'type': _$CategoryTypeEnumMap[instance.type],
     };
+
+CategoryType _$CategoryTypeFromJson(String type) {
+  if (type == 'INCOME') {
+    return CategoryType.income;
+  } else {
+    return CategoryType.expense;
+  }
+}
+
+const _$CategoryTypeEnumMap = {
+  CategoryType.income: 'INCOME',
+  CategoryType.expense: 'EXPENSE',
+};

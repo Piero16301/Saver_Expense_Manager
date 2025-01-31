@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:user_api/src/models/models.dart';
 
 part 'chart_data.g.dart';
 
@@ -8,9 +9,8 @@ part 'chart_data.g.dart';
 class ChartData extends Equatable {
   /// {@macro chart_data}
   const ChartData({
-    required this.name,
+    required this.category,
     required this.value,
-    required this.color,
   });
 
   /// Creates an instance of [ChartData] from a [Map]
@@ -20,19 +20,15 @@ class ChartData extends Equatable {
   /// Creates a [Map] from an instance of [ChartData]
   Map<String, dynamic> toJson() => _$ChartDataToJson(this);
 
-  /// Chart data name
-  final String name;
+  /// Chart data category
+  final Category category;
 
   /// Chart data value
   final double value;
 
-  /// Chart data color
-  final String color;
-
   @override
   List<Object> get props => [
-        name,
+        category,
         value,
-        color,
       ];
 }

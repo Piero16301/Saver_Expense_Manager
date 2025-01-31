@@ -13,7 +13,7 @@ class ChangeThemeButton extends StatelessWidget {
         alignment: Alignment.center,
         icon: Icon(
           (state.darkTheme ?? false) ? Icons.wb_sunny : Icons.nightlight_round,
-          size: 30,
+          size: 25,
         ),
       ),
     );

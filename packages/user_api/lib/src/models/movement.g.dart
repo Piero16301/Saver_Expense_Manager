@@ -22,7 +22,6 @@ Movement _$MovementFromJson(Map<String, dynamic> json) {
     category:
         Category.fromJson(json['category'] as Map<String, dynamic>? ?? {}),
     price: (json['price'] as num?)?.toDouble() ?? 0.0,
-    type: _$MovementTypeFromJson(json['type'] as String? ?? 'EXPENSE'),
     company: json['company'] as String? ?? '',
     attachments: (json['attachments'] as List<dynamic>?)
             ?.map((e) => e as String? ?? '')
@@ -40,20 +39,6 @@ Map<String, dynamic> _$MovementToJson(Movement instance) => <String, dynamic>{
       'date': instance.date,
       'category': instance.category.toJson(),
       'price': instance.price,
-      'type': _$MovementTypeEnumMap[instance.type],
       'company': instance.company,
       'attachments': instance.attachments,
     };
-
-MovementType _$MovementTypeFromJson(String type) {
-  if (type == 'INCOME') {
-    return MovementType.income;
-  } else {
-    return MovementType.expense;
-  }
-}
-
-const _$MovementTypeEnumMap = {
-  MovementType.income: 'INCOME',
-  MovementType.expense: 'EXPENSE',
-};

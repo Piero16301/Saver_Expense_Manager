@@ -36,12 +36,7 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
     final l10n = context.l10n;
 
     return SfCircularChart(
-      series: _buildDoughnutSeries(),
-      legend: Legend(
-        isVisible: true,
-        position: LegendPosition.bottom,
-        textStyle: Theme.of(context).textTheme.labelSmall,
-      ),
+      series: _buildDoughnutSeries(l10n),
       annotations: [
         CircularChartAnnotation(
           height: '90%',
@@ -50,34 +45,35 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                widget.data[widget.explodeIndex].name,
-                style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                getCategoryName(
+                  widget.data[widget.explodeIndex].category.name,
+                  l10n,
+                ),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                moneyFormat.format(widget.data[widget.explodeIndex].value),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               Text(
-                moneyFormat.format(widget.data[widget.explodeIndex].value),
-                style: Theme.of(context).textTheme.labelLarge,
-              ),
-              Text(
                 '${_percentage.toInt()}%',
-                style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
               const SizedBox(height: 5),
               SizedBox(
-                height: 20,
+                height: 30,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                   ),
                   onPressed: () {},
                   child: Text(
                     l10n.homeDetails,
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
                 ),
               ),
@@ -94,20 +90,25 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
         100;
   }
 
-  List<DoughnutSeries<ChartData, String>> _buildDoughnutSeries() {
+  List<DoughnutSeries<ChartData, String>> _buildDoughnutSeries(
+    AppLocalizations l10n,
+  ) {
     return <DoughnutSeries<ChartData, String>>[
       DoughnutSeries<ChartData, String>(
         dataSource: widget.data,
-        xValueMapper: (ChartData data, _) => data.name,
+        xValueMapper: (ChartData data, _) =>
+            getCategoryName(data.category.name, l10n),
         yValueMapper: (ChartData data, _) => data.value,
-        dataLabelMapper: (ChartData data, _) => data.name,
+        dataLabelMapper: (ChartData data, _) => null,
         animationDuration: 500,
         innerRadius: '60%',
+        radius: '95%',
         legendIconType: LegendIconType.circle,
         explode: true,
         explodeIndex: widget.explodeIndex,
         onPointTap: widget.onPointTap,
-        pointColorMapper: (data, index) => HexColor.fromHex(data.color),
+        pointColorMapper: (data, index) =>
+            HexColor.fromHex(data.category.color),
         dataLabelSettings: const DataLabelSettings(
           isVisible: true,
           labelPosition: ChartDataLabelPosition.outside,

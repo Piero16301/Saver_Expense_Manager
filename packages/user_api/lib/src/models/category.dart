@@ -15,6 +15,7 @@ class Category extends Equatable {
     required this.name,
     required this.icon,
     required this.color,
+    required this.type,
   });
 
   /// Creates an instance of [Category] from a [Map]
@@ -42,6 +43,9 @@ class Category extends Equatable {
   /// Category color
   final String color;
 
+  /// Category type
+  final CategoryType type;
+
   @override
   List<Object> get props => [
         id,
@@ -50,5 +54,15 @@ class Category extends Equatable {
         name,
         icon,
         color,
+        type,
       ];
+}
+
+/// An enum that represents the type of category
+enum CategoryType {
+  /// Represents an income category
+  income,
+
+  /// Represents an expense category
+  expense,
 }

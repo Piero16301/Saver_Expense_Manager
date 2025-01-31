@@ -69,15 +69,16 @@ class _RadialCircularChartState extends State<RadialCircularChart> {
     return <RadialBarSeries<ChartData, String>>[
       RadialBarSeries<ChartData, String>(
         dataSource: widget.data,
-        xValueMapper: (ChartData data, _) => data.name,
+        xValueMapper: (ChartData data, _) => data.category.name,
         yValueMapper: (ChartData data, _) => data.value,
-        dataLabelMapper: (ChartData data, _) => data.name,
+        dataLabelMapper: (ChartData data, _) => data.category.name,
         animationDuration: 500,
         maximumValue: 100,
         radius: '100%',
         cornerStyle: CornerStyle.endCurve,
         legendIconType: LegendIconType.circle,
-        pointColorMapper: (data, index) => HexColor.fromHex(data.color),
+        pointColorMapper: (data, index) =>
+            HexColor.fromHex(data.category.color),
         dataLabelSettings: const DataLabelSettings(
           isVisible: true,
           labelPosition: ChartDataLabelPosition.outside,

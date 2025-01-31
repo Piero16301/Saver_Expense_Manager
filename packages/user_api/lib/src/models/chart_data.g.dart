@@ -8,14 +8,13 @@ part of 'chart_data.dart';
 
 ChartData _$ChartDataFromJson(Map<String, dynamic> json) {
   return ChartData(
-    name: json['name'] as String? ?? '',
+    category:
+        Category.fromJson(json['category'] as Map<String, dynamic>? ?? {}),
     value: (json['value'] as num?)?.toDouble() ?? 0.0,
-    color: json['color'] as String? ?? '',
   );
 }
 
 Map<String, dynamic> _$ChartDataToJson(ChartData instance) => <String, dynamic>{
-      'name': instance.name,
+      'category': instance.category.toJson(),
       'value': instance.value,
-      'color': instance.color,
     };

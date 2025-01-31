@@ -18,7 +18,7 @@ class HomeView extends StatelessWidget {
         appBar: AppBar(
           title: Image.asset('assets/images/logo_no_bg.png', height: 40),
           centerTitle: true,
-          leading: const ChangeThemeButton(),
+          notificationPredicate: (notification) => false,
           actions: [
             IconButton(
               icon: user?.photoURL == null
@@ -61,8 +61,6 @@ class HomeView extends StatelessWidget {
       case 0:
         return const ExpensesHomePage();
       case 1:
-        return const BalanceHomePage();
-      case 2:
         return const IncomeHomePage();
       default:
         return const SizedBox();
@@ -89,11 +87,6 @@ class BottomNavigationBarHome extends StatelessWidget {
             label: l10n.homeExpensesTitle,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.account_balance_wallet_outlined),
-            selectedIcon: const Icon(Icons.account_balance_wallet),
-            label: l10n.homeBalanceTitle,
-          ),
-          NavigationDestination(
             icon: const Icon(Icons.attach_money_outlined),
             selectedIcon: const Icon(Icons.attach_money),
             label: l10n.homeIncomeTitle,
@@ -111,7 +104,7 @@ class AddMovementBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 200,
+      height: 300,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -120,7 +113,6 @@ class AddMovementBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 20,
         children: [
           Center(
             child: GestureDetector(
@@ -135,83 +127,104 @@ class AddMovementBottomSheet extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 10),
           Text(
-            context.l10n.homeAddMovement,
+            context.l10n.homeAddExpense,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
+          const SizedBox(height: 10),
           Row(
             spacing: 20,
             children: [
-              Expanded(
-                child: SizedBox(
-                  height: 60,
-                  child: FilledButton.tonal(
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(horizontal: 10),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      spacing: 10,
-                      children: [
-                        const Icon(Icons.money_off, size: 25),
-                        Expanded(
-                          child: Text(
-                            context.l10n.homeAddExpense,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              TonalButtonActionHome(
+                title: context.l10n.homeScanExpense,
+                icon: Icons.document_scanner,
+                onPressed: () {},
               ),
-              Expanded(
-                child: SizedBox(
-                  height: 60,
-                  child: FilledButton.tonal(
-                    style: ButtonStyle(
-                      shape: WidgetStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                      padding: WidgetStateProperty.all(
-                        const EdgeInsets.symmetric(horizontal: 10),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      spacing: 10,
-                      children: [
-                        const Icon(Icons.attach_money, size: 25),
-                        Expanded(
-                          child: Text(
-                            context.l10n.homeAddIncome,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              TonalButtonActionHome(
+                title: context.l10n.homeRegisterExpense,
+                icon: Icons.attach_money,
+                onPressed: () {},
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text(
+            context.l10n.homeAddIncome,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            spacing: 20,
+            children: [
+              TonalButtonActionHome(
+                title: context.l10n.homeScanIncome,
+                icon: Icons.document_scanner,
+                onPressed: () {},
+              ),
+              TonalButtonActionHome(
+                title: context.l10n.homeRegisterIncome,
+                icon: Icons.attach_money,
+                onPressed: () {},
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class TonalButtonActionHome extends StatelessWidget {
+  const TonalButtonActionHome({
+    required this.title,
+    required this.icon,
+    this.onPressed,
+    super.key,
+  });
+
+  final String title;
+  final IconData icon;
+  final void Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: SizedBox(
+        height: 60,
+        child: FilledButton.tonal(
+          style: ButtonStyle(
+            shape: WidgetStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            padding: WidgetStateProperty.all(
+              const EdgeInsets.symmetric(horizontal: 10),
+            ),
+          ),
+          onPressed: onPressed,
+          child: Row(
+            spacing: 10,
+            children: [
+              Icon(icon, size: 25),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

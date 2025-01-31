@@ -18,6 +18,7 @@ class ProfileView extends StatelessWidget {
         title: Text(l10n.profileTitle),
         centerTitle: true,
         actions: const [
+          ChangeThemeButton(),
           ChangeLanguageButton(),
         ],
       ),

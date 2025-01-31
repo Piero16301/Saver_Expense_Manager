@@ -20,7 +20,7 @@ class TotalSpentChart extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            l10n.homeTotal.toUpperCase(),
+            l10n.homeTotal,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           Text(
