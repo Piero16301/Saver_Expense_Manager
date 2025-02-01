@@ -16,7 +16,7 @@ Movement _$MovementFromJson(Map<String, dynamic> json) {
         .toLocal(),
     updatedAt: DateTime.parse(json['updatedAt'] as String? ?? defaultDatetime)
         .toLocal(),
-    name: json['name'] as String? ?? '',
+    title: json['name'] as String? ?? '',
     description: json['description'] as String? ?? '',
     date: json['date'] as String? ?? '',
     category:
@@ -34,7 +34,7 @@ Map<String, dynamic> _$MovementToJson(Movement instance) => <String, dynamic>{
       'id': instance.id,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
-      'name': instance.name,
+      'name': instance.title,
       'description': instance.description,
       'date': instance.date,
       'category': instance.category.toJson(),

@@ -25,6 +25,17 @@ class Category extends Equatable {
   /// Creates a [Map] from an instance of [Category]
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
 
+  /// An empty category instance
+  static final empty = Category(
+    id: '',
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
+    name: '',
+    icon: '',
+    color: '',
+    type: CategoryType.expense,
+  );
+
   /// Category id
   final String id;
 

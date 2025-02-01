@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+import 'package:user_api/user_api.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -147,7 +148,14 @@ class AddMovementBottomSheet extends StatelessWidget {
               TonalButtonActionHome(
                 title: context.l10n.homeRegisterExpense,
                 icon: Icons.attach_money,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.pushNamed(
+                    'enter-movement',
+                    extra: Movement.empty
+                        .copyWith(category: expenseCategories.first),
+                  );
+                },
               ),
             ],
           ),
@@ -171,7 +179,14 @@ class AddMovementBottomSheet extends StatelessWidget {
               TonalButtonActionHome(
                 title: context.l10n.homeRegisterIncome,
                 icon: Icons.attach_money,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.pushNamed(
+                    'enter-movement',
+                    extra: Movement.empty
+                        .copyWith(category: incomeCategories.first),
+                  );
+                },
               ),
             ],
           ),
