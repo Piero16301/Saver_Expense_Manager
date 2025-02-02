@@ -25,6 +25,9 @@ final appLightTheme = ThemeData(
     color: seedColor.withValues(alpha: 0.3),
     elevation: 0,
   ),
+  inputDecorationTheme: const InputDecorationTheme(
+    border: OutlineInputBorder(),
+  ),
   useMaterial3: true,
   fontFamily: GoogleFonts.nunito().fontFamily,
 );
@@ -48,6 +51,9 @@ final appDarkTheme = ThemeData(
     ),
     color: seedColor.withValues(alpha: 0.3),
     elevation: 0,
+  ),
+  inputDecorationTheme: const InputDecorationTheme(
+    border: OutlineInputBorder(),
   ),
   useMaterial3: true,
   fontFamily: GoogleFonts.nunito().fontFamily,

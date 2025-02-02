@@ -152,8 +152,11 @@ class AddMovementBottomSheet extends StatelessWidget {
                   Navigator.of(context).pop();
                   context.pushNamed(
                     'enter-movement',
-                    extra: Movement.empty
-                        .copyWith(category: expenseCategories.first),
+                    pathParameters: {
+                      'type': 'EXPENSE',
+                      'screenType': 'ADD',
+                    },
+                    extra: Movement.empty,
                   );
                 },
               ),
@@ -183,8 +186,11 @@ class AddMovementBottomSheet extends StatelessWidget {
                   Navigator.of(context).pop();
                   context.pushNamed(
                     'enter-movement',
-                    extra: Movement.empty
-                        .copyWith(category: incomeCategories.first),
+                    pathParameters: {
+                      'type': 'INCOME',
+                      'screenType': 'ADD',
+                    },
+                    extra: Movement.empty,
                   );
                 },
               ),

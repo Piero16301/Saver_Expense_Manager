@@ -1,1 +1,6 @@
-final minDate = DateTime(2000);
+final minDate = DateTime(2020);
+
+enum MovementScreenType {
+  add,
+  edit,
+}

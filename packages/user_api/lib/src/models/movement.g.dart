@@ -6,16 +6,13 @@ part of 'movement.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-/// Default datetime value
-const defaultDatetime = '2000-01-01 00:00:00';
-
 Movement _$MovementFromJson(Map<String, dynamic> json) {
   return Movement(
     id: json['id'] as String,
-    createdAt: DateTime.parse(json['createdAt'] as String? ?? defaultDatetime)
-        .toLocal(),
-    updatedAt: DateTime.parse(json['updatedAt'] as String? ?? defaultDatetime)
-        .toLocal(),
+    createdAt:
+        (json['createdAt'] as Timestamp? ?? Timestamp.now()).toDate().toLocal(),
+    updatedAt:
+        (json['updatedAt'] as Timestamp? ?? Timestamp.now()).toDate().toLocal(),
     title: json['name'] as String? ?? '',
     description: json['description'] as String? ?? '',
     date: json['date'] as String? ?? '',

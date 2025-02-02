@@ -14,6 +14,7 @@ class LoginView extends StatelessWidget {
         child: Stack(
           children: [
             SignInScreen(
+              showPasswordVisibilityToggle: true,
               actions: [
                 AuthStateChangeAction(
                   (context, state) {

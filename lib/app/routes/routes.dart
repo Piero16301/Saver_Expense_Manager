@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/login/login.dart';
 import 'package:user_api/user_api.dart';
@@ -45,10 +46,20 @@ GoRouter goRouter() {
         routes: [
           GoRoute(
             name: 'enter-movement',
-            path: 'enter-movement',
+            path: 'enter-movement/:type/:screenType',
             builder: (context, state) {
               final movement = state.extra! as Movement;
-              return EnterMovementPage(movement: movement);
+              final type = state.pathParameters['type'] ?? 'EXPENSE';
+              final screenType = state.pathParameters['screenType'] ?? 'ADD';
+              return EnterMovementPage(
+                movement: movement,
+                type: type == 'EXPENSE'
+                    ? CategoryType.expense
+                    : CategoryType.income,
+                screenType: screenType == 'ADD'
+                    ? MovementScreenType.add
+                    : MovementScreenType.edit,
+              );
             },
           ),
           GoRoute(

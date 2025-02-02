@@ -8,7 +8,7 @@ part 'enter_movement_state.dart';
 class EnterMovementCubit extends Cubit<EnterMovementState> {
   EnterMovementCubit() : super(const EnterMovementState());
 
-  void init(Movement movement) {
+  void init(Movement movement, List<Category> categories) {
     emit(
       state.copyWith(
         title: movement.title,
@@ -16,7 +16,10 @@ class EnterMovementCubit extends Cubit<EnterMovementState> {
         date: movement.date.isEmpty
             ? DateTime.now()
             : DateFormat('dd-MM-yyyy').parse(movement.date),
-        category: movement.category,
+        categories: categories,
+        category: movement.category == Category.empty
+            ? categories.first
+            : movement.category,
         price: movement.price,
         company: movement.company,
         attachments: movement.attachments,
@@ -36,12 +39,12 @@ class EnterMovementCubit extends Cubit<EnterMovementState> {
     emit(state.copyWith(date: value));
   }
 
-  void categoryChanged(Category value) {
+  void categoryChanged(Category? value) {
     emit(state.copyWith(category: value));
   }
 
-  void priceChanged(double value) {
-    emit(state.copyWith(price: value));
+  void priceChanged(String value) {
+    emit(state.copyWith(price: double.tryParse(value) ?? 0.0));
   }
 
   void companyChanged(String value) {

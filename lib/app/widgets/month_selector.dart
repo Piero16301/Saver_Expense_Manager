@@ -20,9 +20,8 @@ class MonthSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.select<AppCubit, String>(
-      (cubit) => cubit.state.locale!.languageCode,
-    );
+    final locale =
+        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -51,7 +50,7 @@ class MonthSelector extends StatelessWidget {
                     );
                   },
                   child: Text(
-                    DateFormat('MMMM yyyy', locale)
+                    DateFormat('MMMM yyyy', locale.languageCode)
                         .format(monthSelected)
                         .toUpperCase(),
                     style: Theme.of(context).textTheme.labelLarge!.copyWith(
