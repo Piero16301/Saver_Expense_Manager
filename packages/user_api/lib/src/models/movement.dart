@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:user_api/src/models/models.dart';
 
@@ -28,11 +29,11 @@ class Movement extends Equatable {
   Map<String, dynamic> toJson() => _$MovementToJson(this);
 
   /// An empty movement instance
-  static const empty = Movement(
+  static final empty = Movement(
     id: '',
     title: '',
     description: '',
-    date: '',
+    date: DateTime.now(),
     category: Category.empty,
     price: 0,
     user: '',
@@ -48,7 +49,7 @@ class Movement extends Equatable {
   final String description;
 
   /// Movement date
-  final String date;
+  final DateTime date;
 
   /// Movement category
   final Category category;
@@ -70,7 +71,7 @@ class Movement extends Equatable {
     String? id,
     String? title,
     String? description,
-    String? date,
+    DateTime? date,
     Category? category,
     double? price,
     String? company,

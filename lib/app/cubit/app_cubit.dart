@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:user_api/user_api.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -53,7 +54,7 @@ class AppCubit extends Cubit<AppState> {
 
   Future<void> loadCategories() async {
     final categoriesJson =
-        await FirebaseFirestore.instance.collection('categories').get();
+        await FirebaseFirestore.instance.collection(categoriesCollection).get();
     final categories = categoriesJson.docs
         .map((category) => Category.fromJson(category.data()))
         .toList();

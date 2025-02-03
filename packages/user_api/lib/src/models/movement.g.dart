@@ -11,7 +11,7 @@ Movement _$MovementFromJson(Map<String, dynamic> json) {
     id: json['id'] as String,
     title: json['name'] as String? ?? '',
     description: json['description'] as String? ?? '',
-    date: json['date'] as String? ?? '',
+    date: (json['date'] as Timestamp? ?? Timestamp.now()).toDate().toLocal(),
     category:
         Category.fromJson(json['category'] as Map<String, dynamic>? ?? {}),
     price: (json['price'] as num?)?.toDouble() ?? 0.0,
@@ -28,7 +28,7 @@ Map<String, dynamic> _$MovementToJson(Movement instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.title,
       'description': instance.description,
-      'date': instance.date,
+      'date': instance.date.toUtc(),
       'category': instance.category.toJson(),
       'price': instance.price,
       'company': instance.company,

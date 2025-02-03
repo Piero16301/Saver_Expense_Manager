@@ -20,6 +20,8 @@
     "@homeTitle": {},
     "homeSubtitle": "Keep track of your expenses",
     "@homeSubtitle": {},
+    "homeNoMovements": "No movements registered for this month",
+    "@homeNoMovements": {},
     "homeTotal": "Total",
     "@homeTotal": {},
     "homeDetails": "Details",
@@ -124,7 +126,7 @@
     "@movementAttachments": {},
     "movementAddAttachment": "Add attachment",
     "@movementAddAttachment": {},
-    "movementImageType": "Image file {index}",
+    "movementImageType": "Image {index}",
     "@movementImageType": {
         "placeholders": {
             "index": {
@@ -132,7 +134,7 @@
             }
         }
     },
-    "movementPdfType": "PDF file {index}",
+    "movementPdfType": "PDF {index}",
     "@movementPdfType": {
         "placeholders": {
             "index": {
@@ -140,7 +142,7 @@
             }
         }
     },
-    "movementCustomType": "Custom file {index}",
+    "movementCustomType": "Custom {index}",
     "@movementCustomType": {
         "placeholders": {
             "index": {

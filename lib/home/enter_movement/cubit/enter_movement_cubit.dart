@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:user_api/user_api.dart';
 
 part 'enter_movement_state.dart';
@@ -16,9 +16,7 @@ class EnterMovementCubit extends Cubit<EnterMovementState> {
       state.copyWith(
         title: movement.title,
         description: movement.description,
-        date: movement.date.isEmpty
-            ? DateTime.now()
-            : DateFormat('dd/MM/yyyy').parse(movement.date),
+        date: movement.date,
         categories: categories,
         category: movement.category == Category.empty
             ? categories.first
@@ -74,13 +72,14 @@ class EnterMovementCubit extends Cubit<EnterMovementState> {
 
   bool saveMovement(String userId) {
     // Save movement in Firebase Firestore
-    final docId = FirebaseFirestore.instance.collection('movements').doc().id;
-    FirebaseFirestore.instance.collection('movements').doc(docId).set(
+    final docId =
+        FirebaseFirestore.instance.collection(movementsCollection).doc().id;
+    FirebaseFirestore.instance.collection(movementsCollection).doc(docId).set(
           Movement(
             id: docId,
             title: state.title,
             description: state.description,
-            date: DateFormat('dd/MM/yyyy').format(state.date!),
+            date: state.date!,
             category: state.category!,
             price: state.price,
             company: state.company,

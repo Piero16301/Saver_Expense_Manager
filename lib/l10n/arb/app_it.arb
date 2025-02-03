@@ -20,6 +20,8 @@
     "@homeTitle": {},
     "homeSubtitle": "Tieni traccia delle tue spese",
     "@homeSubtitle": {},
+    "homeNoMovements": "Nessun movimento registrato per questo mese",
+    "@homeNoMovements": {},
     "homeTotal": "Totale",
     "@homeTotal": {},
     "homeDetails": "Dettagli",
@@ -124,7 +126,7 @@
     "@movementAttachments": {},
     "movementAddAttachment": "Aggiungi allegato",
     "@movementAddAttachment": {},
-    "movementImageType": "File immagine {index}",
+    "movementImageType": "Immagine {index}",
     "@movementImageType": {
         "placeholders": {
             "index": {
@@ -132,7 +134,7 @@
             }
         }
     },
-    "movementPdfType": "File PDF {index}",
+    "movementPdfType": "PDF {index}",
     "@movementPdfType": {
         "placeholders": {
             "index": {
@@ -140,7 +142,7 @@
             }
         }
     },
-    "movementCustomType": "File personalizzato {index}",
+    "movementCustomType": "Personalizzato {index}",
     "@movementCustomType": {
         "placeholders": {
             "index": {

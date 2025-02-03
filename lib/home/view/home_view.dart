@@ -159,7 +159,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                   context.pushNamed(
                     'enter-movement',
                     pathParameters: {
-                      'type': 'EXPENSE',
+                      'type': expenseType,
                       'screenType': 'ADD',
                     },
                     extra: Movement.empty,
@@ -193,7 +193,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                   context.pushNamed(
                     'enter-movement',
                     pathParameters: {
-                      'type': 'INCOME',
+                      'type': incomeType,
                       'screenType': 'ADD',
                     },
                     extra: Movement.empty,
