@@ -18,7 +18,7 @@ class ExpensesHomeCubit extends Cubit<ExpensesHomeState> {
   }
 
   void changeExplodeIndex(int? index) {
-    emit(state.copyWith(explodeIndex: index));
+    emit(state.copyWith(selectedIndex: index));
   }
 
   void nextMonth() {

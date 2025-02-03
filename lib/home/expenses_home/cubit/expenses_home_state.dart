@@ -3,22 +3,22 @@ part of 'expenses_home_cubit.dart';
 class ExpensesHomeState extends Equatable {
   const ExpensesHomeState({
     this.monthSelected,
-    this.explodeIndex = 0,
+    this.selectedIndex = 0,
     this.data = const <ChartData>[],
   });
 
   final DateTime? monthSelected;
-  final int explodeIndex;
+  final int selectedIndex;
   final List<ChartData> data;
 
   ExpensesHomeState copyWith({
     DateTime? monthSelected,
-    int? explodeIndex,
+    int? selectedIndex,
     List<ChartData>? data,
   }) {
     return ExpensesHomeState(
       monthSelected: monthSelected ?? this.monthSelected,
-      explodeIndex: explodeIndex ?? this.explodeIndex,
+      selectedIndex: selectedIndex ?? this.selectedIndex,
       data: data ?? this.data,
     );
   }
@@ -26,7 +26,7 @@ class ExpensesHomeState extends Equatable {
   @override
   List<Object?> get props => [
         monthSelected,
-        explodeIndex,
+        selectedIndex,
         data,
       ];
 }

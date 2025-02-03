@@ -1,9 +1,64 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+import 'package:user_api/user_api.dart';
 
 String? highResPicture(String? url) {
   if (url == null) return null;
   return url.replaceAll('s96-c', 's400-c');
+}
+
+Stream<QuerySnapshot<Object?>>? getCategoriesChart({
+  required String userId,
+  required DateTime monthSelected,
+  required String type,
+}) {
+  return FirebaseFirestore.instance
+      .collection(movementsCollection)
+      .where('user', isEqualTo: userId)
+      .where('category.type', isEqualTo: type)
+      .where(
+        'date',
+        isGreaterThanOrEqualTo: Timestamp.fromDate(
+          DateTime(monthSelected.year, monthSelected.month),
+        ),
+      )
+      .where(
+        'date',
+        isLessThan: Timestamp.fromDate(
+          DateTime(
+            monthSelected.month == 12
+                ? monthSelected.year + 1
+                : monthSelected.year,
+            monthSelected.month == 12 ? 1 : monthSelected.month + 1,
+          ),
+        ),
+      )
+      .snapshots();
+}
+
+List<ChartData> buildChartData({
+  required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+}) {
+  final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
+  final data = <ChartData>[];
+  final categories = <Category>[];
+  for (final element in movements) {
+    if (!categories.contains(element.category)) {
+      categories.add(element.category);
+    }
+  }
+  for (final category in categories) {
+    final movementsByCategory =
+        movements.where((element) => element.category == category).toList();
+    final total = movementsByCategory.fold<double>(
+      0,
+      (previousValue, element) => previousValue + element.price,
+    );
+    data.add(ChartData(category: category, value: total));
+  }
+  return data..sort((a, b) => b.value.compareTo(a.value));
 }
 
 String getCategoryName(String category, AppLocalizations l10n) {

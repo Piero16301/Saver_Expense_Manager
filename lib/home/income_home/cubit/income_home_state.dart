@@ -3,25 +3,30 @@ part of 'income_home_cubit.dart';
 class IncomeHomeState extends Equatable {
   const IncomeHomeState({
     this.monthSelected,
-    this.explodeIndex = 0,
+    this.selectedIndex = 0,
+    this.data = const <ChartData>[],
   });
 
   final DateTime? monthSelected;
-  final int explodeIndex;
+  final int selectedIndex;
+  final List<ChartData> data;
 
   IncomeHomeState copyWith({
     DateTime? monthSelected,
-    int? explodeIndex,
+    int? selectedIndex,
+    List<ChartData>? data,
   }) {
     return IncomeHomeState(
       monthSelected: monthSelected ?? this.monthSelected,
-      explodeIndex: explodeIndex ?? this.explodeIndex,
+      selectedIndex: selectedIndex ?? this.selectedIndex,
+      data: data ?? this.data,
     );
   }
 
   @override
   List<Object?> get props => [
         monthSelected,
-        explodeIndex,
+        selectedIndex,
+        data,
       ];
 }

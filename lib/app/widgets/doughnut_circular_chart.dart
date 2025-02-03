@@ -7,13 +7,13 @@ import 'package:user_api/user_api.dart';
 class DoughnutCircularChart extends StatefulWidget {
   const DoughnutCircularChart({
     required this.data,
-    this.explodeIndex = 0,
+    this.selectedIndex = 0,
     this.onPointTap,
     super.key,
   });
 
   final List<ChartData> data;
-  final int explodeIndex;
+  final int selectedIndex;
   final void Function(ChartPointDetails)? onPointTap;
 
   @override
@@ -46,13 +46,13 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
             children: [
               Text(
                 getCategoryName(
-                  widget.data[widget.explodeIndex].category.name,
+                  widget.data[widget.selectedIndex].category.name,
                   l10n,
                 ),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
-                moneyFormat.format(widget.data[widget.explodeIndex].value),
+                moneyFormat.format(widget.data[widget.selectedIndex].value),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -85,7 +85,7 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
   }
 
   double get _percentage {
-    return widget.data[widget.explodeIndex].value /
+    return widget.data[widget.selectedIndex].value /
         widget.data.map((e) => e.value).reduce((a, b) => a + b) *
         100;
   }
@@ -101,14 +101,17 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
         yValueMapper: (ChartData data, _) => data.value,
         dataLabelMapper: (ChartData data, _) => null,
         animationDuration: 500,
-        innerRadius: '60%',
-        radius: '95%',
+        innerRadius: '55%',
+        radius: '100%',
         legendIconType: LegendIconType.circle,
-        explode: true,
-        explodeIndex: widget.explodeIndex,
         onPointTap: widget.onPointTap,
-        pointColorMapper: (data, index) =>
-            HexColor.fromHex(data.category.color),
+        pointColorMapper: (data, index) {
+          if (index == widget.selectedIndex) {
+            return HexColor.fromHex(data.category.color);
+          } else {
+            return HexColor.fromHex(data.category.color).withValues(alpha: 0.5);
+          }
+        },
         dataLabelSettings: const DataLabelSettings(
           isVisible: true,
           labelPosition: ChartDataLabelPosition.outside,

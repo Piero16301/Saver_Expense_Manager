@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/expenses_home/expenses_home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:user_api/user_api.dart';
 
 class ExpensesHomeView extends StatelessWidget {
   const ExpensesHomeView({super.key});
@@ -25,33 +24,11 @@ class ExpensesHomeView extends StatelessWidget {
             onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
           ),
           StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection(movementsCollection)
-                .where('user', isEqualTo: user!.uid)
-                .where('category.type', isEqualTo: expenseType)
-                .where(
-                  'date',
-                  isGreaterThanOrEqualTo: Timestamp.fromDate(
-                    DateTime(
-                      state.monthSelected!.year,
-                      state.monthSelected!.month,
-                    ),
-                  ),
-                )
-                .where(
-                  'date',
-                  isLessThan: Timestamp.fromDate(
-                    DateTime(
-                      state.monthSelected!.month == 12
-                          ? state.monthSelected!.year + 1
-                          : state.monthSelected!.year,
-                      state.monthSelected!.month == 12
-                          ? 1
-                          : state.monthSelected!.month + 1,
-                    ),
-                  ),
-                )
-                .snapshots(),
+            stream: getCategoriesChart(
+              userId: user!.uid,
+              monthSelected: state.monthSelected!,
+              type: expenseType,
+            ),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Expanded(
@@ -61,40 +38,23 @@ class ExpensesHomeView extends StatelessWidget {
 
               if (snapshot.data!.docs.isEmpty) {
                 return Expanded(
-                  child: Center(child: Text(l10n.homeNoMovements)),
+                  child: Center(child: Text(l10n.homeNoExpenses)),
                 );
               }
 
-              final movements = snapshot.data!.docs
-                  .map(
-                    (e) => Movement.fromJson(e.data()! as Map<String, dynamic>),
-                  )
-                  .toList();
-              final data = <ChartData>[];
-              final categories = <Category>[];
-              for (final element in movements) {
-                if (!categories.contains(element.category)) {
-                  categories.add(element.category);
-                }
-              }
-              for (final category in categories) {
-                final movementsByCategory = movements
-                    .where((element) => element.category == category)
-                    .toList();
-                final total = movementsByCategory.fold<double>(
-                  0,
-                  (previousValue, element) => previousValue + element.price,
-                );
-                data.add(ChartData(category: category, value: total));
-              }
+              final data = buildChartData(
+                docs: snapshot.data!.docs
+                    as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+              );
 
               return Expanded(
                 child: Column(
                   children: [
                     TotalSpentChart(data: data),
+                    const SizedBox(height: 10),
                     DoughnutCircularChart(
-                      data: data,
-                      explodeIndex: state.explodeIndex,
+                      data: data..sort((a, b) => b.value.compareTo(a.value)),
+                      selectedIndex: state.selectedIndex,
                       onPointTap: (p0) => context
                           .read<ExpensesHomeCubit>()
                           .changeExplodeIndex(p0.pointIndex),

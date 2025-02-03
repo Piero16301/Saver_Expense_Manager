@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:user_api/user_api.dart';
 
 part 'income_home_state.dart';
 
@@ -17,7 +18,7 @@ class IncomeHomeCubit extends Cubit<IncomeHomeState> {
   }
 
   void changeExplodeIndex(int? index) {
-    emit(state.copyWith(explodeIndex: index));
+    emit(state.copyWith(selectedIndex: index));
   }
 
   void nextMonth() {
