@@ -124,6 +124,32 @@
     "@movementAttachments": {},
     "movementAddAttachment": "Add attachment",
     "@movementAddAttachment": {},
+    "movementImageType": "Image file {index}",
+    "@movementImageType": {
+        "placeholders": {
+            "index": {
+                "type": "int"
+            }
+        }
+    },
+    "movementPdfType": "PDF file {index}",
+    "@movementPdfType": {
+        "placeholders": {
+            "index": {
+                "type": "int"
+            }
+        }
+    },
+    "movementCustomType": "Custom file {index}",
+    "@movementCustomType": {
+        "placeholders": {
+            "index": {
+                "type": "int"
+            }
+        }
+    },
+    "movementSaveError": "An error occurred while saving the movement",
+    "@movementSaveError": {},
 
     "profileTitle": "Profile",
     "@profileTitle": {},

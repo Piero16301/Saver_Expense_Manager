@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/enter_movement/enter_movement.dart';
+import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
 class EnterMovementPage extends StatelessWidget {
@@ -18,10 +19,15 @@ class EnterMovementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final categories = context
         .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
         .where((element) => element.type == type)
-        .toList();
+        .toList()
+      ..sort(
+        (a, b) => getCategoryName(a.name, l10n)
+            .compareTo(getCategoryName(b.name, l10n)),
+      );
 
     return BlocProvider(
       create: (_) => EnterMovementCubit()..init(movement, categories),

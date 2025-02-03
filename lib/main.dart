@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
+import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/bootstrap.dart';
@@ -26,13 +28,20 @@ Future<void> main() async {
     ),
   ]);
 
+  // Configure Firebase Storage
+  final storage = FirebaseStorage.instance;
+  final config = FirebaseUIStorageConfiguration(
+    storage: storage,
+    uploadRoot: storage.ref(),
+    namingPolicy: const UuidFileUploadNamingPolicy(),
+  );
+  await FirebaseUIStorage.configure(config);
+
   // Get SharedPreferences instance
   final preferences = await SharedPreferences.getInstance();
 
-  // Initialize User API
+  // Configure User API and User Repository
   final userApi = UserApiRemote(preferences: preferences);
-
-  // Initialize User Repository
   final userRepository = UserRepository(userApi: userApi);
 
   // Bootstrap the app

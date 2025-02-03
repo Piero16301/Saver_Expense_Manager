@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 part 'category.g.dart';
@@ -10,8 +9,6 @@ class Category extends Equatable {
   /// {@macro category}
   const Category({
     required this.id,
-    required this.createdAt,
-    required this.updatedAt,
     required this.name,
     required this.icon,
     required this.color,
@@ -26,10 +23,8 @@ class Category extends Equatable {
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
 
   /// An empty category instance
-  static final empty = Category(
+  static const empty = Category(
     id: '',
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
     name: '',
     icon: '',
     color: '',
@@ -38,12 +33,6 @@ class Category extends Equatable {
 
   /// Category id
   final String id;
-
-  /// Category created at
-  final DateTime createdAt;
-
-  /// Category updated at
-  final DateTime updatedAt;
 
   /// Category name
   final String name;
@@ -60,8 +49,6 @@ class Category extends Equatable {
   @override
   List<Object> get props => [
         id,
-        createdAt,
-        updatedAt,
         name,
         icon,
         color,

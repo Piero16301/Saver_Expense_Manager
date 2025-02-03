@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,6 +19,7 @@ class EnterMovementView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser!;
     final l10n = context.l10n;
 
     return BlocBuilder<EnterMovementCubit, EnterMovementState>(
@@ -28,7 +30,12 @@ class EnterMovementView extends StatelessWidget {
           notificationPredicate: (notification) => false,
         ),
         body: Padding(
-          padding: const EdgeInsets.all(30),
+          padding: const EdgeInsets.only(
+            left: 30,
+            right: 30,
+            top: 10,
+            bottom: 50,
+          ),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
@@ -99,9 +106,31 @@ class EnterMovementView extends StatelessWidget {
                   initialValue: state.company,
                   maxLength: 50,
                 ),
+                AppFileField(
+                  label: l10n.movementAttachments,
+                  labelAdd: l10n.movementAddAttachment,
+                  onAdd: context.read<EnterMovementCubit>().attachAdd,
+                  onRemove: context.read<EnterMovementCubit>().attachRemove,
+                  attachments: state.attachments,
+                ),
               ],
             ),
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (context.read<EnterMovementCubit>().saveMovement(user.uid)) {
+              Navigator.of(context).pop();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.movementSaveError),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          },
+          child: const Icon(Icons.save),
         ),
       ),
     );

@@ -1,5 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:user_api/user_api.dart';
 
@@ -15,7 +18,7 @@ class EnterMovementCubit extends Cubit<EnterMovementState> {
         description: movement.description,
         date: movement.date.isEmpty
             ? DateTime.now()
-            : DateFormat('dd-MM-yyyy').parse(movement.date),
+            : DateFormat('dd/MM/yyyy').parse(movement.date),
         categories: categories,
         category: movement.category == Category.empty
             ? categories.first
@@ -49,5 +52,43 @@ class EnterMovementCubit extends Cubit<EnterMovementState> {
 
   void companyChanged(String value) {
     emit(state.copyWith(company: value));
+  }
+
+  void attachAdd(String value) {
+    final updatedAttachments = List<String>.from(state.attachments)..add(value);
+    emit(state.copyWith(attachments: updatedAttachments));
+  }
+
+  Future<void> attachRemove(String value) async {
+    final updatedAttachments = List<String>.from(state.attachments)
+      ..remove(value);
+    emit(state.copyWith(attachments: updatedAttachments));
+
+    // Remove the file from Firebase Storage
+    try {
+      await FirebaseStorage.instance.ref().child(value).delete();
+    } catch (e) {
+      debugPrint('Error deleting file: $e');
+    }
+  }
+
+  bool saveMovement(String userId) {
+    // Save movement in Firebase Firestore
+    final docId = FirebaseFirestore.instance.collection('movements').doc().id;
+    FirebaseFirestore.instance.collection('movements').doc(docId).set(
+          Movement(
+            id: docId,
+            title: state.title,
+            description: state.description,
+            date: DateFormat('dd/MM/yyyy').format(state.date!),
+            category: state.category!,
+            price: state.price,
+            company: state.company,
+            attachments: state.attachments,
+            user: userId,
+          ).toJson(),
+        );
+
+    return true;
   }
 }

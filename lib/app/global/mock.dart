@@ -1,11 +1,9 @@
 import 'package:user_api/user_api.dart';
 
 List<ChartData> expensesChartData = <ChartData>[
-  ChartData(
+  const ChartData(
     category: Category(
       id: '1',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'TRANSPORT',
       icon: 'DIRECTIONS_CAR',
       color: '#FF64B5F6',
@@ -13,11 +11,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 15000.75,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '2',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'FEEDING',
       icon: 'RESTAURANT',
       color: '#FFFFB74D',
@@ -25,11 +21,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 27500.50,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '3',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'HEALTH',
       icon: 'LOCAL_HOSPITAL',
       color: '#FF81C784',
@@ -37,11 +31,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 13000.25,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '4',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'ENTERTAINMENT',
       icon: 'MOVIE',
       color: '#FFBA68C8',
@@ -49,11 +41,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 12000.73,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '5',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'TRIPS',
       icon: 'CARD_TRAVEL',
       color: '#FFFFF176',
@@ -61,11 +51,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 22000.13,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '6',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'TECHNOLOGY',
       icon: 'COMPUTER',
       color: '#FF4DD0E1',
@@ -73,11 +61,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 18000.38,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '7',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'EDUCATION',
       icon: 'SCHOOL',
       color: '#FFFF7043',
@@ -85,11 +71,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 19000.80,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '8',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'FASHION',
       icon: 'CHECKROOM',
       color: '#FFF48FB1',
@@ -97,11 +81,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 14000.84,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '9',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'TAXES',
       icon: 'PAYMENTS',
       color: '#FF8BC34A',
@@ -109,11 +91,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 30000.63,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '10',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'INSURANCE',
       icon: 'SECURITY',
       color: '#FF2196F3',
@@ -121,11 +101,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 25000.35,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '11',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'DWELLING',
       icon: 'HOUSE',
       color: '#FFA1887F',
@@ -133,11 +111,9 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 32000.40,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '12',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'OTHERS',
       icon: 'CATEGORY',
       color: '#FFBDBDBD',
@@ -148,11 +124,9 @@ List<ChartData> expensesChartData = <ChartData>[
 ];
 
 List<ChartData> incomesChartData = <ChartData>[
-  ChartData(
+  const ChartData(
     category: Category(
       id: '1',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'SALARY',
       icon: 'ATTACH_MONEY',
       color: '#FF64B5F6',
@@ -160,11 +134,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 52345.67,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '2',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'BUSINESS',
       icon: 'BUSINESS',
       color: '#FFFFB74D',
@@ -172,11 +144,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 41234.56,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '3',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'FREELANCE',
       icon: 'PERSON_SEARCH',
       color: '#FF81C784',
@@ -184,11 +154,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 37890.12,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '4',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'RENTALS',
       icon: 'APARTMENT',
       color: '#FFBA68C8',
@@ -196,11 +164,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 28901.34,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '5',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'INVESTMENTS',
       icon: 'TRENDING_UP',
       color: '#FFFFF176',
@@ -208,11 +174,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 15789.45,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '6',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'INTERESTS',
       icon: 'PERCENT',
       color: '#FF4DD0E1',
@@ -220,11 +184,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 10987.65,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '7',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'PENSIONS',
       icon: 'CARD_MEMBERSHIP',
       color: '#FFFF7043',
@@ -232,11 +194,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 8765.43,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '8',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'DIVIDENDS',
       icon: 'MONETIZATION_ON',
       color: '#FFF48FB1',
@@ -244,11 +204,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 7654.32,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '9',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'GIFTS',
       icon: 'CARD_GIFTCARD',
       color: '#FF8BC34A',
@@ -256,11 +214,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 6543.21,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '10',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'REFUNDS',
       icon: 'RECEIPT_LONG',
       color: '#FF2196F3',
@@ -268,11 +224,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 5432.10,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '11',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'SALES',
       icon: 'LOCAL_OFFER',
       color: '#FFA1887F',
@@ -280,11 +234,9 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 4321.09,
   ),
-  ChartData(
+  const ChartData(
     category: Category(
       id: '12',
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
       name: 'OTHERS',
       icon: 'CATEGORY',
       color: '#FFBDBDBD',

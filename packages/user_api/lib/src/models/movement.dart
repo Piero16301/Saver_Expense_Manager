@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:user_api/src/models/models.dart';
 
@@ -11,13 +10,12 @@ class Movement extends Equatable {
   /// {@macro movement}
   const Movement({
     required this.id,
-    required this.createdAt,
-    required this.updatedAt,
     required this.title,
     required this.description,
     required this.date,
     required this.category,
     required this.price,
+    required this.user,
     this.company = '',
     this.attachments = const <String>[],
   });
@@ -30,25 +28,18 @@ class Movement extends Equatable {
   Map<String, dynamic> toJson() => _$MovementToJson(this);
 
   /// An empty movement instance
-  static final empty = Movement(
+  static const empty = Movement(
     id: '',
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
     title: '',
     description: '',
     date: '',
     category: Category.empty,
     price: 0,
+    user: '',
   );
 
   /// Movement id
   final String id;
-
-  /// Movement created at
-  final DateTime createdAt;
-
-  /// Movement updated at
-  final DateTime updatedAt;
 
   /// Movement title
   final String title;
@@ -71,11 +62,12 @@ class Movement extends Equatable {
   /// Movement attachments
   final List<String> attachments;
 
+  /// Movement user
+  final String user;
+
   /// Copies the current instance of [Movement] with some new values
   Movement copyWith({
     String? id,
-    DateTime? createdAt,
-    DateTime? updatedAt,
     String? title,
     String? description,
     String? date,
@@ -83,11 +75,10 @@ class Movement extends Equatable {
     double? price,
     String? company,
     List<String>? attachments,
+    String? user,
   }) {
     return Movement(
       id: id ?? this.id,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
       title: title ?? this.title,
       description: description ?? this.description,
       date: date ?? this.date,
@@ -95,14 +86,13 @@ class Movement extends Equatable {
       price: price ?? this.price,
       company: company ?? this.company,
       attachments: attachments ?? this.attachments,
+      user: user ?? this.user,
     );
   }
 
   @override
   List<Object> get props => [
         id,
-        createdAt,
-        updatedAt,
         title,
         description,
         date,
@@ -110,5 +100,6 @@ class Movement extends Equatable {
         price,
         company,
         attachments,
+        user,
       ];
 }

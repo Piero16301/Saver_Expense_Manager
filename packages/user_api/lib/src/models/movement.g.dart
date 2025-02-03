@@ -9,10 +9,6 @@ part of 'movement.dart';
 Movement _$MovementFromJson(Map<String, dynamic> json) {
   return Movement(
     id: json['id'] as String,
-    createdAt:
-        (json['createdAt'] as Timestamp? ?? Timestamp.now()).toDate().toLocal(),
-    updatedAt:
-        (json['updatedAt'] as Timestamp? ?? Timestamp.now()).toDate().toLocal(),
     title: json['name'] as String? ?? '',
     description: json['description'] as String? ?? '',
     date: json['date'] as String? ?? '',
@@ -24,13 +20,12 @@ Movement _$MovementFromJson(Map<String, dynamic> json) {
             ?.map((e) => e as String? ?? '')
             .toList() ??
         [],
+    user: json['user'] as String? ?? '',
   );
 }
 
 Map<String, dynamic> _$MovementToJson(Movement instance) => <String, dynamic>{
       'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
       'name': instance.title,
       'description': instance.description,
       'date': instance.date,
@@ -38,4 +33,5 @@ Map<String, dynamic> _$MovementToJson(Movement instance) => <String, dynamic>{
       'price': instance.price,
       'company': instance.company,
       'attachments': instance.attachments,
+      'user': instance.user,
     };
