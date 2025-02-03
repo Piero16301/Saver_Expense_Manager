@@ -39,14 +39,6 @@ class AppCubit extends Cubit<AppState> {
       );
     }
     emit(state.copyWith(darkTheme: userRepository.getDarkTheme()));
-
-    // Get categories from Firestore
-    final categoriesJson =
-        await FirebaseFirestore.instance.collection('categories').get();
-    final categories = categoriesJson.docs
-        .map((category) => Category.fromJson(category.data()))
-        .toList();
-    emit(state.copyWith(categories: categories));
   }
 
   Future<void> changeLanguage(String language) async {
@@ -57,5 +49,14 @@ class AppCubit extends Cubit<AppState> {
   Future<void> toggleTheme() async {
     await userRepository.saveDarkTheme(darkTheme: !(state.darkTheme ?? false));
     emit(state.copyWith(darkTheme: !(state.darkTheme ?? false)));
+  }
+
+  Future<void> loadCategories() async {
+    final categoriesJson =
+        await FirebaseFirestore.instance.collection('categories').get();
+    final categories = categoriesJson.docs
+        .map((category) => Category.fromJson(category.data()))
+        .toList();
+    emit(state.copyWith(categories: categories));
   }
 }

@@ -13,6 +13,12 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+    final categories = context
+        .select<AppCubit, List<Category>>((cubit) => cubit.state.categories);
+
+    if (categories.isEmpty) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) => Scaffold(
