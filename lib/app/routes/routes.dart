@@ -45,13 +45,13 @@ GoRouter goRouter() {
         builder: (context, state) => const HomePage(),
         routes: [
           GoRoute(
-            name: 'enter-movement',
-            path: 'enter-movement/:type/:screenType',
+            name: 'movement',
+            path: 'movement/:type/:screenType',
             builder: (context, state) {
               final movement = state.extra! as Movement;
               final type = state.pathParameters['type'] ?? 'EXPENSE';
               final screenType = state.pathParameters['screenType'] ?? 'ADD';
-              return EnterMovementPage(
+              return MovementPage(
                 movement: movement,
                 type: type == 'EXPENSE'
                     ? CategoryType.expense
@@ -60,6 +60,14 @@ GoRouter goRouter() {
                     ? MovementScreenType.add
                     : MovementScreenType.edit,
               );
+            },
+          ),
+          GoRoute(
+            name: 'category',
+            path: 'category',
+            builder: (context, state) {
+              final category = state.extra! as Category;
+              return CategoryPage(category: category);
             },
           ),
           GoRoute(

@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:user_api/user_api.dart';
 
-part 'enter_movement_state.dart';
+part 'movement_state.dart';
 
-class EnterMovementCubit extends Cubit<EnterMovementState> {
-  EnterMovementCubit() : super(const EnterMovementState());
+class MovementCubit extends Cubit<MovementState> {
+  MovementCubit() : super(const MovementState());
 
   void init(Movement movement, List<Category> categories) {
     emit(

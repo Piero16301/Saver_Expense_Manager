@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/home/enter_movement/enter_movement.dart';
+import 'package:saver_expense_manager/home/movement/movement.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
-class EnterMovementView extends StatelessWidget {
-  const EnterMovementView({
+class MovementView extends StatelessWidget {
+  const MovementView({
     required this.type,
     required this.screenType,
     super.key,
@@ -22,7 +22,7 @@ class EnterMovementView extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser!;
     final l10n = context.l10n;
 
-    return BlocBuilder<EnterMovementCubit, EnterMovementState>(
+    return BlocBuilder<MovementCubit, MovementState>(
       builder: (context, state) => Scaffold(
         appBar: AppBar(
           title: Text(appBarTitle(l10n)),
@@ -45,7 +45,7 @@ class EnterMovementView extends StatelessWidget {
                   label: l10n.movementTitle,
                   hintText: l10n.movementTitleHint,
                   errorText: l10n.movementTitleError,
-                  onChanged: context.read<EnterMovementCubit>().titleChanged,
+                  onChanged: context.read<MovementCubit>().titleChanged,
                   prefix: const Icon(Icons.title),
                   initialValue: state.title,
                   maxLength: 50,
@@ -54,8 +54,7 @@ class EnterMovementView extends StatelessWidget {
                   label: l10n.movementDescription,
                   hintText: l10n.movementDescriptionHint,
                   errorText: l10n.movementDescriptionError,
-                  onChanged:
-                      context.read<EnterMovementCubit>().descriptionChanged,
+                  onChanged: context.read<MovementCubit>().descriptionChanged,
                   prefix: const Icon(Icons.description),
                   initialValue: state.description,
                   maxLines: 6,
@@ -64,7 +63,7 @@ class EnterMovementView extends StatelessWidget {
                 AppDateField(
                   label: l10n.movementDate,
                   initialDate: state.date!,
-                  onDateChanged: context.read<EnterMovementCubit>().dateChanged,
+                  onDateChanged: context.read<MovementCubit>().dateChanged,
                 ),
                 AppDropdownField<Category>(
                   label: l10n.movementCategory,
@@ -79,14 +78,13 @@ class EnterMovementView extends StatelessWidget {
                       .toList(),
                   selected: state.category!,
                   leadingIcon: getIconData(state.category!.icon),
-                  onSelected:
-                      context.read<EnterMovementCubit>().categoryChanged,
+                  onSelected: context.read<MovementCubit>().categoryChanged,
                 ),
                 AppTextField(
                   label: l10n.movementAmount,
                   hintText: l10n.movementAmountHint,
                   errorText: l10n.movementAmountError,
-                  onChanged: context.read<EnterMovementCubit>().priceChanged,
+                  onChanged: context.read<MovementCubit>().priceChanged,
                   prefix: const Icon(Icons.attach_money),
                   initialValue:
                       state.price == 0 ? '' : state.price.toStringAsFixed(2),
@@ -101,7 +99,7 @@ class EnterMovementView extends StatelessWidget {
                   label: l10n.movementCompany,
                   hintText: l10n.movementCompanyHint,
                   isRequired: false,
-                  onChanged: context.read<EnterMovementCubit>().companyChanged,
+                  onChanged: context.read<MovementCubit>().companyChanged,
                   prefix: const Icon(Icons.business),
                   initialValue: state.company,
                   maxLength: 50,
@@ -109,8 +107,8 @@ class EnterMovementView extends StatelessWidget {
                 AppFileField(
                   label: l10n.movementAttachments,
                   labelAdd: l10n.movementAddAttachment,
-                  onAdd: context.read<EnterMovementCubit>().attachAdd,
-                  onRemove: context.read<EnterMovementCubit>().attachRemove,
+                  onAdd: context.read<MovementCubit>().attachAdd,
+                  onRemove: context.read<MovementCubit>().attachRemove,
                   attachments: state.attachments,
                 ),
               ],
@@ -119,7 +117,7 @@ class EnterMovementView extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (context.read<EnterMovementCubit>().saveMovement(user.uid)) {
+            if (context.read<MovementCubit>().saveMovement(user.uid)) {
               Navigator.of(context).pop();
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

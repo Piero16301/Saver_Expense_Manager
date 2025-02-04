@@ -1,7 +1,7 @@
-part of 'enter_movement_cubit.dart';
+part of 'movement_cubit.dart';
 
-class EnterMovementState extends Equatable {
-  const EnterMovementState({
+class MovementState extends Equatable {
+  const MovementState({
     this.title = '',
     this.description = '',
     this.date,
@@ -21,7 +21,7 @@ class EnterMovementState extends Equatable {
   final String company;
   final List<String> attachments;
 
-  EnterMovementState copyWith({
+  MovementState copyWith({
     String? title,
     String? description,
     DateTime? date,
@@ -31,7 +31,7 @@ class EnterMovementState extends Equatable {
     String? company,
     List<String>? attachments,
   }) {
-    return EnterMovementState(
+    return MovementState(
       title: title ?? this.title,
       description: description ?? this.description,
       date: date ?? this.date,

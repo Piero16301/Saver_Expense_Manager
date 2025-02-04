@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
@@ -22,7 +23,7 @@ class CategoriesListChart extends StatelessWidget {
           children: [
             ...data.map(
               (e) => ListTile(
-                onTap: () {},
+                onTap: () => context.pushNamed('category', extra: e.category),
                 contentPadding: const EdgeInsets.only(left: 16, right: 16),
                 title: Text(
                   getCategoryName(e.category.name, l10n),

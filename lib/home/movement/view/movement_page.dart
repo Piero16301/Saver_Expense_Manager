@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/home/enter_movement/enter_movement.dart';
+import 'package:saver_expense_manager/home/movement/movement.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
-class EnterMovementPage extends StatelessWidget {
-  const EnterMovementPage({
+class MovementPage extends StatelessWidget {
+  const MovementPage({
     required this.movement,
     required this.type,
     required this.screenType,
@@ -30,8 +30,8 @@ class EnterMovementPage extends StatelessWidget {
       );
 
     return BlocProvider(
-      create: (_) => EnterMovementCubit()..init(movement, categories),
-      child: EnterMovementView(type: type, screenType: screenType),
+      create: (_) => MovementCubit()..init(movement, categories),
+      child: MovementView(type: type, screenType: screenType),
     );
   }
 }
