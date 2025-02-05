@@ -61,6 +61,10 @@
     "@categoryTabTrend": {},
     "categoryTabMovements": "Movimenti",
     "@categoryTabMovements": {},
+    "categoryMonthRange": "Intervallo di mesi",
+    "@categoryMonthRange": {},
+    "categorySelectMonthRange": "Seleziona intervallo di mesi",
+    "@categorySelectMonthRange": {},
 
     "categoryTransport": "Trasporto",
     "@categoryTransport": {},

@@ -126,13 +126,46 @@ class _CategoryTabBarState extends State<CategoryTabBar>
             child: TabBarView(
               controller: _tabController,
               children: const [
-                Placeholder(color: Colors.red),
-                Placeholder(color: Colors.green),
+                TabTrendCategory(),
+                TabMovementsCategory(),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+class TabTrendCategory extends StatefulWidget {
+  const TabTrendCategory({super.key});
+
+  @override
+  State<TabTrendCategory> createState() => _TabTrendCategoryState();
+}
+
+class _TabTrendCategoryState extends State<TabTrendCategory> {
+  DateTime endMonth = DateTime.now();
+  DateTime startMonth = DateTime(DateTime.now().year - 1, DateTime.now().month);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        MonthRangeSelector(
+          startMonth: startMonth,
+          endMonth: endMonth,
+        ),
+      ],
+    );
+  }
+}
+
+class TabMovementsCategory extends StatelessWidget {
+  const TabMovementsCategory({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }
