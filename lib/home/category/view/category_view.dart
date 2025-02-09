@@ -155,6 +155,20 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
         MonthRangeSelector(
           startMonth: startMonth,
           endMonth: endMonth,
+          onChangeStartMonth: (date) {
+            if (date != null) {
+              setState(() {
+                startMonth = date;
+              });
+            }
+          },
+          onChangeEndMonth: (date) {
+            if (date != null) {
+              setState(() {
+                endMonth = date;
+              });
+            }
+          },
         ),
       ],
     );

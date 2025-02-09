@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class MonthSelector extends StatelessWidget {
   const MonthSelector({
@@ -23,7 +22,6 @@ class MonthSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale =
         context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
-    final l10n = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -42,40 +40,13 @@ class MonthSelector extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   onTap: () async {
-                    await showDialog<void>(
+                    await showMonthPicker(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        contentPadding: const EdgeInsets.only(
-                          left: 24,
-                          top: 20,
-                          right: 24,
-                        ),
-                        title: Text(l10n.homeSelectMonth),
-                        content: SizedBox(
-                          height: 300,
-                          width: 300,
-                          child: SfDateRangePicker(
-                            minDate: minDate,
-                            maxDate: DateTime.now(),
-                            view: DateRangePickerView.year,
-                            backgroundColor: Colors.transparent,
-                            headerStyle: const DateRangePickerHeaderStyle(
-                              backgroundColor: Colors.transparent,
-                            ),
-                            onViewChanged: (dateRangePickerViewChangedArgs) {
-                              if (dateRangePickerViewChangedArgs.view ==
-                                  DateRangePickerView.month) {
-                                onChangeMonth(
-                                  dateRangePickerViewChangedArgs
-                                      .visibleDateRange.startDate,
-                                );
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            initialDisplayDate: monthSelected,
-                          ),
-                        ),
-                      ),
+                      initialDate: monthSelected,
+                      firstDate: minDate,
+                      lastDate: DateTime.now(),
+                    ).then(
+                      onChangeMonth,
                     );
                   },
                   child: Text(
