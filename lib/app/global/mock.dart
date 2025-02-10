@@ -1,7 +1,7 @@
 import 'package:user_api/user_api.dart';
 
-List<ChartData> expensesChartData = <ChartData>[
-  const ChartData(
+List<CategoryData> expensesCategoryData = <CategoryData>[
+  const CategoryData(
     category: Category(
       id: '1',
       name: 'TRANSPORT',
@@ -11,7 +11,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 15000.75,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '2',
       name: 'FEEDING',
@@ -21,7 +21,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 27500.50,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '3',
       name: 'HEALTH',
@@ -31,7 +31,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 13000.25,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '4',
       name: 'ENTERTAINMENT',
@@ -41,7 +41,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 12000.73,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '5',
       name: 'TRIPS',
@@ -51,7 +51,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 22000.13,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '6',
       name: 'TECHNOLOGY',
@@ -61,7 +61,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 18000.38,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '7',
       name: 'EDUCATION',
@@ -71,7 +71,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 19000.80,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '8',
       name: 'FASHION',
@@ -81,7 +81,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 14000.84,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '9',
       name: 'TAXES',
@@ -91,7 +91,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 30000.63,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '10',
       name: 'INSURANCE',
@@ -101,7 +101,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 25000.35,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '11',
       name: 'DWELLING',
@@ -111,7 +111,7 @@ List<ChartData> expensesChartData = <ChartData>[
     ),
     value: 32000.40,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '12',
       name: 'OTHERS',
@@ -123,8 +123,8 @@ List<ChartData> expensesChartData = <ChartData>[
   ),
 ];
 
-List<ChartData> incomesChartData = <ChartData>[
-  const ChartData(
+List<CategoryData> incomesCategoryData = <CategoryData>[
+  const CategoryData(
     category: Category(
       id: '1',
       name: 'SALARY',
@@ -134,7 +134,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 52345.67,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '2',
       name: 'BUSINESS',
@@ -144,7 +144,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 41234.56,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '3',
       name: 'FREELANCE',
@@ -154,7 +154,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 37890.12,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '4',
       name: 'RENTALS',
@@ -164,7 +164,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 28901.34,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '5',
       name: 'INVESTMENTS',
@@ -174,7 +174,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 15789.45,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '6',
       name: 'INTERESTS',
@@ -184,7 +184,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 10987.65,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '7',
       name: 'PENSIONS',
@@ -194,7 +194,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 8765.43,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '8',
       name: 'DIVIDENDS',
@@ -204,7 +204,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 7654.32,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '9',
       name: 'GIFTS',
@@ -214,7 +214,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 6543.21,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '10',
       name: 'REFUNDS',
@@ -224,7 +224,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 5432.10,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '11',
       name: 'SALES',
@@ -234,7 +234,7 @@ List<ChartData> incomesChartData = <ChartData>[
     ),
     value: 4321.09,
   ),
-  const ChartData(
+  const CategoryData(
     category: Category(
       id: '12',
       name: 'OTHERS',

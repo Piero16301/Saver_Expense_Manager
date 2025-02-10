@@ -9,7 +9,7 @@ class TotalSpentChart extends StatelessWidget {
     super.key,
   });
 
-  final List<ChartData> data;
+  final List<CategoryData> data;
 
   @override
   Widget build(BuildContext context) {

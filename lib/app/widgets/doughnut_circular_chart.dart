@@ -4,7 +4,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:user_api/user_api.dart';
 
-class DoughnutCircularChart extends StatefulWidget {
+class DoughnutCircularChart extends StatelessWidget {
   const DoughnutCircularChart({
     required this.data,
     this.selectedIndex = 0,
@@ -12,24 +12,9 @@ class DoughnutCircularChart extends StatefulWidget {
     super.key,
   });
 
-  final List<ChartData> data;
+  final List<CategoryData> data;
   final int selectedIndex;
   final void Function(ChartPointDetails)? onPointTap;
-
-  @override
-  State<DoughnutCircularChart> createState() => _DoughnutCircularChartState();
-}
-
-class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +31,13 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
             children: [
               Text(
                 getCategoryName(
-                  widget.data[widget.selectedIndex].category.name,
+                  data[selectedIndex].category.name,
                   l10n,
                 ),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
-                moneyFormat.format(widget.data[widget.selectedIndex].value),
+                moneyFormat.format(data[selectedIndex].value),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -85,28 +70,28 @@ class _DoughnutCircularChartState extends State<DoughnutCircularChart> {
   }
 
   double get _percentage {
-    return widget.data[widget.selectedIndex].value /
-        widget.data.map((e) => e.value).reduce((a, b) => a + b) *
+    return data[selectedIndex].value /
+        data.map((e) => e.value).reduce((a, b) => a + b) *
         100;
   }
 
-  List<DoughnutSeries<ChartData, String>> _buildDoughnutSeries(
+  List<DoughnutSeries<CategoryData, String>> _buildDoughnutSeries(
     AppLocalizations l10n,
   ) {
-    return <DoughnutSeries<ChartData, String>>[
-      DoughnutSeries<ChartData, String>(
-        dataSource: widget.data,
-        xValueMapper: (ChartData data, _) =>
+    return <DoughnutSeries<CategoryData, String>>[
+      DoughnutSeries<CategoryData, String>(
+        dataSource: data,
+        xValueMapper: (CategoryData data, _) =>
             getCategoryName(data.category.name, l10n),
-        yValueMapper: (ChartData data, _) => data.value,
-        dataLabelMapper: (ChartData data, _) => null,
+        yValueMapper: (CategoryData data, _) => data.value,
+        dataLabelMapper: (CategoryData data, _) => null,
         animationDuration: 500,
         innerRadius: '55%',
         radius: '100%',
         legendIconType: LegendIconType.circle,
-        onPointTap: widget.onPointTap,
+        onPointTap: onPointTap,
         pointColorMapper: (data, index) {
-          if (index == widget.selectedIndex) {
+          if (index == selectedIndex) {
             return HexColor.fromHex(data.category.color);
           } else {
             return HexColor.fromHex(data.category.color).withValues(alpha: 0.5);

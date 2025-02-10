@@ -10,7 +10,7 @@ class RadialCircularChart extends StatefulWidget {
     super.key,
   });
 
-  final List<ChartData> data;
+  final List<CategoryData> data;
   final String? image;
 
   @override
@@ -65,13 +65,13 @@ class _RadialCircularChartState extends State<RadialCircularChart> {
     );
   }
 
-  List<RadialBarSeries<ChartData, String>> _buildRadialSeries() {
-    return <RadialBarSeries<ChartData, String>>[
-      RadialBarSeries<ChartData, String>(
+  List<RadialBarSeries<CategoryData, String>> _buildRadialSeries() {
+    return <RadialBarSeries<CategoryData, String>>[
+      RadialBarSeries<CategoryData, String>(
         dataSource: widget.data,
-        xValueMapper: (ChartData data, _) => data.category.name,
-        yValueMapper: (ChartData data, _) => data.value,
-        dataLabelMapper: (ChartData data, _) => data.category.name,
+        xValueMapper: (CategoryData data, _) => data.category.name,
+        yValueMapper: (CategoryData data, _) => data.value,
+        dataLabelMapper: (CategoryData data, _) => data.category.name,
         animationDuration: 500,
         maximumValue: 100,
         radius: '100%',

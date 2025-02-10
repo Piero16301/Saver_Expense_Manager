@@ -23,71 +23,68 @@ class MonthRangeSelector extends StatelessWidget {
     final locale =
         context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Row(
-        children: [
-          SizedBox(
-            height: 50,
-            width: 130,
-            child: Card(
-              child: GestureDetector(
-                onTap: () async {
-                  await showMonthPicker(
-                    context: context,
-                    initialDate: startMonth,
-                    firstDate: minDate,
-                    lastDate: endMonth.copyWith(month: endMonth.month - 1),
-                  ).then(
-                    onChangeStartMonth,
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Center(
-                    child: Text(
-                      DateFormat('MMM yyyy', locale.languageCode)
-                          .format(startMonth)
-                          .toUpperCase(),
-                      style: const TextStyle(fontSize: 16),
-                    ),
+    return Row(
+      children: [
+        SizedBox(
+          height: 40,
+          width: 130,
+          child: Card(
+            child: GestureDetector(
+              onTap: () async {
+                await showMonthPicker(
+                  context: context,
+                  initialDate: startMonth,
+                  firstDate: minDate,
+                  lastDate: endMonth.copyWith(month: endMonth.month - 1),
+                ).then(
+                  onChangeStartMonth,
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Center(
+                  child: Text(
+                    DateFormat('MMM yyyy', locale.languageCode)
+                        .format(startMonth)
+                        .toUpperCase(),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),
             ),
           ),
-          const Expanded(child: Icon(Icons.date_range_outlined, size: 30)),
-          SizedBox(
-            height: 50,
-            width: 130,
-            child: Card(
-              child: GestureDetector(
-                onTap: () async {
-                  await showMonthPicker(
-                    context: context,
-                    initialDate: endMonth,
-                    firstDate: startMonth.copyWith(month: startMonth.month + 1),
-                    lastDate: DateTime.now(),
-                  ).then(
-                    onChangeEndMonth,
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Center(
-                    child: Text(
-                      DateFormat('MMM yyyy', locale.languageCode)
-                          .format(endMonth)
-                          .toUpperCase(),
-                      style: const TextStyle(fontSize: 16),
-                    ),
+        ),
+        const Expanded(child: Icon(Icons.date_range_outlined, size: 30)),
+        SizedBox(
+          height: 40,
+          width: 130,
+          child: Card(
+            child: GestureDetector(
+              onTap: () async {
+                await showMonthPicker(
+                  context: context,
+                  initialDate: endMonth,
+                  firstDate: startMonth.copyWith(month: startMonth.month + 1),
+                  lastDate: DateTime.now(),
+                ).then(
+                  onChangeEndMonth,
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Center(
+                  child: Text(
+                    DateFormat('MMM yyyy', locale.languageCode)
+                        .format(endMonth)
+                        .toUpperCase(),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

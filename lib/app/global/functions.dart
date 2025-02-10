@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
@@ -38,11 +39,11 @@ Stream<QuerySnapshot<Object?>>? getCategoriesChart({
       .snapshots();
 }
 
-List<ChartData> buildChartData({
+List<CategoryData> buildChartData({
   required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
 }) {
   final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
-  final data = <ChartData>[];
+  final data = <CategoryData>[];
   final categories = <Category>[];
   for (final element in movements) {
     if (!categories.contains(element.category)) {
@@ -56,9 +57,71 @@ List<ChartData> buildChartData({
       0,
       (previousValue, element) => previousValue + element.price,
     );
-    data.add(ChartData(category: category, value: total));
+    data.add(CategoryData(category: category, value: total));
   }
   return data..sort((a, b) => b.value.compareTo(a.value));
+}
+
+Stream<QuerySnapshot<Object?>>? getTrendChart({
+  required String userId,
+  required DateTime startMonth,
+  required DateTime endMonth,
+  required Category category,
+}) {
+  return FirebaseFirestore.instance
+      .collection(movementsCollection)
+      .where('user', isEqualTo: userId)
+      .where('category.id', isEqualTo: category.id)
+      .where(
+        'date',
+        isGreaterThanOrEqualTo: Timestamp.fromDate(
+          DateTime(startMonth.year, startMonth.month),
+        ),
+      )
+      .where(
+        'date',
+        isLessThan: Timestamp.fromDate(
+          DateTime(
+            endMonth.month == 12 ? endMonth.year + 1 : endMonth.year,
+            endMonth.month == 12 ? 1 : endMonth.month + 1,
+          ),
+        ),
+      )
+      .snapshots();
+}
+
+List<TrendData> buildTrendData({
+  required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  required DateTime startMonth,
+  required DateTime endMonth,
+  required Locale locale,
+}) {
+  final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
+  final data = <TrendData>[];
+  for (var i = startMonth;
+      i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
+      i = DateTime(
+    i.month == 12 ? i.year + 1 : i.year,
+    i.month == 12 ? 1 : i.month + 1,
+  )) {
+    final movementsByMonth = movements
+        .where(
+          (element) =>
+              element.date.year == i.year && element.date.month == i.month,
+        )
+        .toList();
+    final total = movementsByMonth.fold<double>(
+      0,
+      (previousValue, element) => previousValue + element.price,
+    );
+    data.add(
+      TrendData(
+        month: DateFormat('MMM yyyy', locale.languageCode).format(i),
+        value: total,
+      ),
+    );
+  }
+  return data;
 }
 
 String getCategoryName(String category, AppLocalizations l10n) {

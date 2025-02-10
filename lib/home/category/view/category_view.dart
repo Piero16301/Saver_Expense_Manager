@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -49,6 +51,9 @@ class CategoryIconAndName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final category = context.select<CategoryCubit, Category>(
+      (cubit) => cubit.state.category,
+    );
     final l10n = context.l10n;
 
     return Center(
@@ -57,6 +62,8 @@ class CategoryIconAndName extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 50,
+            backgroundColor:
+                HexColor.fromHex(category.color).withValues(alpha: 0.7),
             child: Icon(
               getIconData(category.icon),
               size: 70,
@@ -150,8 +157,16 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
 
   @override
   Widget build(BuildContext context) {
+    final category = context.select<CategoryCubit, Category>(
+      (cubit) => cubit.state.category,
+    );
+    final locale =
+        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
+    final user = FirebaseAuth.instance.currentUser;
+
     return Column(
       children: [
+        const SizedBox(height: 10),
         MonthRangeSelector(
           startMonth: startMonth,
           endMonth: endMonth,
@@ -170,6 +185,39 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
             }
           },
         ),
+        const SizedBox(height: 10),
+        StreamBuilder<QuerySnapshot>(
+          stream: getTrendChart(
+            userId: user!.uid,
+            startMonth: startMonth,
+            endMonth: endMonth,
+            category: category,
+          ),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (snapshot.data!.docs.isEmpty) {
+              return Expanded(
+                child: Center(child: Text(context.l10n.categoryNoTrendData)),
+              );
+            }
+
+            final data = buildTrendData(
+              docs: snapshot.data!.docs
+                  as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+              startMonth: startMonth,
+              endMonth: endMonth,
+              locale: locale,
+            );
+
+            return LinearChart(category: category, data: data);
+          },
+        ),
+        const SizedBox(height: 20),
       ],
     );
   }

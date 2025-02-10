@@ -65,6 +65,8 @@
     "@categoryMonthRange": {},
     "categorySelectMonthRange": "Select month range",
     "@categorySelectMonthRange": {},
+    "categoryNoTrendData": "No data available for this month range",
+    "@categoryNoTrendData": {},
 
     "categoryTransport": "Transport",
     "@categoryTransport": {},

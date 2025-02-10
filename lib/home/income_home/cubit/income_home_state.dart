@@ -4,17 +4,17 @@ class IncomeHomeState extends Equatable {
   const IncomeHomeState({
     this.monthSelected,
     this.selectedIndex = 0,
-    this.data = const <ChartData>[],
+    this.data = const <CategoryData>[],
   });
 
   final DateTime? monthSelected;
   final int selectedIndex;
-  final List<ChartData> data;
+  final List<CategoryData> data;
 
   IncomeHomeState copyWith({
     DateTime? monthSelected,
     int? selectedIndex,
-    List<ChartData>? data,
+    List<CategoryData>? data,
   }) {
     return IncomeHomeState(
       monthSelected: monthSelected ?? this.monthSelected,

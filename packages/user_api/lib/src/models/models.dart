@@ -1,3 +1,4 @@
 export 'category.dart';
-export 'chart_data.dart';
+export 'category_data.dart';
 export 'movement.dart';
+export 'trend_data.dart';
