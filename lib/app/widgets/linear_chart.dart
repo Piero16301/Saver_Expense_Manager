@@ -22,6 +22,7 @@ class LinearChart extends StatelessWidget {
 
     return Expanded(
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         controller: ScrollController(
           initialScrollOffset: 50 + (data.length * 70).toDouble(),
