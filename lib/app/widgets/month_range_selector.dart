@@ -47,7 +47,10 @@ class MonthRangeSelector extends StatelessWidget {
                     DateFormat('MMM yyyy', locale.languageCode)
                         .format(startMonth)
                         .toUpperCase(),
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -77,7 +80,10 @@ class MonthRangeSelector extends StatelessWidget {
                     DateFormat('MMM yyyy', locale.languageCode)
                         .format(endMonth)
                         .toUpperCase(),
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

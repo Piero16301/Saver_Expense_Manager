@@ -29,7 +29,7 @@ class CategoryView extends StatelessWidget {
           padding:
               const EdgeInsets.only(right: 30, left: 30, bottom: 30, top: 20),
           child: Column(
-            spacing: 20,
+            spacing: 10,
             children: [
               CategoryIconAndName(category: state.category),
               CategoryTabBar(category: state.category),
@@ -61,18 +61,18 @@ class CategoryIconAndName extends StatelessWidget {
         spacing: 10,
         children: [
           CircleAvatar(
-            radius: 50,
+            radius: 60,
             backgroundColor:
-                HexColor.fromHex(category.color).withValues(alpha: 0.7),
+                HexColor.fromHex(category.color).withValues(alpha: 0.3),
             child: Icon(
               getIconData(category.icon),
               size: 70,
-              color: Theme.of(context).colorScheme.secondary,
+              color: HexColor.fromHex(category.color),
             ),
           ),
           Text(
             getCategoryName(category.name, l10n).toUpperCase(),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
       ),
