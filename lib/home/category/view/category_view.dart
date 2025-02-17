@@ -157,16 +157,16 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
 
   @override
   Widget build(BuildContext context) {
-    final category = context.select<CategoryCubit, Category>(
-      (cubit) => cubit.state.category,
-    );
+    final category = context
+        .select<CategoryCubit, Category>((cubit) => cubit.state.category);
     final locale =
         context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
     final user = FirebaseAuth.instance.currentUser;
+    final l10n = context.l10n;
 
     return Column(
       children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         MonthRangeSelector(
           startMonth: startMonth,
           endMonth: endMonth,
@@ -185,7 +185,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
             }
           },
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         StreamBuilder<QuerySnapshot>(
           stream: getTrendChart(
             userId: user!.uid,
@@ -202,7 +202,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
 
             if (snapshot.data!.docs.isEmpty) {
               return Expanded(
-                child: Center(child: Text(context.l10n.categoryNoTrendData)),
+                child: Center(child: Text(l10n.categoryNoTrendData)),
               );
             }
 
@@ -217,17 +217,100 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
             return LinearChart(category: category, data: data);
           },
         ),
-        const SizedBox(height: 20),
       ],
     );
   }
 }
 
-class TabMovementsCategory extends StatelessWidget {
+class TabMovementsCategory extends StatefulWidget {
   const TabMovementsCategory({super.key});
 
   @override
+  State<TabMovementsCategory> createState() => _TabMovementsCategoryState();
+}
+
+class _TabMovementsCategoryState extends State<TabMovementsCategory> {
+  DateTime monthSelected = DateTime.now();
+
+  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final category = context
+        .select<CategoryCubit, Category>((cubit) => cubit.state.category);
+    final user = FirebaseAuth.instance.currentUser;
+    final l10n = context.l10n;
+
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        MonthSelector(
+          monthSelected: monthSelected,
+          onBack: () {
+            if (monthSelected.month == 1) {
+              setState(() {
+                monthSelected = DateTime(
+                  monthSelected.year - 1,
+                  12,
+                );
+              });
+            } else {
+              setState(() {
+                monthSelected = DateTime(
+                  monthSelected.year,
+                  monthSelected.month - 1,
+                );
+              });
+            }
+          },
+          onForward: () {
+            if (monthSelected.month == 12) {
+              setState(() {
+                monthSelected = DateTime(monthSelected.year + 1);
+              });
+            } else {
+              setState(() {
+                monthSelected = DateTime(
+                  monthSelected.year,
+                  monthSelected.month + 1,
+                );
+              });
+            }
+          },
+          onChangeMonth: (month) => setState(() {
+            if (month != null) {
+              monthSelected = DateTime(month.year, month.month);
+            }
+          }),
+        ),
+        const SizedBox(height: 10),
+        StreamBuilder<QuerySnapshot>(
+          stream: getCategoryMovements(
+            userId: user!.uid,
+            monthSelected: monthSelected,
+            category: category,
+          ),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (snapshot.data!.docs.isEmpty) {
+              return Expanded(
+                child: Center(child: Text(l10n.categoryNoMovements)),
+              );
+            }
+
+            final movements = snapshot.data!.docs
+                .map(
+                  (e) => Movement.fromJson(e.data()! as Map<String, dynamic>),
+                )
+                .toList();
+
+            return MovementsList(movements: movements);
+          },
+        ),
+      ],
+    );
   }
 }

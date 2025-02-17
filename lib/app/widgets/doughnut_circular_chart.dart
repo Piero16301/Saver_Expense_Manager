@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -55,7 +56,10 @@ class DoughnutCircularChart extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                   ),
-                  onPressed: () {},
+                  onPressed: () => context.pushNamed(
+                    'category',
+                    extra: data[selectedIndex].category,
+                  ),
                   child: Text(
                     l10n.homeDetails,
                     style: Theme.of(context).textTheme.titleSmall,

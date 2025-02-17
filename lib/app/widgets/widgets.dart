@@ -9,5 +9,6 @@ export 'doughnut_circular_chart.dart';
 export 'linear_chart.dart';
 export 'month_range_selector.dart';
 export 'month_selector.dart';
+export 'movements_list.dart';
 export 'radial_circular_chart.dart';
 export 'total_spent_chart.dart';

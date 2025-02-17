@@ -33,14 +33,13 @@ class MovementView extends StatelessWidget {
           padding: const EdgeInsets.only(
             left: 30,
             right: 30,
-            top: 10,
             bottom: 50,
           ),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
-              spacing: 20,
               children: [
+                const SizedBox(height: 10),
                 AppTextField(
                   label: l10n.movementTitle,
                   hintText: l10n.movementTitleHint,
@@ -50,6 +49,7 @@ class MovementView extends StatelessWidget {
                   initialValue: state.title,
                   maxLength: 50,
                 ),
+                const SizedBox(height: 20),
                 AppTextField(
                   label: l10n.movementDescription,
                   hintText: l10n.movementDescriptionHint,
@@ -60,11 +60,13 @@ class MovementView extends StatelessWidget {
                   maxLines: 6,
                   maxLength: 250,
                 ),
+                const SizedBox(height: 20),
                 AppDateField(
                   label: l10n.movementDate,
                   initialDate: state.date!,
                   onDateChanged: context.read<MovementCubit>().dateChanged,
                 ),
+                const SizedBox(height: 20),
                 AppDropdownField<Category>(
                   label: l10n.movementCategory,
                   options: state.categories
@@ -80,6 +82,7 @@ class MovementView extends StatelessWidget {
                   leadingIcon: getIconData(state.category!.icon),
                   onSelected: context.read<MovementCubit>().categoryChanged,
                 ),
+                const SizedBox(height: 20),
                 AppTextField(
                   label: l10n.movementAmount,
                   hintText: l10n.movementAmountHint,
@@ -95,6 +98,7 @@ class MovementView extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
                 AppTextField(
                   label: l10n.movementCompany,
                   hintText: l10n.movementCompanyHint,
@@ -104,6 +108,7 @@ class MovementView extends StatelessWidget {
                   initialValue: state.company,
                   maxLength: 50,
                 ),
+                const SizedBox(height: 20),
                 AppFileField(
                   label: l10n.movementAttachments,
                   labelAdd: l10n.movementAddAttachment,

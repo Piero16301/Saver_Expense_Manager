@@ -24,7 +24,7 @@ class IncomeHomeView extends StatelessWidget {
             onChangeMonth: context.read<IncomeHomeCubit>().changeMonth,
           ),
           StreamBuilder<QuerySnapshot>(
-            stream: getCategoriesChart(
+            stream: getMonthMovements(
               userId: user!.uid,
               monthSelected: state.monthSelected!,
               type: incomeType,

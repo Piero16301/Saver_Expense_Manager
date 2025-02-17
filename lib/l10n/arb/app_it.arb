@@ -67,6 +67,8 @@
     "@categorySelectMonthRange": {},
     "categoryNoTrendData": "Nessun dato disponibile per questo intervallo di mesi",
     "@categoryNoTrendData": {},
+    "categoryNoMovements": "Nessun movimento registrato per questo mese",
+    "@categoryNoMovements": {},
 
     "categoryTransport": "Trasporto",
     "@categoryTransport": {},

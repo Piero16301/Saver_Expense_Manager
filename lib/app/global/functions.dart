@@ -10,7 +10,7 @@ String? highResPicture(String? url) {
   return url.replaceAll('s96-c', 's400-c');
 }
 
-Stream<QuerySnapshot<Object?>>? getCategoriesChart({
+Stream<QuerySnapshot<Object?>>? getMonthMovements({
   required String userId,
   required DateTime monthSelected,
   required String type,
@@ -19,6 +19,35 @@ Stream<QuerySnapshot<Object?>>? getCategoriesChart({
       .collection(movementsCollection)
       .where('user', isEqualTo: userId)
       .where('category.type', isEqualTo: type)
+      .where(
+        'date',
+        isGreaterThanOrEqualTo: Timestamp.fromDate(
+          DateTime(monthSelected.year, monthSelected.month),
+        ),
+      )
+      .where(
+        'date',
+        isLessThan: Timestamp.fromDate(
+          DateTime(
+            monthSelected.month == 12
+                ? monthSelected.year + 1
+                : monthSelected.year,
+            monthSelected.month == 12 ? 1 : monthSelected.month + 1,
+          ),
+        ),
+      )
+      .snapshots();
+}
+
+Stream<QuerySnapshot<Object?>>? getCategoryMovements({
+  required String userId,
+  required DateTime monthSelected,
+  required Category category,
+}) {
+  return FirebaseFirestore.instance
+      .collection(movementsCollection)
+      .where('user', isEqualTo: userId)
+      .where('category.id', isEqualTo: category.id)
       .where(
         'date',
         isGreaterThanOrEqualTo: Timestamp.fromDate(
