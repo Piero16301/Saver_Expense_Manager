@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:user_api/user_api.dart';
 
@@ -23,7 +24,16 @@ class MovementsList extends StatelessWidget {
           children: movements
               .map(
                 (e) => ListTile(
-                  onTap: () {},
+                  onTap: () => context.pushNamed(
+                    'movement',
+                    pathParameters: {
+                      'type': e.category.type == CategoryType.income
+                          ? incomeType
+                          : expenseType,
+                      'screenType': 'EDIT',
+                    },
+                    extra: e,
+                  ),
                   contentPadding: const EdgeInsets.only(left: 16, right: 16),
                   title: Text(
                     e.title,
@@ -62,6 +72,7 @@ class MovementsList extends StatelessWidget {
                         .replaceFirst(' ', '\n')
                         .toUpperCase(),
                     textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               )

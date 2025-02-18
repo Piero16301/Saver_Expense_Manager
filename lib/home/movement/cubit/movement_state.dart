@@ -2,6 +2,7 @@ part of 'movement_cubit.dart';
 
 class MovementState extends Equatable {
   const MovementState({
+    this.id = '',
     this.title = '',
     this.description = '',
     this.date,
@@ -12,6 +13,7 @@ class MovementState extends Equatable {
     this.attachments = const <String>[],
   });
 
+  final String id;
   final String title;
   final String description;
   final DateTime? date;
@@ -22,6 +24,7 @@ class MovementState extends Equatable {
   final List<String> attachments;
 
   MovementState copyWith({
+    String? id,
     String? title,
     String? description,
     DateTime? date,
@@ -32,6 +35,7 @@ class MovementState extends Equatable {
     List<String>? attachments,
   }) {
     return MovementState(
+      id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
       date: date ?? this.date,
@@ -45,6 +49,7 @@ class MovementState extends Equatable {
 
   @override
   List<Object?> get props => [
+        id,
         title,
         description,
         date,

@@ -14,6 +14,7 @@ class MovementCubit extends Cubit<MovementState> {
   void init(Movement movement, List<Category> categories) {
     emit(
       state.copyWith(
+        id: movement.id,
         title: movement.title,
         description: movement.description,
         date: movement.date,
@@ -72,8 +73,9 @@ class MovementCubit extends Cubit<MovementState> {
 
   bool saveMovement(String userId) {
     // Save movement in Firebase Firestore
-    final docId =
-        FirebaseFirestore.instance.collection(movementsCollection).doc().id;
+    final docId = state.id.isEmpty
+        ? FirebaseFirestore.instance.collection(movementsCollection).doc().id
+        : state.id;
     FirebaseFirestore.instance.collection(movementsCollection).doc(docId).set(
           Movement(
             id: docId,

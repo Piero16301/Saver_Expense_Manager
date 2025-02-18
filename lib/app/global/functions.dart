@@ -65,6 +65,7 @@ Stream<QuerySnapshot<Object?>>? getCategoryMovements({
           ),
         ),
       )
+      .orderBy('date', descending: true)
       .snapshots();
 }
 
