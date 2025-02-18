@@ -4,7 +4,7 @@ class AppDropdownField<T> extends StatelessWidget {
   const AppDropdownField({
     required this.label,
     required this.options,
-    required this.selected,
+    this.selected,
     this.leadingIcon,
     this.onSelected,
     super.key,
@@ -12,7 +12,7 @@ class AppDropdownField<T> extends StatelessWidget {
 
   final String label;
   final List<DropdownMenuEntry<T>> options;
-  final T selected;
+  final T? selected;
   final IconData? leadingIcon;
   final void Function(T?)? onSelected;
 
@@ -23,8 +23,12 @@ class AppDropdownField<T> extends StatelessWidget {
         Expanded(
           child: DropdownMenu<T>(
             width: double.infinity,
+            menuHeight: 300,
+            menuStyle: const MenuStyle(
+              padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
+            ),
             label: Text(label),
-            leadingIcon: Icon(leadingIcon),
+            leadingIcon: leadingIcon == null ? null : Icon(leadingIcon),
             initialSelection: selected,
             onSelected: onSelected,
             dropdownMenuEntries: options,

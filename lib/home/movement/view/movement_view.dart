@@ -78,7 +78,7 @@ class MovementView extends StatelessWidget {
                         ),
                       )
                       .toList(),
-                  selected: state.category!,
+                  selected: state.category,
                   leadingIcon: getIconData(state.category!.icon),
                   onSelected: context.read<MovementCubit>().categoryChanged,
                 ),

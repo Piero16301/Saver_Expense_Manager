@@ -26,6 +26,7 @@ class HomeView extends StatelessWidget {
           title: Image.asset('assets/images/logo_no_bg.png', height: 40),
           centerTitle: true,
           notificationPredicate: (notification) => false,
+          leading: const ChangeThemeButton(),
           actions: [
             IconButton(
               icon: user?.photoURL == null
@@ -68,9 +69,11 @@ class HomeView extends StatelessWidget {
       case 0:
         return const ExpensesHomePage();
       case 1:
+        return const MovementsHomePage();
+      case 2:
         return const IncomeHomePage();
       default:
-        return const SizedBox();
+        return const SizedBox.shrink();
     }
   }
 }
@@ -92,6 +95,11 @@ class BottomNavigationBarHome extends StatelessWidget {
             icon: const Icon(Icons.money_off_outlined),
             selectedIcon: const Icon(Icons.money_off),
             label: l10n.homeExpensesTitle,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.list_alt_outlined),
+            selectedIcon: const Icon(Icons.list_alt),
+            label: l10n.homeMovementsTitle,
           ),
           NavigationDestination(
             icon: const Icon(Icons.attach_money_outlined),
