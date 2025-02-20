@@ -22,6 +22,9 @@ class AppDropdownField<T> extends StatelessWidget {
       children: [
         Expanded(
           child: DropdownMenu<T>(
+            controller: selected == null
+                ? TextEditingController(text: selected?.toString())
+                : null,
             width: double.infinity,
             menuHeight: 300,
             menuStyle: const MenuStyle(

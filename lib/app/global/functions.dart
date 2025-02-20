@@ -69,6 +69,36 @@ Stream<QuerySnapshot<Object?>>? getCategoryMovements({
       .snapshots();
 }
 
+Future<QuerySnapshot<Map<String, dynamic>>> getUserMovements({
+  required String userId,
+  required CategoryType? type,
+  required Category? category,
+  required QueryDocumentSnapshot<Object?>? lastDocument,
+}) async {
+  var query = FirebaseFirestore.instance
+      .collection(movementsCollection)
+      .where('user', isEqualTo: userId);
+
+  if (type != null) {
+    query = query.where(
+      'category.type',
+      isEqualTo: type == CategoryType.expense ? expenseType : incomeType,
+    );
+  }
+
+  if (category != null) {
+    query = query.where('category.id', isEqualTo: category.id);
+  }
+
+  query = query.orderBy('date', descending: true);
+
+  if (lastDocument != null) {
+    query = query.startAfterDocument(lastDocument);
+  }
+
+  return query.limit(pageSize).get();
+}
+
 List<CategoryData> buildChartData({
   required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
 }) {
@@ -178,6 +208,8 @@ String getCategoryName(String category, AppLocalizations l10n) {
       return l10n.categoryInsurance;
     case 'DWELLING':
       return l10n.categoryDwelling;
+    case 'OTHERS_EXPENSE':
+      return l10n.categoryOthersExpense;
     case 'SALARY':
       return l10n.categorySalary;
     case 'BUSINESS':
@@ -200,12 +232,14 @@ String getCategoryName(String category, AppLocalizations l10n) {
       return l10n.categoryRefunds;
     case 'SALES':
       return l10n.categorySales;
+    case 'OTHERS_INCOME':
+      return l10n.categoryOthersIncome;
     default:
-      return l10n.categoryOthers;
+      return '';
   }
 }
 
-IconData getIconData(String icon) {
+IconData getCategoryIcon(String icon) {
   switch (icon) {
     case 'DIRECTIONS_CAR':
       return Icons.directions_car;
@@ -255,5 +289,23 @@ IconData getIconData(String icon) {
       return Icons.local_offer;
     default:
       return Icons.error;
+  }
+}
+
+String getTypeName(CategoryType type, AppLocalizations l10n) {
+  switch (type) {
+    case CategoryType.expense:
+      return l10n.expenseName;
+    case CategoryType.income:
+      return l10n.incomeName;
+  }
+}
+
+IconData getTypeIcon(CategoryType type) {
+  switch (type) {
+    case CategoryType.expense:
+      return Icons.money_off;
+    case CategoryType.income:
+      return Icons.attach_money;
   }
 }

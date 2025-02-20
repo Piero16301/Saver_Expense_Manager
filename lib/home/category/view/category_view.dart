@@ -65,7 +65,7 @@ class CategoryIconAndName extends StatelessWidget {
             backgroundColor:
                 HexColor.fromHex(category.color).withValues(alpha: 0.3),
             child: Icon(
-              getIconData(category.icon),
+              getCategoryIcon(category.icon),
               size: 70,
               color: HexColor.fromHex(category.color),
             ),

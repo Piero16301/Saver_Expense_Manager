@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/movement/movement.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -74,12 +75,12 @@ class MovementView extends StatelessWidget {
                         (category) => DropdownMenuEntry<Category>(
                           value: category,
                           label: getCategoryName(category.name, l10n),
-                          leadingIcon: Icon(getIconData(category.icon)),
+                          leadingIcon: Icon(getCategoryIcon(category.icon)),
                         ),
                       )
                       .toList(),
                   selected: state.category,
-                  leadingIcon: getIconData(state.category!.icon),
+                  leadingIcon: getCategoryIcon(state.category!.icon),
                   onSelected: context.read<MovementCubit>().categoryChanged,
                 ),
                 const SizedBox(height: 20),
@@ -123,7 +124,7 @@ class MovementView extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (context.read<MovementCubit>().saveMovement(user.uid)) {
-              Navigator.of(context).pop();
+              context.pop<bool>(true);
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

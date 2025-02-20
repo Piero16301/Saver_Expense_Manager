@@ -8,11 +8,11 @@ environment:
 
 dependencies:
   bloc: ^9.0.0
-  cloud_firestore: ^5.6.3
+  cloud_firestore: ^5.6.4
   equatable: ^2.0.7
-  firebase_auth: ^5.4.2
-  firebase_core: ^3.11.0
-  firebase_storage: ^12.4.2
+  firebase_auth: ^5.5.0
+  firebase_core: ^3.12.0
+  firebase_storage: ^12.4.3
   firebase_ui_auth: ^1.16.1
   firebase_ui_localizations: ^1.13.1
   firebase_ui_oauth: ^1.6.1
@@ -25,11 +25,12 @@ dependencies:
     sdk: flutter
   go_router: ^14.8.0
   google_fonts: ^6.2.1
+  infinite_scroll_pagination: ^4.1.0
   intl: ^0.19.0
   mat_month_picker_dialog: ^1.1.2
   shared_preferences: ^2.5.2
-  syncfusion_flutter_charts: ^28.2.5+1
-  syncfusion_flutter_core: ^28.2.5
+  syncfusion_flutter_charts: ^28.2.6
+  syncfusion_flutter_core: ^28.2.6
   user_api:
     path: packages/user_api
   user_api_remote:

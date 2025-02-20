@@ -50,7 +50,7 @@ class CategoriesListChart extends StatelessWidget {
                     ),
                   ),
                 ),
-                leading: Icon(getIconData(e.category.icon), size: 30),
+                leading: Icon(getCategoryIcon(e.category.icon), size: 30),
               ),
             ),
             const SizedBox(height: 70),
