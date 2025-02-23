@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -206,7 +209,39 @@ class AddMovementBottomSheet extends StatelessWidget {
               TonalButtonActionHome(
                 title: context.l10n.homeScan,
                 icon: Icons.document_scanner,
-                onPressed: () {},
+                onPressed: () async {
+                  final files =
+                      await CunningDocumentScanner.getPictures(noOfPages: 1) ??
+                          [];
+                  if (files.isNotEmpty) {
+                    final movement = await buildMovementFromFile(
+                      model: model,
+                      type: expenseType,
+                      categories: categories
+                          .where((c) => c.type == CategoryType.expense)
+                          .toList(),
+                      languageCode: locale.languageCode,
+                      mimeType:
+                          lookupMimeType(files.first) ?? 'application/pdf',
+                      bytes: await File(files.first).readAsBytes(),
+                    );
+
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                    // ignore: use_build_context_synchronously
+                    await context.pushNamed(
+                      'movement',
+                      pathParameters: {
+                        'type': expenseType,
+                        'screenType': 'ADD',
+                      },
+                      extra: movement,
+                    );
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                  }
+                },
               ),
               TonalButtonActionHome(
                 title: context.l10n.homeFill,
@@ -278,7 +313,39 @@ class AddMovementBottomSheet extends StatelessWidget {
               TonalButtonActionHome(
                 title: context.l10n.homeScan,
                 icon: Icons.document_scanner,
-                onPressed: () {},
+                onPressed: () async {
+                  final files =
+                      await CunningDocumentScanner.getPictures(noOfPages: 1) ??
+                          [];
+                  if (files.isNotEmpty) {
+                    final movement = await buildMovementFromFile(
+                      model: model,
+                      type: incomeType,
+                      categories: categories
+                          .where((c) => c.type == CategoryType.income)
+                          .toList(),
+                      languageCode: locale.languageCode,
+                      mimeType:
+                          lookupMimeType(files.first) ?? 'application/pdf',
+                      bytes: await File(files.first).readAsBytes(),
+                    );
+
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                    // ignore: use_build_context_synchronously
+                    await context.pushNamed(
+                      'movement',
+                      pathParameters: {
+                        'type': incomeType,
+                        'screenType': 'ADD',
+                      },
+                      extra: movement,
+                    );
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                  }
+                },
               ),
               TonalButtonActionHome(
                 title: context.l10n.homeFill,
