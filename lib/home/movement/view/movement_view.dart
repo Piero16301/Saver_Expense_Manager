@@ -58,8 +58,8 @@ class MovementView extends StatelessWidget {
                   onChanged: context.read<MovementCubit>().descriptionChanged,
                   prefix: const Icon(Icons.description),
                   initialValue: state.description,
-                  maxLines: 6,
-                  maxLength: 250,
+                  maxLines: 7,
+                  maxLength: 300,
                 ),
                 const SizedBox(height: 20),
                 AppDateField(

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:user_api/src/models/models.dart';
 
 part 'movement.g.dart';
@@ -24,6 +25,13 @@ class Movement extends Equatable {
   /// Creates an instance of [Movement] from a [Map]
   factory Movement.fromJson(Map<String, dynamic> json) =>
       _$MovementFromJson(json);
+
+  /// Creates an instance of [Movement] from a model [Map]
+  factory Movement.fromModel(
+    Map<String, dynamic> json,
+    List<Category> categories,
+  ) =>
+      _$MovementFromModel(json, categories);
 
   /// Creates a [Map] from an instance of [Movement]
   Map<String, dynamic> toJson() => _$MovementToJson(this);

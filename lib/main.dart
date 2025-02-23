@@ -4,6 +4,7 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/bootstrap.dart';
 import 'package:saver_expense_manager/firebase_options.dart';
@@ -13,6 +14,9 @@ import 'package:user_repository/user_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load .env file
+  await dotenv.load(fileName: './.env');
 
   // Initialize Firebase with the default options
   await Firebase.initializeApp(

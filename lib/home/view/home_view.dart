@@ -1,7 +1,10 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -117,9 +120,17 @@ class AddMovementBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale =
+        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
+    final model = context
+        .select<AppCubit, GenerativeModel>((cubit) => cubit.state.model!);
+    final categories = context
+        .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
+        .toList();
+
     return Container(
       width: double.infinity,
-      height: 300,
+      height: 280,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -152,16 +163,54 @@ class AddMovementBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Row(
-            spacing: 20,
+            spacing: 10,
             children: [
               TonalButtonActionHome(
-                title: context.l10n.homeScanExpense,
+                title: context.l10n.homeFile,
+                icon: Icons.upload_file,
+                onPressed: () async {
+                  final result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
+                  );
+                  if (result != null) {
+                    final file = result.files.single;
+                    final movement = await buildMovementFromFile(
+                      model: model,
+                      type: expenseType,
+                      categories: categories
+                          .where((c) => c.type == CategoryType.expense)
+                          .toList(),
+                      languageCode: locale.languageCode,
+                      mimeType: lookupMimeType(file.name) ?? 'application/pdf',
+                      bytes: await file.xFile.readAsBytes(),
+                    );
+
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                    // ignore: use_build_context_synchronously
+                    await context.pushNamed(
+                      'movement',
+                      pathParameters: {
+                        'type': expenseType,
+                        'screenType': 'ADD',
+                      },
+                      extra: movement,
+                    );
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+              TonalButtonActionHome(
+                title: context.l10n.homeScan,
                 icon: Icons.document_scanner,
                 onPressed: () {},
               ),
               TonalButtonActionHome(
-                title: context.l10n.homeRegisterExpense,
-                icon: Icons.attach_money,
+                title: context.l10n.homeFill,
+                icon: Icons.edit,
                 onPressed: () {
                   Navigator.of(context).pop();
                   context.pushNamed(
@@ -176,7 +225,7 @@ class AddMovementBottomSheet extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
           Text(
             context.l10n.homeAddIncome,
             style: const TextStyle(
@@ -186,16 +235,54 @@ class AddMovementBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Row(
-            spacing: 20,
+            spacing: 10,
             children: [
               TonalButtonActionHome(
-                title: context.l10n.homeScanIncome,
+                title: context.l10n.homeFile,
+                icon: Icons.upload_file,
+                onPressed: () async {
+                  final result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
+                  );
+                  if (result != null) {
+                    final file = result.files.single;
+                    final movement = await buildMovementFromFile(
+                      model: model,
+                      type: incomeType,
+                      categories: categories
+                          .where((c) => c.type == CategoryType.income)
+                          .toList(),
+                      languageCode: locale.languageCode,
+                      mimeType: lookupMimeType(file.name) ?? 'application/pdf',
+                      bytes: await file.xFile.readAsBytes(),
+                    );
+
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                    // ignore: use_build_context_synchronously
+                    await context.pushNamed(
+                      'movement',
+                      pathParameters: {
+                        'type': incomeType,
+                        'screenType': 'ADD',
+                      },
+                      extra: movement,
+                    );
+                  } else {
+                    // ignore: use_build_context_synchronously
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+              TonalButtonActionHome(
+                title: context.l10n.homeScan,
                 icon: Icons.document_scanner,
                 onPressed: () {},
               ),
               TonalButtonActionHome(
-                title: context.l10n.homeRegisterIncome,
-                icon: Icons.attach_money,
+                title: context.l10n.homeFill,
+                icon: Icons.edit,
                 onPressed: () {
                   Navigator.of(context).pop();
                   context.pushNamed(
@@ -232,7 +319,7 @@ class TonalButtonActionHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: SizedBox(
-        height: 60,
+        height: 50,
         child: FilledButton.tonal(
           style: ButtonStyle(
             shape: WidgetStateProperty.all(
@@ -241,12 +328,12 @@ class TonalButtonActionHome extends StatelessWidget {
               ),
             ),
             padding: WidgetStateProperty.all(
-              const EdgeInsets.symmetric(horizontal: 10),
+              const EdgeInsets.symmetric(horizontal: 7.5),
             ),
           ),
           onPressed: onPressed,
           child: Row(
-            spacing: 10,
+            spacing: 5,
             children: [
               Icon(icon, size: 25),
               Expanded(
@@ -254,7 +341,7 @@ class TonalButtonActionHome extends StatelessWidget {
                   title,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+                  maxLines: 1,
                 ),
               ),
             ],

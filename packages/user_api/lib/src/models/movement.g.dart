@@ -24,6 +24,27 @@ Movement _$MovementFromJson(Map<String, dynamic> json) {
   );
 }
 
+Movement _$MovementFromModel(
+  Map<String, dynamic> json,
+  List<Category> categories,
+) {
+  final category = categories.firstWhere(
+    (element) => element.name == json['category'],
+    orElse: () => Category.empty,
+  );
+
+  return Movement(
+    id: json['id'] as String? ?? '',
+    title: json['title'] as String? ?? '',
+    description: json['description'] as String? ?? '',
+    date: DateFormat('dd/MM/yyyy').parse(json['date'] as String? ?? ''),
+    category: category,
+    price: (json['price'] as num?)?.toDouble() ?? 0.0,
+    company: json['company'] as String? ?? '',
+    user: '',
+  );
+}
+
 Map<String, dynamic> _$MovementToJson(Movement instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.title,

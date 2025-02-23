@@ -10,6 +10,7 @@ dependencies:
   bloc: ^9.0.0
   cloud_firestore: ^5.6.4
   equatable: ^2.0.7
+  file_picker: ^9.0.0
   firebase_auth: ^5.5.0
   firebase_core: ^3.12.0
   firebase_storage: ^12.4.3
@@ -21,13 +22,16 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.0.0
+  flutter_dotenv: ^5.2.1
   flutter_localizations:
     sdk: flutter
   go_router: ^14.8.0
   google_fonts: ^6.2.1
+  google_generative_ai: ^0.4.6
   infinite_scroll_pagination: ^4.1.0
   intl: ^0.19.0
   mat_month_picker_dialog: ^1.1.2
+  mime: ^2.0.0
   shared_preferences: ^2.5.2
   syncfusion_flutter_charts: ^28.2.6
   syncfusion_flutter_core: ^28.2.6
@@ -69,5 +73,6 @@ flutter:
         - asset: packages/firebase_ui_auth/fonts/SocialIcons.ttf
 
   assets:
+    - .env
     - assets/animations/
     - assets/images/

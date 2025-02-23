@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -182,6 +186,60 @@ List<TrendData> buildTrendData({
     );
   }
   return data;
+}
+
+Future<Movement> buildMovementFromFile({
+  required GenerativeModel model,
+  required String type,
+  required List<Category> categories,
+  required String languageCode,
+  required String mimeType,
+  required Uint8List bytes,
+}) async {
+  final prompt = getPrompt(
+    type: type,
+    categories: categories,
+    languageCode: languageCode,
+  );
+
+  final response = await model.generateContent([
+    Content.text(prompt),
+    Content.data(mimeType, bytes),
+  ]);
+
+  var responseJson = <String, dynamic>{};
+  if (response.text?[0] == '[') {
+    final responseList = jsonDecode(response.text ?? '') as List<dynamic>;
+    responseJson = responseList.first as Map<String, dynamic>? ?? {};
+  } else {
+    responseJson =
+        jsonDecode(response.text ?? '') as Map<String, dynamic>? ?? {};
+  }
+
+  final movement = Movement.fromModel(responseJson, categories);
+
+  return movement;
+}
+
+String getPrompt({
+  required String type,
+  required List<Category> categories,
+  required String languageCode,
+}) {
+  return 'Extract data from this file using this JSON schema: {\n"title": '
+      'string,\n"description": string,\n"date": date(dd/MM/yyyy),\n"category": '
+      'string,\n"price": double,\n"company": string}. Consider that if not '
+      'mentioned an explicit date use now date in the given format. Create a '
+      'title and description, for title using a max of 50 characters and '
+      'description 250 characters. For title, should mentioned the $type itself'
+      ' if it is a product, mention product, if it is food, mention food, et. '
+      'Description should have more details about the $type. If a product, '
+      'place, food, et. is mentioned, search some details on web and put it in '
+      'description. For category select most appropriate from this options: '
+      '${categories.map((e) => e.name).join(', ')}. Extract the company where '
+      'the $type has been made, like a receiver account, store, bank name et.'
+      ' If there is not an explicit company, return an empty string. The '
+      "response should be in '$languageCode' language code.";
 }
 
 String getCategoryName(String category, AppLocalizations l10n) {

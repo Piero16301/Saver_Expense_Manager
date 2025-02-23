@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:user_api/user_api.dart';
 import 'package:user_repository/user_repository.dart';
@@ -40,6 +42,17 @@ class AppCubit extends Cubit<AppState> {
       );
     }
     emit(state.copyWith(darkTheme: userRepository.getDarkTheme()));
+
+    // Setting the model
+    final model = GenerativeModel(
+      model: 'gemini-2.0-flash',
+      apiKey: dotenv.get('GEN_API_KEY'),
+      generationConfig: GenerationConfig(responseMimeType: 'application/json'),
+      safetySettings: [
+        SafetySetting(HarmCategory.dangerousContent, HarmBlockThreshold.none),
+      ],
+    );
+    emit(state.copyWith(model: model));
   }
 
   Future<void> changeLanguage(String language) async {

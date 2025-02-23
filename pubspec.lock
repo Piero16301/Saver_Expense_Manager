@@ -230,6 +230,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.1"
+  file_picker:
+    dependency: "direct main"
+    description:
+      name: file_picker
+      sha256: "6f6bfa8797f296965bdc3e1f702574ab49a540c19b9237b401e7c2b25dfe594c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "9.0.0"
   file_selector:
     dependency: transitive
     description:
@@ -459,6 +467,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.8.2"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      sha256: b7c7be5cd9f6ef7a78429cabd2774d3c4af50e79cb2b7593e3d5d763ef95c61b
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.1"
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
@@ -472,6 +488,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: "615a505aef59b151b46bbeef55b36ce2b6ed299d160c51d84281946f0aa0ce0e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.24"
   flutter_staggered_grid_view:
     dependency: transitive
     description:
@@ -530,6 +554,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.1"
+  google_generative_ai:
+    dependency: "direct main"
+    description:
+      name: google_generative_ai
+      sha256: "81dae159c89e4d9bdc46955b6f4ee5ae0a291f9e8f990d76f43944e0d6041d4f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.6"
   google_identity_services_web:
     dependency: transitive
     description:
@@ -723,7 +755,7 @@ packages:
     source: hosted
     version: "1.16.0"
   mime:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: mime
       sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
@@ -1212,6 +1244,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  win32:
+    dependency: transitive
+    description:
+      name: win32
+      sha256: b89e6e24d1454e149ab20fbb225af58660f0c0bf4475544650700d8e2da54aef
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.11.0"
   xdg_directories:
     dependency: transitive
     description:
@@ -1237,5 +1277,5 @@ packages:
     source: hosted
     version: "3.1.2"
 sdks:
-  dart: ">=3.7.0-0 <4.0.0"
+  dart: ">=3.7.0 <4.0.0"
   flutter: ">=3.24.0"
