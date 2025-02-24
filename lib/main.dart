@@ -25,7 +25,9 @@ Future<void> main() async {
   );
 
   // Initialize Firebase App Check
-  await FirebaseAppCheck.instance.activate();
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+  );
 
   // Configure Firebase Auth providers
   FirebaseUIAuth.configureProviders([
