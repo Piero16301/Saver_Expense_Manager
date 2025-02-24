@@ -12,6 +12,7 @@ dependencies:
   cunning_document_scanner: ^1.2.3
   equatable: ^2.0.7
   file_picker: ^9.0.0
+  firebase_app_check: ^0.3.2+3
   firebase_auth: ^5.5.0
   firebase_core: ^3.12.0
   firebase_storage: ^12.4.3
