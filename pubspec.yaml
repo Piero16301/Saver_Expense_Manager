@@ -8,14 +8,14 @@ environment:
 
 dependencies:
   bloc: ^9.0.0
-  cloud_firestore: ^5.6.4
+  cloud_firestore: ^5.6.5
   cunning_document_scanner: ^1.2.3
   equatable: ^2.0.7
-  file_picker: ^9.0.0
+  file_picker: ^9.0.2
   firebase_app_check: ^0.3.2+3
-  firebase_auth: ^5.5.0
-  firebase_core: ^3.12.0
-  firebase_storage: ^12.4.3
+  firebase_auth: ^5.5.1
+  firebase_core: ^3.12.1
+  firebase_storage: ^12.4.4
   firebase_ui_auth: ^1.16.1
   firebase_ui_localizations: ^1.13.1
   firebase_ui_oauth: ^1.6.1
@@ -23,11 +23,11 @@ dependencies:
   firebase_ui_storage: ^2.1.1
   flutter:
     sdk: flutter
-  flutter_bloc: ^9.0.0
+  flutter_bloc: ^9.1.0
   flutter_dotenv: ^5.2.1
   flutter_localizations:
     sdk: flutter
-  go_router: ^14.8.0
+  go_router: ^14.8.1
   google_fonts: ^6.2.1
   google_generative_ai: ^0.4.6
   infinite_scroll_pagination: ^4.1.0
@@ -35,8 +35,8 @@ dependencies:
   mat_month_picker_dialog: ^1.1.2
   mime: ^2.0.0
   shared_preferences: ^2.5.2
-  syncfusion_flutter_charts: ^28.2.6
-  syncfusion_flutter_core: ^28.2.6
+  syncfusion_flutter_charts: ^28.2.9
+  syncfusion_flutter_core: ^28.2.9
   user_api:
     path: packages/user_api
   user_api_remote:
