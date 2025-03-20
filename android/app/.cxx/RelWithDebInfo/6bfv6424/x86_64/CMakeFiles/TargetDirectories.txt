@@ -1,0 +1,2 @@
+/Users/piero.morales/Documents/StudioProjects/Saver_Expense_Manager/android/app/.cxx/RelWithDebInfo/6bfv6424/x86_64/CMakeFiles/edit_cache.dir
+/Users/piero.morales/Documents/StudioProjects/Saver_Expense_Manager/android/app/.cxx/RelWithDebInfo/6bfv6424/x86_64/CMakeFiles/rebuild_cache.dir

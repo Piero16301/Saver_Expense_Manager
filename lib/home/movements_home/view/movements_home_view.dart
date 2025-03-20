@@ -129,9 +129,16 @@ class ListMovementsHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
+      buildWhen: (previous, current) =>
+          previous.filterType != current.filterType ||
+          previous.filterCategory != current.filterCategory,
       builder: (context, state) => Expanded(
         child: FirestorePagination(
+          key: ValueKey('${state.filterType}-${state.filterCategory}'),
+          shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           query: getUserMovements(
             userId: FirebaseAuth.instance.currentUser!.uid,
@@ -139,6 +146,12 @@ class ListMovementsHome extends StatelessWidget {
             category: state.filterCategory,
           ),
           isLive: true,
+          onEmpty: Center(
+            child: Text(
+              l10n.movementsNoData,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
           itemBuilder: (context, docs, index) {
             final movement = Movement.fromJson(
               docs[index].data()! as Map<String, dynamic>,
