@@ -242,10 +242,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "7423298f08f6fc8cce05792bae329f9a93653fc9c08712831b1a55540127995d"
+      sha256: "8d938fd5c11dc81bf1acd4f7f0486c683fe9e79a0b13419e27730f9ce4d8a25b"
       url: "https://pub.dev"
     source: hosted
-    version: "9.0.2"
+    version: "9.2.1"
   file_selector:
     dependency: transitive
     description:
@@ -382,6 +382,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.21.1"
+  firebase_database:
+    dependency: transitive
+    description:
+      name: firebase_database
+      sha256: "9f961de7ed815edc74b8025476f3ee937c07900d3b39e8c84abcf17d4d534c7a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.3.4"
+  firebase_database_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_database_platform_interface
+      sha256: "89a28159e88b93bbddab28bd80149ce08d3560ee8a69b0d2d8d6767c8d6b0ba1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.6+4"
+  firebase_database_web:
+    dependency: transitive
+    description:
+      name: firebase_database_web
+      sha256: cad15fbc7d1a6f820fc5f6bfe527b666ba2c8ca78e4a990397d7356892a321c8
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.6+10"
   firebase_dynamic_links:
     dependency: transitive
     description:
@@ -398,6 +422,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.7"
+  firebase_pagination:
+    dependency: "direct main"
+    description:
+      name: firebase_pagination
+      sha256: "21d6a266453dc8c40f6e6a077ece84fa50018317a0e1749804775bbe72db2257"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.0"
   firebase_storage:
     dependency: "direct main"
     description:
@@ -528,14 +560,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.24"
-  flutter_staggered_grid_view:
-    dependency: transitive
-    description:
-      name: flutter_staggered_grid_view
-      sha256: "19e7abb550c96fbfeb546b23f3ff356ee7c59a019a651f8f102a4ba9b7349395"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.0"
   flutter_svg:
     dependency: transitive
     description:
@@ -674,14 +698,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.2"
-  infinite_scroll_pagination:
-    dependency: "direct main"
-    description:
-      name: infinite_scroll_pagination
-      sha256: "4047eb8191e8b33573690922a9e995af64c3949dc87efc844f936b039ea279df"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.1.0"
   intl:
     dependency: "direct main"
     description:
@@ -1087,14 +1103,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  sliver_tools:
-    dependency: transitive
-    description:
-      name: sliver_tools
-      sha256: eae28220badfb9d0559207badcbbc9ad5331aac829a88cb0964d330d2a4636a6
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.12"
   source_map_stack_trace:
     dependency: transitive
     description:
@@ -1155,18 +1163,18 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: c53e8616368c1a88397b7b180d0ded7d9e960564cdba01509cc5fa2d503ed727
+      sha256: "8367eb7b9941e33158f34c3e903e19897542b19423f9a91897aaafe4228298ca"
       url: "https://pub.dev"
     source: hosted
-    version: "28.2.9"
+    version: "28.2.12"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "5a1a76eef118e511443b299925d4a802eb8259388d6a580e0ad6413d1a70f987"
+      sha256: f1d2b52697543e13bdefdc62d15868124a265987577f53224a7dbe176c8448f0
       url: "https://pub.dev"
     source: hosted
-    version: "28.2.9"
+    version: "28.2.12"
   term_glyph:
     dependency: transitive
     description:

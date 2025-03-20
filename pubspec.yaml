@@ -11,10 +11,11 @@ dependencies:
   cloud_firestore: ^5.6.5
   cunning_document_scanner: ^1.2.3
   equatable: ^2.0.7
-  file_picker: ^9.0.2
+  file_picker: ^9.2.1
   firebase_app_check: ^0.3.2+3
   firebase_auth: ^5.5.1
   firebase_core: ^3.12.1
+  firebase_pagination: ^4.1.0
   firebase_storage: ^12.4.4
   firebase_ui_auth: ^1.16.1
   firebase_ui_localizations: ^1.13.1
@@ -30,13 +31,12 @@ dependencies:
   go_router: ^14.8.1
   google_fonts: ^6.2.1
   google_generative_ai: ^0.4.6
-  infinite_scroll_pagination: ^4.1.0
   intl: ^0.19.0
   mat_month_picker_dialog: ^1.1.2
   mime: ^2.0.0
   shared_preferences: ^2.5.2
-  syncfusion_flutter_charts: ^28.2.9
-  syncfusion_flutter_core: ^28.2.9
+  syncfusion_flutter_charts: ^28.2.12
+  syncfusion_flutter_core: ^28.2.12
   user_api:
     path: packages/user_api
   user_api_remote:

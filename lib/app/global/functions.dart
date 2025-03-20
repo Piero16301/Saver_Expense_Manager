@@ -73,12 +73,11 @@ Stream<QuerySnapshot<Object?>>? getCategoryMovements({
       .snapshots();
 }
 
-Future<QuerySnapshot<Map<String, dynamic>>> getUserMovements({
+Query<Map<String, dynamic>> getUserMovements({
   required String userId,
   required CategoryType? type,
   required Category? category,
-  required QueryDocumentSnapshot<Object?>? lastDocument,
-}) async {
+}) {
   var query = FirebaseFirestore.instance
       .collection(movementsCollection)
       .where('user', isEqualTo: userId);
@@ -94,13 +93,7 @@ Future<QuerySnapshot<Map<String, dynamic>>> getUserMovements({
     query = query.where('category.id', isEqualTo: category.id);
   }
 
-  query = query.orderBy('date', descending: true);
-
-  if (lastDocument != null) {
-    query = query.startAfterDocument(lastDocument);
-  }
-
-  return query.limit(pageSize).get();
+  return query.orderBy('date', descending: true);
 }
 
 List<CategoryData> buildChartData({
