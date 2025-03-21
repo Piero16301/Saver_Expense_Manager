@@ -12,7 +12,7 @@ class AppTextField extends StatelessWidget {
     this.keyboardType,
     this.prefix,
     this.initialValue,
-    this.maxLines,
+    this.maxLines = 1,
     this.maxLength,
     this.validator,
     super.key,
@@ -27,7 +27,7 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final Widget? prefix;
   final String? initialValue;
-  final int? maxLines;
+  final int maxLines;
   final int? maxLength;
   final String? Function(String?)? validator;
 

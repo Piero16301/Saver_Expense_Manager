@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:user_api/user_api.dart';
 
@@ -68,6 +73,22 @@ class MovementCubit extends Cubit<MovementState> {
       await FirebaseStorage.instance.ref().child(value).delete();
     } catch (e) {
       debugPrint('Error deleting file: $e');
+    }
+  }
+
+  Future<void> attachOpen(String value) async {
+    try {
+      final appTemDir = await getApplicationCacheDirectory();
+      final filePath = '${appTemDir.path}/$value';
+      final file = File(filePath);
+
+      final data =
+          await FirebaseStorage.instance.ref().child(value).getData() ??
+              Uint8List(0);
+      await file.writeAsBytes(data.toList());
+      await OpenFile.open(filePath);
+    } catch (e) {
+      debugPrint('Error opening file: $e');
     }
   }
 

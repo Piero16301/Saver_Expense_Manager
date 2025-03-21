@@ -115,6 +115,7 @@ class MovementView extends StatelessWidget {
                   labelAdd: l10n.movementAddAttachment,
                   onAdd: context.read<MovementCubit>().attachAdd,
                   onRemove: context.read<MovementCubit>().attachRemove,
+                  openFile: context.read<MovementCubit>().attachOpen,
                   attachments: state.attachments,
                 ),
               ],

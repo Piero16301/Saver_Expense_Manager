@@ -14,6 +14,12 @@ String? highResPicture(String? url) {
   return url.replaceAll('s96-c', 's400-c');
 }
 
+DateTime substracMonth(int month) {
+  final now = DateTime.now();
+  final targetDate = DateTime(now.year, now.month - (month - 1));
+  return targetDate;
+}
+
 Stream<QuerySnapshot<Object?>>? getMonthMovements({
   required String userId,
   required DateTime monthSelected,

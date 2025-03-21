@@ -8,6 +8,7 @@ class AppFileField extends StatelessWidget {
     required this.labelAdd,
     required this.onAdd,
     required this.onRemove,
+    required this.openFile,
     required this.attachments,
     super.key,
   });
@@ -16,6 +17,7 @@ class AppFileField extends StatelessWidget {
   final String labelAdd;
   final void Function(String) onAdd;
   final void Function(String) onRemove;
+  final void Function(String) openFile;
   final List<String> attachments;
 
   @override
@@ -36,11 +38,15 @@ class AppFileField extends StatelessWidget {
                 children: [
                   for (var i = 0; i < attachments.length; i++)
                     SizedBox(
-                      child: Chip(
-                        label: Text(
-                          getAttachmentName(attachments[i], i + 1, l10n),
+                      child: GestureDetector(
+                        onTap: () => openFile(attachments[i]),
+                        child: Chip(
+                          label: Text(
+                            getAttachmentName(attachments[i], i + 1, l10n),
+                          ),
+                          avatar: Icon(getAttachmentIcon(attachments[i])),
+                          onDeleted: () => onRemove(attachments[i]),
                         ),
-                        onDeleted: () => onRemove(attachments[i]),
                       ),
                     ),
                   Center(
@@ -71,13 +77,26 @@ class AppFileField extends StatelessWidget {
   String getAttachmentName(String path, int index, AppLocalizations l10n) {
     switch (path.split('.').last) {
       case 'pdf':
-        return l10n.movementPdfType(index);
+        return l10n.movementPdfType;
       case 'png':
       case 'jpg':
       case 'jpeg':
-        return l10n.movementImageType(index);
+        return l10n.movementImageType;
       default:
-        return l10n.movementCustomType(index);
+        return l10n.movementCustomType;
+    }
+  }
+
+  IconData getAttachmentIcon(String path) {
+    switch (path.split('.').last) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'png':
+      case 'jpg':
+      case 'jpeg':
+        return Icons.image;
+      default:
+        return Icons.attach_file;
     }
   }
 }

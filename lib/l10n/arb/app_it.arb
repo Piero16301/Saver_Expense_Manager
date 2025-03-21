@@ -158,30 +158,12 @@
     "@movementAttachments": {},
     "movementAddAttachment": "Aggiungi allegato",
     "@movementAddAttachment": {},
-    "movementImageType": "Immagine {index}",
-    "@movementImageType": {
-        "placeholders": {
-            "index": {
-                "type": "int"
-            }
-        }
-    },
-    "movementPdfType": "PDF {index}",
-    "@movementPdfType": {
-        "placeholders": {
-            "index": {
-                "type": "int"
-            }
-        }
-    },
-    "movementCustomType": "Personalizzato {index}",
-    "@movementCustomType": {
-        "placeholders": {
-            "index": {
-                "type": "int"
-            }
-        }
-    },
+    "movementImageType": "Immagine",
+    "@movementImageType": {},
+    "movementPdfType": "Documento",
+    "@movementPdfType": {},
+    "movementCustomType": "File",
+    "@movementCustomType": {},
     "movementSaveError": "Si è verificato un errore durante il salvataggio del movimento",
     "@movementSaveError": {},
 

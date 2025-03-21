@@ -66,16 +66,24 @@ class LinearChart extends StatelessWidget {
     );
   }
 
-  List<AreaSeries<TrendData, String>> _buildLineSeries(AppLocalizations l10n) {
-    return <AreaSeries<TrendData, String>>[
-      AreaSeries<TrendData, String>(
+  List<SplineSeries<TrendData, String>> _buildLineSeries(
+    AppLocalizations l10n,
+  ) {
+    return <SplineSeries<TrendData, String>>[
+      SplineSeries<TrendData, String>(
         dataSource: data,
+        width: 5,
+        splineType: SplineType.monotonic,
         xValueMapper: (TrendData trend, _) => trend.month,
         yValueMapper: (TrendData trend, _) => trend.value,
         name: getCategoryName(category.name, l10n),
         color: HexColor.fromHex(category.color).withValues(alpha: 0.7),
         animationDuration: 500,
-        markerSettings: const MarkerSettings(isVisible: true),
+        markerSettings: const MarkerSettings(
+          isVisible: true,
+          height: 10,
+          width: 10,
+        ),
       ),
     ];
   }
