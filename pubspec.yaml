@@ -37,8 +37,8 @@ dependencies:
   open_file: ^3.5.10
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2
-  syncfusion_flutter_charts: ^28.2.12
-  syncfusion_flutter_core: ^28.2.12
+  syncfusion_flutter_charts: ^29.1.33
+  syncfusion_flutter_core: ^29.1.33
   user_api:
     path: packages/user_api
   user_api_remote:
