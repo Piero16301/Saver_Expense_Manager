@@ -10,16 +10,14 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.profileTitle),
         centerTitle: true,
-        actions: const [
-          ChangeLanguageButton(),
-        ],
+        actions: const [ChangeLanguageButton()],
       ),
       body: SafeArea(
         child: Padding(
@@ -32,9 +30,7 @@ class ProfileView extends StatelessWidget {
                   ? const Icon(Icons.person, size: 70)
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(80),
-                      child: Image.network(
-                        highResPicture(user!.photoURL)!,
-                      ),
+                      child: Image.network(highResPicture(user!.photoURL)!),
                     ),
             ),
             actions: [
@@ -66,9 +62,7 @@ class ProfileView extends StatelessWidget {
               }),
               DisplayNameChangedAction((context, oldName, newName) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.displayNameChanged(newName)),
-                  ),
+                  SnackBar(content: Text(l10n.displayNameChanged(newName))),
                 );
               }),
             ],

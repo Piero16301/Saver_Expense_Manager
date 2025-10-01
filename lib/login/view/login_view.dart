@@ -16,34 +16,41 @@ class LoginView extends StatelessWidget {
             SignInScreen(
               showPasswordVisibilityToggle: true,
               actions: [
-                AuthStateChangeAction(
-                  (context, state) {
-                    final user = switch (state) {
-                      SignedIn(user: final user) => user,
-                      UserCreated(credential: final cred) => cred.user,
-                      _ => null,
-                    };
+                AuthStateChangeAction((context, state) {
+                  final user = switch (state) {
+                    SignedIn(user: final user) => user,
+                    UserCreated(credential: final cred) => cred.user,
+                    _ => null,
+                  };
 
-                    debugPrint('User: $user');
+                  debugPrint('User: $user');
 
-                    switch (user) {
-                      case User(emailVerified: true):
-                        context.goNamed('home');
-                      case User(emailVerified: false, email: final String _):
-                        context.goNamed('email-verification');
-                    }
-                  },
-                ),
+                  if (user != null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      switch (user) {
+                        case User(emailVerified: true):
+                          if (context.mounted) {
+                            context.goNamed('home');
+                          }
+                        case User(emailVerified: false, email: final String _):
+                          if (context.mounted) {
+                            context.goNamed('email-verification');
+                          }
+                        default:
+                          if (context.mounted) {
+                            context.goNamed('home');
+                          }
+                      }
+                    });
+                  }
+                }),
               ],
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ChangeLanguageButton(),
-                  ChangeThemeButton(),
-                ],
+                children: [ChangeLanguageButton(), ChangeThemeButton()],
               ),
             ),
           ],

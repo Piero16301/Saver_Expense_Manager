@@ -12,7 +12,7 @@ class CategoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<CategoryCubit, CategoryState>(
       builder: (context, state) => Scaffold(
@@ -26,8 +26,12 @@ class CategoryView extends StatelessWidget {
           notificationPredicate: (notification) => false,
         ),
         body: Padding(
-          padding:
-              const EdgeInsets.only(right: 30, left: 30, bottom: 30, top: 20),
+          padding: const EdgeInsets.only(
+            right: 30,
+            left: 30,
+            bottom: 30,
+            top: 20,
+          ),
           child: Column(
             spacing: 10,
             children: [
@@ -42,10 +46,7 @@ class CategoryView extends StatelessWidget {
 }
 
 class CategoryIconAndName extends StatelessWidget {
-  const CategoryIconAndName({
-    required this.category,
-    super.key,
-  });
+  const CategoryIconAndName({required this.category, super.key});
 
   final Category category;
 
@@ -54,7 +55,7 @@ class CategoryIconAndName extends StatelessWidget {
     final category = context.select<CategoryCubit, Category>(
       (cubit) => cubit.state.category,
     );
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return Center(
       child: Column(
@@ -62,8 +63,9 @@ class CategoryIconAndName extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 60,
-            backgroundColor:
-                HexColor.fromHex(category.color).withValues(alpha: 0.3),
+            backgroundColor: HexColor.fromHex(
+              category.color,
+            ).withValues(alpha: 0.3),
             child: Icon(
               getCategoryIcon(category.icon),
               size: 70,
@@ -81,10 +83,7 @@ class CategoryIconAndName extends StatelessWidget {
 }
 
 class CategoryTabBar extends StatefulWidget {
-  const CategoryTabBar({
-    required this.category,
-    super.key,
-  });
+  const CategoryTabBar({required this.category, super.key});
 
   final Category category;
 
@@ -110,7 +109,7 @@ class _CategoryTabBarState extends State<CategoryTabBar>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return Expanded(
       child: Column(
@@ -132,10 +131,7 @@ class _CategoryTabBarState extends State<CategoryTabBar>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                TabTrendCategory(),
-                TabMovementsCategory(),
-              ],
+              children: const [TabTrendCategory(), TabMovementsCategory()],
             ),
           ),
         ],
@@ -157,12 +153,14 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
 
   @override
   Widget build(BuildContext context) {
-    final category = context
-        .select<CategoryCubit, Category>((cubit) => cubit.state.category);
-    final locale =
-        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
+    final category = context.select<CategoryCubit, Category>(
+      (cubit) => cubit.state.category,
+    );
+    final locale = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.locale!,
+    );
     final user = FirebaseAuth.instance.currentUser;
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -207,8 +205,9 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
             }
 
             final data = buildTrendData(
-              docs: snapshot.data!.docs
-                  as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+              docs:
+                  snapshot.data!.docs
+                      as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
               startMonth: startMonth,
               endMonth: endMonth,
               locale: locale,
@@ -234,10 +233,11 @@ class _TabMovementsCategoryState extends State<TabMovementsCategory> {
 
   @override
   Widget build(BuildContext context) {
-    final category = context
-        .select<CategoryCubit, Category>((cubit) => cubit.state.category);
+    final category = context.select<CategoryCubit, Category>(
+      (cubit) => cubit.state.category,
+    );
     final user = FirebaseAuth.instance.currentUser;
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -247,10 +247,7 @@ class _TabMovementsCategoryState extends State<TabMovementsCategory> {
           onBack: () {
             if (monthSelected.month == 1) {
               setState(() {
-                monthSelected = DateTime(
-                  monthSelected.year - 1,
-                  12,
-                );
+                monthSelected = DateTime(monthSelected.year - 1, 12);
               });
             } else {
               setState(() {

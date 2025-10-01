@@ -8,7 +8,7 @@ class ChangeLanguageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
     final languages = {
       'en': l10n.englishFlag,
       'es': l10n.spanishFlag,
@@ -33,7 +33,7 @@ class ChangeLanguageButton extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (context) {
-        final l10n = context.l10n;
+        final l10n = AppLocalizations.of(context);
 
         return SimpleDialog(
           title: Text(l10n.selectLanguage),

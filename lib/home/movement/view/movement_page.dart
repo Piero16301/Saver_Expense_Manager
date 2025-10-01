@@ -19,15 +19,18 @@ class MovementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final categories = context
-        .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
-        .where((element) => element.type == type)
-        .toList()
-      ..sort(
-        (a, b) => getCategoryName(a.name, l10n)
-            .compareTo(getCategoryName(b.name, l10n)),
-      );
+    final l10n = AppLocalizations.of(context);
+    final categories =
+        context
+            .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
+            .where((element) => element.type == type)
+            .toList()
+          ..sort(
+            (a, b) => getCategoryName(
+              a.name,
+              l10n,
+            ).compareTo(getCategoryName(b.name, l10n)),
+          );
 
     return BlocProvider(
       create: (_) => MovementCubit()..init(movement, categories),

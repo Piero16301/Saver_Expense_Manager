@@ -9,11 +9,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
 class MovementView extends StatelessWidget {
-  const MovementView({
-    required this.type,
-    required this.screenType,
-    super.key,
-  });
+  const MovementView({required this.type, required this.screenType, super.key});
 
   final CategoryType type;
   final MovementScreenType screenType;
@@ -21,7 +17,7 @@ class MovementView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<MovementCubit, MovementState>(
       builder: (context, state) => Scaffold(
@@ -31,11 +27,7 @@ class MovementView extends StatelessWidget {
           notificationPredicate: (notification) => false,
         ),
         body: Padding(
-          padding: const EdgeInsets.only(
-            left: 30,
-            right: 30,
-            bottom: 50,
-          ),
+          padding: const EdgeInsets.only(left: 30, right: 30, bottom: 50),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
@@ -90,8 +82,9 @@ class MovementView extends StatelessWidget {
                   errorText: l10n.movementAmountError,
                   onChanged: context.read<MovementCubit>().priceChanged,
                   prefix: const Icon(Icons.attach_money),
-                  initialValue:
-                      state.price == 0 ? '' : state.price.toStringAsFixed(2),
+                  initialValue: state.price == 0
+                      ? ''
+                      : state.price.toStringAsFixed(2),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(

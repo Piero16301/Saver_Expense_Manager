@@ -19,8 +19,9 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final categories = context
-        .select<AppCubit, List<Category>>((cubit) => cubit.state.categories);
+    final categories = context.select<AppCubit, List<Category>>(
+      (cubit) => cubit.state.categories,
+    );
 
     if (categories.isEmpty) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -50,10 +51,8 @@ class HomeView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
-              transitionBuilder: (child, animation) => FadeTransition(
-                opacity: animation,
-                child: child,
-              ),
+              transitionBuilder: (child, animation) =>
+                  FadeTransition(opacity: animation, child: child),
               child: _getSelectedBody(state.selectedIndex),
             ),
           ),
@@ -89,7 +88,7 @@ class BottomNavigationBarHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) => NavigationBar(
@@ -123,13 +122,16 @@ class AddMovementBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale =
-        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
-    final model = context
-        .select<AppCubit, GenerativeModel>((cubit) => cubit.state.model!);
+    final locale = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.locale!,
+    );
+    final model = context.select<AppCubit, GenerativeModel>(
+      (cubit) => cubit.state.model!,
+    );
     final categories = context
         .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
         .toList();
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       width: double.infinity,
@@ -158,18 +160,15 @@ class AddMovementBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            context.l10n.homeAddExpense,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            l10n.homeAddExpense,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Row(
             spacing: 10,
             children: [
               TonalButtonActionHome(
-                title: context.l10n.homeFile,
+                title: l10n.homeFile,
                 icon: Icons.upload_file,
                 onPressed: () async {
                   final result = await FilePicker.platform.pickFiles(
@@ -207,12 +206,12 @@ class AddMovementBottomSheet extends StatelessWidget {
                 },
               ),
               TonalButtonActionHome(
-                title: context.l10n.homeScan,
+                title: l10n.homeScan,
                 icon: Icons.document_scanner,
                 onPressed: () async {
                   final files =
                       await CunningDocumentScanner.getPictures(noOfPages: 1) ??
-                          [];
+                      [];
                   if (files.isNotEmpty) {
                     final movement = await buildMovementFromFile(
                       model: model,
@@ -244,16 +243,13 @@ class AddMovementBottomSheet extends StatelessWidget {
                 },
               ),
               TonalButtonActionHome(
-                title: context.l10n.homeFill,
+                title: l10n.homeFill,
                 icon: Icons.edit,
                 onPressed: () {
                   Navigator.of(context).pop();
                   context.pushNamed(
                     'movement',
-                    pathParameters: {
-                      'type': expenseType,
-                      'screenType': 'ADD',
-                    },
+                    pathParameters: {'type': expenseType, 'screenType': 'ADD'},
                     extra: Movement.empty,
                   );
                 },
@@ -262,18 +258,15 @@ class AddMovementBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 30),
           Text(
-            context.l10n.homeAddIncome,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            l10n.homeAddIncome,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           Row(
             spacing: 10,
             children: [
               TonalButtonActionHome(
-                title: context.l10n.homeFile,
+                title: l10n.homeFile,
                 icon: Icons.upload_file,
                 onPressed: () async {
                   final result = await FilePicker.platform.pickFiles(
@@ -298,10 +291,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                     // ignore: use_build_context_synchronously
                     await context.pushNamed(
                       'movement',
-                      pathParameters: {
-                        'type': incomeType,
-                        'screenType': 'ADD',
-                      },
+                      pathParameters: {'type': incomeType, 'screenType': 'ADD'},
                       extra: movement,
                     );
                   } else {
@@ -311,12 +301,12 @@ class AddMovementBottomSheet extends StatelessWidget {
                 },
               ),
               TonalButtonActionHome(
-                title: context.l10n.homeScan,
+                title: l10n.homeScan,
                 icon: Icons.document_scanner,
                 onPressed: () async {
                   final files =
                       await CunningDocumentScanner.getPictures(noOfPages: 1) ??
-                          [];
+                      [];
                   if (files.isNotEmpty) {
                     final movement = await buildMovementFromFile(
                       model: model,
@@ -335,10 +325,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                     // ignore: use_build_context_synchronously
                     await context.pushNamed(
                       'movement',
-                      pathParameters: {
-                        'type': incomeType,
-                        'screenType': 'ADD',
-                      },
+                      pathParameters: {'type': incomeType, 'screenType': 'ADD'},
                       extra: movement,
                     );
                   } else {
@@ -348,16 +335,13 @@ class AddMovementBottomSheet extends StatelessWidget {
                 },
               ),
               TonalButtonActionHome(
-                title: context.l10n.homeFill,
+                title: l10n.homeFill,
                 icon: Icons.edit,
                 onPressed: () {
                   Navigator.of(context).pop();
                   context.pushNamed(
                     'movement',
-                    pathParameters: {
-                      'type': incomeType,
-                      'screenType': 'ADD',
-                    },
+                    pathParameters: {'type': incomeType, 'screenType': 'ADD'},
                     extra: Movement.empty,
                   );
                 },
@@ -390,9 +374,7 @@ class TonalButtonActionHome extends StatelessWidget {
         child: FilledButton.tonal(
           style: ButtonStyle(
             shape: WidgetStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
             padding: WidgetStateProperty.all(
               const EdgeInsets.symmetric(horizontal: 7.5),

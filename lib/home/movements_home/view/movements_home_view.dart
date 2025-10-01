@@ -19,10 +19,7 @@ class MovementsHomeView extends StatelessWidget {
         padding: EdgeInsets.only(bottom: 20),
         child: Column(
           spacing: 20,
-          children: [
-            FilterMovementsHome(),
-            ListMovementsHome(),
-          ],
+          children: [FilterMovementsHome(), ListMovementsHome()],
         ),
       ),
     );
@@ -34,13 +31,16 @@ class FilterMovementsHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final categories = context
-        .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
-      ..sort(
-        (a, b) => getCategoryName(a.name, l10n)
-            .compareTo(getCategoryName(b.name, l10n)),
-      );
+    final l10n = AppLocalizations.of(context);
+    final categories =
+        context.select<AppCubit, List<Category>>(
+          (cubit) => cubit.state.categories,
+        )..sort(
+          (a, b) => getCategoryName(
+            a.name,
+            l10n,
+          ).compareTo(getCategoryName(b.name, l10n)),
+        );
 
     return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
       builder: (context, state) => Column(
@@ -102,9 +102,9 @@ class FilterMovementsHome extends StatelessWidget {
                         ? getCategoryIcon(state.filterCategory!.icon)
                         : null,
                     onSelected: (category) {
-                      context
-                          .read<MovementsHomeCubit>()
-                          .changeFilterCategory(category);
+                      context.read<MovementsHomeCubit>().changeFilterCategory(
+                        category,
+                      );
                     },
                   ),
                 ),
@@ -129,7 +129,7 @@ class ListMovementsHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
       buildWhen: (previous, current) =>
@@ -165,17 +165,15 @@ class ListMovementsHome extends StatelessWidget {
 }
 
 class ListMovementsItemHome extends StatelessWidget {
-  const ListMovementsItemHome({
-    required this.movement,
-    super.key,
-  });
+  const ListMovementsItemHome({required this.movement, super.key});
 
   final Movement movement;
 
   @override
   Widget build(BuildContext context) {
-    final locale =
-        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
+    final locale = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.locale!,
+    );
 
     return ListTile(
       onTap: () => context.pushNamed<bool>(
@@ -191,10 +189,7 @@ class ListMovementsItemHome extends StatelessWidget {
       contentPadding: const EdgeInsets.only(left: 16, right: 16),
       title: Text(
         movement.title,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -206,12 +201,11 @@ class ListMovementsItemHome extends StatelessWidget {
       trailing: Container(
         width: 80,
         decoration: BoxDecoration(
-          color: (movement.category.type == CategoryType.expense
-                  ? Colors.red
-                  : Colors.green)
-              .withValues(
-            alpha: 0.3,
-          ),
+          color:
+              (movement.category.type == CategoryType.expense
+                      ? Colors.red
+                      : Colors.green)
+                  .withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(

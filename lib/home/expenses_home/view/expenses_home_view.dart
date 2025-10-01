@@ -12,7 +12,7 @@ class ExpensesHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<ExpensesHomeCubit, ExpensesHomeState>(
       builder: (context, state) => Column(
@@ -43,8 +43,9 @@ class ExpensesHomeView extends StatelessWidget {
               }
 
               final data = buildChartData(
-                docs: snapshot.data!.docs
-                    as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+                docs:
+                    snapshot.data!.docs
+                        as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
               );
 
               return Expanded(

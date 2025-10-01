@@ -11,17 +11,13 @@ final appLightTheme = ThemeData(
     brightness: Brightness.light,
   ),
   snackBarTheme: SnackBarThemeData(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     behavior: SnackBarBehavior.floating,
     showCloseIcon: true,
     contentTextStyle: GoogleFonts.nunito(),
   ),
-  cardTheme: CardTheme(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-    ),
+  cardTheme: CardThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     color: seedColor.withValues(alpha: 0.3),
     elevation: 0,
   ),
@@ -38,17 +34,13 @@ final appDarkTheme = ThemeData(
     brightness: Brightness.dark,
   ),
   snackBarTheme: SnackBarThemeData(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     behavior: SnackBarBehavior.floating,
     showCloseIcon: true,
     contentTextStyle: GoogleFonts.nunito(),
   ),
-  cardTheme: CardTheme(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-    ),
+  cardTheme: CardThemeData(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     color: seedColor.withValues(alpha: 0.3),
     elevation: 0,
   ),

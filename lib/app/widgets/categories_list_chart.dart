@@ -5,16 +5,13 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
 class CategoriesListChart extends StatelessWidget {
-  const CategoriesListChart({
-    required this.data,
-    super.key,
-  });
+  const CategoriesListChart({required this.data, super.key});
 
   final List<CategoryData> data;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return Expanded(
       child: SingleChildScrollView(
@@ -36,9 +33,9 @@ class CategoriesListChart extends StatelessWidget {
                 trailing: Container(
                   width: 60,
                   decoration: BoxDecoration(
-                    color: HexColor.fromHex(e.category.color).withValues(
-                      alpha: 0.5,
-                    ),
+                    color: HexColor.fromHex(
+                      e.category.color,
+                    ).withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Padding(
@@ -61,7 +58,8 @@ class CategoriesListChart extends StatelessWidget {
   }
 
   int percentage(int index) {
-    final percentage = data[index].value /
+    final percentage =
+        data[index].value /
         data.map((e) => e.value).reduce((a, b) => a + b) *
         100;
     return percentage.toInt();

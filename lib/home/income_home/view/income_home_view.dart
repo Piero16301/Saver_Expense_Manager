@@ -12,7 +12,7 @@ class IncomeHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<IncomeHomeCubit, IncomeHomeState>(
       builder: (context, state) => Column(
@@ -37,14 +37,13 @@ class IncomeHomeView extends StatelessWidget {
               }
 
               if (snapshot.data!.docs.isEmpty) {
-                return Expanded(
-                  child: Center(child: Text(l10n.homeNoIncomes)),
-                );
+                return Expanded(child: Center(child: Text(l10n.homeNoIncomes)));
               }
 
               final data = buildChartData(
-                docs: snapshot.data!.docs
-                    as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+                docs:
+                    snapshot.data!.docs
+                        as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
               );
 
               return Expanded(

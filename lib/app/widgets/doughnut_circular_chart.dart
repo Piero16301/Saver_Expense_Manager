@@ -19,7 +19,7 @@ class DoughnutCircularChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return SfCircularChart(
       series: _buildDoughnutSeries(l10n),
@@ -31,23 +31,20 @@ class DoughnutCircularChart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                getCategoryName(
-                  data[selectedIndex].category.name,
-                  l10n,
-                ),
+                getCategoryName(data[selectedIndex].category.name, l10n),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
                 moneyFormat.format(data[selectedIndex].value),
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
               ),
               Text(
                 '${_percentage.toInt()}%',
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
               SizedBox(

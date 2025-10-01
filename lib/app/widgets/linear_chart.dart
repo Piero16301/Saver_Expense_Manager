@@ -5,11 +5,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:user_api/user_api.dart';
 
 class LinearChart extends StatelessWidget {
-  const LinearChart({
-    required this.category,
-    required this.data,
-    super.key,
-  });
+  const LinearChart({required this.category, required this.data, super.key});
 
   final Category category;
   final List<TrendData> data;
@@ -18,7 +14,7 @@ class LinearChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final maximum = data.map((e) => e.value).reduce((a, b) => a > b ? a : b);
     final maximumRounded = (maximum / 100).ceil() * 100;
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return Expanded(
       child: SingleChildScrollView(

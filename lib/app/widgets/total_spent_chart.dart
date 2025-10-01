@@ -4,25 +4,19 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
 class TotalSpentChart extends StatelessWidget {
-  const TotalSpentChart({
-    required this.data,
-    super.key,
-  });
+  const TotalSpentChart({required this.data, super.key});
 
   final List<CategoryData> data;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Column(
         children: [
-          Text(
-            l10n.homeTotal,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          Text(l10n.homeTotal, style: Theme.of(context).textTheme.titleMedium),
           Text(
             moneyFormat.format(
               data.fold<double>(
@@ -30,9 +24,9 @@ class TotalSpentChart extends StatelessWidget {
                 (previousValue, element) => previousValue + element.value,
               ),
             ),
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
           ),
         ],
       ),

@@ -54,7 +54,7 @@ android {
         applicationId "com.pmorales.saver.expense.manager"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion 23
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
@@ -114,5 +114,5 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.20"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.1.0"
 }
