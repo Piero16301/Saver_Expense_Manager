@@ -20,8 +20,9 @@ class MonthRangeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale =
-        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
+    final locale = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.locale!,
+    );
 
     return Row(
       children: [
@@ -34,19 +35,18 @@ class MonthRangeSelector extends StatelessWidget {
                 await showMonthPicker(
                   context: context,
                   initialDate: startMonth,
-                  firstDate: minDate,
+                  firstDate: AppVariables.minDate,
                   lastDate: endMonth.copyWith(month: endMonth.month - 1),
-                ).then(
-                  onChangeStartMonth,
-                );
+                ).then(onChangeStartMonth);
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Center(
                   child: Text(
-                    DateFormat('MMM yyyy', locale.languageCode)
-                        .format(startMonth)
-                        .toUpperCase(),
+                    DateFormat(
+                      'MMM yyyy',
+                      locale.languageCode,
+                    ).format(startMonth).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -69,17 +69,16 @@ class MonthRangeSelector extends StatelessWidget {
                   initialDate: endMonth,
                   firstDate: startMonth.copyWith(month: startMonth.month + 1),
                   lastDate: DateTime.now(),
-                ).then(
-                  onChangeEndMonth,
-                );
+                ).then(onChangeEndMonth);
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Center(
                   child: Text(
-                    DateFormat('MMM yyyy', locale.languageCode)
-                        .format(endMonth)
-                        .toUpperCase(),
+                    DateFormat(
+                      'MMM yyyy',
+                      locale.languageCode,
+                    ).format(endMonth).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

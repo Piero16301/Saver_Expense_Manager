@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class AppFileField extends StatelessWidget {
@@ -16,13 +19,14 @@ class AppFileField extends StatelessWidget {
   final String label;
   final String labelAdd;
   final void Function(String) onAdd;
-  final void Function(String) onRemove;
-  final void Function(String) openFile;
+  final Future<void> Function(String) onRemove;
+  final Future<void> Function(String) openFile;
   final List<String> attachments;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final appLoader = AppLoader(context);
 
     return Row(
       children: [
@@ -39,13 +43,23 @@ class AppFileField extends StatelessWidget {
                   for (var i = 0; i < attachments.length; i++)
                     SizedBox(
                       child: GestureDetector(
-                        onTap: () => openFile(attachments[i]),
+                        onTap: () async {
+                          unawaited(appLoader.showLoading());
+                          await openFile(attachments[i]);
+                          if (appLoader.isLoading) {
+                            appLoader.hideLoading();
+                          }
+                        },
                         child: Chip(
                           label: Text(
                             getAttachmentName(attachments[i], i + 1, l10n),
                           ),
                           avatar: Icon(getAttachmentIcon(attachments[i])),
-                          onDeleted: () => onRemove(attachments[i]),
+                          onDeleted: () => _showRemoveConfirmationDialog(
+                            context,
+                            attachments[i],
+                            l10n,
+                          ),
                         ),
                       ),
                     ),
@@ -98,5 +112,35 @@ class AppFileField extends StatelessWidget {
       default:
         return Icons.attach_file;
     }
+  }
+
+  void _showRemoveConfirmationDialog(
+    BuildContext context,
+    String attachment,
+    AppLocalizations l10n,
+  ) {
+    showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(l10n.confirmRemoveAttachmentTitle),
+          content: Text(l10n.confirmRemoveAttachmentMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.removeAttachmentCancel),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.removeAttachmentConfirm),
+            ),
+          ],
+        );
+      },
+    ).then((shouldRemove) {
+      if (shouldRemove ?? false) {
+        unawaited(onRemove(attachment));
+      }
+    });
   }
 }

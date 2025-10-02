@@ -168,6 +168,23 @@
     "@movementCustomType": {},
     "movementSaveError": "Se produjo un error al guardar el movimiento",
     "@movementSaveError": {},
+    "movementDateWarningTitle": "Advertencia de Fecha",
+    "@movementDateWarningTitle": {},
+    "movementDateWarningContent": "Estás a punto de guardar un movimiento con una fecha anterior a {days} días. ¿Estás seguro de que deseas continuar?",
+    "@movementDateWarningContent": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+
+    "cancel": "Cancelar",
+    "@cancel": {},
+    "confirm": "Confirmar",
+    "@confirm": {},
+    "ok": "OK",
+    "@ok": {},
 
     "movementsNoData": "No se han registrado movimientos",
     "@movementsNoData": {},
@@ -193,5 +210,27 @@
     "logoutCancel": "Cancelar",
     "@logoutCancel": {},
     "logoutConfirm": "Cerrar Sesión",
-    "@logoutConfirm": {}
+    "@logoutConfirm": {},
+
+    "confirmRemoveAttachmentTitle": "Eliminar Adjunto",
+    "@confirmRemoveAttachmentTitle": {},
+    "confirmRemoveAttachmentMessage": "¿Estás seguro de que deseas eliminar este adjunto?",
+    "@confirmRemoveAttachmentMessage": {},
+    "removeAttachmentCancel": "Cancelar",
+    "@removeAttachmentCancel": {},
+    "removeAttachmentConfirm": "Eliminar",
+    "@removeAttachmentConfirm": {},
+
+    "confirmDeleteMovementTitle": "Eliminar Movimiento",
+    "@confirmDeleteMovementTitle": {},
+    "confirmDeleteMovementMessage": "¿Estás seguro de que deseas eliminar este movimiento? Esta acción no se puede deshacer.",
+    "@confirmDeleteMovementMessage": {},
+    "deleteMovementCancel": "Cancelar",
+    "@deleteMovementCancel": {},
+    "deleteMovementConfirm": "Eliminar",
+    "@deleteMovementConfirm": {},
+    "movementDeleteSuccess": "Movimiento eliminado correctamente",
+    "@movementDeleteSuccess": {},
+    "movementDeleteError": "Se produjo un error al eliminar el movimiento",
+    "@movementDeleteError": {}
 }

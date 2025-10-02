@@ -17,8 +17,9 @@ class AppDateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale =
-        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
+    final locale = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.locale!,
+    );
 
     return TextFormField(
       decoration: InputDecoration(
@@ -30,7 +31,7 @@ class AppDateField extends StatelessWidget {
             final date = await showDatePicker(
               context: context,
               initialDate: initialDate,
-              firstDate: minDate,
+              firstDate: AppVariables.minDate,
               lastDate: DateTime.now(),
             );
             if (date != null) {

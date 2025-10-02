@@ -168,6 +168,23 @@
     "@movementCustomType": {},
     "movementSaveError": "An error occurred while saving the movement",
     "@movementSaveError": {},
+    "movementDateWarningTitle": "Date Warning",
+    "@movementDateWarningTitle": {},
+    "movementDateWarningContent": "You are about to save a movement with a date older than {days} days. Are you sure you want to continue?",
+    "@movementDateWarningContent": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+
+    "cancel": "Cancel",
+    "@cancel": {},
+    "confirm": "Confirm",
+    "@confirm": {},
+    "ok": "OK",
+    "@ok": {},
 
     "movementsNoData": "No movements registered",
     "@movementsNoData": {},
@@ -193,5 +210,27 @@
     "logoutCancel": "Cancel",
     "@logoutCancel": {},
     "logoutConfirm": "Logout",
-    "@logoutConfirm": {}
+    "@logoutConfirm": {},
+
+    "confirmRemoveAttachmentTitle": "Remove Attachment",
+    "@confirmRemoveAttachmentTitle": {},
+    "confirmRemoveAttachmentMessage": "Are you sure you want to remove this attachment?",
+    "@confirmRemoveAttachmentMessage": {},
+    "removeAttachmentCancel": "Cancel",
+    "@removeAttachmentCancel": {},
+    "removeAttachmentConfirm": "Remove",
+    "@removeAttachmentConfirm": {},
+
+    "confirmDeleteMovementTitle": "Delete Movement",
+    "@confirmDeleteMovementTitle": {},
+    "confirmDeleteMovementMessage": "Are you sure you want to delete this movement? This action cannot be undone.",
+    "@confirmDeleteMovementMessage": {},
+    "deleteMovementCancel": "Cancel",
+    "@deleteMovementCancel": {},
+    "deleteMovementConfirm": "Delete",
+    "@deleteMovementConfirm": {},
+    "movementDeleteSuccess": "Movement deleted successfully",
+    "@movementDeleteSuccess": {},
+    "movementDeleteError": "An error occurred while deleting the movement",
+    "@movementDeleteError": {}
 }

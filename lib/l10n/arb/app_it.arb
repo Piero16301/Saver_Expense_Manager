@@ -168,6 +168,23 @@
     "@movementCustomType": {},
     "movementSaveError": "Si è verificato un errore durante il salvataggio del movimento",
     "@movementSaveError": {},
+    "movementDateWarningTitle": "Avviso Data",
+    "@movementDateWarningTitle": {},
+    "movementDateWarningContent": "Stai per salvare un movimento con una data precedente di {days} giorni. Sei sicuro di voler continuare?",
+    "@movementDateWarningContent": {
+        "placeholders": {
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+
+    "cancel": "Annulla",
+    "@cancel": {},
+    "confirm": "Conferma",
+    "@confirm": {},
+    "ok": "OK",
+    "@ok": {},
 
     "movementsNoData": "Nessun movimento registrato",
     "@movementsNoData": {},
@@ -193,5 +210,27 @@
     "logoutCancel": "Annulla",
     "@logoutCancel": {},
     "logoutConfirm": "Disconnettersi",
-    "@logoutConfirm": {}
+    "@logoutConfirm": {},
+
+    "confirmRemoveAttachmentTitle": "Rimuovi Allegato",
+    "@confirmRemoveAttachmentTitle": {},
+    "confirmRemoveAttachmentMessage": "Sei sicuro di voler rimuovere questo allegato?",
+    "@confirmRemoveAttachmentMessage": {},
+    "removeAttachmentCancel": "Annulla",
+    "@removeAttachmentCancel": {},
+    "removeAttachmentConfirm": "Rimuovi",
+    "@removeAttachmentConfirm": {},
+
+    "confirmDeleteMovementTitle": "Elimina Movimento",
+    "@confirmDeleteMovementTitle": {},
+    "confirmDeleteMovementMessage": "Sei sicuro di voler eliminare questo movimento? Questa azione non può essere annullata.",
+    "@confirmDeleteMovementMessage": {},
+    "deleteMovementCancel": "Annulla",
+    "@deleteMovementCancel": {},
+    "deleteMovementConfirm": "Elimina",
+    "@deleteMovementConfirm": {},
+    "movementDeleteSuccess": "Movimento eliminato con successo",
+    "@movementDeleteSuccess": {},
+    "movementDeleteError": "Si è verificato un errore durante l'eliminazione del movimento",
+    "@movementDeleteError": {}
 }

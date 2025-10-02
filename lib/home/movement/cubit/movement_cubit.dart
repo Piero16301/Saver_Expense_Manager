@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -84,7 +85,7 @@ class MovementCubit extends Cubit<MovementState> {
 
       final data =
           await FirebaseStorage.instance.ref().child(value).getData() ??
-              Uint8List(0);
+          Uint8List(0);
       await file.writeAsBytes(data.toList());
       await OpenFile.open(filePath);
     } catch (e) {
@@ -95,9 +96,15 @@ class MovementCubit extends Cubit<MovementState> {
   bool saveMovement(String userId) {
     // Save movement in Firebase Firestore
     final docId = state.id.isEmpty
-        ? FirebaseFirestore.instance.collection(movementsCollection).doc().id
+        ? FirebaseFirestore.instance
+              .collection(AppVariables.movementsCollection)
+              .doc()
+              .id
         : state.id;
-    FirebaseFirestore.instance.collection(movementsCollection).doc(docId).set(
+    FirebaseFirestore.instance
+        .collection(AppVariables.movementsCollection)
+        .doc(docId)
+        .set(
           Movement(
             id: docId,
             title: state.title,
@@ -110,6 +117,25 @@ class MovementCubit extends Cubit<MovementState> {
             user: userId,
           ).toJson(),
         );
+
+    return true;
+  }
+
+  bool removeMovement() {
+    if (state.id.isEmpty) {
+      return false;
+    }
+
+    // Remove movement from Firebase Firestore
+    FirebaseFirestore.instance
+        .collection(AppVariables.movementsCollection)
+        .doc(state.id)
+        .delete();
+
+    // Remove associated attachments from Firebase Storage
+    for (final attachment in state.attachments) {
+      FirebaseStorage.instance.ref().child(attachment).delete();
+    }
 
     return true;
   }

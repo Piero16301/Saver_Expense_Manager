@@ -66,8 +66,9 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> loadCategories() async {
-    final categoriesJson =
-        await FirebaseFirestore.instance.collection(categoriesCollection).get();
+    final categoriesJson = await FirebaseFirestore.instance
+        .collection(AppVariables.categoriesCollection)
+        .get();
     final categories = categoriesJson.docs
         .map((category) => Category.fromJson(category.data()))
         .toList();

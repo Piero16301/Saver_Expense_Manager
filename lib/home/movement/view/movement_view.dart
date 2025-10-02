@@ -18,13 +18,17 @@ class MovementView extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
     final l10n = AppLocalizations.of(context);
+    final selectedDate = context.select<MovementCubit, DateTime>(
+      (cubit) => cubit.state.date!,
+    );
 
     return BlocBuilder<MovementCubit, MovementState>(
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Text(appBarTitle(l10n)),
+          title: Text(_appBarTitle(l10n)),
           centerTitle: true,
           notificationPredicate: (notification) => false,
+          actions: _appBarActions(context, l10n),
         ),
         body: Padding(
           padding: const EdgeInsets.only(left: 30, right: 30, bottom: 50),
@@ -117,15 +121,57 @@ class MovementView extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (context.read<MovementCubit>().saveMovement(user.uid)) {
-              context.pop<bool>(true);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.movementSaveError),
-                  behavior: SnackBarBehavior.floating,
+            if (selectedDate.isBefore(
+              DateTime.now().subtract(
+                const Duration(days: AppVariables.maxDaysWarning),
+              ),
+            )) {
+              showDialog<void>(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  title: Text(l10n.movementDateWarningTitle),
+                  content: Text(
+                    l10n.movementDateWarningContent(
+                      AppVariables.maxDaysWarning,
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => context.pop(),
+                      child: Text(l10n.cancel),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.pop();
+                        if (context.read<MovementCubit>().saveMovement(
+                          user.uid,
+                        )) {
+                          context.pop<bool>(true);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(l10n.movementSaveError),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      },
+                      child: Text(l10n.confirm),
+                    ),
+                  ],
                 ),
               );
+            } else {
+              if (context.read<MovementCubit>().saveMovement(user.uid)) {
+                context.pop<bool>(true);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.movementSaveError),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
             }
           },
           child: const Icon(Icons.save),
@@ -134,12 +180,64 @@ class MovementView extends StatelessWidget {
     );
   }
 
-  String appBarTitle(AppLocalizations l10n) {
+  String _appBarTitle(AppLocalizations l10n) {
     switch (screenType) {
       case MovementScreenType.add:
         return l10n.movementNewAppbarTitle;
       case MovementScreenType.edit:
         return l10n.movementEditAppbarTitle;
     }
+  }
+
+  List<Widget>? _appBarActions(BuildContext context, AppLocalizations l10n) {
+    switch (screenType) {
+      case MovementScreenType.add:
+        return null;
+      case MovementScreenType.edit:
+        return [
+          IconButton(
+            onPressed: () => _showDeleteDialog(context, l10n),
+            icon: const Icon(Icons.delete),
+          ),
+        ];
+    }
+  }
+
+  void _showDeleteDialog(BuildContext context, AppLocalizations l10n) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.confirmDeleteMovementTitle),
+        content: Text(l10n.confirmDeleteMovementMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.deleteMovementCancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              if (context.read<MovementCubit>().removeMovement()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.movementDeleteSuccess),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                context.pop<bool>(true);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(l10n.movementDeleteError),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              }
+            },
+            child: Text(l10n.deleteMovementConfirm),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -149,7 +149,7 @@ class TabTrendCategory extends StatefulWidget {
 
 class _TabTrendCategoryState extends State<TabTrendCategory> {
   DateTime endMonth = DateTime.now();
-  DateTime startMonth = substracMonth(deafultMonthsTrend);
+  DateTime startMonth = substracMonth(AppVariables.deafultMonthsTrend);
 
   @override
   Widget build(BuildContext context) {

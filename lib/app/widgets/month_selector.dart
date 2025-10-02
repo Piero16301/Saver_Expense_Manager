@@ -20,8 +20,9 @@ class MonthSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale =
-        context.select<AppCubit, Locale>((cubit) => cubit.state.locale!);
+    final locale = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.locale!,
+    );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -43,19 +44,18 @@ class MonthSelector extends StatelessWidget {
                     await showMonthPicker(
                       context: context,
                       initialDate: monthSelected,
-                      firstDate: minDate,
+                      firstDate: AppVariables.minDate,
                       lastDate: DateTime.now(),
-                    ).then(
-                      onChangeMonth,
-                    );
+                    ).then(onChangeMonth);
                   },
                   child: Text(
-                    DateFormat('MMMM yyyy', locale.languageCode)
-                        .format(monthSelected)
-                        .toUpperCase(),
+                    DateFormat(
+                      'MMMM yyyy',
+                      locale.languageCode,
+                    ).format(monthSelected).toUpperCase(),
                     style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -81,8 +81,8 @@ class MonthSelector extends StatelessWidget {
     } else {
       previousMonth = DateTime(monthSelected.year, monthSelected.month - 1);
     }
-    return previousMonth.isAfter(minDate) ||
-        previousMonth.isAtSameMomentAs(minDate);
+    return previousMonth.isAfter(AppVariables.minDate) ||
+        previousMonth.isAtSameMomentAs(AppVariables.minDate);
   }
 
   bool get forwardEnabled {

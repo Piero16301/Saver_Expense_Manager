@@ -26,7 +26,7 @@ Stream<QuerySnapshot<Object?>>? getMonthMovements({
   required ExpenseType type,
 }) {
   return FirebaseFirestore.instance
-      .collection(movementsCollection)
+      .collection(AppVariables.movementsCollection)
       .where('user', isEqualTo: userId)
       .where('category.type', isEqualTo: type.value)
       .where(
@@ -55,7 +55,7 @@ Query<Map<String, dynamic>> getCategoryMovements({
   required Category category,
 }) {
   return FirebaseFirestore.instance
-      .collection(movementsCollection)
+      .collection(AppVariables.movementsCollection)
       .where('user', isEqualTo: userId)
       .where('category.id', isEqualTo: category.id)
       .where(
@@ -84,7 +84,7 @@ Query<Map<String, dynamic>> getUserMovements({
   required Category? category,
 }) {
   var query = FirebaseFirestore.instance
-      .collection(movementsCollection)
+      .collection(AppVariables.movementsCollection)
       .where('user', isEqualTo: userId);
 
   if (type != null) {
@@ -134,7 +134,7 @@ Stream<QuerySnapshot<Object?>>? getTrendChart({
   required Category category,
 }) {
   return FirebaseFirestore.instance
-      .collection(movementsCollection)
+      .collection(AppVariables.movementsCollection)
       .where('user', isEqualTo: userId)
       .where('category.id', isEqualTo: category.id)
       .where(
