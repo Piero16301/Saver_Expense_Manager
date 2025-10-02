@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +14,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
+import 'package:uuid/uuid.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -30,7 +33,7 @@ class HomeView extends StatelessWidget {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Image.asset('assets/images/logo_no_bg.png', height: 40),
+          title: Image.asset('assets/images/logo_no_bg.png', height: 35),
           centerTitle: true,
           notificationPredicate: (notification) => false,
           leading: const ChangeThemeButton(),
@@ -58,15 +61,30 @@ class HomeView extends StatelessWidget {
           ),
         ),
         bottomNavigationBar: const BottomNavigationBarHome(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () => showModalBottomSheet<void>(
-            context: context,
-            builder: (context) => const AddMovementBottomSheet(),
-          ),
-          child: const Icon(Icons.add),
-        ),
+        floatingActionButton: state.selectedIndex != 1
+            ? FloatingActionButton(
+                onPressed: () => showModalBottomSheet<void>(
+                  context: context,
+                  builder: (context) => AddMovementBottomSheet(
+                    expenseType: _getExpenseType(state.selectedIndex),
+                  ),
+                ),
+                child: const Icon(Icons.add),
+              )
+            : null,
       ),
     );
+  }
+
+  ExpenseType _getExpenseType(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return ExpenseType.expense;
+      case 2:
+        return ExpenseType.income;
+      default:
+        return ExpenseType.expense;
+    }
   }
 
   Widget _getSelectedBody(int selectedIndex) {
@@ -118,7 +136,9 @@ class BottomNavigationBarHome extends StatelessWidget {
 }
 
 class AddMovementBottomSheet extends StatelessWidget {
-  const AddMovementBottomSheet({super.key});
+  const AddMovementBottomSheet({required this.expenseType, super.key});
+
+  final ExpenseType expenseType;
 
   @override
   Widget build(BuildContext context) {
@@ -132,10 +152,11 @@ class AddMovementBottomSheet extends StatelessWidget {
         .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
         .toList();
     final l10n = AppLocalizations.of(context);
+    final loader = AppLoader(context);
 
     return Container(
       width: double.infinity,
-      height: 280,
+      height: 250,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -143,7 +164,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 20,
         children: [
           Center(
             child: GestureDetector(
@@ -158,12 +179,12 @@ class AddMovementBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 10),
           Text(
-            l10n.homeAddExpense,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            expenseType == ExpenseType.expense
+                ? l10n.homeAddExpense
+                : l10n.homeAddIncome,
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-          const SizedBox(height: 10),
           Row(
             spacing: 10,
             children: [
@@ -176,10 +197,21 @@ class AddMovementBottomSheet extends StatelessWidget {
                     allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
                   );
                   if (result != null) {
+                    unawaited(loader.showLoading());
+
+                    // Upload file to Firebase Storage
+                    final ext = result.files.single.path!.split('.').last;
+                    final ref = FirebaseStorage.instance.ref().child(
+                      '${const Uuid().v4()}.$ext',
+                    );
+                    final uploadTask = await ref.putFile(
+                      File(result.files.single.path!),
+                    );
+
                     final file = result.files.single;
                     final movement = await buildMovementFromFile(
                       model: model,
-                      type: expenseType,
+                      expenseType: expenseType,
                       categories: categories
                           .where((c) => c.type == CategoryType.expense)
                           .toList(),
@@ -188,16 +220,22 @@ class AddMovementBottomSheet extends StatelessWidget {
                       bytes: await file.xFile.readAsBytes(),
                     );
 
+                    if (loader.isLoading) {
+                      loader.hideLoading();
+                    }
+
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pop();
                     // ignore: use_build_context_synchronously
                     await context.pushNamed(
                       'movement',
                       pathParameters: {
-                        'type': expenseType,
+                        'type': expenseType.value,
                         'screenType': 'ADD',
                       },
-                      extra: movement,
+                      extra: movement.copyWith(
+                        attachments: [uploadTask.ref.name],
+                      ),
                     );
                   } else {
                     // ignore: use_build_context_synchronously
@@ -213,9 +251,18 @@ class AddMovementBottomSheet extends StatelessWidget {
                       await CunningDocumentScanner.getPictures(noOfPages: 1) ??
                       [];
                   if (files.isNotEmpty) {
+                    unawaited(loader.showLoading());
+
+                    // Upload file to Firebase Storage
+                    final ext = files.first.split('.').last;
+                    final ref = FirebaseStorage.instance.ref().child(
+                      '${const Uuid().v4()}.$ext',
+                    );
+                    final uploadTask = await ref.putFile(File(files.first));
+
                     final movement = await buildMovementFromFile(
                       model: model,
-                      type: expenseType,
+                      expenseType: expenseType,
                       categories: categories
                           .where((c) => c.type == CategoryType.expense)
                           .toList(),
@@ -225,16 +272,22 @@ class AddMovementBottomSheet extends StatelessWidget {
                       bytes: await File(files.first).readAsBytes(),
                     );
 
+                    if (loader.isLoading) {
+                      loader.hideLoading();
+                    }
+
                     // ignore: use_build_context_synchronously
                     Navigator.of(context).pop();
                     // ignore: use_build_context_synchronously
                     await context.pushNamed(
                       'movement',
                       pathParameters: {
-                        'type': expenseType,
+                        'type': expenseType.value,
                         'screenType': 'ADD',
                       },
-                      extra: movement,
+                      extra: movement.copyWith(
+                        attachments: [uploadTask.ref.name],
+                      ),
                     );
                   } else {
                     // ignore: use_build_context_synchronously
@@ -243,105 +296,16 @@ class AddMovementBottomSheet extends StatelessWidget {
                 },
               ),
               TonalButtonActionHome(
-                title: l10n.homeFill,
+                title: l10n.homeEnter,
                 icon: Icons.edit,
                 onPressed: () {
                   Navigator.of(context).pop();
                   context.pushNamed(
                     'movement',
-                    pathParameters: {'type': expenseType, 'screenType': 'ADD'},
-                    extra: Movement.empty,
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 30),
-          Text(
-            l10n.homeAddIncome,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 10),
-          Row(
-            spacing: 10,
-            children: [
-              TonalButtonActionHome(
-                title: l10n.homeFile,
-                icon: Icons.upload_file,
-                onPressed: () async {
-                  final result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
-                  );
-                  if (result != null) {
-                    final file = result.files.single;
-                    final movement = await buildMovementFromFile(
-                      model: model,
-                      type: incomeType,
-                      categories: categories
-                          .where((c) => c.type == CategoryType.income)
-                          .toList(),
-                      languageCode: locale.languageCode,
-                      mimeType: lookupMimeType(file.name) ?? 'application/pdf',
-                      bytes: await file.xFile.readAsBytes(),
-                    );
-
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                    // ignore: use_build_context_synchronously
-                    await context.pushNamed(
-                      'movement',
-                      pathParameters: {'type': incomeType, 'screenType': 'ADD'},
-                      extra: movement,
-                    );
-                  } else {
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-              TonalButtonActionHome(
-                title: l10n.homeScan,
-                icon: Icons.document_scanner,
-                onPressed: () async {
-                  final files =
-                      await CunningDocumentScanner.getPictures(noOfPages: 1) ??
-                      [];
-                  if (files.isNotEmpty) {
-                    final movement = await buildMovementFromFile(
-                      model: model,
-                      type: incomeType,
-                      categories: categories
-                          .where((c) => c.type == CategoryType.income)
-                          .toList(),
-                      languageCode: locale.languageCode,
-                      mimeType:
-                          lookupMimeType(files.first) ?? 'application/pdf',
-                      bytes: await File(files.first).readAsBytes(),
-                    );
-
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                    // ignore: use_build_context_synchronously
-                    await context.pushNamed(
-                      'movement',
-                      pathParameters: {'type': incomeType, 'screenType': 'ADD'},
-                      extra: movement,
-                    );
-                  } else {
-                    // ignore: use_build_context_synchronously
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-              TonalButtonActionHome(
-                title: l10n.homeFill,
-                icon: Icons.edit,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  context.pushNamed(
-                    'movement',
-                    pathParameters: {'type': incomeType, 'screenType': 'ADD'},
+                    pathParameters: {
+                      'type': expenseType.value,
+                      'screenType': 'ADD',
+                    },
                     extra: Movement.empty,
                   );
                 },
@@ -370,28 +334,25 @@ class TonalButtonActionHome extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: SizedBox(
-        height: 50,
+        height: 100,
         child: FilledButton.tonal(
           style: ButtonStyle(
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
-            padding: WidgetStateProperty.all(
-              const EdgeInsets.symmetric(horizontal: 7.5),
-            ),
+            padding: WidgetStateProperty.all(const EdgeInsets.all(10)),
           ),
           onPressed: onPressed,
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             spacing: 5,
             children: [
-              Icon(icon, size: 25),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
+              Icon(icon, size: 40),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.bodyMedium,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
             ],
           ),

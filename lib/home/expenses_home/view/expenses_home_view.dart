@@ -27,7 +27,7 @@ class ExpensesHomeView extends StatelessWidget {
             stream: getMonthMovements(
               userId: user!.uid,
               monthSelected: state.monthSelected!,
-              type: expenseType,
+              type: ExpenseType.expense,
             ),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -60,7 +60,11 @@ class ExpensesHomeView extends StatelessWidget {
                           .read<ExpensesHomeCubit>()
                           .changeExplodeIndex(p0.pointIndex),
                     ),
-                    CategoriesListChart(data: data),
+                    const SizedBox(height: 10),
+                    MovementsListChart(
+                      filterCategory: data[state.selectedIndex].category,
+                      monthSelected: state.monthSelected!,
+                    ),
                   ],
                 ),
               );

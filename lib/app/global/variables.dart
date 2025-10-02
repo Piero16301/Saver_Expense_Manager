@@ -6,10 +6,13 @@ const categoriesCollection = 'categories';
 const movementsCollection = 'movements';
 const usersCollection = 'users';
 
-const expenseType = 'EXPENSE';
-const incomeType = 'INCOME';
+enum ExpenseType {
+  expense('EXPENSE'),
+  income('INCOME');
 
-enum MovementScreenType {
-  add,
-  edit,
+  const ExpenseType(this.value);
+
+  final String value;
 }
+
+enum MovementScreenType { add, edit }

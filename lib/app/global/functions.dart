@@ -23,12 +23,12 @@ DateTime substracMonth(int month) {
 Stream<QuerySnapshot<Object?>>? getMonthMovements({
   required String userId,
   required DateTime monthSelected,
-  required String type,
+  required ExpenseType type,
 }) {
   return FirebaseFirestore.instance
       .collection(movementsCollection)
       .where('user', isEqualTo: userId)
-      .where('category.type', isEqualTo: type)
+      .where('category.type', isEqualTo: type.value)
       .where(
         'date',
         isGreaterThanOrEqualTo: Timestamp.fromDate(
@@ -49,7 +49,7 @@ Stream<QuerySnapshot<Object?>>? getMonthMovements({
       .snapshots();
 }
 
-Stream<QuerySnapshot<Object?>>? getCategoryMovements({
+Query<Map<String, dynamic>> getCategoryMovements({
   required String userId,
   required DateTime monthSelected,
   required Category category,
@@ -75,8 +75,7 @@ Stream<QuerySnapshot<Object?>>? getCategoryMovements({
           ),
         ),
       )
-      .orderBy('date', descending: true)
-      .snapshots();
+      .orderBy('date', descending: true);
 }
 
 Query<Map<String, dynamic>> getUserMovements({
@@ -91,7 +90,9 @@ Query<Map<String, dynamic>> getUserMovements({
   if (type != null) {
     query = query.where(
       'category.type',
-      isEqualTo: type == CategoryType.expense ? expenseType : incomeType,
+      isEqualTo: type == CategoryType.expense
+          ? ExpenseType.expense.value
+          : ExpenseType.income.value,
     );
   }
 
@@ -114,8 +115,9 @@ List<CategoryData> buildChartData({
     }
   }
   for (final category in categories) {
-    final movementsByCategory =
-        movements.where((element) => element.category == category).toList();
+    final movementsByCategory = movements
+        .where((element) => element.category == category)
+        .toList();
     final total = movementsByCategory.fold<double>(
       0,
       (previousValue, element) => previousValue + element.price,
@@ -161,12 +163,14 @@ List<TrendData> buildTrendData({
 }) {
   final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
   final data = <TrendData>[];
-  for (var i = startMonth;
-      i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
-      i = DateTime(
-    i.month == 12 ? i.year + 1 : i.year,
-    i.month == 12 ? 1 : i.month + 1,
-  )) {
+  for (
+    var i = startMonth;
+    i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
+    i = DateTime(
+      i.month == 12 ? i.year + 1 : i.year,
+      i.month == 12 ? 1 : i.month + 1,
+    )
+  ) {
     final movementsByMonth = movements
         .where(
           (element) =>
@@ -189,14 +193,14 @@ List<TrendData> buildTrendData({
 
 Future<Movement> buildMovementFromFile({
   required GenerativeModel model,
-  required String type,
+  required ExpenseType expenseType,
   required List<Category> categories,
   required String languageCode,
   required String mimeType,
   required Uint8List bytes,
 }) async {
   final prompt = getPrompt(
-    type: type,
+    expenseType: expenseType,
     categories: categories,
     languageCode: languageCode,
   );
@@ -221,7 +225,7 @@ Future<Movement> buildMovementFromFile({
 }
 
 String getPrompt({
-  required String type,
+  required ExpenseType expenseType,
   required List<Category> categories,
   required String languageCode,
 }) {
@@ -230,15 +234,16 @@ String getPrompt({
       'string,\n"price": double,\n"company": string}. Consider that if not '
       'mentioned an explicit date use now date in the given format. Create a '
       'title and description, for title using a max of 50 characters and '
-      'description 250 characters. For title, should mentioned the $type itself'
-      ' if it is a product, mention product, if it is food, mention food, et. '
-      'Description should have more details about the $type. If a product, '
-      'place, food, et. is mentioned, search some details on web and put it in '
-      'description. For category select most appropriate from this options: '
+      'description 250 characters. For title, should mentioned the '
+      '${expenseType.value} itself if it is a product, mention product, if it '
+      'is food, mention food, et. Description should have more details about '
+      'the ${expenseType.value}. If a product, place, food, et. is mentioned, '
+      'search some details on web and put it in description. For category '
+      'select most appropriate from this options: '
       '${categories.map((e) => e.name).join(', ')}. Extract the company where '
-      'the $type has been made, like a receiver account, store, bank name et.'
-      ' If there is not an explicit company, return an empty string. The '
-      "response should be in '$languageCode' language code.";
+      'the ${expenseType.value} has been made, like a receiver account, store, '
+      'bank name et. If there is not an explicit company, return an empty '
+      "string. The response should be in '$languageCode' language code.";
 }
 
 String getCategoryName(String category, AppLocalizations l10n) {

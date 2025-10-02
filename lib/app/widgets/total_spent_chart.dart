@@ -14,9 +14,12 @@ class TotalSpentChart extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 10,
         children: [
           Text(l10n.homeTotal, style: Theme.of(context).textTheme.titleMedium),
+          Text(':', style: Theme.of(context).textTheme.titleMedium),
           Text(
             moneyFormat.format(
               data.fold<double>(

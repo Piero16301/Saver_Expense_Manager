@@ -236,8 +236,6 @@ class _TabMovementsCategoryState extends State<TabMovementsCategory> {
     final category = context.select<CategoryCubit, Category>(
       (cubit) => cubit.state.category,
     );
-    final user = FirebaseAuth.instance.currentUser;
-    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -279,34 +277,7 @@ class _TabMovementsCategoryState extends State<TabMovementsCategory> {
           }),
         ),
         const SizedBox(height: 10),
-        StreamBuilder<QuerySnapshot>(
-          stream: getCategoryMovements(
-            userId: user!.uid,
-            monthSelected: monthSelected,
-            category: category,
-          ),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Expanded(
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-
-            if (snapshot.data!.docs.isEmpty) {
-              return Expanded(
-                child: Center(child: Text(l10n.categoryNoMovements)),
-              );
-            }
-
-            final movements = snapshot.data!.docs
-                .map(
-                  (e) => Movement.fromJson(e.data()! as Map<String, dynamic>),
-                )
-                .toList();
-
-            return MovementsList(movements: movements);
-          },
-        ),
+        MovementsList(filterCategory: category, monthSelected: monthSelected),
       ],
     );
   }

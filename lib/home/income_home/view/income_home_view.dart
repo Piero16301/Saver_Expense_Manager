@@ -27,7 +27,7 @@ class IncomeHomeView extends StatelessWidget {
             stream: getMonthMovements(
               userId: user!.uid,
               monthSelected: state.monthSelected!,
-              type: incomeType,
+              type: ExpenseType.income,
             ),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -58,7 +58,10 @@ class IncomeHomeView extends StatelessWidget {
                           .read<IncomeHomeCubit>()
                           .changeExplodeIndex(p0.pointIndex),
                     ),
-                    CategoriesListChart(data: data),
+                    MovementsListChart(
+                      filterCategory: data[state.selectedIndex].category,
+                      monthSelected: state.monthSelected!,
+                    ),
                   ],
                 ),
               );

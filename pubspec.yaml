@@ -36,6 +36,7 @@ dependencies:
   mime: ^2.0.0
   open_file: ^3.5.10
   path_provider: ^2.1.5
+  rive: ^0.13.20
   shared_preferences: ^2.5.3
   syncfusion_flutter_charts: ^31.1.22
   syncfusion_flutter_core: ^31.1.22
@@ -45,6 +46,7 @@ dependencies:
     path: packages/user_api_remote
   user_repository:
     path: packages/user_repository
+  uuid: ^4.5.1
 
 dev_dependencies:
   bloc_test: ^10.0.0
