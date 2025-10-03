@@ -72,7 +72,7 @@ class MovementCubit extends Cubit<MovementState> {
     // Remove the file from Firebase Storage
     try {
       await FirebaseStorage.instance.ref().child(value).delete();
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Error deleting file: $e');
     }
   }
@@ -88,7 +88,7 @@ class MovementCubit extends Cubit<MovementState> {
           Uint8List(0);
       await file.writeAsBytes(data.toList());
       await OpenFile.open(filePath);
-    } catch (e) {
+    } on Exception catch (e) {
       debugPrint('Error opening file: $e');
     }
   }
@@ -101,22 +101,24 @@ class MovementCubit extends Cubit<MovementState> {
               .doc()
               .id
         : state.id;
-    FirebaseFirestore.instance
-        .collection(AppVariables.movementsCollection)
-        .doc(docId)
-        .set(
-          Movement(
-            id: docId,
-            title: state.title,
-            description: state.description,
-            date: state.date!,
-            category: state.category!,
-            price: state.price,
-            company: state.company,
-            attachments: state.attachments,
-            user: userId,
-          ).toJson(),
-        );
+    unawaited(
+      FirebaseFirestore.instance
+          .collection(AppVariables.movementsCollection)
+          .doc(docId)
+          .set(
+            Movement(
+              id: docId,
+              title: state.title,
+              description: state.description,
+              date: state.date!,
+              category: state.category!,
+              price: state.price,
+              company: state.company,
+              attachments: state.attachments,
+              user: userId,
+            ).toJson(),
+          ),
+    );
 
     return true;
   }
@@ -127,14 +129,16 @@ class MovementCubit extends Cubit<MovementState> {
     }
 
     // Remove movement from Firebase Firestore
-    FirebaseFirestore.instance
-        .collection(AppVariables.movementsCollection)
-        .doc(state.id)
-        .delete();
+    unawaited(
+      FirebaseFirestore.instance
+          .collection(AppVariables.movementsCollection)
+          .doc(state.id)
+          .delete(),
+    );
 
     // Remove associated attachments from Firebase Storage
     for (final attachment in state.attachments) {
-      FirebaseStorage.instance.ref().child(attachment).delete();
+      unawaited(FirebaseStorage.instance.ref().child(attachment).delete());
     }
 
     return true;

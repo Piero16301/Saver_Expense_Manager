@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -20,7 +22,11 @@ class AppPage extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AppCubit>(
-            create: (_) => AppCubit(_userRepository)..initialLoad(),
+            create: (_) {
+              final cubit = AppCubit(_userRepository);
+              unawaited(cubit.initialLoad());
+              return cubit;
+            },
           ),
         ],
         child: const AppView(),

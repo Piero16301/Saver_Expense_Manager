@@ -56,7 +56,7 @@ class ProfileView extends StatelessWidget {
                 );
 
                 if (shouldLogout ?? false) {
-                  // ignore: use_build_context_synchronously
+                  // ignore: use_build_context_synchronously // Context is still valid here
                   context.goNamed('login');
                 }
               }),

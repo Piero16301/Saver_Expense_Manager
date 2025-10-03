@@ -1,10 +1,8 @@
-// ignore_for_file: avoid_redundant_argument_values
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const _seedColor = Colors.greenAccent;
+  static const MaterialAccentColor _seedColor = Colors.greenAccent;
   static ThemeData _lightBase() {
     return ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: _seedColor));
   }
@@ -21,7 +19,6 @@ class AppTheme {
   static final appLightTheme = ThemeData(
     colorScheme: ColorScheme.fromSeed(
       seedColor: _seedColor,
-      brightness: Brightness.light,
     ),
     snackBarTheme: SnackBarThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

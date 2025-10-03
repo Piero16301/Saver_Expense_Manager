@@ -119,28 +119,30 @@ class AppFileField extends StatelessWidget {
     String attachment,
     AppLocalizations l10n,
   ) {
-    showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.confirmRemoveAttachmentTitle),
-          content: Text(l10n.confirmRemoveAttachmentMessage),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.removeAttachmentCancel),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(l10n.removeAttachmentConfirm),
-            ),
-          ],
-        );
-      },
-    ).then((shouldRemove) {
-      if (shouldRemove ?? false) {
-        unawaited(onRemove(attachment));
-      }
-    });
+    unawaited(
+      showDialog<bool>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(l10n.confirmRemoveAttachmentTitle),
+            content: Text(l10n.confirmRemoveAttachmentMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(l10n.removeAttachmentCancel),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(l10n.removeAttachmentConfirm),
+              ),
+            ],
+          );
+        },
+      ).then((shouldRemove) {
+        if (shouldRemove ?? false) {
+          unawaited(onRemove(attachment));
+        }
+      }),
+    );
   }
 }

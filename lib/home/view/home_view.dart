@@ -224,9 +224,9 @@ class AddMovementBottomSheet extends StatelessWidget {
                       loader.hideLoading();
                     }
 
-                    // ignore: use_build_context_synchronously
+                    // ignore: use_build_context_synchronously // To dismiss bottom sheet
                     Navigator.of(context).pop();
-                    // ignore: use_build_context_synchronously
+                    // ignore: use_build_context_synchronously // To go to movement page
                     await context.pushNamed(
                       'movement',
                       pathParameters: {
@@ -238,7 +238,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                       ),
                     );
                   } else {
-                    // ignore: use_build_context_synchronously
+                    // ignore: use_build_context_synchronously // To dismiss bottom sheet
                     Navigator.of(context).pop();
                   }
                 },
@@ -276,9 +276,9 @@ class AddMovementBottomSheet extends StatelessWidget {
                       loader.hideLoading();
                     }
 
-                    // ignore: use_build_context_synchronously
+                    // ignore: use_build_context_synchronously // To dismiss bottom sheet
                     Navigator.of(context).pop();
-                    // ignore: use_build_context_synchronously
+                    // ignore: use_build_context_synchronously // To go to movement page
                     await context.pushNamed(
                       'movement',
                       pathParameters: {
@@ -290,7 +290,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                       ),
                     );
                   } else {
-                    // ignore: use_build_context_synchronously
+                    // ignore: use_build_context_synchronously // To dismiss bottom sheet
                     Navigator.of(context).pop();
                   }
                 },
@@ -300,13 +300,15 @@ class AddMovementBottomSheet extends StatelessWidget {
                 icon: Icons.edit,
                 onPressed: () {
                   Navigator.of(context).pop();
-                  context.pushNamed(
-                    'movement',
-                    pathParameters: {
-                      'type': expenseType.value,
-                      'screenType': 'ADD',
-                    },
-                    extra: Movement.empty,
+                  unawaited(
+                    context.pushNamed(
+                      'movement',
+                      pathParameters: {
+                        'type': expenseType.value,
+                        'screenType': 'ADD',
+                      },
+                      extra: Movement.empty,
+                    ),
                   );
                 },
               ),

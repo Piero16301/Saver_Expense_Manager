@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -30,31 +32,40 @@ class ChangeLanguageButton extends StatelessWidget {
   }
 
   void changeLanguageDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) {
-        final l10n = AppLocalizations.of(context);
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (context) {
+          final l10n = AppLocalizations.of(context);
 
-        return SimpleDialog(
-          title: Text(l10n.selectLanguage),
-          children: AppLocalizations.supportedLocales.map((locale) {
-            final languages = {
-              'en': l10n.english,
-              'es': l10n.spanish,
-              'it': l10n.italian,
-            };
-            final language = languages[locale.languageCode]!;
-            return SimpleDialogOption(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-              onPressed: () {
-                context.read<AppCubit>().changeLanguage(locale.languageCode);
-                Navigator.pop(context);
-              },
-              child: Text(language),
-            );
-          }).toList(),
-        );
-      },
+          return SimpleDialog(
+            title: Text(l10n.selectLanguage),
+            children: AppLocalizations.supportedLocales.map((locale) {
+              final languages = {
+                'en': l10n.english,
+                'es': l10n.spanish,
+                'it': l10n.italian,
+              };
+              final language = languages[locale.languageCode]!;
+              return SimpleDialogOption(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 25,
+                ),
+                onPressed: () {
+                  unawaited(
+                    context.read<AppCubit>().changeLanguage(
+                      locale.languageCode,
+                    ),
+                  );
+                  Navigator.pop(context);
+                },
+                child: Text(language),
+              );
+            }).toList(),
+          );
+        },
+      ),
     );
   }
 }

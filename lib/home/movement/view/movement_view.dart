@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -126,39 +128,41 @@ class MovementView extends StatelessWidget {
                 const Duration(days: AppVariables.maxDaysWarning),
               ),
             )) {
-              showDialog<void>(
-                context: context,
-                builder: (dialogContext) => AlertDialog(
-                  title: Text(l10n.movementDateWarningTitle),
-                  content: Text(
-                    l10n.movementDateWarningContent(
-                      AppVariables.maxDaysWarning,
+              unawaited(
+                showDialog<void>(
+                  context: context,
+                  builder: (dialogContext) => AlertDialog(
+                    title: Text(l10n.movementDateWarningTitle),
+                    content: Text(
+                      l10n.movementDateWarningContent(
+                        AppVariables.maxDaysWarning,
+                      ),
                     ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => context.pop(),
+                        child: Text(l10n.cancel),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.pop();
+                          if (context.read<MovementCubit>().saveMovement(
+                            user.uid,
+                          )) {
+                            context.pop<bool>(true);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.movementSaveError),
+                                behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          }
+                        },
+                        child: Text(l10n.confirm),
+                      ),
+                    ],
                   ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => context.pop(),
-                      child: Text(l10n.cancel),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        context.pop();
-                        if (context.read<MovementCubit>().saveMovement(
-                          user.uid,
-                        )) {
-                          context.pop<bool>(true);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.movementSaveError),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                        }
-                      },
-                      child: Text(l10n.confirm),
-                    ),
-                  ],
                 ),
               );
             } else {
@@ -204,39 +208,41 @@ class MovementView extends StatelessWidget {
   }
 
   void _showDeleteDialog(BuildContext context, AppLocalizations l10n) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.confirmDeleteMovementTitle),
-        content: Text(l10n.confirmDeleteMovementMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(l10n.deleteMovementCancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              if (context.read<MovementCubit>().removeMovement()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.movementDeleteSuccess),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-                context.pop<bool>(true);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.movementDeleteError),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              }
-            },
-            child: Text(l10n.deleteMovementConfirm),
-          ),
-        ],
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(l10n.confirmDeleteMovementTitle),
+          content: Text(l10n.confirmDeleteMovementMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.deleteMovementCancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                if (context.read<MovementCubit>().removeMovement()) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.movementDeleteSuccess),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  context.pop<bool>(true);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.movementDeleteError),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              },
+              child: Text(l10n.deleteMovementConfirm),
+            ),
+          ],
+        ),
       ),
     );
   }

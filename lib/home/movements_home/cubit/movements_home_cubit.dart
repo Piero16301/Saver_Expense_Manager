@@ -27,7 +27,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
     emit(
       state.copyWith(
         filterType: state.filterType,
-        // ignore: avoid_redundant_argument_values
+        // ignore: avoid_redundant_argument_values // Needed to clear the category
         filterCategory: null,
       ),
     );

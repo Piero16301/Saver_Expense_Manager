@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "269318126118-ldqma0i1qb6cdhnusohsnlkbd64i96rs.apps.googleusercontent.com",
+          "client_id": "269318126118-jk0bofoe2le4s3i9q21dgi61kv5vp0r2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.pmorales.saver.expense.manager",
-            "certificate_hash": "604bf17fa78d9628960db26cd5dd15ccd9047540"
+            "certificate_hash": "99ce14ebe7679c828803a203c0c3effb9809fbc4"
+          }
+        },
+        {
+          "client_id": "269318126118-o3ueo4v2t98k0hg518bctvmg5s66dnm5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pmorales.saver.expense.manager",
+            "certificate_hash": "40e3109a1786325d063dc17bf97ed7b1ce5be1b0"
+          }
+        },
+        {
+          "client_id": "269318126118-qajmvgjcjga2f8scpueobju5q7qpbkqp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pmorales.saver.expense.manager",
+            "certificate_hash": "a13a54f94300db07340535071ac33f92bc5f1e57"
           }
         },
         {
