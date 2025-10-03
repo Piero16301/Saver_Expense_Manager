@@ -14,7 +14,12 @@ class IncomeHomeCubit extends Cubit<IncomeHomeState> {
 
   void changeMonth(DateTime? month) {
     if (month == null) return;
-    emit(state.copyWith(monthSelected: DateTime(month.year, month.month)));
+    emit(
+      state.copyWith(
+        selectedIndex: 0,
+        monthSelected: DateTime(month.year, month.month),
+      ),
+    );
   }
 
   void changeExplodeIndex(int? index) {
@@ -26,12 +31,14 @@ class IncomeHomeCubit extends Cubit<IncomeHomeState> {
     if (monthSelected.month == 12) {
       emit(
         state.copyWith(
+          selectedIndex: 0,
           monthSelected: DateTime(monthSelected.year + 1),
         ),
       );
     } else {
       emit(
         state.copyWith(
+          selectedIndex: 0,
           monthSelected: DateTime(monthSelected.year, monthSelected.month + 1),
         ),
       );
@@ -43,12 +50,14 @@ class IncomeHomeCubit extends Cubit<IncomeHomeState> {
     if (monthSelected.month == 1) {
       emit(
         state.copyWith(
+          selectedIndex: 0,
           monthSelected: DateTime(monthSelected.year - 1, 12),
         ),
       );
     } else {
       emit(
         state.copyWith(
+          selectedIndex: 0,
           monthSelected: DateTime(monthSelected.year, monthSelected.month - 1),
         ),
       );

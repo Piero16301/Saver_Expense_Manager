@@ -59,6 +59,9 @@ class ExpensesHomeView extends StatelessWidget {
                       onPointTap: (p0) => context
                           .read<ExpensesHomeCubit>()
                           .changeExplodeIndex(p0.pointIndex),
+                      onIndexChanged: (index) => context
+                          .read<ExpensesHomeCubit>()
+                          .changeExplodeIndex(index),
                     ),
                     const SizedBox(height: 10),
                     MovementsListChart(

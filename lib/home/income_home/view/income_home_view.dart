@@ -57,6 +57,9 @@ class IncomeHomeView extends StatelessWidget {
                       onPointTap: (p0) => context
                           .read<IncomeHomeCubit>()
                           .changeExplodeIndex(p0.pointIndex),
+                      onIndexChanged: (index) => context
+                          .read<IncomeHomeCubit>()
+                          .changeExplodeIndex(index),
                     ),
                     MovementsListChart(
                       filterCategory: data[state.selectedIndex].category,
