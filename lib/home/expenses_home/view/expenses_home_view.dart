@@ -65,7 +65,7 @@ class ExpensesHomeView extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     MovementsListChart(
-                      filterCategory: data[state.selectedIndex].category,
+                      expenseType: ExpenseType.expense,
                       monthSelected: state.monthSelected!,
                     ),
                   ],

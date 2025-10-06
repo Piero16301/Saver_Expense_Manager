@@ -78,6 +78,35 @@ Query<Map<String, dynamic>> getCategoryMovements({
       .orderBy('date', descending: true);
 }
 
+Query<Map<String, dynamic>> getExpenseTypeMovements({
+  required String userId,
+  required DateTime monthSelected,
+  required ExpenseType expenseType,
+}) {
+  return FirebaseFirestore.instance
+      .collection(AppVariables.movementsCollection)
+      .where('user', isEqualTo: userId)
+      .where('category.type', isEqualTo: expenseType.value)
+      .where(
+        'date',
+        isGreaterThanOrEqualTo: Timestamp.fromDate(
+          DateTime(monthSelected.year, monthSelected.month),
+        ),
+      )
+      .where(
+        'date',
+        isLessThan: Timestamp.fromDate(
+          DateTime(
+            monthSelected.month == 12
+                ? monthSelected.year + 1
+                : monthSelected.year,
+            monthSelected.month == 12 ? 1 : monthSelected.month + 1,
+          ),
+        ),
+      )
+      .orderBy('date', descending: true);
+}
+
 Query<Map<String, dynamic>> getUserMovements({
   required String userId,
   required CategoryType? type,

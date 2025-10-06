@@ -62,7 +62,7 @@ class IncomeHomeView extends StatelessWidget {
                           .changeExplodeIndex(index),
                     ),
                     MovementsListChart(
-                      filterCategory: data[state.selectedIndex].category,
+                      expenseType: ExpenseType.income,
                       monthSelected: state.monthSelected!,
                     ),
                   ],

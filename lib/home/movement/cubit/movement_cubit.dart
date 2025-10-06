@@ -94,6 +94,8 @@ class MovementCubit extends Cubit<MovementState> {
   }
 
   bool saveMovement(String userId) {
+    final nowDate = DateTime.now();
+
     // Save movement in Firebase Firestore
     final docId = state.id.isEmpty
         ? FirebaseFirestore.instance
@@ -110,7 +112,11 @@ class MovementCubit extends Cubit<MovementState> {
               id: docId,
               title: state.title,
               description: state.description,
-              date: state.date!,
+              date: state.date!.copyWith(
+                hour: nowDate.hour,
+                minute: nowDate.minute,
+                second: nowDate.second,
+              ),
               category: state.category!,
               price: state.price,
               company: state.company,

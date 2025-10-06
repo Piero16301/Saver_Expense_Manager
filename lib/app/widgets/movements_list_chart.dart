@@ -7,12 +7,12 @@ import 'package:user_api/user_api.dart';
 
 class MovementsListChart extends StatelessWidget {
   const MovementsListChart({
-    required this.filterCategory,
+    required this.expenseType,
     required this.monthSelected,
     super.key,
   });
 
-  final Category filterCategory;
+  final ExpenseType expenseType;
   final DateTime monthSelected;
 
   @override
@@ -20,13 +20,13 @@ class MovementsListChart extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Expanded(
       child: FirestorePagination(
-        key: ValueKey('$filterCategory-$monthSelected'),
+        key: ValueKey('$expenseType-$monthSelected'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: getCategoryMovements(
+        query: getExpenseTypeMovements(
           userId: FirebaseAuth.instance.currentUser!.uid,
           monthSelected: monthSelected,
-          category: filterCategory,
+          expenseType: expenseType,
         ),
         isLive: true,
         onEmpty: Center(
