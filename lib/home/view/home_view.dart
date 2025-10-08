@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously // To dismiss bottom sheet
+
 import 'dart:async';
 import 'dart:io';
 
@@ -8,7 +10,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
@@ -140,19 +141,131 @@ class AddMovementBottomSheet extends StatelessWidget {
 
   final ExpenseType expenseType;
 
+  Future<void> _handleFilePick(BuildContext context) async {
+    final locale = context.read<AppCubit>().state.locale!;
+    final model = context.read<AppCubit>().state.model!;
+    final categories = context
+        .read<AppCubit>()
+        .state
+        .categories
+        .where((c) => c.type == CategoryType.expense)
+        .toList();
+    final loader = AppLoader(context);
+
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
+    );
+
+    if (result != null) {
+      unawaited(loader.showLoading());
+
+      final file = result.files.single;
+      final ext = file.path!.split('.').last;
+      final ref = FirebaseStorage.instance.ref().child(
+        '${const Uuid().v4()}.$ext',
+      );
+      final bytes = await file.xFile.readAsBytes();
+
+      // Upload file to Firebase Storage and build movement from file in
+      // parallel
+      final uploadTask = ref.putFile(File(file.path!));
+      final movementFuture = buildMovementFromFile(
+        model: model,
+        expenseType: expenseType,
+        categories: categories,
+        languageCode: locale.languageCode,
+        mimeType: lookupMimeType(file.name) ?? 'application/pdf',
+        bytes: bytes,
+      );
+
+      final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
+      final uploadSnapshot = results[0] as TaskSnapshot;
+      final movement = results[1] as Movement;
+
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+
+      Navigator.of(context).pop();
+      unawaited(
+        context.pushNamed(
+          'movement',
+          pathParameters: {
+            'type': expenseType.value,
+            'screenType': 'ADD',
+          },
+          extra: movement.copyWith(
+            attachments: [uploadSnapshot.ref.name],
+          ),
+        ),
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _handleDocumentScan(BuildContext context) async {
+    final locale = context.read<AppCubit>().state.locale!;
+    final model = context.read<AppCubit>().state.model!;
+    final categories = context
+        .read<AppCubit>()
+        .state
+        .categories
+        .where((c) => c.type == CategoryType.expense)
+        .toList();
+    final loader = AppLoader(context);
+
+    final files = await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
+
+    if (files.isNotEmpty) {
+      unawaited(loader.showLoading());
+
+      final ext = files.first.split('.').last;
+      final ref = FirebaseStorage.instance.ref().child(
+        '${const Uuid().v4()}.$ext',
+      );
+      final bytes = await File(files.first).readAsBytes();
+
+      // Upload file to Firebase Storage and build movement from file in
+      // parallel
+      final uploadTask = ref.putFile(File(files.first));
+      final movementFuture = buildMovementFromFile(
+        model: model,
+        expenseType: expenseType,
+        categories: categories,
+        languageCode: locale.languageCode,
+        mimeType: lookupMimeType(files.first) ?? 'application/pdf',
+        bytes: bytes,
+      );
+
+      final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
+      final uploadSnapshot = results[0] as TaskSnapshot;
+      final movement = results[1] as Movement;
+
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+
+      Navigator.of(context).pop();
+      await context.pushNamed(
+        'movement',
+        pathParameters: {
+          'type': expenseType.value,
+          'screenType': 'ADD',
+        },
+        extra: movement.copyWith(
+          attachments: [uploadSnapshot.ref.name],
+        ),
+      );
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final locale = context.select<AppCubit, Locale>(
-      (cubit) => cubit.state.locale!,
-    );
-    final model = context.select<AppCubit, GenerativeModel>(
-      (cubit) => cubit.state.model!,
-    );
-    final categories = context
-        .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
-        .toList();
     final l10n = AppLocalizations.of(context);
-    final loader = AppLoader(context);
 
     return Container(
       width: double.infinity,
@@ -191,109 +304,12 @@ class AddMovementBottomSheet extends StatelessWidget {
               TonalButtonActionHome(
                 title: l10n.homeFile,
                 icon: Icons.upload_file,
-                onPressed: () async {
-                  final result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
-                  );
-                  if (result != null) {
-                    unawaited(loader.showLoading());
-
-                    // Upload file to Firebase Storage
-                    final ext = result.files.single.path!.split('.').last;
-                    final ref = FirebaseStorage.instance.ref().child(
-                      '${const Uuid().v4()}.$ext',
-                    );
-                    final uploadTask = await ref.putFile(
-                      File(result.files.single.path!),
-                    );
-
-                    final file = result.files.single;
-                    final movement = await buildMovementFromFile(
-                      model: model,
-                      expenseType: expenseType,
-                      categories: categories
-                          .where((c) => c.type == CategoryType.expense)
-                          .toList(),
-                      languageCode: locale.languageCode,
-                      mimeType: lookupMimeType(file.name) ?? 'application/pdf',
-                      bytes: await file.xFile.readAsBytes(),
-                    );
-
-                    if (loader.isLoading) {
-                      loader.hideLoading();
-                    }
-
-                    // ignore: use_build_context_synchronously // To dismiss bottom sheet
-                    Navigator.of(context).pop();
-                    // ignore: use_build_context_synchronously // To go to movement page
-                    await context.pushNamed(
-                      'movement',
-                      pathParameters: {
-                        'type': expenseType.value,
-                        'screenType': 'ADD',
-                      },
-                      extra: movement.copyWith(
-                        attachments: [uploadTask.ref.name],
-                      ),
-                    );
-                  } else {
-                    // ignore: use_build_context_synchronously // To dismiss bottom sheet
-                    Navigator.of(context).pop();
-                  }
-                },
+                onPressed: () => _handleFilePick(context),
               ),
               TonalButtonActionHome(
                 title: l10n.homeScan,
                 icon: Icons.document_scanner,
-                onPressed: () async {
-                  final files =
-                      await CunningDocumentScanner.getPictures(noOfPages: 1) ??
-                      [];
-                  if (files.isNotEmpty) {
-                    unawaited(loader.showLoading());
-
-                    // Upload file to Firebase Storage
-                    final ext = files.first.split('.').last;
-                    final ref = FirebaseStorage.instance.ref().child(
-                      '${const Uuid().v4()}.$ext',
-                    );
-                    final uploadTask = await ref.putFile(File(files.first));
-
-                    final movement = await buildMovementFromFile(
-                      model: model,
-                      expenseType: expenseType,
-                      categories: categories
-                          .where((c) => c.type == CategoryType.expense)
-                          .toList(),
-                      languageCode: locale.languageCode,
-                      mimeType:
-                          lookupMimeType(files.first) ?? 'application/pdf',
-                      bytes: await File(files.first).readAsBytes(),
-                    );
-
-                    if (loader.isLoading) {
-                      loader.hideLoading();
-                    }
-
-                    // ignore: use_build_context_synchronously // To dismiss bottom sheet
-                    Navigator.of(context).pop();
-                    // ignore: use_build_context_synchronously // To go to movement page
-                    await context.pushNamed(
-                      'movement',
-                      pathParameters: {
-                        'type': expenseType.value,
-                        'screenType': 'ADD',
-                      },
-                      extra: movement.copyWith(
-                        attachments: [uploadTask.ref.name],
-                      ),
-                    );
-                  } else {
-                    // ignore: use_build_context_synchronously // To dismiss bottom sheet
-                    Navigator.of(context).pop();
-                  }
-                },
+                onPressed: () => _handleDocumentScan(context),
               ),
               TonalButtonActionHome(
                 title: l10n.homeEnter,
