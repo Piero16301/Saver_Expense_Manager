@@ -40,7 +40,7 @@ dependencies:
   rive: ^0.13.20
   shared_preferences: ^2.5.3
   syncfusion_flutter_charts: ^31.1.22
-  syncfusion_flutter_core: ^31.1.22
+  syncfusion_flutter_core: ^31.2.2
   user_api:
     path: packages/user_api
   user_api_remote:
