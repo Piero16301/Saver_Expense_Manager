@@ -7,6 +7,7 @@ import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:rive/rive.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/bootstrap.dart';
 import 'package:saver_expense_manager/firebase_options.dart';
@@ -27,8 +28,9 @@ Future<void> main() async {
 
   // Initialize Firebase App Check
   await FirebaseAppCheck.instance.activate(
-    androidProvider:
-        kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+    androidProvider: kDebugMode
+        ? AndroidProvider.debug
+        : AndroidProvider.playIntegrity,
   );
 
   // Configure Firebase Auth providers
@@ -55,6 +57,9 @@ Future<void> main() async {
   // Configure User API and User Repository
   final userApi = UserApiRemote(preferences: preferences);
   final userRepository = UserRepository(userApi: userApi);
+
+  // Initialize Rive
+  await RiveNative.init();
 
   // Bootstrap the app
   await bootstrap(() => AppPage(userRepository: userRepository));
