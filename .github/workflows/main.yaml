@@ -64,6 +64,9 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+      - name: 🔑 Create .env file
+        run: |
+          echo "GEN_API_KEY=${{ secrets.GEN_API_KEY }}" > .env
       - name: 📦 Install Dependencies
         run: |
           flutter pub global activate very_good_cli
@@ -102,6 +105,9 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+      - name: 🔑 Create .env file
+        run: |
+          echo "GEN_API_KEY=${{ secrets.GEN_API_KEY }}" > .env
 
       - name: 🔑 Decode Android Keystore
         run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.KEYSTORE_PATH }}
