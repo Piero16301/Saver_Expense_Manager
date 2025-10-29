@@ -18,11 +18,11 @@ dependencies:
   firebase_core: ^4.2.0
   firebase_pagination: ^4.2.0
   firebase_storage: ^13.0.3
-  firebase_ui_auth: ^3.0.0
-  firebase_ui_localizations: ^2.0.0
-  firebase_ui_oauth: ^2.0.0
-  firebase_ui_oauth_google: ^2.0.0
-  firebase_ui_storage: ^3.0.0
+  firebase_ui_auth: ^3.0.1
+  firebase_ui_localizations: ^2.0.1
+  firebase_ui_oauth: ^2.0.1
+  firebase_ui_oauth_google: ^2.0.1
+  firebase_ui_storage: ^3.0.1
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
@@ -37,10 +37,10 @@ dependencies:
   mime: ^2.0.0
   open_file: ^3.5.10
   path_provider: ^2.1.5
-  rive: ^0.14.0-dev.12
+  rive: ^0.14.0-dev.13
   shared_preferences: ^2.5.3
-  syncfusion_flutter_charts: ^31.2.3
-  syncfusion_flutter_core: ^31.2.3
+  syncfusion_flutter_charts: ^31.2.4
+  syncfusion_flutter_core: ^31.2.4
   user_api:
     path: packages/user_api
   user_api_remote:

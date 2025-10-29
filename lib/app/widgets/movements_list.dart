@@ -50,8 +50,8 @@ class MovementsList extends StatelessWidget {
               'movement',
               pathParameters: {
                 'type': movement.category.type == CategoryType.income
-                    ? ExpenseType.income.value
-                    : ExpenseType.expense.value,
+                    ? CategoryType.income.value
+                    : CategoryType.expense.value,
                 'screenType': 'EDIT',
               },
               extra: movement,

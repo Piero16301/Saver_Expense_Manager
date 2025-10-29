@@ -57,6 +57,10 @@
     "@homeConfirm": {},
     "loading": "Cargando...",
     "@loading": {},
+    "errorLoadingCategories": "Error al cargar las categorías",
+    "@errorLoadingCategories": {},
+    "noCategoriesFound": "No se encontraron categorías",
+    "@noCategoriesFound": {},
 
     "categoryExpenseTitle": "Gastos",
     "@categoryExpenseTitle": {},

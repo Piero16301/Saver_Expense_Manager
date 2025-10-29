@@ -47,20 +47,19 @@ class Category extends Equatable {
   final CategoryType type;
 
   @override
-  List<Object> get props => [
-        id,
-        name,
-        icon,
-        color,
-        type,
-      ];
+  List<Object> get props => [id, name, icon, color, type];
 }
 
 /// An enum that represents the type of category
 enum CategoryType {
-  /// Represents an income category
-  income,
-
   /// Represents an expense category
-  expense,
+  expense('EXPENSE'),
+
+  /// Represents an income category
+  income('INCOME');
+
+  const CategoryType(this.value);
+
+  /// The string value of the category type
+  final String value;
 }

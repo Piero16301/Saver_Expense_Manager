@@ -12,7 +12,7 @@ class MovementsListChart extends StatelessWidget {
     super.key,
   });
 
-  final ExpenseType expenseType;
+  final CategoryType expenseType;
   final DateTime monthSelected;
 
   @override

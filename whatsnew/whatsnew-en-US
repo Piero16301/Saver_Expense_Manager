@@ -1,9 +1,11 @@
 🎯 What's new in this version:
 
+• Complete refresh of app icons and logo
+• Improved category management with direct Firestore integration
+• New error handling and empty state screens for better user experience
 • Dependency updates for better performance and security
-• Rive animations optimization with improved memory management
-• Library updates for better graphics
-• General application performance optimization
+• Category type system refactoring throughout the application
+• Android version updated to 1.2.0
 
 Thank you for using Saver Expense Manager!
 

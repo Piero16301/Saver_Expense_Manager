@@ -57,6 +57,10 @@
     "@homeConfirm": {},
     "loading": "Caricamento...",
     "@loading": {},
+    "errorLoadingCategories": "Errore nel caricamento delle categorie",
+    "@errorLoadingCategories": {},
+    "noCategoriesFound": "Nessuna categoria trovata",
+    "@noCategoriesFound": {},
 
     "categoryExpenseTitle": "Spese",
     "@categoryExpenseTitle": {},

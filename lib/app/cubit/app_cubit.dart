@@ -2,12 +2,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:saver_expense_manager/app/app.dart';
-import 'package:user_api/user_api.dart';
 import 'package:user_repository/user_repository.dart';
 
 part 'app_state.dart';
@@ -63,15 +60,5 @@ class AppCubit extends Cubit<AppState> {
   Future<void> toggleTheme() async {
     await userRepository.saveDarkTheme(darkTheme: !(state.darkTheme ?? false));
     emit(state.copyWith(darkTheme: !(state.darkTheme ?? false)));
-  }
-
-  Future<void> loadCategories() async {
-    final categoriesJson = await FirebaseFirestore.instance
-        .collection(AppVariables.categoriesCollection)
-        .get();
-    final categories = categoriesJson.docs
-        .map((category) => Category.fromJson(category.data()))
-        .toList();
-    emit(state.copyWith(categories: categories));
   }
 }

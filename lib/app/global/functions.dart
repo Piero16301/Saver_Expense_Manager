@@ -23,7 +23,7 @@ DateTime substracMonth(int month) {
 Stream<QuerySnapshot<Object?>>? getMonthMovements({
   required String userId,
   required DateTime monthSelected,
-  required ExpenseType type,
+  required CategoryType type,
 }) {
   return FirebaseFirestore.instance
       .collection(AppVariables.movementsCollection)
@@ -81,7 +81,7 @@ Query<Map<String, dynamic>> getCategoryMovements({
 Query<Map<String, dynamic>> getExpenseTypeMovements({
   required String userId,
   required DateTime monthSelected,
-  required ExpenseType expenseType,
+  required CategoryType expenseType,
 }) {
   return FirebaseFirestore.instance
       .collection(AppVariables.movementsCollection)
@@ -120,8 +120,8 @@ Query<Map<String, dynamic>> getUserMovements({
     query = query.where(
       'category.type',
       isEqualTo: type == CategoryType.expense
-          ? ExpenseType.expense.value
-          : ExpenseType.income.value,
+          ? CategoryType.expense.value
+          : CategoryType.income.value,
     );
   }
 
@@ -222,14 +222,14 @@ List<TrendData> buildTrendData({
 
 Future<Movement> buildMovementFromFile({
   required GenerativeModel model,
-  required ExpenseType expenseType,
+  required CategoryType movementType,
   required List<Category> categories,
   required String languageCode,
   required String mimeType,
   required Uint8List bytes,
 }) async {
   final prompt = getPrompt(
-    expenseType: expenseType,
+    movementType: movementType,
     categories: categories,
     languageCode: languageCode,
   );
@@ -254,7 +254,7 @@ Future<Movement> buildMovementFromFile({
 }
 
 String getPrompt({
-  required ExpenseType expenseType,
+  required CategoryType movementType,
   required List<Category> categories,
   required String languageCode,
 }) {
@@ -264,14 +264,14 @@ String getPrompt({
       'mentioned an explicit date use now date in the given format. Create a '
       'title and description, for title using a max of 50 characters and '
       'description 250 characters. For title, should mentioned the '
-      '${expenseType.value} itself if it is a product, mention product, if it '
+      '${movementType.value} itself if it is a product, mention product, if it '
       'is food, mention food, et. Description should have more details about '
-      'the ${expenseType.value}. If a product, place, food, et. is mentioned, '
+      'the ${movementType.value}. If a product, place, food, et. is mentioned, '
       'search some details on web and put it in description. For category '
       'select most appropriate from this options: '
       '${categories.map((e) => e.name).join(', ')}. Extract the company where '
-      'the ${expenseType.value} has been made, like a receiver account, store, '
-      'bank name et. If there is not an explicit company, return an empty '
+      'the ${movementType.value} has been made, like a receiver account, store,'
+      ' bank name et. If there is not an explicit company, return an empty '
       "string. The response should be in '$languageCode' language code.";
 }
 

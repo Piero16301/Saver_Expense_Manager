@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/income_home/income_home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+import 'package:user_api/user_api.dart';
 
 class IncomeHomeView extends StatelessWidget {
   const IncomeHomeView({super.key});
@@ -27,7 +28,7 @@ class IncomeHomeView extends StatelessWidget {
             stream: getMonthMovements(
               userId: user!.uid,
               monthSelected: state.monthSelected!,
-              type: ExpenseType.income,
+              type: CategoryType.income,
             ),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -57,12 +58,9 @@ class IncomeHomeView extends StatelessWidget {
                       onPointTap: (p0) => context
                           .read<IncomeHomeCubit>()
                           .changeExplodeIndex(p0.pointIndex),
-                      onIndexChanged: (index) => context
-                          .read<IncomeHomeCubit>()
-                          .changeExplodeIndex(index),
                     ),
                     MovementsListChart(
-                      expenseType: ExpenseType.income,
+                      expenseType: CategoryType.income,
                       monthSelected: state.monthSelected!,
                     ),
                   ],

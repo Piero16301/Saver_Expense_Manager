@@ -18,18 +18,16 @@ import 'package:user_api/user_api.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+  const HomeView({
+    required this.categories,
+    super.key,
+  });
+
+  final List<Category> categories;
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final categories = context.select<AppCubit, List<Category>>(
-      (cubit) => cubit.state.categories,
-    );
-
-    if (categories.isEmpty) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
 
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) => Scaffold(
@@ -67,7 +65,8 @@ class HomeView extends StatelessWidget {
                 onPressed: () => showModalBottomSheet<void>(
                   context: context,
                   builder: (context) => AddMovementBottomSheet(
-                    expenseType: _getExpenseType(state.selectedIndex),
+                    categories: categories,
+                    movementType: _getMovementType(state.selectedIndex),
                   ),
                 ),
                 child: const Icon(Icons.add),
@@ -77,14 +76,14 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  ExpenseType _getExpenseType(int selectedIndex) {
+  CategoryType _getMovementType(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return ExpenseType.expense;
+        return CategoryType.expense;
       case 2:
-        return ExpenseType.income;
+        return CategoryType.income;
       default:
-        return ExpenseType.expense;
+        return CategoryType.expense;
     }
   }
 
@@ -137,18 +136,20 @@ class BottomNavigationBarHome extends StatelessWidget {
 }
 
 class AddMovementBottomSheet extends StatelessWidget {
-  const AddMovementBottomSheet({required this.expenseType, super.key});
+  const AddMovementBottomSheet({
+    required this.categories,
+    required this.movementType,
+    super.key,
+  });
 
-  final ExpenseType expenseType;
+  final List<Category> categories;
+  final CategoryType movementType;
 
   Future<void> _handleFilePick(BuildContext context) async {
     final locale = context.read<AppCubit>().state.locale!;
     final model = context.read<AppCubit>().state.model!;
-    final categories = context
-        .read<AppCubit>()
-        .state
-        .categories
-        .where((c) => c.type == CategoryType.expense)
+    final selectedCategories = categories
+        .where((c) => c.type == movementType)
         .toList();
     final loader = AppLoader(context);
 
@@ -172,8 +173,8 @@ class AddMovementBottomSheet extends StatelessWidget {
       final uploadTask = ref.putFile(File(file.path!));
       final movementFuture = buildMovementFromFile(
         model: model,
-        expenseType: expenseType,
-        categories: categories,
+        movementType: movementType,
+        categories: selectedCategories,
         languageCode: locale.languageCode,
         mimeType: lookupMimeType(file.name) ?? 'application/pdf',
         bytes: bytes,
@@ -192,7 +193,7 @@ class AddMovementBottomSheet extends StatelessWidget {
         context.pushNamed(
           'movement',
           pathParameters: {
-            'type': expenseType.value,
+            'type': movementType.value,
             'screenType': 'ADD',
           },
           extra: movement.copyWith(
@@ -208,11 +209,8 @@ class AddMovementBottomSheet extends StatelessWidget {
   Future<void> _handleDocumentScan(BuildContext context) async {
     final locale = context.read<AppCubit>().state.locale!;
     final model = context.read<AppCubit>().state.model!;
-    final categories = context
-        .read<AppCubit>()
-        .state
-        .categories
-        .where((c) => c.type == CategoryType.expense)
+    final selectedCategories = categories
+        .where((c) => c.type == movementType)
         .toList();
     final loader = AppLoader(context);
 
@@ -232,8 +230,8 @@ class AddMovementBottomSheet extends StatelessWidget {
       final uploadTask = ref.putFile(File(files.first));
       final movementFuture = buildMovementFromFile(
         model: model,
-        expenseType: expenseType,
-        categories: categories,
+        movementType: movementType,
+        categories: selectedCategories,
         languageCode: locale.languageCode,
         mimeType: lookupMimeType(files.first) ?? 'application/pdf',
         bytes: bytes,
@@ -251,7 +249,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       await context.pushNamed(
         'movement',
         pathParameters: {
-          'type': expenseType.value,
+          'type': movementType.value,
           'screenType': 'ADD',
         },
         extra: movement.copyWith(
@@ -293,7 +291,7 @@ class AddMovementBottomSheet extends StatelessWidget {
             ),
           ),
           Text(
-            expenseType == ExpenseType.expense
+            movementType == CategoryType.expense
                 ? l10n.homeAddExpense
                 : l10n.homeAddIncome,
             style: Theme.of(context).textTheme.titleLarge,
@@ -320,7 +318,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                     context.pushNamed(
                       'movement',
                       pathParameters: {
-                        'type': expenseType.value,
+                        'type': movementType.value,
                         'screenType': 'ADD',
                       },
                       extra: Movement.empty,

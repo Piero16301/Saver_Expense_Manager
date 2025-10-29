@@ -10,28 +10,13 @@ App to manage expenses
 
 ---
 
-## Getting Started 🚀
+## What's New 🆕
 
-This project contains 3 flavors:
+Prompt to update the "What's New" sections in the three language files:
 
-- development
-- staging
-- production
-
-To run the desired flavor either use the launch configuration in VSCode/Android Studio or use the following commands:
-
-```sh
-# Development
-$ flutter run --flavor development --target lib/main_development.dart
-
-# Staging
-$ flutter run --flavor staging --target lib/main_staging.dart
-
-# Production
-$ flutter run --flavor production --target lib/main_production.dart
 ```
-
-_\*Saver Expense Manager works on iOS, Android, Web, and Windows._
+Actualizar los cambios de esta nueva versión siguiendo el mismo formato que se tiene actualmente en los 3 archivos de novedades según el idioma y teniendo el cuenta estos cambios: Replaces ExpenseType with CategoryType throughout the codebase and updates its definition. Removes category state from AppCubit and now fetches categories directly from Firestore in relevant views (Home, Movement, MovementsHome). Updates UI and logic to support this change, adds error and empty state handling for category loading, and updates localized strings. Also updates app icons and logo, bumps Android version to 1.2.0, and upgrades several dependencies.
+```
 
 ---
 

@@ -8,16 +8,24 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
 class MovementsHomeView extends StatelessWidget {
-  const MovementsHomeView({super.key});
+  const MovementsHomeView({
+    required this.categories,
+    super.key,
+  });
+
+  final List<Category> categories;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
-      builder: (context, state) => const Padding(
-        padding: EdgeInsets.only(bottom: 20),
+      builder: (context, state) => Padding(
+        padding: const EdgeInsets.only(bottom: 20),
         child: Column(
           spacing: 20,
-          children: [FilterMovementsHome(), ListMovementsHome()],
+          children: [
+            FilterMovementsHome(categories: categories),
+            const ListMovementsHome(),
+          ],
         ),
       ),
     );
@@ -25,20 +33,22 @@ class MovementsHomeView extends StatelessWidget {
 }
 
 class FilterMovementsHome extends StatelessWidget {
-  const FilterMovementsHome({super.key});
+  const FilterMovementsHome({
+    required this.categories,
+    super.key,
+  });
+
+  final List<Category> categories;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final categories =
-        context.select<AppCubit, List<Category>>(
-          (cubit) => cubit.state.categories,
-        )..sort(
-          (a, b) => getCategoryName(
-            a.name,
-            l10n,
-          ).compareTo(getCategoryName(b.name, l10n)),
-        );
+    categories.sort(
+      (a, b) => getCategoryName(
+        a.name,
+        l10n,
+      ).compareTo(getCategoryName(b.name, l10n)),
+    );
 
     return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
       builder: (context, state) => Column(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -20,21 +21,57 @@ class MovementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final categories =
-        context
-            .select<AppCubit, List<Category>>((cubit) => cubit.state.categories)
-            .where((element) => element.type == type)
-            .toList()
-          ..sort(
-            (a, b) => getCategoryName(
-              a.name,
-              l10n,
-            ).compareTo(getCategoryName(b.name, l10n)),
-          );
 
-    return BlocProvider(
-      create: (_) => MovementCubit()..init(movement, categories),
-      child: MovementView(type: type, screenType: screenType),
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection(AppVariables.categoriesCollection)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text(
+                l10n.errorLoadingCategories,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          );
+        }
+
+        if (snapshot.data!.docs.isEmpty) {
+          return Scaffold(
+            body: Center(
+              child: Text(
+                l10n.noCategoriesFound,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          );
+        }
+
+        final categories =
+            snapshot.data!.docs
+                .map((category) => Category.fromJson(category.data()))
+                .where((element) => element.type == type)
+                .toList()
+              ..sort(
+                (a, b) => getCategoryName(
+                  a.name,
+                  l10n,
+                ).compareTo(getCategoryName(b.name, l10n)),
+              );
+
+        return BlocProvider(
+          create: (_) => MovementCubit()..init(movement, categories),
+          child: MovementView(type: type, screenType: screenType),
+        );
+      },
     );
   }
 }

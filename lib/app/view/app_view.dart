@@ -25,7 +25,7 @@ class _AppViewState extends State<AppView> {
   Widget build(BuildContext context) {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => MaterialApp.router(
-        title: 'Saver Expense Manager',
+        title: AppVariables.appName,
         routeInformationProvider: _router.routeInformationProvider,
         routerDelegate: _router.routerDelegate,
         routeInformationParser: _router.routeInformationParser,
