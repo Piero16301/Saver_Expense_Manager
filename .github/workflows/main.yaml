@@ -21,7 +21,7 @@ jobs:
       is_bot: ${{ steps.check_author.outputs.is_bot }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - name: Check commit author
@@ -59,7 +59,7 @@ jobs:
       contents: write
     steps:
       - name: 📚 Git Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -100,7 +100,7 @@ jobs:
       SERVICE_ACCOUNT_PATH: service-account.json
     steps:
       - name: 📚 Git Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -141,7 +141,7 @@ jobs:
       SERVICE_ACCOUNT_PATH: service-account.json
     steps:
       - name: 📚 Checkout repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: ⬇️ Download Artifact
         uses: actions/download-artifact@master
         with:
