@@ -145,12 +145,14 @@ class AddMovementBottomSheet extends StatelessWidget {
   final List<Category> categories;
   final CategoryType movementType;
 
-  Future<void> _handleFilePick(BuildContext context) async {
+  Future<void> _handleFilePick(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) async {
     final locale = context.read<AppCubit>().state.locale!;
-    final model = context.read<AppCubit>().state.model!;
-    final selectedCategories = categories
-        .where((c) => c.type == movementType)
-        .toList();
+    final model = context.read<AppCubit>().model;
+    final selectedCategories =
+        categories.where((c) => c.type == movementType).toList();
     final loader = AppLoader(context);
 
     final result = await FilePicker.platform.pickFiles(
@@ -161,36 +163,111 @@ class AddMovementBottomSheet extends StatelessWidget {
     if (result != null) {
       unawaited(loader.showLoading());
 
-      final file = result.files.single;
-      final ext = file.path!.split('.').last;
-      final ref = FirebaseStorage.instance.ref().child(
-        '${const Uuid().v4()}.$ext',
-      );
-      final bytes = await file.xFile.readAsBytes();
+      try {
+        final file = result.files.single;
+        final ext = file.path!.split('.').last;
+        final ref = FirebaseStorage.instance.ref().child(
+              '${const Uuid().v4()}.$ext',
+            );
+        final bytes = await file.xFile.readAsBytes();
 
-      // Upload file to Firebase Storage and build movement from file in
-      // parallel
-      final uploadTask = ref.putFile(File(file.path!));
-      final movementFuture = buildMovementFromFile(
-        model: model,
-        movementType: movementType,
-        categories: selectedCategories,
-        languageCode: locale.languageCode,
-        mimeType: lookupMimeType(file.name) ?? 'application/pdf',
-        bytes: bytes,
-      );
+        // Upload file to Firebase Storage and build movement from file in
+        // parallel
+        final uploadTask = ref.putFile(File(file.path!));
+        final movementFuture = buildMovementFromFile(
+          model: model,
+          movementType: movementType,
+          categories: selectedCategories,
+          languageCode: locale.languageCode,
+          mimeType: lookupMimeType(file.name) ?? 'application/pdf',
+          bytes: bytes,
+        );
 
-      final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
-      final uploadSnapshot = results[0] as TaskSnapshot;
-      final movement = results[1] as Movement;
+        final results =
+            await Future.wait<dynamic>([uploadTask, movementFuture]);
+        final uploadSnapshot = results[0] as TaskSnapshot;
+        final movement = results[1] as Movement;
 
-      if (loader.isLoading) {
-        loader.hideLoading();
+        if (loader.isLoading) {
+          loader.hideLoading();
+        }
+        Navigator.of(context).pop();
+        unawaited(
+          context.pushNamed(
+            'movement',
+            pathParameters: {
+              'type': movementType.value,
+              'screenType': 'ADD',
+            },
+            extra: movement.copyWith(
+              attachments: [uploadSnapshot.ref.name],
+            ),
+          ),
+        );
+      } on Exception catch (e) {
+        if (loader.isLoading) {
+          loader.hideLoading();
+        }
+        ScaffoldMessenger.of(context).clearSnackBars();
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.toString(),
+              style: TextStyle(color: Theme.of(context).colorScheme.onError),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            closeIconColor: Theme.of(context).colorScheme.onError,
+          ),
+        );
       }
+    }
+  }
 
-      Navigator.of(context).pop();
-      unawaited(
-        context.pushNamed(
+  Future<void> _handleDocumentScan(BuildContext context) async {
+    Navigator.of(context).pop();
+
+    final locale = context.read<AppCubit>().state.locale!;
+    final model = context.read<AppCubit>().model;
+    final selectedCategories =
+        categories.where((c) => c.type == movementType).toList();
+    final loader = AppLoader(context);
+
+    final files = await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
+
+    if (files.isNotEmpty) {
+      unawaited(loader.showLoading());
+
+      try {
+        final ext = files.first.split('.').last;
+        final ref = FirebaseStorage.instance.ref().child(
+              '${const Uuid().v4()}.$ext',
+            );
+        final bytes = await File(files.first).readAsBytes();
+
+        // Upload file to Firebase Storage and build movement from file in
+        // parallel
+        final uploadTask = ref.putFile(File(files.first));
+        final movementFuture = buildMovementFromFile(
+          model: model,
+          movementType: movementType,
+          categories: selectedCategories,
+          languageCode: locale.languageCode,
+          mimeType: lookupMimeType(files.first) ?? 'application/pdf',
+          bytes: bytes,
+        );
+
+        final results =
+            await Future.wait<dynamic>([uploadTask, movementFuture]);
+        final uploadSnapshot = results[0] as TaskSnapshot;
+        final movement = results[1] as Movement;
+
+        if (loader.isLoading) {
+          loader.hideLoading();
+        }
+        Navigator.of(context).pop();
+        await context.pushNamed(
           'movement',
           pathParameters: {
             'type': movementType.value,
@@ -199,65 +276,25 @@ class AddMovementBottomSheet extends StatelessWidget {
           extra: movement.copyWith(
             attachments: [uploadSnapshot.ref.name],
           ),
-        ),
-      );
-    } else {
-      Navigator.of(context).pop();
-    }
-  }
-
-  Future<void> _handleDocumentScan(BuildContext context) async {
-    final locale = context.read<AppCubit>().state.locale!;
-    final model = context.read<AppCubit>().state.model!;
-    final selectedCategories = categories
-        .where((c) => c.type == movementType)
-        .toList();
-    final loader = AppLoader(context);
-
-    final files = await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
-
-    if (files.isNotEmpty) {
-      unawaited(loader.showLoading());
-
-      final ext = files.first.split('.').last;
-      final ref = FirebaseStorage.instance.ref().child(
-        '${const Uuid().v4()}.$ext',
-      );
-      final bytes = await File(files.first).readAsBytes();
-
-      // Upload file to Firebase Storage and build movement from file in
-      // parallel
-      final uploadTask = ref.putFile(File(files.first));
-      final movementFuture = buildMovementFromFile(
-        model: model,
-        movementType: movementType,
-        categories: selectedCategories,
-        languageCode: locale.languageCode,
-        mimeType: lookupMimeType(files.first) ?? 'application/pdf',
-        bytes: bytes,
-      );
-
-      final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
-      final uploadSnapshot = results[0] as TaskSnapshot;
-      final movement = results[1] as Movement;
-
-      if (loader.isLoading) {
-        loader.hideLoading();
+        );
+      } on Exception catch (e) {
+        if (loader.isLoading) {
+          loader.hideLoading();
+        }
+        ScaffoldMessenger.of(context).clearSnackBars();
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.toString(),
+              style: TextStyle(color: Theme.of(context).colorScheme.onError),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+            closeIconColor: Theme.of(context).colorScheme.onError,
+          ),
+        );
       }
-
-      Navigator.of(context).pop();
-      await context.pushNamed(
-        'movement',
-        pathParameters: {
-          'type': movementType.value,
-          'screenType': 'ADD',
-        },
-        extra: movement.copyWith(
-          attachments: [uploadSnapshot.ref.name],
-        ),
-      );
-    } else {
-      Navigator.of(context).pop();
     }
   }
 
@@ -302,7 +339,7 @@ class AddMovementBottomSheet extends StatelessWidget {
               TonalButtonActionHome(
                 title: l10n.homeFile,
                 icon: Icons.upload_file,
-                onPressed: () => _handleFilePick(context),
+                onPressed: () => _handleFilePick(context, l10n),
               ),
               TonalButtonActionHome(
                 title: l10n.homeScan,

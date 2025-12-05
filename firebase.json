@@ -1,1 +1,30 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"saver-expense-manager","appId":"1:269318126118:android:19c0edc290b70b9dfb04e7","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"saver-expense-manager","appId":"1:269318126118:ios:ccccf972db5c7042fb04e7","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"saver-expense-manager","configurations":{"android":"1:269318126118:android:19c0edc290b70b9dfb04e7","ios":"1:269318126118:ios:ccccf972db5c7042fb04e7"}}}}}}
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "appId": "1:269318126118:android:19c0edc290b70b9dfb04e7",
+                    "fileOutput": "android/app/google-services.json",
+                    "projectId": "saver-expense-manager"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "configurations": {
+                        "android": "1:269318126118:android:19c0edc290b70b9dfb04e7",
+                        "ios": "1:269318126118:ios:ccccf972db5c7042fb04e7"
+                    },
+                    "projectId": "saver-expense-manager"
+                }
+            },
+            "ios": {
+                "default": {
+                    "appId": "1:269318126118:ios:ccccf972db5c7042fb04e7",
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist",
+                    "projectId": "saver-expense-manager",
+                    "uploadDebugSymbols": false
+                }
+            }
+        }
+    }
+}

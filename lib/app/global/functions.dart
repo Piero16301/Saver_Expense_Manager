@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -144,9 +144,8 @@ List<CategoryData> buildChartData({
     }
   }
   for (final category in categories) {
-    final movementsByCategory = movements
-        .where((element) => element.category == category)
-        .toList();
+    final movementsByCategory =
+        movements.where((element) => element.category == category).toList();
     final total = movementsByCategory.fold<double>(
       0,
       (previousValue, element) => previousValue + element.price,
@@ -192,14 +191,12 @@ List<TrendData> buildTrendData({
 }) {
   final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
   final data = <TrendData>[];
-  for (
-    var i = startMonth;
-    i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
-    i = DateTime(
-      i.month == 12 ? i.year + 1 : i.year,
-      i.month == 12 ? 1 : i.month + 1,
-    )
-  ) {
+  for (var i = startMonth;
+      i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
+      i = DateTime(
+    i.month == 12 ? i.year + 1 : i.year,
+    i.month == 12 ? 1 : i.month + 1,
+  )) {
     final movementsByMonth = movements
         .where(
           (element) =>
@@ -236,7 +233,7 @@ Future<Movement> buildMovementFromFile({
 
   final response = await model.generateContent([
     Content.text(prompt),
-    Content.data(mimeType, bytes),
+    Content.inlineData(mimeType, bytes),
   ]);
 
   var responseJson = <String, dynamic>{};
