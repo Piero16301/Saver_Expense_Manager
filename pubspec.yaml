@@ -57,12 +57,15 @@ dev_dependencies:
   test_coverage_badge: ^0.3.2
   very_good_analysis: ^10.0.0
 
-flutter_icons:
-  image_path: "assets/images/logo.png"
-  android: "launcher_icon"
+flutter_launcher_icons:
+  android: true
+  image_path_android: "assets/images/app-main-logo.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app-main-logo.png"
   ios: true
+  image_path_ios: "assets/images/app-main-logo.png"
   remove_alpha_ios: true
-  min_sdk_android: 23
+  background_color_ios: "#FFFFFF"
   web:
     generate: false
   windows:
