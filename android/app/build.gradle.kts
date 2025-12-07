@@ -41,8 +41,8 @@ android {
         applicationId = "com.pmorales.saver.expense.manager"
         minSdk = 28
         targetSdk = 36
-        versionCode = 6
-        versionName = "1.3.2"
+        versionCode = 7
+        versionName = "1.3.3"
 
         // Configuración para tamaño de página de 16KB
         ndk {
@@ -72,17 +72,17 @@ android {
         create("production") {
             dimension = "default"
             applicationIdSuffix = ""
-            manifestPlaceholders["appName"] = "Saver Expense Manager"
+            manifestPlaceholders["appName"] = "Saver"
         }
         create("staging") {
             dimension = "default"
             applicationIdSuffix = ".stg"
-            manifestPlaceholders["appName"] = "[STG] Saver Expense Manager"
+            manifestPlaceholders["appName"] = "[STG] Saver"
         }
         create("development") {
             dimension = "default"
             applicationIdSuffix = ".dev"
-            manifestPlaceholders["appName"] = "[DEV] Saver Expense Manager"
+            manifestPlaceholders["appName"] = "[DEV] Saver"
         }
     }
 

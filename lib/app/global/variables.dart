@@ -1,5 +1,5 @@
 class AppVariables {
-  static const String appName = 'Saver Expense Manager';
+  static const String appName = 'Saver';
 
   static final minDate = DateTime(2020);
   static const deafultMonthsTrend = 5;
