@@ -255,20 +255,22 @@ String getPrompt({
   required List<Category> categories,
   required String languageCode,
 }) {
+  final type = movementType == CategoryType.expense ? 'expense' : 'income';
   return 'Extract data from this file using this JSON schema: {\n"title": '
       'string,\n"description": string,\n"date": date(dd/MM/yyyy),\n"category": '
       'string,\n"price": double,\n"company": string}. Consider that if not '
       'mentioned an explicit date use now date in the given format. Create a '
-      'title and description, for title using a max of 50 characters and '
-      'description 250 characters. For title, should mentioned the '
-      '${movementType.value} itself if it is a product, mention product, if it '
-      'is food, mention food, et. Description should have more details about '
-      'the ${movementType.value}. If a product, place, food, et. is mentioned, '
-      'search some details on web and put it in description. For category '
-      'select most appropriate from this options: '
+      'title and description, for title strictly less than 50 characters and '
+      'description strictly less than 300 characters. Both title and '
+      'description must start with an uppercase letter. For title, should '
+      'mention the $type itself (translated to $languageCode, not in caps) if '
+      'it is a product, mention product, if it is food, mention food, et. '
+      'Description should have more details about the $type. If a product, '
+      'place, food, et. is mentioned, search some details on web and put it in '
+      'description. For category select most appropriate from this options: '
       '${categories.map((e) => e.name).join(', ')}. Extract the company where '
-      'the ${movementType.value} has been made, like a receiver account, store,'
-      ' bank name et. If there is not an explicit company, return an empty '
+      'the $type has been made, like a receiver account, store, bank name et. '
+      'If there is not an explicit company, return an empty '
       "string. The response should be in '$languageCode' language code.";
 }
 

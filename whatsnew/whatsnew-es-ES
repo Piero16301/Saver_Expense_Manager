@@ -1,10 +1,7 @@
 🎯 Novedades en esta versión:
 
-• Renovación completa de iconos y logo de la aplicación
-• Mejora en la gestión de categorías con integración directa desde Firestore
-• Nuevos estados de manejo de errores y pantallas vacías para mejor experiencia
-• Actualización de dependencias para mejor rendimiento y seguridad
-• Refactorización del sistema de tipos de categorías en toda la aplicación
-• Versión Android actualizada a 1.2.0
+• Mejoras generales de rendimiento y estabilidad para una experiencia más fluida
+• Optimizaciones internas y actualización de componentes del sistema
+• Corrección de errores menores y mejoras en la interfaz de usuario
 
 ¡Gracias por usar Saver Expense Manager!

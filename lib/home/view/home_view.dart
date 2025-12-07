@@ -231,8 +231,6 @@ class AddMovementBottomSheet extends StatelessWidget {
   }
 
   Future<void> _handleDocumentScan(BuildContext context) async {
-    Navigator.of(context).pop();
-
     final locale = context.read<AppCubit>().state.locale!;
     final model = context.read<AppCubit>().model;
     final selectedCategories =
