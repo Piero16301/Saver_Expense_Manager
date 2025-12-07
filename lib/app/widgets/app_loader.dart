@@ -13,7 +13,10 @@ class AppLoader {
   late double _size;
   bool _isLoading = false;
 
-  Future<void> showLoading({String? message, double size = 120}) async {
+  Future<void> showLoading({
+    String? message,
+    double size = 120,
+  }) async {
     final l10n = AppLocalizations.of(context);
 
     _message = message ?? l10n.loading;
@@ -40,7 +43,7 @@ class AppLoader {
                     children: [
                       const AppLoaderWidget(),
                       Image.asset(
-                        'assets/images/logo_no_bg.png',
+                        'assets/images/logo-no-bg-light.png',
                         width: _size / 3,
                         height: _size / 3,
                       ),

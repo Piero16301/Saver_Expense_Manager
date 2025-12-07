@@ -59,13 +59,13 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: true
-  image_path_android: "assets/images/app-main-logo.png"
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/app-main-logo.png"
+  image_path_android: "assets/images/app-main-logo-rounded.png"
+  adaptive_icon_background: "#2C6C41"
+  adaptive_icon_foreground: "assets/images/app-main-logo-rounded.png"
   ios: true
-  image_path_ios: "assets/images/app-main-logo.png"
+  image_path_ios: "assets/images/app-main-logo-rounded.png"
   remove_alpha_ios: true
-  background_color_ios: "#FFFFFF"
+  background_color_ios: "#2C6C41"
   web:
     generate: false
   windows:

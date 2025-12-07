@@ -28,11 +28,19 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+    final darkTheme = context.select<AppCubit, bool>(
+      (cubit) => cubit.state.darkTheme!,
+    );
 
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Image.asset('assets/images/logo_no_bg.png', height: 35),
+          title: Image.asset(
+            darkTheme
+                ? 'assets/images/logo-no-bg-dark.png'
+                : 'assets/images/logo-no-bg-light.png',
+            height: 35,
+          ),
           centerTitle: true,
           notificationPredicate: (notification) => false,
           leading: const ChangeThemeButton(),
@@ -145,10 +153,7 @@ class AddMovementBottomSheet extends StatelessWidget {
   final List<Category> categories;
   final CategoryType movementType;
 
-  Future<void> _handleFilePick(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) async {
+  Future<void> _handleFilePick(BuildContext context) async {
     final locale = context.read<AppCubit>().state.locale!;
     final model = context.read<AppCubit>().model;
     final selectedCategories =
@@ -339,7 +344,7 @@ class AddMovementBottomSheet extends StatelessWidget {
               TonalButtonActionHome(
                 title: l10n.homeFile,
                 icon: Icons.upload_file,
-                onPressed: () => _handleFilePick(context, l10n),
+                onPressed: () => _handleFilePick(context),
               ),
               TonalButtonActionHome(
                 title: l10n.homeScan,
