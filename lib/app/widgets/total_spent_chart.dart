@@ -21,7 +21,7 @@ class TotalSpentChart extends StatelessWidget {
           Text(l10n.homeTotal, style: Theme.of(context).textTheme.titleMedium),
           Text(':', style: Theme.of(context).textTheme.titleMedium),
           Text(
-            moneyFormat.format(
+            AppExtensions.moneyFormat.format(
               data.fold<double>(
                 0,
                 (previousValue, element) => previousValue + element.value,

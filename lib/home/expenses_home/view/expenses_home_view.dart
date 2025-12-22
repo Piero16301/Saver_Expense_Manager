@@ -25,7 +25,7 @@ class ExpensesHomeView extends StatelessWidget {
             onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
           ),
           StreamBuilder<QuerySnapshot>(
-            stream: getMonthMovements(
+            stream: AppFunctions.getMonthMovements(
               userId: user!.uid,
               monthSelected: state.monthSelected!,
               type: CategoryType.expense,
@@ -43,10 +43,9 @@ class ExpensesHomeView extends StatelessWidget {
                 );
               }
 
-              final data = buildChartData(
-                docs:
-                    snapshot.data!.docs
-                        as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+              final data = AppFunctions.buildChartData(
+                docs: snapshot.data!.docs
+                    as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
               );
 
               return Expanded(

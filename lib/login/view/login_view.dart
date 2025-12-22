@@ -15,6 +15,14 @@ class LoginView extends StatelessWidget {
           children: [
             SignInScreen(
               showPasswordVisibilityToggle: true,
+              styles: const {
+                EmailFormStyle(
+                  signInButtonVariant: ButtonVariant.filled,
+                  inputDecorationTheme: InputDecorationTheme(
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              },
               actions: [
                 AuthStateChangeAction((context, state) {
                   final user = switch (state) {

@@ -20,8 +20,10 @@ extension HexColor on Color {
       '${b.toInt().toRadixString(16).padLeft(2, '0')}';
 }
 
-final moneyFormat = NumberFormat('###,###,###,##0.00');
+class AppExtensions {
+  static final moneyFormat = NumberFormat('###,###,###,##0.00');
 
-DateFormat largeDateFormat(String languageCode) {
-  return DateFormat('EEE dd', languageCode);
+  static DateFormat largeDateFormat(String languageCode) {
+    return DateFormat('EEE dd', languageCode);
+  }
 }

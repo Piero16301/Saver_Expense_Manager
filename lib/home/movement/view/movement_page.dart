@@ -55,17 +55,16 @@ class MovementPage extends StatelessWidget {
           );
         }
 
-        final categories =
-            snapshot.data!.docs
-                .map((category) => Category.fromJson(category.data()))
-                .where((element) => element.type == type)
-                .toList()
-              ..sort(
-                (a, b) => getCategoryName(
-                  a.name,
-                  l10n,
-                ).compareTo(getCategoryName(b.name, l10n)),
-              );
+        final categories = snapshot.data!.docs
+            .map((category) => Category.fromJson(category.data()))
+            .where((element) => element.type == type)
+            .toList()
+          ..sort(
+            (a, b) => AppFunctions.getCategoryName(
+              a.name,
+              l10n,
+            ).compareTo(AppFunctions.getCategoryName(b.name, l10n)),
+          );
 
         return BlocProvider(
           create: (_) => MovementCubit()..init(movement, categories),

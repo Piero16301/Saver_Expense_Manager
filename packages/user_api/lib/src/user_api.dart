@@ -6,14 +6,26 @@ abstract class IUserApi {
   const IUserApi();
 
   /// Save language in local storage
-  Future<void> saveLanguage(String language);
+  Future<void> saveLanguage({required String language});
 
   /// Get language from local storage
   String? getLanguage();
 
-  /// Save dark theme in local storage
-  Future<void> saveDarkTheme({bool darkTheme = false});
+  /// Save theme preference in local storage
+  Future<void> saveTheme({required String theme});
 
-  /// Get dark theme from local storage
-  bool? getDarkTheme();
+  /// Get theme preference from local storage
+  String? getTheme();
+
+  /// Save base color in local storage
+  Future<void> saveBaseColor({required String baseColor});
+
+  /// Get base color from local storage
+  String? getBaseColor();
+
+  /// Save font family in local storage
+  Future<void> saveFontFamily({required String fontFamily});
+
+  /// Get font family from local storage
+  String? getFontFamily();
 }

@@ -72,13 +72,16 @@ class MovementView extends StatelessWidget {
                       .map(
                         (category) => DropdownMenuEntry<Category>(
                           value: category,
-                          label: getCategoryName(category.name, l10n),
-                          leadingIcon: Icon(getCategoryIcon(category.icon)),
+                          label:
+                              AppFunctions.getCategoryName(category.name, l10n),
+                          leadingIcon:
+                              Icon(AppFunctions.getCategoryIcon(category.icon)),
                         ),
                       )
                       .toList(),
                   selected: state.category,
-                  leadingIcon: getCategoryIcon(state.category!.icon),
+                  leadingIcon:
+                      AppFunctions.getCategoryIcon(state.category!.icon),
                   onSelected: context.read<MovementCubit>().categoryChanged,
                 ),
                 const SizedBox(height: 20),
@@ -88,9 +91,8 @@ class MovementView extends StatelessWidget {
                   errorText: l10n.movementAmountError,
                   onChanged: context.read<MovementCubit>().priceChanged,
                   prefix: const Icon(Icons.attach_money),
-                  initialValue: state.price == 0
-                      ? ''
-                      : state.price.toStringAsFixed(2),
+                  initialValue:
+                      state.price == 0 ? '' : state.price.toStringAsFixed(2),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(
@@ -147,8 +149,8 @@ class MovementView extends StatelessWidget {
                         onPressed: () {
                           context.pop();
                           if (context.read<MovementCubit>().saveMovement(
-                            user.uid,
-                          )) {
+                                user.uid,
+                              )) {
                             context.pop<bool>(true);
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(

@@ -31,20 +31,23 @@ class DoughnutCircularChart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                getCategoryName(data[selectedIndex].category.name, l10n),
+                AppFunctions.getCategoryName(
+                  data[selectedIndex].category.name,
+                  l10n,
+                ),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               Text(
-                moneyFormat.format(data[selectedIndex].value),
+                AppExtensions.moneyFormat.format(data[selectedIndex].value),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               Text(
                 '${_percentage.toInt()}%',
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               const SizedBox(height: 5),
               SizedBox(
@@ -83,7 +86,7 @@ class DoughnutCircularChart extends StatelessWidget {
       DoughnutSeries<CategoryData, String>(
         dataSource: data,
         xValueMapper: (CategoryData data, _) =>
-            getCategoryName(data.category.name, l10n),
+            AppFunctions.getCategoryName(data.category.name, l10n),
         yValueMapper: (CategoryData data, _) => data.value,
         dataLabelMapper: (CategoryData data, _) => null,
         animationDuration: 500,

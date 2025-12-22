@@ -23,7 +23,7 @@ class MovementsListChart extends StatelessWidget {
         key: ValueKey('$expenseType-$monthSelected'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: getExpenseTypeMovements(
+        query: AppFunctions.getExpenseTypeMovements(
           userId: FirebaseAuth.instance.currentUser!.uid,
           monthSelected: monthSelected,
           expenseType: expenseType,

@@ -20,8 +20,8 @@ class MovementsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final locale = context.select<AppCubit, Locale>(
-      (cubit) => cubit.state.locale!,
+    final language = context.select<AppCubit, String>(
+      (cubit) => cubit.state.language,
     );
 
     return Expanded(
@@ -29,7 +29,7 @@ class MovementsList extends StatelessWidget {
         key: ValueKey('$filterCategory-$monthSelected'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: getCategoryMovements(
+        query: AppFunctions.getCategoryMovements(
           userId: FirebaseAuth.instance.currentUser!.uid,
           monthSelected: monthSelected,
           category: filterCategory,
@@ -79,15 +79,15 @@ class MovementsList extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
-                  moneyFormat.format(movement.price),
+                  AppExtensions.moneyFormat.format(movement.price),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
             leading: Text(
-              largeDateFormat(
-                locale.languageCode,
+              AppExtensions.largeDateFormat(
+                language.split('_').first,
               ).format(movement.date).replaceFirst(' ', '\n').toUpperCase(),
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.bold),

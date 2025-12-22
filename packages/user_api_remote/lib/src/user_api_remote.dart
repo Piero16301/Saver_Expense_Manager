@@ -12,29 +12,55 @@ class UserApiRemote implements IUserApi {
 
   final SharedPreferences _preferences;
 
-  /// The key used to store language in local storage
-  static const kLanguage = '__language__';
+  /// The key used to store the user's language
+  static const kUserLanguage = '__user_language__';
 
-  /// The key used to store dark theme in local storage
-  static const kDarkTheme = '__dark_theme__';
+  /// The key used to store the user's theme preference
+  static const kUserTheme = '__user_theme__';
+
+  /// The key used to store the user's base color preference
+  static const kUserBaseColor = '__user_base_color__';
+
+  /// The key used to store the user's font family preference
+  static const kUserFontFamily = '__user_font_family__';
 
   @override
-  Future<void> saveLanguage(String language) async {
-    await _preferences.setString(kLanguage, language);
+  Future<void> saveLanguage({required String language}) async {
+    await _preferences.setString(kUserLanguage, language);
   }
 
   @override
   String? getLanguage() {
-    return _preferences.getString(kLanguage);
+    return _preferences.getString(kUserLanguage);
   }
 
   @override
-  Future<void> saveDarkTheme({bool darkTheme = false}) async {
-    await _preferences.setBool(kDarkTheme, darkTheme);
+  Future<void> saveTheme({required String theme}) async {
+    await _preferences.setString(kUserTheme, theme);
   }
 
   @override
-  bool? getDarkTheme() {
-    return _preferences.getBool(kDarkTheme);
+  String? getTheme() {
+    return _preferences.getString(kUserTheme);
+  }
+
+  @override
+  Future<void> saveBaseColor({required String baseColor}) async {
+    await _preferences.setString(kUserBaseColor, baseColor);
+  }
+
+  @override
+  String? getBaseColor() {
+    return _preferences.getString(kUserBaseColor);
+  }
+
+  @override
+  Future<void> saveFontFamily({required String fontFamily}) async {
+    await _preferences.setString(kUserFontFamily, fontFamily);
+  }
+
+  @override
+  String? getFontFamily() {
+    return _preferences.getString(kUserFontFamily);
   }
 }

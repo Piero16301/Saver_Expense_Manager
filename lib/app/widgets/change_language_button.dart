@@ -22,7 +22,7 @@ class ChangeLanguageButton extends StatelessWidget {
         icon: SizedBox.square(
           dimension: 30,
           child: Text(
-            languages[(state.locale ?? const Locale('en')).languageCode]!,
+            languages[state.language.split('_').first]!,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 20),
           ),
@@ -55,8 +55,8 @@ class ChangeLanguageButton extends StatelessWidget {
                 onPressed: () {
                   unawaited(
                     context.read<AppCubit>().changeLanguage(
-                      locale.languageCode,
-                    ),
+                          language: locale.toLanguageTag(),
+                        ),
                   );
                   Navigator.pop(context);
                 },

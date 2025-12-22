@@ -35,14 +35,21 @@ class _AppViewState extends State<AppView> {
           ...AppLocalizations.localizationsDelegates,
         ],
         supportedLocales: AppLocalizations.supportedLocales,
-        locale: state.locale,
-        theme: AppTheme.appLightTheme,
-        darkTheme: AppTheme.appDarkTheme,
+        locale: Locale(
+          state.language.split('_').first,
+          state.language.split('_').last,
+        ),
+        theme: AppThemes.lightTheme(
+          baseColor: state.baseColor,
+          fontFamily: state.fontFamily,
+        ),
+        darkTheme: AppThemes.darkTheme(
+          baseColor: state.baseColor,
+          fontFamily: state.fontFamily,
+        ),
         themeAnimationCurve: Curves.easeInOut,
-        themeAnimationDuration: const Duration(milliseconds: 500),
-        themeMode: (state.darkTheme ?? false)
-            ? ThemeMode.dark
-            : ThemeMode.light,
+        themeAnimationDuration: const Duration(milliseconds: 400),
+        themeMode: ThemeHelper.getThemeByName(state.theme),
       ),
     );
   }

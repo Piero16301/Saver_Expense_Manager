@@ -44,10 +44,10 @@ class FilterMovementsHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     categories.sort(
-      (a, b) => getCategoryName(
+      (a, b) => AppFunctions.getCategoryName(
         a.name,
         l10n,
-      ).compareTo(getCategoryName(b.name, l10n)),
+      ).compareTo(AppFunctions.getCategoryName(b.name, l10n)),
     );
 
     return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
@@ -64,14 +64,14 @@ class FilterMovementsHome extends StatelessWidget {
                       .map(
                         (type) => DropdownMenuEntry<CategoryType>(
                           value: type,
-                          label: getTypeName(type, l10n),
-                          leadingIcon: Icon(getTypeIcon(type)),
+                          label: AppFunctions.getTypeName(type, l10n),
+                          leadingIcon: Icon(AppFunctions.getTypeIcon(type)),
                         ),
                       )
                       .toList(),
                   selected: state.filterType,
                   leadingIcon: state.filterType != null
-                      ? getTypeIcon(state.filterType!)
+                      ? AppFunctions.getTypeIcon(state.filterType!)
                       : null,
                   onSelected: (type) {
                     context.read<MovementsHomeCubit>().changeFilterType(type);
@@ -100,19 +100,26 @@ class FilterMovementsHome extends StatelessWidget {
                         .map(
                           (category) => DropdownMenuEntry<Category>(
                             value: category,
-                            label: getCategoryName(category.name, l10n),
-                            leadingIcon: Icon(getCategoryIcon(category.icon)),
+                            label: AppFunctions.getCategoryName(
+                              category.name,
+                              l10n,
+                            ),
+                            leadingIcon: Icon(
+                              AppFunctions.getCategoryIcon(category.icon),
+                            ),
                           ),
                         )
                         .toList(),
                     selected: state.filterCategory,
                     leadingIcon: state.filterCategory != null
-                        ? getCategoryIcon(state.filterCategory!.icon)
+                        ? AppFunctions.getCategoryIcon(
+                            state.filterCategory!.icon,
+                          )
                         : null,
                     onSelected: (category) {
                       context.read<MovementsHomeCubit>().changeFilterCategory(
-                        category,
-                      );
+                            category,
+                          );
                     },
                   ),
                 ),
@@ -148,7 +155,7 @@ class ListMovementsHome extends StatelessWidget {
           key: ValueKey('${state.filterType}-${state.filterCategory}'),
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
-          query: getUserMovements(
+          query: AppFunctions.getUserMovements(
             userId: FirebaseAuth.instance.currentUser!.uid,
             type: state.filterType,
             category: state.filterCategory,

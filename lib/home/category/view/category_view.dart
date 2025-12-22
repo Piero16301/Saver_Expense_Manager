@@ -67,13 +67,13 @@ class CategoryIconAndName extends StatelessWidget {
               category.color,
             ).withValues(alpha: 0.3),
             child: Icon(
-              getCategoryIcon(category.icon),
+              AppFunctions.getCategoryIcon(category.icon),
               size: 70,
               color: HexColor.fromHex(category.color),
             ),
           ),
           Text(
-            getCategoryName(category.name, l10n).toUpperCase(),
+            AppFunctions.getCategoryName(category.name, l10n).toUpperCase(),
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
@@ -149,15 +149,16 @@ class TabTrendCategory extends StatefulWidget {
 
 class _TabTrendCategoryState extends State<TabTrendCategory> {
   DateTime endMonth = DateTime.now();
-  DateTime startMonth = substracMonth(AppVariables.deafultMonthsTrend);
+  DateTime startMonth =
+      AppFunctions.substracMonth(AppVariables.deafultMonthsTrend);
 
   @override
   Widget build(BuildContext context) {
     final category = context.select<CategoryCubit, Category>(
       (cubit) => cubit.state.category,
     );
-    final locale = context.select<AppCubit, Locale>(
-      (cubit) => cubit.state.locale!,
+    final language = context.select<AppCubit, String>(
+      (cubit) => cubit.state.language,
     );
     final user = FirebaseAuth.instance.currentUser;
     final l10n = AppLocalizations.of(context);
@@ -185,7 +186,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
         ),
         const SizedBox(height: 20),
         StreamBuilder<QuerySnapshot>(
-          stream: getTrendChart(
+          stream: AppFunctions.getTrendChart(
             userId: user!.uid,
             startMonth: startMonth,
             endMonth: endMonth,
@@ -204,13 +205,12 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
               );
             }
 
-            final data = buildTrendData(
-              docs:
-                  snapshot.data!.docs
-                      as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+            final data = AppFunctions.buildTrendData(
+              docs: snapshot.data!.docs
+                  as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
               startMonth: startMonth,
               endMonth: endMonth,
-              locale: locale,
+              locale: Locale(language.split('_')[0], language.split('_')[1]),
             );
 
             return LinearChart(category: category, data: data);

@@ -28,9 +28,10 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final darkTheme = context.select<AppCubit, bool>(
-      (cubit) => cubit.state.darkTheme!,
-    );
+    final darkTheme = context.select<AppCubit, String>(
+          (cubit) => cubit.state.theme,
+        ) ==
+        'DARK';
 
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) => Scaffold(
@@ -50,7 +51,9 @@ class HomeView extends StatelessWidget {
                   ? const Icon(Icons.person)
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(50),
-                      child: Image.network(highResPicture(user!.photoURL)!),
+                      child: Image.network(
+                        AppFunctions.highResPicture(user!.photoURL)!,
+                      ),
                     ),
               onPressed: () => context.pushNamed('profile'),
             ),
@@ -154,7 +157,7 @@ class AddMovementBottomSheet extends StatelessWidget {
   final CategoryType movementType;
 
   Future<void> _handleFilePick(BuildContext context) async {
-    final locale = context.read<AppCubit>().state.locale!;
+    final language = context.read<AppCubit>().state.language;
     final model = context.read<AppCubit>().model;
     final selectedCategories =
         categories.where((c) => c.type == movementType).toList();
@@ -179,11 +182,11 @@ class AddMovementBottomSheet extends StatelessWidget {
         // Upload file to Firebase Storage and build movement from file in
         // parallel
         final uploadTask = ref.putFile(File(file.path!));
-        final movementFuture = buildMovementFromFile(
+        final movementFuture = AppFunctions.buildMovementFromFile(
           model: model,
           movementType: movementType,
           categories: selectedCategories,
-          languageCode: locale.languageCode,
+          languageCode: language.split('_').first,
           mimeType: lookupMimeType(file.name) ?? 'application/pdf',
           bytes: bytes,
         );
@@ -231,7 +234,7 @@ class AddMovementBottomSheet extends StatelessWidget {
   }
 
   Future<void> _handleDocumentScan(BuildContext context) async {
-    final locale = context.read<AppCubit>().state.locale!;
+    final language = context.read<AppCubit>().state.language;
     final model = context.read<AppCubit>().model;
     final selectedCategories =
         categories.where((c) => c.type == movementType).toList();
@@ -252,11 +255,11 @@ class AddMovementBottomSheet extends StatelessWidget {
         // Upload file to Firebase Storage and build movement from file in
         // parallel
         final uploadTask = ref.putFile(File(files.first));
-        final movementFuture = buildMovementFromFile(
+        final movementFuture = AppFunctions.buildMovementFromFile(
           model: model,
           movementType: movementType,
           categories: selectedCategories,
-          languageCode: locale.languageCode,
+          languageCode: language.split('_').first,
           mimeType: lookupMimeType(files.first) ?? 'application/pdf',
           bytes: bytes,
         );

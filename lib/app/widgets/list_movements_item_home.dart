@@ -12,8 +12,8 @@ class ListMovementsItemHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.select<AppCubit, Locale>(
-      (cubit) => cubit.state.locale!,
+    final language = context.select<AppCubit, String>(
+      (cubit) => cubit.state.language,
     );
 
     return ListTile(
@@ -35,31 +35,30 @@ class ListMovementsItemHome extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        DateFormat.yMMMMd(locale.languageCode).format(movement.date),
+        DateFormat.yMMMMd(language.split('_').first).format(movement.date),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Container(
         width: 80,
         decoration: BoxDecoration(
-          color:
-              (movement.category.type == CategoryType.expense
-                      ? Colors.red
-                      : Colors.green)
-                  .withValues(alpha: 0.3),
+          color: (movement.category.type == CategoryType.expense
+                  ? Colors.red
+                  : Colors.green)
+              .withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(
-            moneyFormat.format(movement.price),
+            AppExtensions.moneyFormat.format(movement.price),
             style: const TextStyle(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
         ),
       ),
       leading: Icon(
-        getCategoryIcon(movement.category.icon),
+        AppFunctions.getCategoryIcon(movement.category.icon),
         size: 30,
         color: HexColor.fromHex(movement.category.color),
       ),

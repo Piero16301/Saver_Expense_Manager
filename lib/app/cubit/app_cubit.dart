@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:user_repository/user_repository.dart';
 
 part 'app_state.dart';
@@ -35,35 +36,56 @@ class AppCubit extends Cubit<AppState> {
     final language = userRepository.getLanguage();
     if (language == null) {
       final deviceLanguage = Platform.localeName;
-      await userRepository.saveLanguage(deviceLanguage);
+      await userRepository.saveLanguage(language: deviceLanguage);
     }
-    emit(
-      state.copyWith(
-        locale: Locale(
-          userRepository.getLanguage()!.split('_').first,
-          userRepository.getLanguage()!.split('_').last,
-        ),
-      ),
-    );
+    emit(state.copyWith(language: userRepository.getLanguage()));
 
     // Setting the theme to the device theme if it's not set
-    final darkTheme = userRepository.getDarkTheme();
-    if (darkTheme == null) {
+    final theme = userRepository.getTheme();
+    if (theme == null) {
       final deviceBrightness = PlatformDispatcher.instance.platformBrightness;
-      await userRepository.saveDarkTheme(
-        darkTheme: deviceBrightness == Brightness.dark,
+      await userRepository.saveTheme(
+        theme: deviceBrightness == Brightness.dark ? 'DARK' : 'LIGHT',
       );
     }
-    emit(state.copyWith(darkTheme: userRepository.getDarkTheme()));
+    emit(state.copyWith(theme: userRepository.getTheme()));
+
+    // Setting the base color to INDIGO if it's not set
+    final baseColor = userRepository.getBaseColor();
+    if (baseColor == null) {
+      await userRepository.saveBaseColor(
+        baseColor: AppVariables.defaultBaseColor,
+      );
+    }
+    emit(state.copyWith(baseColor: userRepository.getBaseColor()));
+
+    // Setting the font family to Nunito_regular if it's not set
+    final fontFamily = userRepository.getFontFamily();
+    if (fontFamily == null) {
+      await userRepository.saveFontFamily(
+        fontFamily: AppVariables.defaultFontFamily,
+      );
+    }
+    emit(state.copyWith(fontFamily: userRepository.getFontFamily()));
   }
 
-  Future<void> changeLanguage(String language) async {
-    await userRepository.saveLanguage(language);
-    emit(state.copyWith(locale: Locale(language)));
+  Future<void> changeLanguage({required String language}) async {
+    await userRepository.saveLanguage(language: language);
+    emit(state.copyWith(language: language));
   }
 
-  Future<void> toggleTheme() async {
-    await userRepository.saveDarkTheme(darkTheme: !(state.darkTheme ?? false));
-    emit(state.copyWith(darkTheme: !(state.darkTheme ?? false)));
+  Future<void> changeTheme({required String theme}) async {
+    await userRepository.saveTheme(theme: theme);
+    emit(state.copyWith(theme: theme));
+  }
+
+  Future<void> changeBaseColor({required String baseColor}) async {
+    await userRepository.saveBaseColor(baseColor: baseColor);
+    emit(state.copyWith(baseColor: baseColor));
+  }
+
+  Future<void> changeFontFamily({required String fontFamily}) async {
+    await userRepository.saveFontFamily(fontFamily: fontFamily);
+    emit(state.copyWith(fontFamily: fontFamily));
   }
 }

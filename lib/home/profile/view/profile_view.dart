@@ -30,7 +30,9 @@ class ProfileView extends StatelessWidget {
                   ? const Icon(Icons.person, size: 70)
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(80),
-                      child: Image.network(highResPicture(user!.photoURL)!),
+                      child: Image.network(
+                        AppFunctions.highResPicture(user!.photoURL)!,
+                      ),
                     ),
             ),
             actions: [

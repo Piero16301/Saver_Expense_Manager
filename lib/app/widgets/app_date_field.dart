@@ -17,8 +17,8 @@ class AppDateField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.select<AppCubit, Locale>(
-      (cubit) => cubit.state.locale!,
+    final language = context.select<AppCubit, String>(
+      (cubit) => cubit.state.language,
     );
 
     return TextFormField(
@@ -42,9 +42,7 @@ class AppDateField extends StatelessWidget {
       ),
       readOnly: true,
       controller: TextEditingController(
-        text: DateFormat.yMMMMd(
-          '${locale.languageCode}_${locale.countryCode}',
-        ).format(initialDate),
+        text: DateFormat.yMMMMd(language).format(initialDate),
       ),
     );
   }

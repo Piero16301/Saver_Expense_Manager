@@ -72,7 +72,7 @@ class LinearChart extends StatelessWidget {
         splineType: SplineType.monotonic,
         xValueMapper: (TrendData trend, _) => trend.month,
         yValueMapper: (TrendData trend, _) => trend.value,
-        name: getCategoryName(category.name, l10n),
+        name: AppFunctions.getCategoryName(category.name, l10n),
         color: HexColor.fromHex(category.color).withValues(alpha: 0.7),
         animationDuration: 500,
         markerSettings: const MarkerSettings(
