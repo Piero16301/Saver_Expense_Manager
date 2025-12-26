@@ -42,7 +42,7 @@ class CategoryView extends StatelessWidget {
             right: 30,
             left: 30,
             bottom: 30,
-            top: 20,
+            top: 10,
           ),
           child: Column(
             spacing: 10,
@@ -82,6 +82,7 @@ class CategoryIconAndName extends StatelessWidget {
               icon: AppFunctions.getCategoryIcon(category.icon),
               size: 70,
               color: HexColor.fromHex(category.color),
+              strokeWidth: 2,
             ),
           ),
           Text(
@@ -226,7 +227,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
                   as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
               startMonth: startMonth,
               endMonth: endMonth,
-              locale: Locale(language.split('_')[0], language.split('_')[1]),
+              language: language,
             );
 
             return LinearChart(category: category, data: data);

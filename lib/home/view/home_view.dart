@@ -147,15 +147,24 @@ class BottomNavigationBarHome extends StatelessWidget {
             context.read<HomeCubit>().toggleSelectedIndex(index),
         destinations: [
           NavigationDestination(
-            icon: const HugeIcon(icon: HugeIcons.strokeRoundedMoneyRemove01),
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedMoneyRemove01,
+              strokeWidth: 2,
+            ),
             label: l10n.homeExpensesTitle,
           ),
           NavigationDestination(
-            icon: const HugeIcon(icon: HugeIcons.strokeRoundedTaskDaily01),
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedTaskDaily01,
+              strokeWidth: 2,
+            ),
             label: l10n.homeMovementsTitle,
           ),
           NavigationDestination(
-            icon: const HugeIcon(icon: HugeIcons.strokeRoundedMoneyAdd01),
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedMoneyAdd01,
+              strokeWidth: 2,
+            ),
             label: l10n.homeIncomeTitle,
           ),
         ],
@@ -204,7 +213,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           model: model,
           movementType: movementType,
           categories: selectedCategories,
-          languageCode: language.split('_').first,
+          language: language,
           mimeType: lookupMimeType(file.name) ?? 'application/pdf',
           bytes: bytes,
         );
@@ -277,7 +286,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           model: model,
           movementType: movementType,
           categories: selectedCategories,
-          languageCode: language.split('_').first,
+          language: language,
           mimeType: lookupMimeType(files.first) ?? 'application/pdf',
           bytes: bytes,
         );

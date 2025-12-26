@@ -15,7 +15,26 @@ rootProject.layout.buildDirectory.value(newBuildDir)
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
+    
+    pluginManager.withPlugin("com.android.library") {
+        extensions.configure<com.android.build.gradle.LibraryExtension> {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
+    }
+    
+    pluginManager.withPlugin("com.android.application") {
+        extensions.configure<com.android.build.gradle.AppExtension> {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
+    }
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

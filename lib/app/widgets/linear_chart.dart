@@ -17,46 +17,31 @@ class LinearChart extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Expanded(
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        controller: ScrollController(
-          initialScrollOffset: 50 + (data.length * 70).toDouble(),
+      child: SfCartesianChart(
+        tooltipBehavior: TooltipBehavior(
+          enable: true,
+          animationDuration: 100,
+          decimalPlaces: 2,
         ),
-        child: Row(
-          children: [
-            const SizedBox(width: 20),
-            SizedBox(
-              width: 50 + (data.length * 70).toDouble(),
-              child: SfCartesianChart(
-                tooltipBehavior: TooltipBehavior(
-                  enable: true,
-                  animationDuration: 100,
-                  decimalPlaces: 2,
-                ),
-                series: _buildLineSeries(l10n),
-                primaryXAxis: CategoryAxis(
-                  labelPlacement: LabelPlacement.onTicks,
-                  majorGridLines: const MajorGridLines(width: 0),
-                  labelStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                primaryYAxis: NumericAxis(
-                  opposedPosition: true,
-                  minimum: 0,
-                  maximum: maximum == maximumRounded
-                      ? (maximum + 100)
-                      : maximumRounded.toDouble(),
-                  labelStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+        series: _buildLineSeries(l10n),
+        primaryXAxis: CategoryAxis(
+          labelPlacement: LabelPlacement.onTicks,
+          majorGridLines: const MajorGridLines(width: 0),
+          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
               ),
-            ),
-          ],
+        ),
+        primaryYAxis: NumericAxis(
+          opposedPosition: true,
+          minimum: 0,
+          maximum: maximum == maximumRounded
+              ? (maximum + 100)
+              : maximumRounded.toDouble(),
+          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
+              ),
         ),
       ),
     );

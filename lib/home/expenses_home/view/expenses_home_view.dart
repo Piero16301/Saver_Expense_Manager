@@ -52,7 +52,6 @@ class ExpensesHomeView extends StatelessWidget {
                 child: Column(
                   children: [
                     TotalSpentChart(data: data),
-                    const SizedBox(height: 10),
                     DoughnutCircularChart(
                       data: data..sort((a, b) => b.value.compareTo(a.value)),
                       selectedIndex: state.selectedIndex,
@@ -60,7 +59,6 @@ class ExpensesHomeView extends StatelessWidget {
                           .read<ExpensesHomeCubit>()
                           .changeExplodeIndex(p0.pointIndex),
                     ),
-                    const SizedBox(height: 10),
                     MovementsListChart(
                       expenseType: CategoryType.expense,
                       monthSelected: state.monthSelected!,

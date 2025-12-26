@@ -50,7 +50,6 @@ class IncomeHomeView extends StatelessWidget {
                 child: Column(
                   children: [
                     TotalSpentChart(data: data),
-                    const SizedBox(height: 10),
                     DoughnutCircularChart(
                       data: data,
                       selectedIndex: state.selectedIndex,

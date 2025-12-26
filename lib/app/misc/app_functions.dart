@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ai/firebase_ai.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
@@ -189,7 +188,7 @@ class AppFunctions {
     required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
     required DateTime startMonth,
     required DateTime endMonth,
-    required Locale locale,
+    required String language,
   }) {
     final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
     final data = <TrendData>[];
@@ -211,7 +210,7 @@ class AppFunctions {
       );
       data.add(
         TrendData(
-          month: DateFormat('MMM yyyy', locale.languageCode).format(i),
+          month: DateFormat('MMM', language).format(i),
           value: total,
         ),
       );
@@ -223,14 +222,14 @@ class AppFunctions {
     required GenerativeModel model,
     required CategoryType movementType,
     required List<Category> categories,
-    required String languageCode,
+    required String language,
     required String mimeType,
     required Uint8List bytes,
   }) async {
     final prompt = getPrompt(
       movementType: movementType,
       categories: categories,
-      languageCode: languageCode,
+      language: language,
     );
 
     final response = await model.generateContent([
@@ -255,7 +254,7 @@ class AppFunctions {
   static String getPrompt({
     required CategoryType movementType,
     required List<Category> categories,
-    required String languageCode,
+    required String language,
   }) {
     final type = movementType == CategoryType.expense ? 'expense' : 'income';
     return 'Extract data from this file using this JSON schema: {\n"title": '
@@ -265,15 +264,15 @@ class AppFunctions {
         'title and description, for title strictly less than 50 characters and '
         'description strictly less than 300 characters. Both title and '
         'description must start with an uppercase letter. For title, should '
-        'mention the $type itself (translated to $languageCode, not in caps) if'
-        ' it is a product, mention product, if it is food, mention food, et. '
-        'Description should have more details about the $type. If a product, '
-        'place, food, et. is mentioned, search some details on web and put it '
-        'in description. For category select most appropriate from this '
-        'options: ${categories.map((e) => e.name).join(', ')}. Extract the '
+        'mention the $type itself (translated to $language language code, not '
+        'in caps) if it is a product, mention product, if it is food, mention '
+        'food, et. Description should have more details about the $type. If a '
+        'product, place, food, et. is mentioned, search some details on web and'
+        ' put it in description. For category select most appropriate from this'
+        ' options: ${categories.map((e) => e.name).join(', ')}. Extract the '
         'company where the $type has been made, like a receiver account, store,'
         ' bank name et. If there is not an explicit company, return an empty '
-        "string. The response should be in '$languageCode' language code.";
+        "string. The response should be in '$language' language code.";
   }
 
   static String getCategoryName(String category, AppLocalizations l10n) {

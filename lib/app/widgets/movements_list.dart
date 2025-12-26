@@ -87,9 +87,10 @@ class MovementsList extends StatelessWidget {
               ),
             ),
             leading: Text(
-              AppExtensions.largeDateFormat(
-                language.split('_').first,
-              ).format(movement.date).replaceFirst(' ', '\n').toUpperCase(),
+              AppExtensions.largeDateFormat(language)
+                  .format(movement.date)
+                  .replaceFirst(' ', '\n')
+                  .toUpperCase(),
               textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),

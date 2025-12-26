@@ -46,7 +46,7 @@ class MonthRangeSelector extends StatelessWidget {
                   child: Text(
                     DateFormat(
                       'MMM yyyy',
-                      language.split('_').first,
+                      language,
                     ).format(startMonth).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 16,
@@ -80,7 +80,7 @@ class MonthRangeSelector extends StatelessWidget {
                   child: Text(
                     DateFormat(
                       'MMM yyyy',
-                      language.split('_').first,
+                      language,
                     ).format(endMonth).toUpperCase(),
                     style: const TextStyle(
                       fontSize: 16,

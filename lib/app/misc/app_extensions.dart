@@ -23,7 +23,7 @@ extension HexColor on Color {
 class AppExtensions {
   static final moneyFormat = NumberFormat('###,###,###,##0.00');
 
-  static DateFormat largeDateFormat(String languageCode) {
-    return DateFormat('EEE dd', languageCode);
+  static DateFormat largeDateFormat(String language) {
+    return DateFormat('EEE dd', language);
   }
 }

@@ -32,17 +32,20 @@ class ListMovementsItemHome extends StatelessWidget {
       contentPadding: const EdgeInsets.only(left: 16, right: 16),
       title: Text(
         movement.title,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        DateFormat.yMMMMd(language.split('_').first).format(movement.date),
+        DateFormat.yMMMMd(language).format(movement.date),
+        style: Theme.of(context).textTheme.bodySmall,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Container(
-        width: 80,
+        width: 90,
         decoration: BoxDecoration(
           color: (movement.category.type == CategoryType.expense
                   ? Colors.red
@@ -51,18 +54,21 @@ class ListMovementsItemHome extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: Text(
             AppExtensions.moneyFormat.format(movement.price),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
             textAlign: TextAlign.center,
           ),
         ),
       ),
       leading: HugeIcon(
         icon: AppFunctions.getCategoryIcon(movement.category.icon),
-        size: 30,
+        size: 32,
         color: HexColor.fromHex(movement.category.color),
+        strokeWidth: 2,
       ),
     );
   }

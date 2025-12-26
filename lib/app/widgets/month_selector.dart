@@ -55,7 +55,7 @@ class MonthSelector extends StatelessWidget {
                   child: Text(
                     DateFormat(
                       'MMMM yyyy',
-                      language.split('_').first,
+                      language,
                     ).format(monthSelected).toUpperCase(),
                     style: Theme.of(context).textTheme.labelLarge!.copyWith(
                           fontWeight: FontWeight.bold,
