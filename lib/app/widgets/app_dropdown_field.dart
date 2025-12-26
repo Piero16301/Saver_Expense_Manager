@@ -6,35 +6,37 @@ class AppDropdownField<T> extends StatelessWidget {
     required this.options,
     this.selected,
     this.leadingIcon,
-    this.onSelected,
+    this.onChanged,
     super.key,
   });
 
   final String label;
-  final List<DropdownMenuEntry<T>> options;
+  final List<DropdownMenuItem<T>> options;
   final T? selected;
-  final IconData? leadingIcon;
-  final void Function(T?)? onSelected;
+  final List<List<dynamic>>? leadingIcon;
+  final void Function(T?)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
-          child: DropdownMenu<T>(
-            controller: selected == null
-                ? TextEditingController(text: selected?.toString())
-                : null,
-            width: double.infinity,
-            menuHeight: 300,
-            menuStyle: const MenuStyle(
-              padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+              borderRadius: BorderRadius.circular(8),
             ),
-            label: Text(label),
-            leadingIcon: leadingIcon == null ? null : Icon(leadingIcon),
-            initialSelection: selected,
-            onSelected: onSelected,
-            dropdownMenuEntries: options,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: DropdownButton<T>(
+              value: selected,
+              isExpanded: true,
+              underline: const SizedBox(),
+              borderRadius: BorderRadius.circular(8),
+              onChanged: onChanged,
+              items: options,
+            ),
           ),
         ),
       ],

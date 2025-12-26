@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -57,7 +58,9 @@ class MonthRangeSelector extends StatelessWidget {
             ),
           ),
         ),
-        const Expanded(child: Icon(Icons.date_range_outlined, size: 30)),
+        const Expanded(
+          child: HugeIcon(icon: HugeIcons.strokeRoundedCalendar03, size: 30),
+        ),
         SizedBox(
           height: 40,
           width: 130,

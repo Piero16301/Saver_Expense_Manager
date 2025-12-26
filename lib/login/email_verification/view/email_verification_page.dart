@@ -5,6 +5,9 @@ import 'package:saver_expense_manager/login/email_verification/email_verificatio
 class EmailVerificationPage extends StatelessWidget {
   const EmailVerificationPage({super.key});
 
+  static const String pageName = 'email-verification';
+  static const String pagePath = '/email-verification';
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

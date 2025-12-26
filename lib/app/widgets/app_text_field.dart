@@ -39,9 +39,26 @@ class AppTextField extends StatelessWidget {
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
       decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+          ),
+        ),
         labelText: label,
         hintText: hintText,
-        prefixIcon: prefix,
+        prefixIcon: prefix != null
+            ? Padding(
+                padding: const EdgeInsets.all(12),
+                child: prefix,
+              )
+            : null,
+        prefixIconConstraints: prefix != null
+            ? const BoxConstraints(
+                minWidth: 48,
+                minHeight: 48,
+              )
+            : null,
         alignLabelWithHint: true,
       ),
       maxLines: maxLines,

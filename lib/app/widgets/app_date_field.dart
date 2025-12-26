@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
@@ -25,8 +26,14 @@ class AppDateField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         alignLabelWithHint: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+          ),
+        ),
         prefixIcon: IconButton(
-          icon: const Icon(Icons.calendar_today),
+          icon: const HugeIcon(icon: HugeIcons.strokeRoundedCalendar01),
           onPressed: () async {
             final date = await showDatePicker(
               context: context,

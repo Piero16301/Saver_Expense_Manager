@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -299,6 +300,8 @@ class AppFunctions {
         return l10n.categoryInsurance;
       case 'DWELLING':
         return l10n.categoryDwelling;
+      case 'GIFTS':
+        return l10n.categoryGifts;
       case 'OTHERS_EXPENSE':
         return l10n.categoryOthersExpense;
       case 'SALARY':
@@ -317,8 +320,8 @@ class AppFunctions {
         return l10n.categoryPensions;
       case 'DIVIDENDS':
         return l10n.categoryDividends;
-      case 'GIFTS':
-        return l10n.categoryGifts;
+      case 'AWARDS':
+        return l10n.categoryAwards;
       case 'REFUNDS':
         return l10n.categoryRefunds;
       case 'SALES':
@@ -330,56 +333,58 @@ class AppFunctions {
     }
   }
 
-  static IconData getCategoryIcon(String icon) {
+  static List<List<dynamic>> getCategoryIcon(String icon) {
     switch (icon) {
       case 'DIRECTIONS_CAR':
-        return Icons.directions_car;
+        return HugeIcons.strokeRoundedCar01;
       case 'RESTAURANT':
-        return Icons.restaurant;
+        return HugeIcons.strokeRoundedRestaurant01;
       case 'LOCAL_HOSPITAL':
-        return Icons.local_hospital;
+        return HugeIcons.strokeRoundedHospital01;
       case 'MOVIE':
-        return Icons.movie;
+        return HugeIcons.strokeRoundedVideo01;
       case 'CARD_TRAVEL':
-        return Icons.card_travel;
+        return HugeIcons.strokeRoundedTravelBag;
       case 'COMPUTER':
-        return Icons.computer;
+        return HugeIcons.strokeRoundedComputerDesk01;
       case 'SCHOOL':
-        return Icons.school;
+        return HugeIcons.strokeRoundedSchool;
       case 'CHECKROOM':
-        return Icons.checkroom;
+        return HugeIcons.strokeRoundedShirt01;
       case 'PAYMENTS':
-        return Icons.payments;
+        return HugeIcons.strokeRoundedPayment01;
       case 'SECURITY':
-        return Icons.security;
+        return HugeIcons.strokeRoundedSecurity;
       case 'HOUSE':
-        return Icons.house;
+        return HugeIcons.strokeRoundedHome01;
+      case 'GIFT':
+        return HugeIcons.strokeRoundedGift;
       case 'CATEGORY':
-        return Icons.category;
+        return HugeIcons.strokeRoundedMore;
       case 'ATTACH_MONEY':
-        return Icons.attach_money;
+        return HugeIcons.strokeRoundedDollar01;
       case 'BUSINESS':
-        return Icons.business;
+        return HugeIcons.strokeRoundedBuilding01;
       case 'PERSON_SEARCH':
-        return Icons.person_search;
+        return HugeIcons.strokeRoundedUserSearch01;
       case 'APARTMENT':
-        return Icons.apartment;
+        return HugeIcons.strokeRoundedBuilding03;
       case 'TRENDING_UP':
-        return Icons.trending_up;
+        return HugeIcons.strokeRoundedArrowUpRight01;
       case 'PERCENT':
-        return Icons.percent;
+        return HugeIcons.strokeRoundedPercent;
       case 'CARD_MEMBERSHIP':
-        return Icons.card_membership;
+        return HugeIcons.strokeRoundedCreditCard;
       case 'MONETIZATION_ON':
-        return Icons.monetization_on;
+        return HugeIcons.strokeRoundedDollarCircle;
       case 'CARD_GIFTCARD':
-        return Icons.card_giftcard;
+        return HugeIcons.strokeRoundedGiftCard;
       case 'RECEIPT_LONG':
-        return Icons.receipt_long;
+        return HugeIcons.strokeRoundedInvoice01;
       case 'LOCAL_OFFER':
-        return Icons.local_offer;
+        return HugeIcons.strokeRoundedTag01;
       default:
-        return Icons.error;
+        return HugeIcons.strokeRoundedAlert02;
     }
   }
 
@@ -392,12 +397,12 @@ class AppFunctions {
     }
   }
 
-  static IconData getTypeIcon(CategoryType type) {
+  static List<List<dynamic>> getTypeIcon(CategoryType type) {
     switch (type) {
       case CategoryType.expense:
-        return Icons.money_off;
+        return HugeIcons.strokeRoundedMoneyRemove01;
       case CategoryType.income:
-        return Icons.attach_money;
+        return HugeIcons.strokeRoundedMoneyAdd01;
     }
   }
 }

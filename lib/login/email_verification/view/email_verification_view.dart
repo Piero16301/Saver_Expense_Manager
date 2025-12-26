@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:saver_expense_manager/home/home.dart';
+import 'package:saver_expense_manager/login/login.dart';
 
 class EmailVerificationView extends StatefulWidget {
   const EmailVerificationView({super.key});
@@ -26,7 +28,7 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
       // Si el email ya está verificado, navegar directamente a home
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          context.goNamed('home');
+          context.goNamed(HomePage.pageName);
         }
       });
     }
@@ -41,13 +43,13 @@ class _EmailVerificationViewState extends State<EmailVerificationView> {
             actions: [
               EmailVerifiedAction(() {
                 if (mounted) {
-                  context.goNamed('home');
+                  context.goNamed(HomePage.pageName);
                 }
               }),
               AuthCancelledAction((context) {
                 unawaited(FirebaseUIAuth.signOut(context: context));
                 if (mounted) {
-                  context.goNamed('login');
+                  context.goNamed(LoginPage.pageName);
                 }
               }),
             ],

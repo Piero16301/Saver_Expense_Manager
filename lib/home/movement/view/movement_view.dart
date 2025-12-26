@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/movement/movement.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -27,13 +28,26 @@ class MovementView extends StatelessWidget {
     return BlocBuilder<MovementCubit, MovementState>(
       builder: (context, state) => Scaffold(
         appBar: AppBar(
-          title: Text(_appBarTitle(l10n)),
+          title: Text(
+            _appBarTitle(l10n),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
           centerTitle: true,
           notificationPredicate: (notification) => false,
           actions: _appBarActions(context, l10n),
+          leading: IconButton(
+            onPressed: () => context.pop(),
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowLeft01,
+              strokeWidth: 2,
+            ),
+          ),
         ),
         body: Padding(
-          padding: const EdgeInsets.only(left: 30, right: 30, bottom: 50),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 50),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
@@ -44,7 +58,7 @@ class MovementView extends StatelessWidget {
                   hintText: l10n.movementTitleHint,
                   errorText: l10n.movementTitleError,
                   onChanged: context.read<MovementCubit>().titleChanged,
-                  prefix: const Icon(Icons.title),
+                  prefix: const HugeIcon(icon: HugeIcons.strokeRoundedTextFont),
                   initialValue: state.title,
                   maxLength: 50,
                 ),
@@ -54,7 +68,7 @@ class MovementView extends StatelessWidget {
                   hintText: l10n.movementDescriptionHint,
                   errorText: l10n.movementDescriptionError,
                   onChanged: context.read<MovementCubit>().descriptionChanged,
-                  prefix: const Icon(Icons.description),
+                  prefix: const HugeIcon(icon: HugeIcons.strokeRoundedNote),
                   initialValue: state.description,
                   maxLines: 7,
                   maxLength: 300,
@@ -70,19 +84,31 @@ class MovementView extends StatelessWidget {
                   label: l10n.movementCategory,
                   options: state.categories
                       .map(
-                        (category) => DropdownMenuEntry<Category>(
+                        (category) => DropdownMenuItem<Category>(
                           value: category,
-                          label:
-                              AppFunctions.getCategoryName(category.name, l10n),
-                          leadingIcon:
-                              Icon(AppFunctions.getCategoryIcon(category.icon)),
+                          child: Row(
+                            spacing: 12,
+                            children: [
+                              HugeIcon(
+                                icon:
+                                    AppFunctions.getCategoryIcon(category.icon),
+                              ),
+                              Text(
+                                AppFunctions.getCategoryName(
+                                  category.name,
+                                  l10n,
+                                ),
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ],
+                          ),
                         ),
                       )
                       .toList(),
                   selected: state.category,
                   leadingIcon:
                       AppFunctions.getCategoryIcon(state.category!.icon),
-                  onSelected: context.read<MovementCubit>().categoryChanged,
+                  onChanged: context.read<MovementCubit>().categoryChanged,
                 ),
                 const SizedBox(height: 20),
                 AppTextField(
@@ -90,7 +116,7 @@ class MovementView extends StatelessWidget {
                   hintText: l10n.movementAmountHint,
                   errorText: l10n.movementAmountError,
                   onChanged: context.read<MovementCubit>().priceChanged,
-                  prefix: const Icon(Icons.attach_money),
+                  prefix: const HugeIcon(icon: HugeIcons.strokeRoundedMoney01),
                   initialValue:
                       state.price == 0 ? '' : state.price.toStringAsFixed(2),
                   keyboardType: TextInputType.number,
@@ -106,7 +132,8 @@ class MovementView extends StatelessWidget {
                   hintText: l10n.movementCompanyHint,
                   isRequired: false,
                   onChanged: context.read<MovementCubit>().companyChanged,
-                  prefix: const Icon(Icons.business),
+                  prefix:
+                      const HugeIcon(icon: HugeIcons.strokeRoundedBuilding01),
                   initialValue: state.company,
                   maxLength: 50,
                 ),
@@ -180,7 +207,7 @@ class MovementView extends StatelessWidget {
               }
             }
           },
-          child: const Icon(Icons.save),
+          child: const HugeIcon(icon: HugeIcons.strokeRoundedTick02),
         ),
       ),
     );
@@ -203,7 +230,7 @@ class MovementView extends StatelessWidget {
         return [
           IconButton(
             onPressed: () => _showDeleteDialog(context, l10n),
-            icon: const Icon(Icons.delete),
+            icon: const HugeIcon(icon: HugeIcons.strokeRoundedDelete02),
           ),
         ];
     }

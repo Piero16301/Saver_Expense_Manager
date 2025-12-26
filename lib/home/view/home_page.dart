@@ -9,6 +9,9 @@ import 'package:user_api/user_api.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  static const String pageName = 'home';
+  static const String pagePath = '/';
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);

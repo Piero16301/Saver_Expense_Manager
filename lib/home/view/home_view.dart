@@ -10,9 +10,11 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
+import 'package:saver_expense_manager/home/settings/settings.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 import 'package:uuid/uuid.dart';
@@ -44,24 +46,41 @@ class HomeView extends StatelessWidget {
           ),
           centerTitle: true,
           notificationPredicate: (notification) => false,
-          leading: const ChangeThemeButton(),
+          leading: Row(
+            children: [
+              const SizedBox(width: 8),
+              IconButton(
+                padding: EdgeInsets.zero,
+                icon: user?.photoURL == null
+                    ? const HugeIcon(icon: HugeIcons.strokeRoundedUser)
+                    : ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.network(
+                          AppFunctions.highResPicture(user!.photoURL)!,
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                onPressed: () => context.pushNamed(ProfilePage.pageName),
+              ),
+            ],
+          ),
           actions: [
             IconButton(
-              icon: user?.photoURL == null
-                  ? const Icon(Icons.person)
-                  : ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.network(
-                        AppFunctions.highResPicture(user!.photoURL)!,
-                      ),
-                    ),
-              onPressed: () => context.pushNamed('profile'),
+              padding: EdgeInsets.zero,
+              icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedSettings02,
+                size: 28,
+              ),
+              onPressed: () => context.pushNamed(SettingsPage.pageName),
             ),
           ],
+          actionsPadding: const EdgeInsets.only(right: 8),
         ),
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
               transitionBuilder: (child, animation) =>
@@ -80,7 +99,9 @@ class HomeView extends StatelessWidget {
                     movementType: _getMovementType(state.selectedIndex),
                   ),
                 ),
-                child: const Icon(Icons.add),
+                child: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedAdd01,
+                ),
               )
             : null,
       ),
@@ -126,18 +147,15 @@ class BottomNavigationBarHome extends StatelessWidget {
             context.read<HomeCubit>().toggleSelectedIndex(index),
         destinations: [
           NavigationDestination(
-            icon: const Icon(Icons.money_off_outlined),
-            selectedIcon: const Icon(Icons.money_off),
+            icon: const HugeIcon(icon: HugeIcons.strokeRoundedMoneyRemove01),
             label: l10n.homeExpensesTitle,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.list_alt_outlined),
-            selectedIcon: const Icon(Icons.list_alt),
+            icon: const HugeIcon(icon: HugeIcons.strokeRoundedTaskDaily01),
             label: l10n.homeMovementsTitle,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.attach_money_outlined),
-            selectedIcon: const Icon(Icons.attach_money),
+            icon: const HugeIcon(icon: HugeIcons.strokeRoundedMoneyAdd01),
             label: l10n.homeIncomeTitle,
           ),
         ],
@@ -202,7 +220,7 @@ class AddMovementBottomSheet extends StatelessWidget {
         Navigator.of(context).pop();
         unawaited(
           context.pushNamed(
-            'movement',
+            MovementPage.pageName,
             pathParameters: {
               'type': movementType.value,
               'screenType': 'ADD',
@@ -274,7 +292,7 @@ class AddMovementBottomSheet extends StatelessWidget {
         }
         Navigator.of(context).pop();
         await context.pushNamed(
-          'movement',
+          MovementPage.pageName,
           pathParameters: {
             'type': movementType.value,
             'screenType': 'ADD',
@@ -311,14 +329,14 @@ class AddMovementBottomSheet extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 250,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        spacing: 20,
+        spacing: 16,
         children: [
           Center(
             child: GestureDetector(
@@ -344,22 +362,22 @@ class AddMovementBottomSheet extends StatelessWidget {
             children: [
               TonalButtonActionHome(
                 title: l10n.homeFile,
-                icon: Icons.upload_file,
+                icon: HugeIcons.strokeRoundedUpload04,
                 onPressed: () => _handleFilePick(context),
               ),
               TonalButtonActionHome(
                 title: l10n.homeScan,
-                icon: Icons.document_scanner,
+                icon: HugeIcons.strokeRoundedCamera01,
                 onPressed: () => _handleDocumentScan(context),
               ),
               TonalButtonActionHome(
                 title: l10n.homeEnter,
-                icon: Icons.edit,
+                icon: HugeIcons.strokeRoundedEdit02,
                 onPressed: () {
                   Navigator.of(context).pop();
                   unawaited(
                     context.pushNamed(
-                      'movement',
+                      MovementPage.pageName,
                       pathParameters: {
                         'type': movementType.value,
                         'screenType': 'ADD',
@@ -386,7 +404,7 @@ class TonalButtonActionHome extends StatelessWidget {
   });
 
   final String title;
-  final IconData icon;
+  final List<List<dynamic>> icon;
   final void Function()? onPressed;
 
   @override
@@ -397,7 +415,7 @@ class TonalButtonActionHome extends StatelessWidget {
         child: FilledButton.tonal(
           style: ButtonStyle(
             shape: WidgetStateProperty.all(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
             padding: WidgetStateProperty.all(const EdgeInsets.all(10)),
           ),
@@ -406,7 +424,7 @@ class TonalButtonActionHome extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: 5,
             children: [
-              Icon(icon, size: 40),
+              HugeIcon(icon: icon, size: 40),
               Text(
                 title,
                 style: Theme.of(context).textTheme.bodyMedium,

@@ -3,6 +3,8 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/home/home.dart';
+import 'package:saver_expense_manager/login/email_verification/email_verification.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -38,15 +40,15 @@ class LoginView extends StatelessWidget {
                       switch (user) {
                         case User(emailVerified: true):
                           if (context.mounted) {
-                            context.goNamed('home');
+                            context.goNamed(HomePage.pageName);
                           }
                         case User(emailVerified: false, email: final String _):
                           if (context.mounted) {
-                            context.goNamed('email-verification');
+                            context.goNamed(EmailVerificationPage.pageName);
                           }
                         default:
                           if (context.mounted) {
-                            context.goNamed('home');
+                            context.goNamed(HomePage.pageName);
                           }
                       }
                     });

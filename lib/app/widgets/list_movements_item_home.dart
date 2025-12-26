@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/home/movement/movement.dart';
 import 'package:user_api/user_api.dart';
 
 class ListMovementsItemHome extends StatelessWidget {
@@ -18,7 +20,7 @@ class ListMovementsItemHome extends StatelessWidget {
 
     return ListTile(
       onTap: () => context.pushNamed<bool>(
-        'movement',
+        MovementPage.pageName,
         pathParameters: {
           'type': movement.category.type == CategoryType.income
               ? CategoryType.income.value
@@ -57,8 +59,8 @@ class ListMovementsItemHome extends StatelessWidget {
           ),
         ),
       ),
-      leading: Icon(
-        AppFunctions.getCategoryIcon(movement.category.icon),
+      leading: HugeIcon(
+        icon: AppFunctions.getCategoryIcon(movement.category.icon),
         size: 30,
         color: HexColor.fromHex(movement.category.color),
       ),

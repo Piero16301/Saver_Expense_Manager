@@ -5,6 +5,9 @@ import 'package:saver_expense_manager/home/profile/profile.dart';
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
+  static const String pageName = 'profile';
+  static const String pagePath = 'profile';
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(

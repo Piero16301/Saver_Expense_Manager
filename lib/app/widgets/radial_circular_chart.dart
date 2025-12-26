@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:user_api/user_api.dart';
@@ -52,7 +53,10 @@ class _RadialCircularChartState extends State<RadialCircularChart> {
           widget: ClipRRect(
             borderRadius: BorderRadius.circular(60),
             child: widget.image == null
-                ? const Icon(Icons.person, size: 100)
+                ? const HugeIcon(
+                    icon: HugeIcons.strokeRoundedUser,
+                    size: 100,
+                  )
                 : Image.network(
                     widget.image!,
                     fit: BoxFit.cover,

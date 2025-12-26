@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/category/category.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -21,9 +23,19 @@ class CategoryView extends StatelessWidget {
             state.category.type == CategoryType.expense
                 ? l10n.categoryExpenseTitle
                 : l10n.categoryIncomeTitle,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           centerTitle: true,
           notificationPredicate: (notification) => false,
+          leading: IconButton(
+            onPressed: () => context.pop(),
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowLeft01,
+              strokeWidth: 2,
+            ),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.only(
@@ -66,8 +78,8 @@ class CategoryIconAndName extends StatelessWidget {
             backgroundColor: HexColor.fromHex(
               category.color,
             ).withValues(alpha: 0.3),
-            child: Icon(
-              AppFunctions.getCategoryIcon(category.icon),
+            child: HugeIcon(
+              icon: AppFunctions.getCategoryIcon(category.icon),
               size: 70,
               color: HexColor.fromHex(category.color),
             ),
@@ -120,11 +132,15 @@ class _CategoryTabBarState extends State<CategoryTabBar>
             tabs: [
               Tab(
                 text: l10n.categoryTabTrend,
-                icon: const Icon(Icons.trending_up),
+                icon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedChartLineData01,
+                ),
               ),
               Tab(
                 text: l10n.categoryTabMovements,
-                icon: const Icon(Icons.list),
+                icon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedListView,
+                ),
               ),
             ],
           ),

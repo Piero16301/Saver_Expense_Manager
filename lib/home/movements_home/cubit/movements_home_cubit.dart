@@ -8,9 +8,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
   MovementsHomeCubit() : super(const MovementsHomeState());
 
   void changeFilterType(CategoryType? type) {
-    emit(
-      state.copyWith(filterType: type, filterCategory: state.filterCategory),
-    );
+    emit(state.copyWith(filterType: type));
   }
 
   void changeFilterCategory(Category? category) {
@@ -24,12 +22,6 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
   }
 
   void clearFilterCategory() {
-    emit(
-      state.copyWith(
-        filterType: state.filterType,
-        // ignore: avoid_redundant_argument_values // Needed to clear the category
-        filterCategory: null,
-      ),
-    );
+    emit(state.copyWith(filterType: state.filterType));
   }
 }

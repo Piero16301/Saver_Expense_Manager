@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/home/movement/movement.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
@@ -47,7 +48,7 @@ class MovementsList extends StatelessWidget {
           );
           return ListTile(
             onTap: () => context.pushNamed(
-              'movement',
+              MovementPage.pageName,
               pathParameters: {
                 'type': movement.category.type == CategoryType.income
                     ? CategoryType.income.value

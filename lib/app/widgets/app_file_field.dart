@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
@@ -56,7 +57,10 @@ class AppFileField extends StatelessWidget {
                           label: Text(
                             getAttachmentName(attachments[i], i + 1, l10n),
                           ),
-                          avatar: Icon(getAttachmentIcon(attachments[i])),
+                          avatar: HugeIcon(
+                            icon: getAttachmentIcon(attachments[i]),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                           onDeleted: () => _showRemoveConfirmationDialog(
                             context,
                             attachments[i],
@@ -103,16 +107,16 @@ class AppFileField extends StatelessWidget {
     }
   }
 
-  IconData getAttachmentIcon(String path) {
+  List<List<dynamic>> getAttachmentIcon(String path) {
     switch (path.split('.').last) {
       case 'pdf':
-        return Icons.picture_as_pdf;
+        return HugeIcons.strokeRoundedPdf01;
       case 'png':
       case 'jpg':
       case 'jpeg':
-        return Icons.image;
+        return HugeIcons.strokeRoundedImage01;
       default:
-        return Icons.attach_file;
+        return HugeIcons.strokeRoundedAttachment;
     }
   }
 

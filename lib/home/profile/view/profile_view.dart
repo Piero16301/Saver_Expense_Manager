@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+import 'package:saver_expense_manager/login/login.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -15,9 +17,20 @@ class ProfileView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.profileTitle),
+        title: Text(
+          l10n.profileTitle,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
         centerTitle: true,
-        actions: const [ChangeLanguageButton()],
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedArrowLeft01,
+            strokeWidth: 2,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -27,7 +40,7 @@ class ProfileView extends StatelessWidget {
             avatar: CircleAvatar(
               radius: 80,
               child: user?.photoURL == null
-                  ? const Icon(Icons.person, size: 70)
+                  ? const HugeIcon(icon: HugeIcons.strokeRoundedUser, size: 70)
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(80),
                       child: Image.network(
@@ -59,7 +72,7 @@ class ProfileView extends StatelessWidget {
 
                 if (shouldLogout ?? false) {
                   // ignore: use_build_context_synchronously // Context is still valid here
-                  context.goNamed('login');
+                  context.goNamed(LoginPage.pageName);
                 }
               }),
               DisplayNameChangedAction((context, oldName, newName) {

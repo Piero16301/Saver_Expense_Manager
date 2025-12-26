@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -34,7 +35,10 @@ class MonthSelector extends StatelessWidget {
               SizedBox.square(
                 dimension: 40,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, size: 20),
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedArrowLeft01,
+                    size: 20,
+                  ),
                   onPressed: backEnabled ? onBack : null,
                 ),
               ),
@@ -63,7 +67,10 @@ class MonthSelector extends StatelessWidget {
               SizedBox.square(
                 dimension: 40,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios, size: 20),
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedArrowRight01,
+                    size: 20,
+                  ),
                   onPressed: forwardEnabled ? onForward : null,
                 ),
               ),
