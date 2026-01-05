@@ -50,6 +50,77 @@ class AppFunctions {
         .snapshots();
   }
 
+  static Stream<QuerySnapshot<Object?>>? getUserMovementsRange({
+    required String userId,
+    required DateTime startMonth,
+    required DateTime endMonth,
+  }) {
+    return FirebaseFirestore.instance
+        .collection(AppVariables.movementsCollection)
+        .where('user', isEqualTo: userId)
+        .where(
+          'date',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(
+            DateTime(startMonth.year, startMonth.month),
+          ),
+        )
+        .where(
+          'date',
+          isLessThan: Timestamp.fromDate(
+            DateTime(
+              endMonth.month == 12 ? endMonth.year + 1 : endMonth.year,
+              endMonth.month == 12 ? 1 : endMonth.month + 1,
+            ),
+          ),
+        )
+        .snapshots();
+  }
+
+  static (double, double, double, double) calculateIncomesAndExpenses({
+    required List<Movement> movements,
+  }) {
+    final now = DateTime.now();
+    final twoMonthsAgo = DateTime(now.year, now.month - 2);
+    final oneMonthAgo = DateTime(now.year, now.month - 1);
+
+    // Filtrar movimientos del mes antepasado
+    final twoMonthsAgoMovements = movements.where((movement) {
+      return movement.date.year == twoMonthsAgo.year &&
+          movement.date.month == twoMonthsAgo.month;
+    }).toList();
+
+    // Filtrar movimientos del mes pasado
+    final oneMonthAgoMovements = movements.where((movement) {
+      return movement.date.year == oneMonthAgo.year &&
+          movement.date.month == oneMonthAgo.month;
+    }).toList();
+
+    // Calcular ingresos y gastos del mes antepasado
+    final twoMonthsAgoIncomes = twoMonthsAgoMovements
+        .where((m) => m.category.type == CategoryType.income)
+        .fold<double>(0, (s, m) => s + m.price);
+
+    final twoMonthsAgoExpenses = twoMonthsAgoMovements
+        .where((m) => m.category.type == CategoryType.expense)
+        .fold<double>(0, (s, m) => s + m.price);
+
+    // Calcular ingresos y gastos del mes pasado
+    final oneMonthAgoIncomes = oneMonthAgoMovements
+        .where((m) => m.category.type == CategoryType.income)
+        .fold<double>(0, (s, m) => s + m.price);
+
+    final oneMonthAgoExpenses = oneMonthAgoMovements
+        .where((m) => m.category.type == CategoryType.expense)
+        .fold<double>(0, (s, m) => s + m.price);
+
+    return (
+      twoMonthsAgoIncomes,
+      twoMonthsAgoExpenses,
+      oneMonthAgoIncomes,
+      oneMonthAgoExpenses,
+    );
+  }
+
   static Query<Map<String, dynamic>> getCategoryMovements({
     required String userId,
     required DateTime monthSelected,

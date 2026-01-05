@@ -85,46 +85,83 @@ class HomeView extends StatelessWidget {
               duration: const Duration(milliseconds: 500),
               transitionBuilder: (child, animation) =>
                   FadeTransition(opacity: animation, child: child),
-              child: _getSelectedBody(state.selectedIndex),
+              child: _getSelectedBody(
+                state.selectedIndex,
+                state.movementsShowType,
+              ),
             ),
           ),
         ),
         bottomNavigationBar: const BottomNavigationBarHome(),
-        floatingActionButton: state.selectedIndex != 1
-            ? FloatingActionButton(
-                onPressed: () => showModalBottomSheet<void>(
-                  context: context,
-                  builder: (context) => AddMovementBottomSheet(
-                    categories: categories,
-                    movementType: _getMovementType(state.selectedIndex),
-                  ),
-                ),
-                child: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedAdd01,
-                ),
-              )
-            : null,
+        floatingActionButton: _getFloatingActionButton(
+          context,
+          state.selectedIndex,
+          state.movementsShowType,
+        ),
       ),
     );
   }
 
-  CategoryType _getMovementType(int selectedIndex) {
+  Widget? _getFloatingActionButton(
+    BuildContext context,
+    int selectedIndex,
+    MovementsShowType movementsShowType,
+  ) {
     switch (selectedIndex) {
       case 0:
-        return CategoryType.expense;
+        return FloatingActionButton(
+          onPressed: () => showModalBottomSheet<void>(
+            context: context,
+            builder: (context) => AddMovementBottomSheet(
+              categories: categories,
+              movementType: CategoryType.expense,
+            ),
+          ),
+          child: const HugeIcon(
+            icon: HugeIcons.strokeRoundedAdd01,
+            strokeWidth: 2,
+          ),
+        );
+      case 1:
+        return FloatingActionButton(
+          onPressed: () {
+            context.read<HomeCubit>().toggleMovementsShow();
+          },
+          child: HugeIcon(
+            icon: movementsShowType.isList
+                ? HugeIcons.strokeRoundedChartAverage
+                : HugeIcons.strokeRoundedLeftToRightListTriangle,
+            strokeWidth: 2,
+          ),
+        );
       case 2:
-        return CategoryType.income;
+        return FloatingActionButton(
+          onPressed: () => showModalBottomSheet<void>(
+            context: context,
+            builder: (context) => AddMovementBottomSheet(
+              categories: categories,
+              movementType: CategoryType.income,
+            ),
+          ),
+          child: const HugeIcon(
+            icon: HugeIcons.strokeRoundedAdd01,
+            strokeWidth: 2,
+          ),
+        );
       default:
-        return CategoryType.expense;
+        return null;
     }
   }
 
-  Widget _getSelectedBody(int selectedIndex) {
+  Widget _getSelectedBody(
+    int selectedIndex,
+    MovementsShowType movementsShowType,
+  ) {
     switch (selectedIndex) {
       case 0:
         return const ExpensesHomePage();
       case 1:
-        return const MovementsHomePage();
+        return MovementsHomePage(movementsShowType: movementsShowType);
       case 2:
         return const IncomeHomePage();
       default:

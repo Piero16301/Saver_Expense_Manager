@@ -1,13 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/movements_home/movements_home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
 class MovementsHomePage extends StatelessWidget {
-  const MovementsHomePage({super.key});
+  const MovementsHomePage({
+    required this.movementsShowType,
+    super.key,
+  });
+
+  final MovementsShowType movementsShowType;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +54,9 @@ class MovementsHomePage extends StatelessWidget {
             .map((category) => Category.fromJson(category.data()))
             .toList();
 
-        return BlocProvider(
-          create: (_) => MovementsHomeCubit(),
-          child: MovementsHomeView(categories: categories),
+        return MovementsHomeView(
+          categories: categories,
+          movementsShowType: movementsShowType,
         );
       },
     );

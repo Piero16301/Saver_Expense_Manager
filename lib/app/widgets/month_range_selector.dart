@@ -11,6 +11,7 @@ class MonthRangeSelector extends StatelessWidget {
     required this.endMonth,
     required this.onChangeStartMonth,
     required this.onChangeEndMonth,
+    this.rangeMonths = 1,
     super.key,
   });
 
@@ -18,6 +19,7 @@ class MonthRangeSelector extends StatelessWidget {
   final DateTime endMonth;
   final void Function(DateTime?) onChangeStartMonth;
   final void Function(DateTime?) onChangeEndMonth;
+  final int rangeMonths;
 
   @override
   Widget build(BuildContext context) {
@@ -29,64 +31,62 @@ class MonthRangeSelector extends StatelessWidget {
       children: [
         SizedBox(
           height: 40,
-          width: 130,
+          width: 110,
           child: Card(
+            margin: EdgeInsets.zero,
             child: GestureDetector(
               onTap: () async {
                 await showMonthPicker(
                   context: context,
                   initialDate: startMonth,
                   firstDate: AppVariables.minDate,
-                  lastDate: endMonth.copyWith(month: endMonth.month - 1),
+                  lastDate: endMonth.copyWith(
+                    month: endMonth.month - rangeMonths,
+                  ),
                 ).then(onChangeStartMonth);
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Center(
-                  child: Text(
-                    DateFormat(
-                      'MMM yyyy',
-                      language,
-                    ).format(startMonth).toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+              child: Center(
+                child: Text(
+                  DateFormat(
+                    'MMM yyyy',
+                    language,
+                  ).format(startMonth).toUpperCase(),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
             ),
           ),
         ),
         const Expanded(
-          child: HugeIcon(icon: HugeIcons.strokeRoundedCalendar03, size: 30),
+          child: HugeIcon(icon: HugeIcons.strokeRoundedCalendar03),
         ),
         SizedBox(
           height: 40,
-          width: 130,
+          width: 110,
           child: Card(
+            margin: EdgeInsets.zero,
             child: GestureDetector(
               onTap: () async {
                 await showMonthPicker(
                   context: context,
                   initialDate: endMonth,
-                  firstDate: startMonth.copyWith(month: startMonth.month + 1),
+                  firstDate: startMonth.copyWith(
+                    month: startMonth.month + rangeMonths,
+                  ),
                   lastDate: DateTime.now(),
                 ).then(onChangeEndMonth);
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Center(
-                  child: Text(
-                    DateFormat(
-                      'MMM yyyy',
-                      language,
-                    ).format(endMonth).toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+              child: Center(
+                child: Text(
+                  DateFormat(
+                    'MMM yyyy',
+                    language,
+                  ).format(endMonth).toUpperCase(),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
             ),

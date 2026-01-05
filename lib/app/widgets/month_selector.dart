@@ -28,8 +28,8 @@ class MonthSelector extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: SizedBox(
-        height: 50,
         child: Card(
+          margin: EdgeInsets.zero,
           child: Row(
             children: [
               SizedBox.square(

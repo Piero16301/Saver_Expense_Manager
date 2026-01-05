@@ -29,7 +29,7 @@ class ListMovementsItemHome extends StatelessWidget {
         },
         extra: movement,
       ),
-      contentPadding: const EdgeInsets.only(left: 16, right: 16),
+      contentPadding: const EdgeInsets.only(left: 8, right: 8),
       title: Text(
         movement.title,
         style: Theme.of(context).textTheme.bodyMedium!.copyWith(

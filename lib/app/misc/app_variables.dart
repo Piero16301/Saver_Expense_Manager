@@ -7,7 +7,8 @@ class AppVariables {
   static const String defaultFontFamily = 'Nunito_regular';
 
   static final minDate = DateTime(2020);
-  static const deafultMonthsTrend = 5;
+  static const deafultMonthsTrend = 10;
+  static const deafultMonthsResume = 3;
   static const maxDaysWarning = 7;
 
   static Map<String, String> availableFonts = {
@@ -29,3 +30,17 @@ class AppVariables {
 }
 
 enum MovementScreenType { add, edit }
+
+enum MovementsShowType {
+  list,
+  chart;
+
+  bool get isList => this == MovementsShowType.list;
+  bool get isChart => this == MovementsShowType.chart;
+}
+
+enum ResumeItemType {
+  income,
+  expense,
+  balance,
+}

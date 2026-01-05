@@ -69,28 +69,28 @@ class CategoryIconAndName extends StatelessWidget {
     );
     final l10n = AppLocalizations.of(context);
 
-    return Center(
-      child: Column(
-        spacing: 10,
-        children: [
-          CircleAvatar(
-            radius: 60,
-            backgroundColor: HexColor.fromHex(
-              category.color,
-            ).withValues(alpha: 0.3),
-            child: HugeIcon(
-              icon: AppFunctions.getCategoryIcon(category.icon),
-              size: 70,
-              color: HexColor.fromHex(category.color),
-              strokeWidth: 2,
-            ),
+    return Column(
+      spacing: 10,
+      children: [
+        CircleAvatar(
+          radius: 50,
+          backgroundColor: HexColor.fromHex(
+            category.color,
+          ).withValues(alpha: 0.3),
+          child: HugeIcon(
+            icon: AppFunctions.getCategoryIcon(category.icon),
+            size: 60,
+            color: HexColor.fromHex(category.color),
+            strokeWidth: 2,
           ),
-          Text(
-            AppFunctions.getCategoryName(category.name, l10n).toUpperCase(),
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
+        ),
+        Text(
+          AppFunctions.getCategoryName(category.name, l10n).toUpperCase(),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ],
     );
   }
 }
@@ -129,7 +129,6 @@ class _CategoryTabBarState extends State<CategoryTabBar>
         children: [
           TabBar(
             controller: _tabController,
-            labelStyle: const TextStyle(fontWeight: FontWeight.bold),
             tabs: [
               Tab(
                 text: l10n.categoryTabTrend,
@@ -148,7 +147,10 @@ class _CategoryTabBarState extends State<CategoryTabBar>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [TabTrendCategory(), TabMovementsCategory()],
+              children: const [
+                TabTrendCategory(),
+                TabMovementsCategory(),
+              ],
             ),
           ),
         ],

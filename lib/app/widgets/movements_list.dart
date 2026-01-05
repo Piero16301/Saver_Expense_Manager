@@ -57,10 +57,12 @@ class MovementsList extends StatelessWidget {
               },
               extra: movement,
             ),
-            contentPadding: const EdgeInsets.only(left: 16, right: 16),
+            contentPadding: const EdgeInsets.only(left: 8, right: 8),
             title: Text(
               movement.title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -81,7 +83,9 @@ class MovementsList extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
                   AppExtensions.moneyFormat.format(movement.price),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -92,7 +96,9 @@ class MovementsList extends StatelessWidget {
                   .replaceFirst(' ', '\n')
                   .toUpperCase(),
               textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           );
         },

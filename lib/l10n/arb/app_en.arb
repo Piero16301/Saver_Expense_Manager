@@ -66,6 +66,8 @@
     "@categoryExpenseTitle": {},
     "categoryIncomeTitle": "Incomes",
     "@categoryIncomeTitle": {},
+    "categoryBalanceTitle": "Balance",
+    "@categoryBalanceTitle": {},
     "categoryTabTrend": "Trend",
     "@categoryTabTrend": {},
     "categoryTabMovements": "Movements",

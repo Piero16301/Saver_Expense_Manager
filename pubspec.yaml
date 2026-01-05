@@ -8,10 +8,10 @@ environment:
   flutter: ">=3.35.6"
 
 dependencies:
-  bloc: ^9.1.0
+  bloc: ^9.2.0
   cloud_firestore: ^6.1.1
   cunning_document_scanner: ^1.4.0 # Sólo para Android e iOS
-  equatable: ^2.0.7
+  equatable: ^2.0.8
   file_picker: ^10.3.8
   firebase_ai: ^3.6.1
   firebase_app_check: ^0.4.1
@@ -39,8 +39,8 @@ dependencies:
   path_provider: ^2.1.5 # No compatible con web
   rive: ^0.14.0
   shared_preferences: ^2.5.4
-  syncfusion_flutter_charts: ^32.1.20
-  syncfusion_flutter_core: ^32.1.20
+  syncfusion_flutter_charts: ^32.1.21
+  syncfusion_flutter_core: ^32.1.21
   user_api:
     path: packages/user_api
   user_api_remote:
