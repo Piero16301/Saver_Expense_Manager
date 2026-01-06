@@ -78,10 +78,10 @@ class AppFunctions {
 
   static (double, double, double, double) calculateIncomesAndExpenses({
     required List<Movement> movements,
+    required DateTime endMonth,
   }) {
-    final now = DateTime.now();
-    final twoMonthsAgo = DateTime(now.year, now.month - 2);
-    final oneMonthAgo = DateTime(now.year, now.month - 1);
+    final twoMonthsAgo = DateTime(endMonth.year, endMonth.month - 2);
+    final oneMonthAgo = DateTime(endMonth.year, endMonth.month - 1);
 
     // Filtrar movimientos del mes antepasado
     final twoMonthsAgoMovements = movements.where((movement) {
@@ -255,14 +255,14 @@ class AppFunctions {
         .snapshots();
   }
 
-  static List<TrendData> buildTrendData({
+  static List<LinearChartData> buildTrendData({
     required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
     required DateTime startMonth,
     required DateTime endMonth,
     required String language,
   }) {
     final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
-    final data = <TrendData>[];
+    final data = <LinearChartData>[];
     for (var i = startMonth;
         i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
         i = DateTime(
@@ -280,12 +280,82 @@ class AppFunctions {
         (previousValue, element) => previousValue + element.price,
       );
       data.add(
-        TrendData(
-          month: DateFormat('MMM', language).format(i),
-          value: total,
+        LinearChartData(
+          xValue: DateFormat('MMM', language).format(i),
+          yValue: total,
         ),
       );
     }
+    return data;
+  }
+
+  static List<List<LinearChartData>> buildResumeTrendData({
+    required List<Movement> movements,
+    required DateTime startMonth,
+    required DateTime endMonth,
+    required String language,
+    required Map<ResumeItemType, bool> selResumeItems,
+  }) {
+    final data = <List<LinearChartData>>[];
+    final incomeData = <LinearChartData>[];
+    final expenseData = <LinearChartData>[];
+    final balanceData = <LinearChartData>[];
+    for (var i = startMonth;
+        i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
+        i = DateTime(
+      i.month == 12 ? i.year + 1 : i.year,
+      i.month == 12 ? 1 : i.month + 1,
+    )) {
+      final movementsByMonth = movements
+          .where(
+            (element) =>
+                element.date.year == i.year && element.date.month == i.month,
+          )
+          .toList();
+      final totalIncome = movementsByMonth.fold<double>(
+        0,
+        (previousValue, element) => element.category.type == CategoryType.income
+            ? previousValue + element.price
+            : previousValue,
+      );
+      final totalExpense = movementsByMonth.fold<double>(
+        0,
+        (previousValue, element) =>
+            element.category.type == CategoryType.expense
+                ? previousValue + element.price
+                : previousValue,
+      );
+      final balance = totalIncome - totalExpense;
+      incomeData.add(
+        LinearChartData(
+          xValue: DateFormat('MMM', language).format(i),
+          yValue: totalIncome,
+        ),
+      );
+      expenseData.add(
+        LinearChartData(
+          xValue: DateFormat('MMM', language).format(i),
+          yValue: totalExpense,
+        ),
+      );
+      balanceData.add(
+        LinearChartData(
+          xValue: DateFormat('MMM', language).format(i),
+          yValue: balance,
+        ),
+      );
+    }
+
+    if (selResumeItems[ResumeItemType.income] ?? false) {
+      data.add(incomeData);
+    }
+    if (selResumeItems[ResumeItemType.expense] ?? false) {
+      data.add(expenseData);
+    }
+    if (selResumeItems[ResumeItemType.balance] ?? false) {
+      data.add(balanceData);
+    }
+
     return data;
   }
 

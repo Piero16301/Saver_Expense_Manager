@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppVariables {
@@ -10,6 +11,13 @@ class AppVariables {
   static const deafultMonthsTrend = 10;
   static const deafultMonthsResume = 3;
   static const maxDaysWarning = 7;
+
+  static const MaterialAccentColor incomeColor = Colors.blueAccent;
+  static const MaterialColor balanceColor = Colors.teal;
+  static const MaterialAccentColor expenseColor = Colors.orangeAccent;
+
+  static const MaterialColor growthColor = Colors.green;
+  static const MaterialAccentColor decreaseColor = Colors.redAccent;
 
   static Map<String, String> availableFonts = {
     'Merriweather': GoogleFonts.merriweather().fontFamily ?? '',

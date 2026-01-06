@@ -232,7 +232,13 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
               language: language,
             );
 
-            return LinearChart(category: category, data: data);
+            return Expanded(
+              child: LinearChart(
+                titles: [AppFunctions.getCategoryName(category.name, l10n)],
+                colors: [HexColor.fromHex(category.color)],
+                data: [data],
+              ),
+            );
           },
         ),
       ],
