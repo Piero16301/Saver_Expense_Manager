@@ -80,44 +80,42 @@ class AppFunctions {
     required List<Movement> movements,
     required DateTime endMonth,
   }) {
-    final twoMonthsAgo = DateTime(endMonth.year, endMonth.month - 2);
-    final oneMonthAgo = DateTime(endMonth.year, endMonth.month - 1);
-
-    // Filtrar movimientos del mes antepasado
-    final twoMonthsAgoMovements = movements.where((movement) {
-      return movement.date.year == twoMonthsAgo.year &&
-          movement.date.month == twoMonthsAgo.month;
-    }).toList();
+    final pastMonth = DateTime(endMonth.year, endMonth.month - 1);
+    final currentMonth = DateTime(endMonth.year, endMonth.month);
 
     // Filtrar movimientos del mes pasado
-    final oneMonthAgoMovements = movements.where((movement) {
-      return movement.date.year == oneMonthAgo.year &&
-          movement.date.month == oneMonthAgo.month;
+    final pastMonthMovements = movements.where((movement) {
+      return movement.date.year == pastMonth.year &&
+          movement.date.month == pastMonth.month;
     }).toList();
 
-    // Calcular ingresos y gastos del mes antepasado
-    final twoMonthsAgoIncomes = twoMonthsAgoMovements
+    // Filtrar movimientos del presente mes
+    final currentMonthMovements = movements.where((movement) {
+      return movement.date.year == currentMonth.year &&
+          movement.date.month == currentMonth.month;
+    }).toList();
+
+    // Calcular ingresos y gastos del mes pasado
+    final pastMonthIncomes = pastMonthMovements
         .where((m) => m.category.type == CategoryType.income)
         .fold<double>(0, (s, m) => s + m.price);
-
-    final twoMonthsAgoExpenses = twoMonthsAgoMovements
+    final pastMonthExpenses = pastMonthMovements
         .where((m) => m.category.type == CategoryType.expense)
         .fold<double>(0, (s, m) => s + m.price);
 
-    // Calcular ingresos y gastos del mes pasado
-    final oneMonthAgoIncomes = oneMonthAgoMovements
+    // Calcular ingresos y gastos del presente mes
+    final currentMonthIncomes = currentMonthMovements
         .where((m) => m.category.type == CategoryType.income)
         .fold<double>(0, (s, m) => s + m.price);
-
-    final oneMonthAgoExpenses = oneMonthAgoMovements
+    final currentMonthExpenses = currentMonthMovements
         .where((m) => m.category.type == CategoryType.expense)
         .fold<double>(0, (s, m) => s + m.price);
 
     return (
-      twoMonthsAgoIncomes,
-      twoMonthsAgoExpenses,
-      oneMonthAgoIncomes,
-      oneMonthAgoExpenses,
+      pastMonthIncomes,
+      pastMonthExpenses,
+      currentMonthIncomes,
+      currentMonthExpenses,
     );
   }
 

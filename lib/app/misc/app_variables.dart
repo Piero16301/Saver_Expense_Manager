@@ -9,7 +9,7 @@ class AppVariables {
 
   static final minDate = DateTime(2020);
   static const deafultMonthsTrend = 10;
-  static const deafultMonthsResume = 3;
+  static const deafultMonthsResume = 4;
   static const maxDaysWarning = 7;
 
   static const MaterialAccentColor incomeColor = Colors.blueAccent;

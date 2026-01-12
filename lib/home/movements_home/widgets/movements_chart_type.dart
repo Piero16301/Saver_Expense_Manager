@@ -66,7 +66,6 @@ class _MovementsChartTypeState extends State<MovementsChartType> {
             MonthRangeSelector(
               startMonth: startMonth,
               endMonth: endMonth,
-              rangeMonths: 2,
               onChangeStartMonth: (date) {
                 if (date != null) {
                   setState(() {
@@ -98,11 +97,11 @@ class _MovementsChartTypeState extends State<MovementsChartType> {
               endMonth: endMonth,
               selResumeItems: selResumeItems,
             ),
-            // CategoriesResumeCards(
-            //   movements: movements,
-            //   categories: widget.categories,
-            // ),
-            const SizedBox(height: 48),
+            CategoriesResumeCards(
+              movements: movements,
+              categories: widget.categories,
+            ),
+            const SizedBox.shrink(),
           ],
         );
       },
@@ -127,18 +126,18 @@ class ResumeMovementsChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (
-      twoMonthsAgoIncomes,
-      twoMonthsAgoExpenses,
-      oneMonthAgoIncomes,
-      oneMonthAgoExpenses
+      pastMonthIncomes,
+      pastMonthExpenses,
+      currentMonthIncomes,
+      currentMonthExpenses,
     ) = AppFunctions.calculateIncomesAndExpenses(
       movements: movements,
       endMonth: endMonth,
     );
 
-    final (twoMonthsAgoBalance, oneMonthAgoBalance) = (
-      twoMonthsAgoIncomes - twoMonthsAgoExpenses,
-      oneMonthAgoIncomes - oneMonthAgoExpenses
+    final (pastMonthBalance, currentMonthBalance) = (
+      pastMonthIncomes - pastMonthExpenses,
+      currentMonthIncomes - currentMonthExpenses,
     );
 
     return Row(
@@ -146,11 +145,11 @@ class ResumeMovementsChart extends StatelessWidget {
       children: [
         ResumeItemCardMovements(
           type: ResumeItemType.income,
-          value: oneMonthAgoIncomes,
-          difference: twoMonthsAgoIncomes == 0
-              ? (oneMonthAgoIncomes > 0 ? 100 : 0)
-              : ((oneMonthAgoIncomes - twoMonthsAgoIncomes) /
-                      twoMonthsAgoIncomes *
+          value: currentMonthIncomes,
+          difference: pastMonthIncomes == 0
+              ? (currentMonthIncomes > 0 ? 100 : 0)
+              : ((currentMonthIncomes - pastMonthIncomes) /
+                      pastMonthIncomes *
                       100)
                   .roundToDouble(),
           color: AppVariables.incomeColor,
@@ -159,11 +158,11 @@ class ResumeMovementsChart extends StatelessWidget {
         ),
         ResumeItemCardMovements(
           type: ResumeItemType.balance,
-          value: oneMonthAgoIncomes - oneMonthAgoExpenses,
-          difference: twoMonthsAgoBalance == 0
-              ? (oneMonthAgoBalance > 0 ? 100 : 0)
-              : ((oneMonthAgoBalance - twoMonthsAgoBalance) /
-                      twoMonthsAgoBalance *
+          value: currentMonthIncomes - currentMonthExpenses,
+          difference: pastMonthBalance == 0
+              ? (currentMonthBalance > 0 ? 100 : 0)
+              : ((currentMonthBalance - pastMonthBalance) /
+                      pastMonthBalance *
                       100)
                   .roundToDouble(),
           color: AppVariables.balanceColor,
@@ -172,11 +171,11 @@ class ResumeMovementsChart extends StatelessWidget {
         ),
         ResumeItemCardMovements(
           type: ResumeItemType.expense,
-          value: oneMonthAgoExpenses,
-          difference: twoMonthsAgoExpenses == 0
-              ? (oneMonthAgoExpenses > 0 ? 100 : 0)
-              : ((oneMonthAgoExpenses - twoMonthsAgoExpenses) /
-                      twoMonthsAgoExpenses *
+          value: currentMonthExpenses,
+          difference: pastMonthExpenses == 0
+              ? (currentMonthExpenses > 0 ? 100 : 0)
+              : ((currentMonthExpenses - pastMonthExpenses) /
+                      pastMonthExpenses *
                       100)
                   .roundToDouble(),
           color: AppVariables.expenseColor,
@@ -394,10 +393,261 @@ class CategoriesResumeCards extends StatelessWidget {
   final List<Movement> movements;
   final List<Category> categories;
 
+  Map<String, CategoryExpenseData> _calculateCategoryExpenses() {
+    final categoryExpenses = <String, CategoryExpenseData>{};
+
+    final movementDates = movements.map((m) => m.date).toList()..sort();
+    DateTime? lastMonth;
+    DateTime? penultimateMonth;
+
+    if (movementDates.isNotEmpty) {
+      final lastDate = movementDates.last;
+      lastMonth = DateTime(lastDate.year, lastDate.month);
+
+      for (var i = movementDates.length - 1; i >= 0; i--) {
+        final date = movementDates[i];
+        final month = DateTime(date.year, date.month);
+        if (month != lastMonth) {
+          penultimateMonth = month;
+          break;
+        }
+      }
+    }
+
+    for (final movement in movements) {
+      if (movement.category.type == CategoryType.expense) {
+        final categoryId = movement.category.id;
+        final movementMonth = DateTime(
+          movement.date.year,
+          movement.date.month,
+        );
+
+        if (!categoryExpenses.containsKey(categoryId)) {
+          categoryExpenses[categoryId] = CategoryExpenseData(
+            category: movement.category,
+            totalExpense: 0,
+            lastMonthTotal: 0,
+            penultimateMonthTotal: 0,
+          );
+        }
+
+        categoryExpenses[categoryId]!.totalExpense += movement.price;
+
+        if (lastMonth != null && movementMonth == lastMonth) {
+          categoryExpenses[categoryId]!.lastMonthTotal += movement.price;
+        } else if (penultimateMonth != null &&
+            movementMonth == penultimateMonth) {
+          categoryExpenses[categoryId]!.penultimateMonthTotal += movement.price;
+        }
+      }
+    }
+
+    categoryExpenses.removeWhere((key, value) => value.totalExpense == 0);
+
+    return categoryExpenses;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Expanded(
-      child: Placeholder(),
+    final categoryExpenses = _calculateCategoryExpenses();
+    final sortedCategories = categoryExpenses.values.toList()
+      ..sort(
+        (a, b) => b.totalExpense.compareTo(a.totalExpense),
+      );
+
+    if (sortedCategories.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final totalExpenses = sortedCategories.fold<double>(
+      0,
+      (s, item) => s + item.totalExpense,
+    );
+
+    return SizedBox(
+      height: 200,
+      child: ListView.separated(
+        physics: const BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.zero,
+        itemCount: sortedCategories.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final categoryData = sortedCategories[index];
+          final percentage = totalExpenses > 0
+              ? (categoryData.totalExpense / totalExpenses * 100)
+              : 0.0;
+          final ranking = index + 1;
+
+          return CategoryExpenseCard(
+            category: categoryData.category,
+            amount: categoryData.totalExpense,
+            percentage: percentage,
+            ranking: ranking,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class CategoryExpenseData {
+  CategoryExpenseData({
+    required this.category,
+    required this.totalExpense,
+    required this.lastMonthTotal,
+    required this.penultimateMonthTotal,
+  });
+
+  final Category category;
+  double totalExpense;
+  double lastMonthTotal;
+  double penultimateMonthTotal;
+}
+
+class CategoryExpenseCard extends StatelessWidget {
+  const CategoryExpenseCard({
+    required this.category,
+    required this.amount,
+    required this.percentage,
+    required this.ranking,
+    super.key,
+  });
+
+  final Category category;
+  final double amount;
+  final double percentage;
+  final int ranking;
+
+  String _getRankingText() {
+    return '#$ranking';
+  }
+
+  Color get _rankingColor {
+    switch (ranking) {
+      case 1:
+        return const Color(0xFFFFD700);
+      case 2:
+        return const Color(0xFFC0C0C0);
+      case 3:
+        return const Color(0xFFCD7F32);
+      default:
+        return Colors.grey.shade600;
+    }
+  }
+
+  Color get _rankingBackgroundColor {
+    switch (ranking) {
+      case 1:
+        return const Color(0xFFFFD700).withValues(alpha: 0.2);
+      case 2:
+        return const Color(0xFFC0C0C0).withValues(alpha: 0.2);
+      case 3:
+        return const Color(0xFFCD7F32).withValues(alpha: 0.2);
+      default:
+        return Colors.grey.withValues(alpha: 0.2);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final categoryColor = HexColor.fromHex(category.color);
+
+    return SizedBox(
+      width: 180,
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: categoryColor.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: HugeIcon(
+                      icon: AppFunctions.getCategoryIcon(category.icon),
+                      color: categoryColor,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _rankingBackgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      _getRankingText(),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: _rankingColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8,
+                children: [
+                  Text(
+                    AppFunctions.getCategoryName(category.name, l10n)
+                        .toUpperCase(),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                        ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    AppExtensions.moneyFormat.format(amount),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: percentage / 100,
+                      backgroundColor: categoryColor.withValues(alpha: 0.2),
+                      valueColor: AlwaysStoppedAnimation<Color>(categoryColor),
+                      minHeight: 6,
+                    ),
+                  ),
+                  Text(
+                    '${percentage.toInt()}% del total',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.color
+                              ?.withValues(alpha: 0.6),
+                        ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

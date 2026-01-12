@@ -52,20 +52,23 @@ class LinearChart extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
       ),
+      trackballBehavior: TrackballBehavior(
+        enable: true,
+        activationMode: ActivationMode.singleTap,
+      ),
     );
   }
 
-  List<SplineSeries<LinearChartData, String>> _buildLineSeries(
+  List<LineSeries<LinearChartData, String>> _buildLineSeries(
     AppLocalizations l10n,
   ) {
     return data.asMap().entries.map((entry) {
       final index = entry.key;
       final seriesData = entry.value;
 
-      return SplineSeries<LinearChartData, String>(
+      return LineSeries<LinearChartData, String>(
         dataSource: seriesData,
-        width: 3,
-        splineType: SplineType.monotonic,
+        width: 4,
         xValueMapper: (LinearChartData trend, _) => trend.xValue,
         yValueMapper: (LinearChartData trend, _) => trend.yValue,
         name: titles[index],
@@ -73,8 +76,8 @@ class LinearChart extends StatelessWidget {
         animationDuration: 500,
         markerSettings: const MarkerSettings(
           isVisible: true,
-          height: 7,
-          width: 7,
+          height: 10,
+          width: 10,
         ),
       );
     }).toList();
