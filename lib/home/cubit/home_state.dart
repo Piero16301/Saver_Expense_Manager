@@ -2,8 +2,8 @@ part of 'home_cubit.dart';
 
 class HomeState extends Equatable {
   const HomeState({
-    this.selectedIndex = 0,
-    this.movementsShowType = MovementsShowType.list,
+    this.selectedIndex = 1,
+    this.movementsShowType = MovementsShowType.chart,
   });
 
   final int selectedIndex;

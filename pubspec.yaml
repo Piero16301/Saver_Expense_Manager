@@ -30,7 +30,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   go_router: ^17.0.1
-  google_fonts: ^7.0.0
+  google_fonts: ^7.0.1
   hugeicons: ^1.1.4
   intl: ^0.20.2
   mat_month_picker_dialog: ^1.1.3
@@ -39,8 +39,8 @@ dependencies:
   path_provider: ^2.1.5 # No compatible con web
   rive: ^0.14.0
   shared_preferences: ^2.5.4
-  syncfusion_flutter_charts: ^32.1.22
-  syncfusion_flutter_core: ^32.1.22
+  syncfusion_flutter_charts: ^32.1.23
+  syncfusion_flutter_core: ^32.1.23
   user_api:
     path: packages/user_api
   user_api_remote:

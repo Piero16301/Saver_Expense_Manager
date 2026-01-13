@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
@@ -242,7 +244,7 @@ class ResumeItemCardMovements extends StatelessWidget {
 
   String _valueFormatted() {
     if (type == ResumeItemType.balance) {
-      return '${value >= 0 ? '+' : '-'}'
+      return '${value >= 0 ? '+' : ''}'
           '${AppExtensions.moneyFormat.format(value)}';
     }
     return AppExtensions.moneyFormat.format(value);
@@ -283,7 +285,7 @@ class ResumeItemCardMovements extends StatelessWidget {
                       ),
                       Text(
                         _title(context),
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                       ),
@@ -308,7 +310,7 @@ class ResumeItemCardMovements extends StatelessWidget {
                         color: _differenceColor,
                       ),
                       Text(
-                        '${difference >= 0 ? '+' : '-'}'
+                        '${difference >= 0 ? '+' : ''}'
                         '${difference.abs().toInt()}%',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: _differenceColor,
@@ -383,7 +385,7 @@ class IncomesAndExpensesChart extends StatelessWidget {
   }
 }
 
-class CategoriesResumeCards extends StatelessWidget {
+class CategoriesResumeCards extends StatefulWidget {
   const CategoriesResumeCards({
     required this.movements,
     required this.categories,
@@ -393,116 +395,116 @@ class CategoriesResumeCards extends StatelessWidget {
   final List<Movement> movements;
   final List<Category> categories;
 
-  Map<String, CategoryExpenseData> _calculateCategoryExpenses() {
-    final categoryExpenses = <String, CategoryExpenseData>{};
+  @override
+  State<CategoriesResumeCards> createState() => _CategoriesResumeCardsState();
+}
 
-    final movementDates = movements.map((m) => m.date).toList()..sort();
-    DateTime? lastMonth;
-    DateTime? penultimateMonth;
-
-    if (movementDates.isNotEmpty) {
-      final lastDate = movementDates.last;
-      lastMonth = DateTime(lastDate.year, lastDate.month);
-
-      for (var i = movementDates.length - 1; i >= 0; i--) {
-        final date = movementDates[i];
-        final month = DateTime(date.year, date.month);
-        if (month != lastMonth) {
-          penultimateMonth = month;
-          break;
-        }
-      }
-    }
-
-    for (final movement in movements) {
-      if (movement.category.type == CategoryType.expense) {
-        final categoryId = movement.category.id;
-        final movementMonth = DateTime(
-          movement.date.year,
-          movement.date.month,
-        );
-
-        if (!categoryExpenses.containsKey(categoryId)) {
-          categoryExpenses[categoryId] = CategoryExpenseData(
-            category: movement.category,
-            totalExpense: 0,
-            lastMonthTotal: 0,
-            penultimateMonthTotal: 0,
-          );
-        }
-
-        categoryExpenses[categoryId]!.totalExpense += movement.price;
-
-        if (lastMonth != null && movementMonth == lastMonth) {
-          categoryExpenses[categoryId]!.lastMonthTotal += movement.price;
-        } else if (penultimateMonth != null &&
-            movementMonth == penultimateMonth) {
-          categoryExpenses[categoryId]!.penultimateMonthTotal += movement.price;
-        }
-      }
-    }
-
-    categoryExpenses.removeWhere((key, value) => value.totalExpense == 0);
-
-    return categoryExpenses;
-  }
+class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
+  CategoryType selectedFilter = CategoryType.expense;
 
   @override
   Widget build(BuildContext context) {
-    final categoryExpenses = _calculateCategoryExpenses();
+    final categoryExpenses = AppFunctions.calculateCategoryAmounts(
+      movements: widget.movements,
+      filterType: selectedFilter,
+    );
+
     final sortedCategories = categoryExpenses.values.toList()
       ..sort(
         (a, b) => b.totalExpense.compareTo(a.totalExpense),
       );
-
-    if (sortedCategories.isEmpty) {
-      return const SizedBox.shrink();
-    }
 
     final totalExpenses = sortedCategories.fold<double>(
       0,
       (s, item) => s + item.totalExpense,
     );
 
-    return SizedBox(
-      height: 200,
-      child: ListView.separated(
-        physics: const BouncingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.zero,
-        itemCount: sortedCategories.length,
-        separatorBuilder: (context, index) => const SizedBox(width: 12),
-        itemBuilder: (context, index) {
-          final categoryData = sortedCategories[index];
-          final percentage = totalExpenses > 0
-              ? (categoryData.totalExpense / totalExpenses * 100)
-              : 0.0;
-          final ranking = index + 1;
+    return Visibility(
+      visible: sortedCategories.isNotEmpty,
+      child: Row(
+        spacing: 12,
+        children: [
+          SizedBox(
+            height: 180,
+            child: SegmentedButton<CategoryType>(
+              direction: Axis.vertical,
+              showSelectedIcon: false,
+              segments: [
+                ButtonSegment<CategoryType>(
+                  value: CategoryType.expense,
+                  label: HugeIcon(
+                    icon: HugeIcons.strokeRoundedMoneyRemove01,
+                    size: 22,
+                    color: selectedFilter == CategoryType.expense
+                        ? AppVariables.expenseColor
+                        : null,
+                  ),
+                ),
+                ButtonSegment<CategoryType>(
+                  value: CategoryType.income,
+                  label: HugeIcon(
+                    icon: HugeIcons.strokeRoundedMoneyAdd01,
+                    size: 22,
+                    color: selectedFilter == CategoryType.income
+                        ? AppVariables.incomeColor
+                        : null,
+                  ),
+                ),
+              ],
+              selected: {selectedFilter},
+              onSelectionChanged: (Set<CategoryType> newSelection) {
+                setState(() {
+                  selectedFilter = newSelection.first;
+                });
+              },
+              style: const ButtonStyle(
+                visualDensity: VisualDensity.compact,
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: SizedBox(
+              height: 180,
+              width: double.infinity,
+              child: ListView.separated(
+                physics: const BouncingScrollPhysics(),
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.zero,
+                itemCount: sortedCategories.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final categoryData = sortedCategories[index];
+                  final percentage = totalExpenses > 0
+                      ? (categoryData.totalExpense / totalExpenses * 100)
+                      : 0.0;
+                  final ranking = index + 1;
 
-          return CategoryExpenseCard(
-            category: categoryData.category,
-            amount: categoryData.totalExpense,
-            percentage: percentage,
-            ranking: ranking,
-          );
-        },
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => context.pushNamed(
+                      CategoryPage.pageName,
+                      extra: categoryData.category,
+                    ),
+                    child: CategoryExpenseCard(
+                      category: categoryData.category,
+                      amount: categoryData.totalExpense,
+                      percentage: percentage,
+                      ranking: ranking,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
-}
-
-class CategoryExpenseData {
-  CategoryExpenseData({
-    required this.category,
-    required this.totalExpense,
-    required this.lastMonthTotal,
-    required this.penultimateMonthTotal,
-  });
-
-  final Category category;
-  double totalExpense;
-  double lastMonthTotal;
-  double penultimateMonthTotal;
 }
 
 class CategoryExpenseCard extends StatelessWidget {

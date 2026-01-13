@@ -24,6 +24,15 @@ class LinearChart extends StatelessWidget {
             .reduce((a, b) => a > b ? a : b)
         : 10;
     final maximumRounded = (maximum / 100).ceil() * 100;
+
+    final minimum = data.isNotEmpty
+        ? data
+            .expand((list) => list)
+            .map((e) => e.yValue)
+            .reduce((a, b) => a < b ? a : b)
+        : 0;
+    final minimumRounded = (minimum / 100).floor() * 100;
+
     final l10n = AppLocalizations.of(context);
 
     return SfCartesianChart(
@@ -43,7 +52,9 @@ class LinearChart extends StatelessWidget {
       ),
       primaryYAxis: NumericAxis(
         opposedPosition: true,
-        minimum: 0,
+        minimum: minimum == minimumRounded
+            ? (minimum - 100)
+            : minimumRounded.toDouble(),
         maximum: maximum == maximumRounded
             ? (maximum + 100)
             : maximumRounded.toDouble(),

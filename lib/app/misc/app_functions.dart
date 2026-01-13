@@ -119,6 +119,36 @@ class AppFunctions {
     );
   }
 
+  static Map<String, CategoryExpenseData> calculateCategoryAmounts({
+    required List<Movement> movements,
+    required CategoryType filterType,
+  }) {
+    final categoryTotals = <String, double>{};
+    final categoryMap = <String, Category>{};
+
+    for (final movement in movements) {
+      if (movement.category.type == filterType) {
+        final categoryId = movement.category.id;
+
+        categoryMap[categoryId] = movement.category;
+        categoryTotals[categoryId] =
+            (categoryTotals[categoryId] ?? 0) + movement.price;
+      }
+    }
+
+    final categoryExpenses = <String, CategoryExpenseData>{};
+    for (final entry in categoryTotals.entries) {
+      if (entry.value > 0) {
+        categoryExpenses[entry.key] = CategoryExpenseData(
+          category: categoryMap[entry.key]!,
+          totalExpense: entry.value,
+        );
+      }
+    }
+
+    return categoryExpenses;
+  }
+
   static Query<Map<String, dynamic>> getCategoryMovements({
     required String userId,
     required DateTime monthSelected,
