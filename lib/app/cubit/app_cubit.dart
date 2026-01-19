@@ -19,8 +19,7 @@ class AppCubit extends Cubit<AppState> {
     appCheck: FirebaseAppCheck.instance,
     auth: FirebaseAuth.instance,
   ).generativeModel(
-    // model: 'gemini-2.5-flash',
-    model: 'gemini-3-flash-preview',
+    model: 'gemini-2.5-flash',
     safetySettings: [
       SafetySetting(
         HarmCategory.dangerousContent,

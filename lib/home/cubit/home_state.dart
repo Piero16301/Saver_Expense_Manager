@@ -3,7 +3,7 @@ part of 'home_cubit.dart';
 class HomeState extends Equatable {
   const HomeState({
     this.selectedIndex = 1,
-    this.movementsShowType = MovementsShowType.chart,
+    this.movementsShowType = MovementsShowType.list,
   });
 
   final int selectedIndex;
