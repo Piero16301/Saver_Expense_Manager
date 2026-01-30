@@ -41,8 +41,8 @@ android {
         applicationId = "com.pmorales.saver.expense.manager"
         minSdk = 28
         targetSdk = 36
-        versionCode = 19
-        versionName = "2.2.3"
+        versionCode = 20
+        versionName = "2.2.4"
 
         // Configuración para tamaño de página de 16KB
         ndk {
@@ -107,4 +107,5 @@ flutter {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.10")
+    implementation("androidx.activity:activity-ktx:1.9.3")
 }
