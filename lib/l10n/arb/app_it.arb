@@ -307,5 +307,9 @@
     "settingsColorBlueGrey": "Grigio bluastro",
     "@settingsColorBlueGrey": {},
     "settingsFontTitle": "Carattere",
-    "@settingsFontTitle": {}
+    "@settingsFontTitle": {},
+    "settingsVersionTitle": "Versione",
+    "@settingsVersionTitle": {},
+    "settingsUpdateDateTitle": "Data di aggiornamento",
+    "@settingsUpdateDateTitle": {}
 }

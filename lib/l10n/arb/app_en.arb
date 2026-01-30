@@ -307,5 +307,9 @@
     "settingsColorBlueGrey": "Blue grey",
     "@settingsColorBlueGrey": {},
     "settingsFontTitle": "Font",
-    "@settingsFontTitle": {}
+    "@settingsFontTitle": {},
+    "settingsVersionTitle": "Version",
+    "@settingsVersionTitle": {},
+    "settingsUpdateDateTitle": "Last update",
+    "@settingsUpdateDateTitle": {}
 }

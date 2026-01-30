@@ -8,10 +8,12 @@ class AppThemes {
   }) {
     final color = ColorHelper.getColorByName(baseColor);
     final colorScheme = ColorScheme.fromSeed(seedColor: color);
+    final realFontFamily = AppVariables.getFontFamily(fontFamily);
 
     return ThemeData(
-      useMaterial3: true,
-      fontFamily: fontFamily,
+      textTheme: ThemeData.light().textTheme.apply(
+            fontFamily: realFontFamily,
+          ),
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
         seedColor: color,
@@ -45,10 +47,12 @@ class AppThemes {
       seedColor: color,
       brightness: Brightness.dark,
     );
+    final realFontFamily = AppVariables.getFontFamily(fontFamily);
 
     return ThemeData(
-      useMaterial3: true,
-      fontFamily: fontFamily,
+      textTheme: ThemeData.dark().textTheme.apply(
+            fontFamily: realFontFamily,
+          ),
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
         seedColor: color,

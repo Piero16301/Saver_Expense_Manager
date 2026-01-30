@@ -32,6 +32,24 @@ class AppVariables {
     'Source Code Pro': GoogleFonts.sourceCodePro().fontFamily ?? '',
   };
 
+  static String getFontFamily(String savedFontId) {
+    if (availableFonts.values.contains(savedFontId)) {
+      return savedFontId;
+    }
+
+    final cleanedName = savedFontId
+        .replaceAll('_regular', '')
+        .replaceAll('_bold', '')
+        .replaceAll('_italic', '');
+
+    final fontFamily = availableFonts[cleanedName];
+    if (fontFamily != null && fontFamily.isNotEmpty) {
+      return fontFamily;
+    }
+
+    return availableFonts['Nunito'] ?? 'Nunito';
+  }
+
   static const categoriesCollection = 'categories';
   static const movementsCollection = 'movements';
   static const usersCollection = 'users';
