@@ -52,14 +52,40 @@ class HomeView extends StatelessWidget {
               IconButton(
                 padding: EdgeInsets.zero,
                 icon: user?.photoURL == null
-                    ? const HugeIcon(icon: HugeIcons.strokeRoundedUser)
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(15),
-                        child: Image.network(
-                          AppFunctions.highResPicture(user!.photoURL)!,
-                          width: 30,
-                          height: 30,
-                          fit: BoxFit.cover,
+                    ? Container(
+                        width: 34,
+                        height: 34,
+                        foregroundDecoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(2),
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedUser,
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      )
+                    : Container(
+                        width: 34,
+                        height: 34,
+                        foregroundDecoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 2,
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(2),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(17),
+                          child: Image.network(
+                            AppFunctions.highResPicture(user!.photoURL)!,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                 onPressed: () => context.pushNamed(ProfilePage.pageName),
@@ -69,9 +95,10 @@ class HomeView extends StatelessWidget {
           actions: [
             IconButton(
               padding: EdgeInsets.zero,
-              icon: const HugeIcon(
+              icon: HugeIcon(
                 icon: HugeIcons.strokeRoundedSettings02,
-                size: 28,
+                strokeWidth: 2,
+                color: Theme.of(context).colorScheme.primary,
               ),
               onPressed: () => context.pushNamed(SettingsPage.pageName),
             ),

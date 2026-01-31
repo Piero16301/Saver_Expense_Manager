@@ -32,6 +32,7 @@ class MovementView extends StatelessWidget {
             _appBarTitle(l10n),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
           ),
           centerTitle: true,
@@ -39,9 +40,10 @@ class MovementView extends StatelessWidget {
           actions: _appBarActions(context, l10n),
           leading: IconButton(
             onPressed: () => context.pop(),
-            icon: const HugeIcon(
+            icon: HugeIcon(
               icon: HugeIcons.strokeRoundedArrowLeft01,
               strokeWidth: 2,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -207,7 +209,10 @@ class MovementView extends StatelessWidget {
               }
             }
           },
-          child: const HugeIcon(icon: HugeIcons.strokeRoundedTick02),
+          child: const HugeIcon(
+            icon: HugeIcons.strokeRoundedFloppyDisk,
+            strokeWidth: 2,
+          ),
         ),
       ),
     );
@@ -230,7 +235,11 @@ class MovementView extends StatelessWidget {
         return [
           IconButton(
             onPressed: () => _showDeleteDialog(context, l10n),
-            icon: const HugeIcon(icon: HugeIcons.strokeRoundedDelete02),
+            icon: HugeIcon(
+              icon: HugeIcons.strokeRoundedDelete02,
+              strokeWidth: 2,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ];
     }

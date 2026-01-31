@@ -57,7 +57,7 @@ class ListMovementsItemHome extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: Text(
             AppExtensions.moneyFormat.format(movement.price),
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
             textAlign: TextAlign.center,
