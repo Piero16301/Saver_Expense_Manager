@@ -72,7 +72,7 @@ class MovementsList extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             trailing: Container(
-              width: 80,
+              width: 90,
               decoration: BoxDecoration(
                 color: HexColor.fromHex(
                   movement.category.color,
@@ -83,7 +83,7 @@ class MovementsList extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
                   AppExtensions.moneyFormat.format(movement.price),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                   textAlign: TextAlign.center,

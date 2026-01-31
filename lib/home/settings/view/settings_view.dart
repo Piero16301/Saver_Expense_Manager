@@ -23,14 +23,16 @@ class SettingsView extends StatelessWidget {
               l10n.settingsAppBarTitle,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
             ),
             centerTitle: true,
             leading: IconButton(
               onPressed: () => context.pop(),
-              icon: const HugeIcon(
+              icon: HugeIcon(
                 icon: HugeIcons.strokeRoundedArrowLeft01,
                 strokeWidth: 2,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
