@@ -1,3 +1,4 @@
+export 'app_dependencies.dart';
 export 'app_extensions.dart';
 export 'app_functions.dart';
 export 'app_mocks.dart';

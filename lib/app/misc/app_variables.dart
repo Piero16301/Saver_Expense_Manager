@@ -57,12 +57,21 @@ class AppVariables {
 
 enum MovementScreenType { add, edit }
 
+enum ImageResolutionType { low, medium, high }
+
 enum MovementsShowType {
   list,
   chart;
 
   bool get isList => this == MovementsShowType.list;
   bool get isChart => this == MovementsShowType.chart;
+
+  static MovementsShowType fromString(String value) {
+    return MovementsShowType.values.firstWhere(
+      (e) => e.name == value,
+      orElse: () => MovementsShowType.list,
+    );
+  }
 }
 
 enum ResumeItemType {

@@ -2,9 +2,20 @@ part of 'home_cubit.dart';
 
 class HomeState extends Equatable {
   const HomeState({
-    this.selectedIndex = 1,
-    this.movementsShowType = MovementsShowType.list,
+    required this.movementsShowType,
+    required this.selectedIndex,
   });
+
+  factory HomeState.initial() {
+    return HomeState(
+      movementsShowType: MovementsShowType.fromString(
+        getIt<RemoteConfigService>().transactionsInitialView,
+      ),
+      selectedIndex: AppFunctions.getInitialTabIndex(
+        getIt<RemoteConfigService>().homeInitialTab,
+      ),
+    );
+  }
 
   final int selectedIndex;
   final MovementsShowType movementsShowType;

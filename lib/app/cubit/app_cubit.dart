@@ -3,9 +3,6 @@ import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_ai/firebase_ai.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -15,20 +12,6 @@ class AppCubit extends Cubit<AppState> {
   AppCubit(this.userRepository) : super(const AppState());
 
   final UserRepository userRepository;
-  final GenerativeModel model = FirebaseAI.googleAI(
-    appCheck: FirebaseAppCheck.instance,
-    auth: FirebaseAuth.instance,
-  ).generativeModel(
-    model: 'gemini-3-flash-preview',
-    safetySettings: [
-      SafetySetting(
-        HarmCategory.dangerousContent,
-        HarmBlockThreshold.none,
-        null,
-      ),
-    ],
-    generationConfig: GenerationConfig(responseMimeType: 'application/json'),
-  );
 
   Future<void> initialLoad() async {
     // Setting the language to the device language if it's not set
