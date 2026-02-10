@@ -25,17 +25,15 @@ class CategoryView extends StatelessWidget {
                 : l10n.categoryIncomeTitle,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
                 ),
           ),
           centerTitle: true,
           notificationPredicate: (notification) => false,
           leading: IconButton(
             onPressed: () => context.pop(),
-            icon: HugeIcon(
+            icon: const HugeIcon(
               icon: HugeIcons.strokeRoundedArrowLeft01,
               strokeWidth: 2,
-              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),

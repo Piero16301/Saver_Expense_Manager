@@ -5,7 +5,7 @@ import 'package:saver_expense_manager/app/app.dart';
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(const HomeState());
+  HomeCubit() : super(HomeState.initial());
 
   void toggleSelectedIndex(int index) {
     emit(state.copyWith(selectedIndex: index));

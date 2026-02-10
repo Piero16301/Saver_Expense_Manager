@@ -1,6 +1,4 @@
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
@@ -31,11 +29,9 @@ Future<void> main() async {
         : const AndroidPlayIntegrityProvider(),
   );
 
-  // Configure Firebase AI Logic
-  FirebaseAI.googleAI(
-    appCheck: FirebaseAppCheck.instance,
-    auth: FirebaseAuth.instance,
-  );
+  // Setup and initialize all services
+  setupServiceLocator();
+  await getIt<RemoteConfigService>().initialize();
 
   // Configure Firebase Auth providers
   FirebaseUIAuth.configureProviders([
@@ -47,13 +43,13 @@ Future<void> main() async {
   ]);
 
   // Configure Firebase Storage
-  final storage = FirebaseStorage.instance;
-  final config = FirebaseUIStorageConfiguration(
-    storage: storage,
-    uploadRoot: storage.ref(),
-    namingPolicy: const UuidFileUploadNamingPolicy(),
+  await FirebaseUIStorage.configure(
+    FirebaseUIStorageConfiguration(
+      storage: FirebaseStorage.instance,
+      uploadRoot: FirebaseStorage.instance.ref(),
+      namingPolicy: const UuidFileUploadNamingPolicy(),
+    ),
   );
-  await FirebaseUIStorage.configure(config);
 
   // Get SharedPreferences instance
   final preferences = await SharedPreferences.getInstance();
@@ -66,5 +62,9 @@ Future<void> main() async {
   await RiveNative.init();
 
   // Bootstrap the app
-  await bootstrap(() => AppPage(userRepository: userRepository));
+  await bootstrap(
+    () => AppPage(
+      userRepository: userRepository,
+    ),
+  );
 }

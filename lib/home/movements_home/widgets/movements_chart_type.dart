@@ -42,6 +42,7 @@ class _MovementsChartTypeState extends State<MovementsChartType> {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final l10n = AppLocalizations.of(context);
+    final remoteConfig = getIt<RemoteConfigService>();
 
     return StreamBuilder<QuerySnapshot>(
       stream: AppFunctions.getUserMovementsRange(
@@ -83,27 +84,28 @@ class _MovementsChartTypeState extends State<MovementsChartType> {
                 }
               },
             ),
-            ResumeMovementsChart(
-              movements: movements,
-              endMonth: endMonth,
-              selResumeItems: selResumeItems,
-              onChangeResumeItems: (type) {
-                setState(() {
-                  selResumeItems[type] = !(selResumeItems[type] ?? true);
-                });
-              },
-            ),
+            if (remoteConfig.isHomeSummaryCardsVisible)
+              ResumeMovementsChart(
+                movements: movements,
+                endMonth: endMonth,
+                selResumeItems: selResumeItems,
+                onChangeResumeItems: (type) {
+                  setState(() {
+                    selResumeItems[type] = !(selResumeItems[type] ?? true);
+                  });
+                },
+              ),
             IncomesAndExpensesChart(
               movements: movements,
               startMonth: startMonth,
               endMonth: endMonth,
               selResumeItems: selResumeItems,
             ),
-            CategoriesResumeCards(
-              movements: movements,
-              categories: widget.categories,
-            ),
-            const SizedBox.shrink(),
+            if (remoteConfig.isHomeTopCategoriesVisible)
+              CategoriesResumeCards(
+                movements: movements,
+                categories: widget.categories,
+              ),
           ],
         );
       },
@@ -257,7 +259,7 @@ class ResumeItemCardMovements extends StatelessWidget {
         opacity: isSelected ? 1.0 : 0.5,
         child: Card(
           margin: EdgeInsets.zero,
-          elevation: isSelected ? 4 : 1,
+          elevation: isSelected ? 2 : 1,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
@@ -421,86 +423,92 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
 
     return Visibility(
       visible: sortedCategories.isNotEmpty,
-      child: Row(
-        spacing: 12,
+      child: Column(
         children: [
-          SizedBox(
-            height: 180,
-            child: SegmentedButton<CategoryType>(
-              direction: Axis.vertical,
-              showSelectedIcon: false,
-              segments: [
-                ButtonSegment<CategoryType>(
-                  value: CategoryType.expense,
-                  label: HugeIcon(
-                    icon: HugeIcons.strokeRoundedMoneyRemove01,
-                    size: 22,
-                    color: selectedFilter == CategoryType.expense
-                        ? AppVariables.expenseColor
-                        : null,
-                  ),
-                ),
-                ButtonSegment<CategoryType>(
-                  value: CategoryType.income,
-                  label: HugeIcon(
-                    icon: HugeIcons.strokeRoundedMoneyAdd01,
-                    size: 22,
-                    color: selectedFilter == CategoryType.income
-                        ? AppVariables.incomeColor
-                        : null,
-                  ),
-                ),
-              ],
-              selected: {selectedFilter},
-              onSelectionChanged: (Set<CategoryType> newSelection) {
-                setState(() {
-                  selectedFilter = newSelection.first;
-                });
-              },
-              style: const ButtonStyle(
-                visualDensity: VisualDensity.compact,
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
+          Row(
+            spacing: 12,
+            children: [
+              SizedBox(
+                height: 180,
+                child: SegmentedButton<CategoryType>(
+                  direction: Axis.vertical,
+                  showSelectedIcon: false,
+                  segments: [
+                    ButtonSegment<CategoryType>(
+                      value: CategoryType.expense,
+                      label: HugeIcon(
+                        icon: HugeIcons.strokeRoundedMoneyRemove01,
+                        strokeWidth: 2,
+                        color: selectedFilter == CategoryType.expense
+                            ? AppVariables.expenseColor
+                            : null,
+                      ),
+                    ),
+                    ButtonSegment<CategoryType>(
+                      value: CategoryType.income,
+                      label: HugeIcon(
+                        icon: HugeIcons.strokeRoundedMoneyAdd01,
+                        strokeWidth: 2,
+                        color: selectedFilter == CategoryType.income
+                            ? AppVariables.incomeColor
+                            : null,
+                      ),
+                    ),
+                  ],
+                  selected: {selectedFilter},
+                  onSelectionChanged: (Set<CategoryType> newSelection) {
+                    setState(() {
+                      selectedFilter = newSelection.first;
+                    });
+                  },
+                  style: const ButtonStyle(
+                    visualDensity: VisualDensity.compact,
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Expanded(
-            child: SizedBox(
-              height: 180,
-              width: double.infinity,
-              child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.zero,
-                itemCount: sortedCategories.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
-                itemBuilder: (context, index) {
-                  final categoryData = sortedCategories[index];
-                  final percentage = totalExpenses > 0
-                      ? (categoryData.totalExpense / totalExpenses * 100)
-                      : 0.0;
-                  final ranking = index + 1;
+              Expanded(
+                child: SizedBox(
+                  height: 180,
+                  width: double.infinity,
+                  child: ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.zero,
+                    itemCount: sortedCategories.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 12),
+                    itemBuilder: (context, index) {
+                      final categoryData = sortedCategories[index];
+                      final percentage = totalExpenses > 0
+                          ? (categoryData.totalExpense / totalExpenses * 100)
+                          : 0.0;
+                      final ranking = index + 1;
 
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () => context.pushNamed(
-                      CategoryPage.pageName,
-                      extra: categoryData.category,
-                    ),
-                    child: CategoryExpenseCard(
-                      category: categoryData.category,
-                      amount: categoryData.totalExpense,
-                      percentage: percentage,
-                      ranking: ranking,
-                    ),
-                  );
-                },
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () => context.pushNamed(
+                          CategoryPage.pageName,
+                          extra: categoryData.category,
+                        ),
+                        child: CategoryExpenseCard(
+                          category: categoryData.category,
+                          amount: categoryData.totalExpense,
+                          percentage: percentage,
+                          ranking: ranking,
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
+          const SizedBox(height: 12),
         ],
       ),
     );
@@ -559,7 +567,6 @@ class CategoryExpenseCard extends StatelessWidget {
     return SizedBox(
       width: 180,
       child: Card(
-        margin: EdgeInsets.zero,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),

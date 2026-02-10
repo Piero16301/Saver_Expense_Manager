@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
@@ -10,9 +11,32 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
 class AppFunctions {
-  static String? highResPicture(String? url) {
-    if (url == null) return null;
-    return url.replaceAll('s96-c', 's400-c');
+  static String highResPicture({
+    String? url,
+    ImageResolutionType resolution = ImageResolutionType.low,
+  }) {
+    if (url == null) return '';
+    switch (resolution) {
+      case ImageResolutionType.low:
+        return url.replaceAll('s96-c', 's200-c');
+      case ImageResolutionType.medium:
+        return url.replaceAll('s96-c', 's400-c');
+      case ImageResolutionType.high:
+        return url.replaceAll('s96-c', 's600-c');
+    }
+  }
+
+  static int getInitialTabIndex(String initialTab) {
+    switch (initialTab) {
+      case 'gastos':
+        return 0;
+      case 'movimientos':
+        return 1;
+      case 'ingresos':
+        return 2;
+      default:
+        return 0;
+    }
   }
 
   static DateTime substracMonth(int month) {
@@ -388,7 +412,6 @@ class AppFunctions {
   }
 
   static Future<Movement> buildMovementFromFile({
-    required GenerativeModel model,
     required CategoryType movementType,
     required List<Category> categories,
     required String language,
@@ -401,7 +424,7 @@ class AppFunctions {
       language: language,
     );
 
-    final response = await model.generateContent([
+    final response = await getIt<AiService>().model.generateContent([
       Content.text(prompt),
       Content.inlineData(mimeType, bytes),
     ]);
@@ -425,27 +448,15 @@ class AppFunctions {
     required List<Category> categories,
     required String language,
   }) {
-    final type = movementType == CategoryType.expense ? 'expense' : 'income';
-    return 'Extract data from this file using this JSON schema: {\n"title": '
-        'string,\n"description": string,\n"date": date(dd/MM/yyyy),\n"category": '
-        'string,\n"price": double,\n"company": string}. Consider that if not '
-        'mentioned an explicit date use now date in the given format. Create a '
-        'title and description, for title strictly less than 50 characters and '
-        'description strictly less than 300 characters. Both title and '
-        'description must start with an uppercase letter, and you can also use '
-        'uppercase for other letters if necessary, e.g. for acronyms. '
-        'For title, should mention the $type'
-        ' itself (translated to $language language code, not in caps) if it is '
-        'a product, mention product, if it is food, mention food, et. '
-        'Description should have more details about the $type. If a product, '
-        'place, food, et. is mentioned, search some details on web and put it '
-        'in description. For category select most appropriate from this '
-        'options: ${categories.map((e) => e.name).join(', ')}. Extract the '
-        'company where the $type has been made, like a receiver account, store,'
-        ' bank name et. If there is not an explicit company, '
-        "return a suggestion based on the content in '$language' language. "
-        "The response should be in '$language' "
-        'language code.';
+    final template = getIt<RemoteConfigService>().geminiPromptTemplate;
+    final type = movementType.name.toLowerCase();
+    final categoriesStr = categories.map((e) => e.name).join(', ');
+    debugPrint('template: $template');
+
+    return template
+        .replaceAll('{{type}}', type)
+        .replaceAll('{{language}}', language)
+        .replaceAll('{{categories}}', categoriesStr);
   }
 
   static String getCategoryName(String category, AppLocalizations l10n) {

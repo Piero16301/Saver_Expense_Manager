@@ -30,6 +30,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
+    final remoteConfig = getIt<RemoteConfigService>();
     final darkTheme = context.select<AppCubit, String>(
           (cubit) => cubit.state.theme,
         ) ==
@@ -83,7 +84,7 @@ class HomeView extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(17),
                           child: Image.network(
-                            AppFunctions.highResPicture(user!.photoURL)!,
+                            AppFunctions.highResPicture(url: user!.photoURL),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -95,10 +96,9 @@ class HomeView extends StatelessWidget {
           actions: [
             IconButton(
               padding: EdgeInsets.zero,
-              icon: HugeIcon(
+              icon: const HugeIcon(
                 icon: HugeIcons.strokeRoundedSettings02,
                 strokeWidth: 2,
-                color: Theme.of(context).colorScheme.primary,
               ),
               onPressed: () => context.pushNamed(SettingsPage.pageName),
             ),
@@ -123,7 +123,7 @@ class HomeView extends StatelessWidget {
         floatingActionButton: _getFloatingActionButton(
           context,
           state.selectedIndex,
-          state.movementsShowType,
+          MovementsShowType.fromString(remoteConfig.transactionsInitialView),
         ),
       ),
     );
@@ -132,7 +132,7 @@ class HomeView extends StatelessWidget {
   Widget? _getFloatingActionButton(
     BuildContext context,
     int selectedIndex,
-    MovementsShowType movementsShowType,
+    MovementsShowType transactionsInitialView,
   ) {
     switch (selectedIndex) {
       case 0:
@@ -155,7 +155,7 @@ class HomeView extends StatelessWidget {
             context.read<HomeCubit>().toggleMovementsShow();
           },
           child: HugeIcon(
-            icon: movementsShowType.isList
+            icon: transactionsInitialView.isList
                 ? HugeIcons.strokeRoundedChartAverage
                 : HugeIcons.strokeRoundedLeftToRightListTriangle,
             strokeWidth: 2,
@@ -249,7 +249,6 @@ class AddMovementBottomSheet extends StatelessWidget {
 
   Future<void> _handleFilePick(BuildContext context) async {
     final language = context.read<AppCubit>().state.language;
-    final model = context.read<AppCubit>().model;
     final selectedCategories =
         categories.where((c) => c.type == movementType).toList();
     final loader = AppLoader(context);
@@ -274,7 +273,6 @@ class AddMovementBottomSheet extends StatelessWidget {
         // parallel
         final uploadTask = ref.putFile(File(file.path!));
         final movementFuture = AppFunctions.buildMovementFromFile(
-          model: model,
           movementType: movementType,
           categories: selectedCategories,
           language: language,
@@ -326,7 +324,6 @@ class AddMovementBottomSheet extends StatelessWidget {
 
   Future<void> _handleDocumentScan(BuildContext context) async {
     final language = context.read<AppCubit>().state.language;
-    final model = context.read<AppCubit>().model;
     final selectedCategories =
         categories.where((c) => c.type == movementType).toList();
     final loader = AppLoader(context);
@@ -347,7 +344,6 @@ class AddMovementBottomSheet extends StatelessWidget {
         // parallel
         final uploadTask = ref.putFile(File(files.first));
         final movementFuture = AppFunctions.buildMovementFromFile(
-          model: model,
           movementType: movementType,
           categories: selectedCategories,
           language: language,
