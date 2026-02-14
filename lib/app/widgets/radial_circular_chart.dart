@@ -73,9 +73,9 @@ class _RadialCircularChartState extends State<RadialCircularChart> {
     return <RadialBarSeries<CategoryData, String>>[
       RadialBarSeries<CategoryData, String>(
         dataSource: widget.data,
-        xValueMapper: (CategoryData data, _) => data.category.name,
-        yValueMapper: (CategoryData data, _) => data.value,
-        dataLabelMapper: (CategoryData data, _) => data.category.name,
+        xValueMapper: (data, _) => data.category.name,
+        yValueMapper: (data, _) => data.value,
+        dataLabelMapper: (data, _) => data.category.name,
         animationDuration: 500,
         maximumValue: 100,
         radius: '100%',

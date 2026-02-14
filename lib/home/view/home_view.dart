@@ -6,16 +6,20 @@ import 'dart:io';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/expenses_home/expenses_home.dart';
 import 'package:saver_expense_manager/home/home.dart';
-import 'package:saver_expense_manager/home/settings/settings.dart';
+import 'package:saver_expense_manager/income_home/income_home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+import 'package:saver_expense_manager/movement/movement.dart';
+import 'package:saver_expense_manager/movements_home/movements_home.dart';
+import 'package:saver_expense_manager/profile/profile.dart';
+import 'package:saver_expense_manager/settings/settings.dart';
 import 'package:user_api/user_api.dart';
 import 'package:uuid/uuid.dart';
 
@@ -34,98 +38,105 @@ class HomeView extends StatelessWidget {
     final darkTheme = context.select<AppCubit, String>(
           (cubit) => cubit.state.theme,
         ) ==
-        'DARK';
+        AppVariables.darkTheme;
 
-    return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) => Scaffold(
-        appBar: AppBar(
-          title: Image.asset(
-            darkTheme
-                ? 'assets/images/logo-no-bg-dark.png'
-                : 'assets/images/logo-no-bg-light.png',
-            height: 35,
-          ),
-          centerTitle: true,
-          notificationPredicate: (notification) => false,
-          leading: Row(
-            children: [
-              const SizedBox(width: 8),
-              IconButton(
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      initialData: FirebaseAuth.instance.currentUser,
+      builder: (context, snapshot) {
+        if (snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
+
+        return BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) => Scaffold(
+            appBar: AppBar(
+              title: Image.asset(
+                darkTheme
+                    ? 'assets/images/logo-no-bg-dark.png'
+                    : 'assets/images/logo-no-bg-light.png',
+                height: 35,
+              ),
+              centerTitle: true,
+              notificationPredicate: (notification) => false,
+              leading: IconButton(
                 padding: EdgeInsets.zero,
-                icon: user?.photoURL == null
-                    ? Container(
-                        width: 34,
-                        height: 34,
-                        foregroundDecoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
+                icon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedSettings02,
+                  strokeWidth: 2,
+                ),
+                onPressed: () => context.pushNamed(SettingsPage.pageName),
+              ),
+              actions: [
+                IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: user?.photoURL == null
+                      ? Container(
+                          width: 34,
+                          height: 34,
+                          foregroundDecoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(2),
+                          child: HugeIcon(
+                            icon: HugeIcons.strokeRoundedUser,
+                            strokeWidth: 2,
                             color: Theme.of(context).colorScheme.primary,
-                            width: 2,
+                          ),
+                        )
+                      : Container(
+                          width: 34,
+                          height: 34,
+                          foregroundDecoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(2),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(17),
+                            child: Image.network(
+                              AppFunctions.highResPicture(url: user!.photoURL),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                        padding: const EdgeInsets.all(2),
-                        child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedUser,
-                          strokeWidth: 2,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      )
-                    : Container(
-                        width: 34,
-                        height: 34,
-                        foregroundDecoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 2,
-                          ),
-                        ),
-                        padding: const EdgeInsets.all(2),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(17),
-                          child: Image.network(
-                            AppFunctions.highResPicture(url: user!.photoURL),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                onPressed: () => context.pushNamed(ProfilePage.pageName),
-              ),
-            ],
-          ),
-          actions: [
-            IconButton(
-              padding: EdgeInsets.zero,
-              icon: const HugeIcon(
-                icon: HugeIcons.strokeRoundedSettings02,
-                strokeWidth: 2,
-              ),
-              onPressed: () => context.pushNamed(SettingsPage.pageName),
+                  onPressed: () => context.pushNamed(ProfilePage.pageName),
+                ),
+              ],
+              actionsPadding: const EdgeInsets.only(right: 8),
             ),
-          ],
-          actionsPadding: const EdgeInsets.only(right: 8),
-        ),
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              transitionBuilder: (child, animation) =>
-                  FadeTransition(opacity: animation, child: child),
-              child: _getSelectedBody(
-                state.selectedIndex,
-                state.movementsShowType,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  transitionBuilder: (child, animation) =>
+                      FadeTransition(opacity: animation, child: child),
+                  child: _getSelectedBody(
+                    state.selectedIndex,
+                    state.movementsShowType,
+                  ),
+                ),
+              ),
+            ),
+            bottomNavigationBar: const BottomNavigationBarHome(),
+            floatingActionButton: _getFloatingActionButton(
+              context,
+              state.selectedIndex,
+              MovementsShowType.fromString(
+                remoteConfig.transactionsInitialView,
               ),
             ),
           ),
-        ),
-        bottomNavigationBar: const BottomNavigationBarHome(),
-        floatingActionButton: _getFloatingActionButton(
-          context,
-          state.selectedIndex,
-          MovementsShowType.fromString(remoteConfig.transactionsInitialView),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -248,6 +259,7 @@ class AddMovementBottomSheet extends StatelessWidget {
   final CategoryType movementType;
 
   Future<void> _handleFilePick(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final language = context.read<AppCubit>().state.language;
     final selectedCategories =
         categories.where((c) => c.type == movementType).toList();
@@ -255,7 +267,7 @@ class AddMovementBottomSheet extends StatelessWidget {
 
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'png', 'jpg', 'jpeg'],
+      allowedExtensions: AppVariables.allowedExtensions,
     );
 
     if (result != null) {
@@ -264,14 +276,15 @@ class AddMovementBottomSheet extends StatelessWidget {
       try {
         final file = result.files.single;
         final ext = file.path!.split('.').last;
-        final ref = FirebaseStorage.instance.ref().child(
-              '${const Uuid().v4()}.$ext',
-            );
+        final path = '${const Uuid().v4()}.$ext';
         final bytes = await file.xFile.readAsBytes();
 
         // Upload file to Firebase Storage and build movement from file in
         // parallel
-        final uploadTask = ref.putFile(File(file.path!));
+        final uploadTask = getIt<StorageService>().uploadFile(
+          File(file.path!),
+          path,
+        );
         final movementFuture = AppFunctions.buildMovementFromFile(
           movementType: movementType,
           categories: selectedCategories,
@@ -282,7 +295,7 @@ class AddMovementBottomSheet extends StatelessWidget {
 
         final results =
             await Future.wait<dynamic>([uploadTask, movementFuture]);
-        final uploadSnapshot = results[0] as TaskSnapshot;
+        final uploadName = results[0] as String;
         final movement = results[1] as Movement;
 
         if (loader.isLoading) {
@@ -297,32 +310,26 @@ class AddMovementBottomSheet extends StatelessWidget {
               'screenType': 'ADD',
             },
             extra: movement.copyWith(
-              attachments: [uploadSnapshot.ref.name],
+              attachments: [uploadName],
             ),
           ),
         );
-      } on Exception catch (e) {
+      } on Exception catch (_) {
         if (loader.isLoading) {
           loader.hideLoading();
         }
-        ScaffoldMessenger.of(context).clearSnackBars();
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.toString(),
-              style: TextStyle(color: Theme.of(context).colorScheme.onError),
-            ),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            closeIconColor: Theme.of(context).colorScheme.onError,
-          ),
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.genericError,
+          type: SnackBarType.error,
         );
       }
     }
   }
 
   Future<void> _handleDocumentScan(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     final language = context.read<AppCubit>().state.language;
     final selectedCategories =
         categories.where((c) => c.type == movementType).toList();
@@ -335,14 +342,15 @@ class AddMovementBottomSheet extends StatelessWidget {
 
       try {
         final ext = files.first.split('.').last;
-        final ref = FirebaseStorage.instance.ref().child(
-              '${const Uuid().v4()}.$ext',
-            );
+        final path = '${const Uuid().v4()}.$ext';
         final bytes = await File(files.first).readAsBytes();
 
         // Upload file to Firebase Storage and build movement from file in
         // parallel
-        final uploadTask = ref.putFile(File(files.first));
+        final uploadTask = getIt<StorageService>().uploadFile(
+          File(files.first),
+          path,
+        );
         final movementFuture = AppFunctions.buildMovementFromFile(
           movementType: movementType,
           categories: selectedCategories,
@@ -353,7 +361,7 @@ class AddMovementBottomSheet extends StatelessWidget {
 
         final results =
             await Future.wait<dynamic>([uploadTask, movementFuture]);
-        final uploadSnapshot = results[0] as TaskSnapshot;
+        final uploadName = results[0] as String;
         final movement = results[1] as Movement;
 
         if (loader.isLoading) {
@@ -367,25 +375,18 @@ class AddMovementBottomSheet extends StatelessWidget {
             'screenType': 'ADD',
           },
           extra: movement.copyWith(
-            attachments: [uploadSnapshot.ref.name],
+            attachments: [uploadName],
           ),
         );
-      } on Exception catch (e) {
+      } on Exception catch (_) {
         if (loader.isLoading) {
           loader.hideLoading();
         }
-        ScaffoldMessenger.of(context).clearSnackBars();
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.toString(),
-              style: TextStyle(color: Theme.of(context).colorScheme.onError),
-            ),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            closeIconColor: Theme.of(context).colorScheme.onError,
-          ),
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.genericError,
+          type: SnackBarType.error,
         );
       }
     }

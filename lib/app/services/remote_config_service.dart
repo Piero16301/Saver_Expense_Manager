@@ -41,9 +41,7 @@ class RemoteConfigService {
         ),
       );
       await _remoteConfig.fetchAndActivate();
-    } on Exception catch (e) {
-      debugPrint('Error remoto (usando caché): $e');
-    }
+    } on Exception catch (_) {}
   }
 
   bool get isHomeSummaryCardsVisible =>

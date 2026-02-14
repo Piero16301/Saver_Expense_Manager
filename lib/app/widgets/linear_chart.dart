@@ -80,8 +80,8 @@ class LinearChart extends StatelessWidget {
       return LineSeries<LinearChartData, String>(
         dataSource: seriesData,
         width: 4,
-        xValueMapper: (LinearChartData trend, _) => trend.xValue,
-        yValueMapper: (LinearChartData trend, _) => trend.yValue,
+        xValueMapper: (trend, _) => trend.xValue,
+        yValueMapper: (trend, _) => trend.yValue,
         name: titles[index],
         color: colors[index].withValues(alpha: 0.7),
         animationDuration: 500,

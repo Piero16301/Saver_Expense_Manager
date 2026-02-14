@@ -26,7 +26,9 @@ class AppCubit extends Cubit<AppState> {
     if (theme == null) {
       final deviceBrightness = PlatformDispatcher.instance.platformBrightness;
       await userRepository.saveTheme(
-        theme: deviceBrightness == Brightness.dark ? 'DARK' : 'LIGHT',
+        theme: deviceBrightness == Brightness.dark
+            ? AppVariables.darkTheme
+            : AppVariables.lightTheme,
       );
     }
 
