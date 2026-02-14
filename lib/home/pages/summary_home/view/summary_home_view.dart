@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/category/category.dart';
+import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
-class MovementsChartType extends StatefulWidget {
-  const MovementsChartType({
+class SummaryHomeView extends StatelessWidget {
+  const SummaryHomeView({
     required this.categories,
     super.key,
   });
@@ -18,97 +18,66 @@ class MovementsChartType extends StatefulWidget {
   final List<Category> categories;
 
   @override
-  State<MovementsChartType> createState() => _MovementsChartTypeState();
-}
-
-class _MovementsChartTypeState extends State<MovementsChartType> {
-  late DateTime startMonth;
-  late DateTime endMonth;
-
-  Map<ResumeItemType, bool> selResumeItems = {
-    ResumeItemType.income: true,
-    ResumeItemType.balance: true,
-    ResumeItemType.expense: true,
-  };
-
-  @override
-  void initState() {
-    startMonth = AppFunctions.substracMonth(AppVariables.deafultMonthsResume);
-    endMonth = DateTime.now();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     final l10n = AppLocalizations.of(context);
     final remoteConfig = getIt<RemoteConfigService>();
+    final auth = getIt<AuthenticationService>().auth;
 
-    return StreamBuilder<QuerySnapshot>(
-      stream: AppFunctions.getUserMovementsRange(
-        userId: user!.uid,
-        startMonth: startMonth,
-        endMonth: endMonth,
+    return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
+      builder: (context, state) => StreamBuilder<QuerySnapshot>(
+        stream: AppFunctions.getUserMovementsRange(
+          userId: auth.currentUser!.uid,
+          startMonth: state.startMonth!,
+          endMonth: state.endMonth!,
+        ),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.data!.docs.isEmpty) {
+            return Center(child: Text(l10n.movementsNoData));
+          }
+
+          final docs = snapshot.data!.docs
+              as List<QueryDocumentSnapshot<Map<String, dynamic>>>;
+          final movements =
+              docs.map((e) => Movement.fromJson(e.data())).toList();
+
+          return Column(
+            spacing: 16,
+            children: [
+              MonthRangeSelector(
+                startMonth: state.startMonth!,
+                endMonth: state.endMonth!,
+                onChangeStartMonth: (date) =>
+                    context.read<SummaryHomeCubit>().changeStartMonth(date),
+                onChangeEndMonth: (date) =>
+                    context.read<SummaryHomeCubit>().changeEndMonth(date),
+              ),
+              if (remoteConfig.isHomeSummaryCardsVisible)
+                ResumeMovementsChart(
+                  movements: movements,
+                  endMonth: state.endMonth!,
+                  selResumeItems: state.selResumeItems,
+                  onChangeResumeItems: (type) =>
+                      context.read<SummaryHomeCubit>().toggleResumeItem(type),
+                ),
+              IncomesAndExpensesChart(
+                movements: movements,
+                startMonth: state.startMonth!,
+                endMonth: state.endMonth!,
+                selResumeItems: state.selResumeItems,
+              ),
+              if (remoteConfig.isHomeTopCategoriesVisible)
+                CategoriesResumeCards(
+                  movements: movements,
+                  categories: categories,
+                ),
+            ],
+          );
+        },
       ),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (snapshot.data!.docs.isEmpty) {
-          return Center(child: Text(l10n.movementsNoData));
-        }
-
-        final docs = snapshot.data!.docs
-            as List<QueryDocumentSnapshot<Map<String, dynamic>>>;
-        final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
-
-        return Column(
-          spacing: 16,
-          children: [
-            MonthRangeSelector(
-              startMonth: startMonth,
-              endMonth: endMonth,
-              onChangeStartMonth: (date) {
-                if (date != null) {
-                  setState(() {
-                    startMonth = date;
-                  });
-                }
-              },
-              onChangeEndMonth: (date) {
-                if (date != null) {
-                  setState(() {
-                    endMonth = date;
-                  });
-                }
-              },
-            ),
-            if (remoteConfig.isHomeSummaryCardsVisible)
-              ResumeMovementsChart(
-                movements: movements,
-                endMonth: endMonth,
-                selResumeItems: selResumeItems,
-                onChangeResumeItems: (type) {
-                  setState(() {
-                    selResumeItems[type] = !(selResumeItems[type] ?? true);
-                  });
-                },
-              ),
-            IncomesAndExpensesChart(
-              movements: movements,
-              startMonth: startMonth,
-              endMonth: endMonth,
-              selResumeItems: selResumeItems,
-            ),
-            if (remoteConfig.isHomeTopCategoriesVisible)
-              CategoriesResumeCards(
-                movements: movements,
-                categories: widget.categories,
-              ),
-          ],
-        );
-      },
     );
   }
 }

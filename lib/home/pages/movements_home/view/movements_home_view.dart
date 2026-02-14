@@ -1,15 +1,16 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_pagination/firebase_pagination.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:user_api/user_api.dart';
 
-class MovementsListType extends StatefulWidget {
-  const MovementsListType({
+class MovementsHomeView extends StatelessWidget {
+  const MovementsHomeView({
     required this.categories,
     super.key,
   });
@@ -17,44 +18,25 @@ class MovementsListType extends StatefulWidget {
   final List<Category> categories;
 
   @override
-  State<MovementsListType> createState() => _MovementsListTypeState();
-}
-
-class _MovementsListTypeState extends State<MovementsListType> {
-  CategoryType? filterType;
-  Category? filterCategory;
-
-  void _updateFilterType(CategoryType? type) {
-    setState(() {
-      filterType = type;
-      if (type == null) {
-        filterCategory = null;
-      }
-    });
-  }
-
-  void _updateFilterCategory(Category? category) {
-    setState(() {
-      filterCategory = category;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        FilterMovementsHome(
-          categories: widget.categories,
-          filterType: filterType,
-          filterCategory: filterCategory,
-          onFilterTypeChanged: _updateFilterType,
-          onFilterCategoryChanged: _updateFilterCategory,
-        ),
-        ListMovementsHome(
-          filterType: filterType,
-          filterCategory: filterCategory,
-        ),
-      ],
+    return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
+      builder: (context, state) => Column(
+        children: [
+          FilterMovementsHome(
+            categories: categories,
+            filterType: state.filterType,
+            filterCategory: state.filterCategory,
+            onFilterTypeChanged:
+                context.read<MovementsHomeCubit>().updateFilterType,
+            onFilterCategoryChanged:
+                context.read<MovementsHomeCubit>().updateFilterCategory,
+          ),
+          ListMovementsHome(
+            filterType: state.filterType,
+            filterCategory: state.filterCategory,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -346,6 +328,7 @@ class ListMovementsHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final auth = getIt<AuthenticationService>().auth;
 
     return Expanded(
       child: FirestorePagination(
@@ -353,7 +336,7 @@ class ListMovementsHome extends StatelessWidget {
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         query: AppFunctions.getUserMovements(
-          userId: FirebaseAuth.instance.currentUser!.uid,
+          userId: auth.currentUser!.uid,
           type: filterType,
           category: filterCategory,
         ),

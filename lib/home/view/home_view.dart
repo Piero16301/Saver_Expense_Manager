@@ -12,12 +12,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/expenses_home/expenses_home.dart';
 import 'package:saver_expense_manager/home/home.dart';
-import 'package:saver_expense_manager/income_home/income_home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/movement.dart';
-import 'package:saver_expense_manager/movements_home/movements_home.dart';
 import 'package:saver_expense_manager/profile/profile.dart';
 import 'package:saver_expense_manager/settings/settings.dart';
 import 'package:user_api/user_api.dart';
@@ -34,7 +31,6 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final remoteConfig = getIt<RemoteConfigService>();
     final darkTheme = context.select<AppCubit, String>(
           (cubit) => cubit.state.theme,
         ) ==
@@ -121,19 +117,13 @@ class HomeView extends StatelessWidget {
                       FadeTransition(opacity: animation, child: child),
                   child: _getSelectedBody(
                     state.selectedIndex,
-                    state.movementsShowType,
                   ),
                 ),
               ),
             ),
             bottomNavigationBar: const BottomNavigationBarHome(),
-            floatingActionButton: _getFloatingActionButton(
-              context,
-              state.selectedIndex,
-              MovementsShowType.fromString(
-                remoteConfig.transactionsInitialView,
-              ),
-            ),
+            floatingActionButton:
+                _getFloatingActionButton(context, state.selectedIndex),
           ),
         );
       },
@@ -143,7 +133,6 @@ class HomeView extends StatelessWidget {
   Widget? _getFloatingActionButton(
     BuildContext context,
     int selectedIndex,
-    MovementsShowType transactionsInitialView,
   ) {
     switch (selectedIndex) {
       case 0:
@@ -160,19 +149,7 @@ class HomeView extends StatelessWidget {
             strokeWidth: 2,
           ),
         );
-      case 1:
-        return FloatingActionButton(
-          onPressed: () {
-            context.read<HomeCubit>().toggleMovementsShow();
-          },
-          child: HugeIcon(
-            icon: transactionsInitialView.isList
-                ? HugeIcons.strokeRoundedChartAverage
-                : HugeIcons.strokeRoundedLeftToRightListTriangle,
-            strokeWidth: 2,
-          ),
-        );
-      case 2:
+      case 3:
         return FloatingActionButton(
           onPressed: () => showModalBottomSheet<void>(
             context: context,
@@ -193,14 +170,15 @@ class HomeView extends StatelessWidget {
 
   Widget _getSelectedBody(
     int selectedIndex,
-    MovementsShowType movementsShowType,
   ) {
     switch (selectedIndex) {
       case 0:
         return const ExpensesHomePage();
       case 1:
-        return MovementsHomePage(movementsShowType: movementsShowType);
+        return const MovementsHomePage();
       case 2:
+        return const SummaryHomePage();
+      case 3:
         return const IncomeHomePage();
       default:
         return const SizedBox.shrink();
@@ -234,6 +212,13 @@ class BottomNavigationBarHome extends StatelessWidget {
               strokeWidth: 2,
             ),
             label: l10n.homeMovementsTitle,
+          ),
+          NavigationDestination(
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedChart02,
+              strokeWidth: 2,
+            ),
+            label: l10n.homeSummaryTitle,
           ),
           NavigationDestination(
             icon: const HugeIcon(

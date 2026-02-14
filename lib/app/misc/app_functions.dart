@@ -32,8 +32,10 @@ class AppFunctions {
         return 0;
       case AppVariables.movementsTab:
         return 1;
-      case AppVariables.incomesTab:
+      case AppVariables.summaryTab:
         return 2;
+      case AppVariables.incomesTab:
+        return 3;
       default:
         return 0;
     }

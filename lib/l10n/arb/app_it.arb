@@ -37,6 +37,8 @@
     "@homeExpensesTitle": {},
     "homeMovementsTitle": "Movimenti",
     "@homeMovementsTitle": {},
+    "homeSummaryTitle": "Riepilogo",
+    "@homeSummaryTitle": {},
     "homeIncomeTitle": "Entrate",
     "@homeIncomeTitle": {},
     "homeAddExpense": "Aggiungi spesa",

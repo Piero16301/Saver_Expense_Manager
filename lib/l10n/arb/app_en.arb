@@ -37,6 +37,8 @@
     "@homeExpensesTitle": {},
     "homeMovementsTitle": "Movements",
     "@homeMovementsTitle": {},
+    "homeSummaryTitle": "Summary",
+    "@homeSummaryTitle": {},
     "homeIncomeTitle": "Income",
     "@homeIncomeTitle": {},
     "homeAddExpense": "Add expense",

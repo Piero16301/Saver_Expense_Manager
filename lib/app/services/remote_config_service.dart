@@ -13,8 +13,6 @@ class RemoteConfigService {
       'ui_home_summary_cards_visible';
   static const String _uiHomeTopCategoriesVisible =
       'ui_home_top_categories_visible';
-  static const String _uiTransactionsInitialView =
-      'ui_transactions_initial_view';
   static const String _uiHomeInitialTab = 'ui_home_initial_tab';
 
   /// CONFIG
@@ -26,7 +24,6 @@ class RemoteConfigService {
     await _remoteConfig.setDefaults({
       _uiHomeSummaryCardsVisible: true,
       _uiHomeTopCategoriesVisible: true,
-      _uiTransactionsInitialView: 'list',
       _uiHomeInitialTab: 'movimientos',
       _configGeminiModelId: 'gemini-3-flash-preview',
       _configGeminiPromptTemplate: 'config_gemini_prompt_template',
@@ -48,8 +45,6 @@ class RemoteConfigService {
       _remoteConfig.getBool(_uiHomeSummaryCardsVisible);
   bool get isHomeTopCategoriesVisible =>
       _remoteConfig.getBool(_uiHomeTopCategoriesVisible);
-  String get transactionsInitialView =>
-      _remoteConfig.getString(_uiTransactionsInitialView);
   String get homeInitialTab => _remoteConfig.getString(_uiHomeInitialTab);
   String get geminiModelId => _remoteConfig.getString(_configGeminiModelId);
   String get geminiPromptTemplate =>
