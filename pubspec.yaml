@@ -39,8 +39,8 @@ dependencies:
   path_provider: ^2.1.5 # No compatible con web
   rive: ^0.14.2
   shared_preferences: ^2.5.4
-  syncfusion_flutter_charts: ^32.2.3
-  syncfusion_flutter_core: ^32.2.3
+  syncfusion_flutter_charts: ^32.2.4
+  syncfusion_flutter_core: ^32.2.4
   user_api:
     path: packages/user_api
   user_api_remote:
