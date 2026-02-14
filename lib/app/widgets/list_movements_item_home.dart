@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/home/movement/movement.dart';
+import 'package:saver_expense_manager/movement/movement.dart';
 import 'package:user_api/user_api.dart';
 
 class ListMovementsItemHome extends StatelessWidget {

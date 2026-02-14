@@ -6,11 +6,27 @@ class AppVariables {
 
   static const String defaultBaseColor = 'INDIGO';
   static const String defaultFontFamily = 'Nunito_regular';
+  static const List<String> allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
 
   static final minDate = DateTime(2020);
   static const deafultMonthsTrend = 10;
   static const deafultMonthsResume = 4;
   static const maxDaysWarning = 7;
+
+  static const String expensesTab = 'gastos';
+  static const String movementsTab = 'movimientos';
+  static const String summaryTab = 'resumen';
+  static const String incomesTab = 'ingresos';
+
+  static const String lightTheme = 'LIGHT';
+  static const String darkTheme = 'DARK';
+
+  static const String googleProvider = 'google.com';
+  static const String emailProvider = 'password';
+
+  static const String emailRegExp =
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+  static const String passwordRegExp = r'^(?=.*[a-z])(?=.*[A-Z]).{6,}$';
 
   static const MaterialAccentColor incomeColor = Colors.blueAccent;
   static const MaterialColor balanceColor = Colors.teal;
@@ -55,24 +71,21 @@ class AppVariables {
   static const usersCollection = 'users';
 }
 
+enum SnackBarType {
+  success,
+  error,
+  warning,
+  info;
+
+  bool get isSuccess => this == SnackBarType.success;
+  bool get isError => this == SnackBarType.error;
+  bool get isWarning => this == SnackBarType.warning;
+  bool get isInfo => this == SnackBarType.info;
+}
+
 enum MovementScreenType { add, edit }
 
 enum ImageResolutionType { low, medium, high }
-
-enum MovementsShowType {
-  list,
-  chart;
-
-  bool get isList => this == MovementsShowType.list;
-  bool get isChart => this == MovementsShowType.chart;
-
-  static MovementsShowType fromString(String value) {
-    return MovementsShowType.values.firstWhere(
-      (e) => e.name == value,
-      orElse: () => MovementsShowType.list,
-    );
-  }
-}
 
 enum ResumeItemType {
   income,

@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
-import 'package:firebase_ui_storage/firebase_ui_storage.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+import 'package:uuid/uuid.dart';
 
 class AppFileField extends StatelessWidget {
   const AppFileField({
@@ -70,19 +72,12 @@ class AppFileField extends StatelessWidget {
                       ),
                     ),
                   Center(
-                    child: UploadButton(
-                      onError: (error, stackTrace) {
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text('Error: $error'),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                      },
-                      onUploadComplete: (ref) => onAdd(ref.name),
-                      extensions: const ['pdf', 'png', 'jpg', 'jpeg'],
+                    child: ElevatedButton.icon(
+                      onPressed: () => _handleUpload(context, appLoader),
+                      icon: const HugeIcon(
+                        icon: HugeIcons.strokeRoundedUpload04,
+                      ),
+                      label: Text(labelAdd),
                     ),
                   ),
                 ],
@@ -150,5 +145,44 @@ class AppFileField extends StatelessWidget {
         }
       }),
     );
+  }
+
+  Future<void> _handleUpload(BuildContext context, AppLoader appLoader) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: AppVariables.allowedExtensions,
+      );
+
+      if (result != null) {
+        unawaited(appLoader.showLoading());
+        final file = result.files.single;
+        final ext = file.path!.split('.').last;
+        final path = '${const Uuid().v4()}.$ext';
+        final name = await getIt<StorageService>().uploadFile(
+          File(file.path!),
+          path,
+        );
+
+        if (appLoader.isLoading) {
+          appLoader.hideLoading();
+        }
+        onAdd(name);
+      }
+    } on Exception catch (e) {
+      if (appLoader.isLoading) {
+        appLoader.hideLoading();
+      }
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text('Error: $e'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+      }
+    }
   }
 }

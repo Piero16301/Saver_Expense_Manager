@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/home/category/category.dart';
+import 'package:saver_expense_manager/category/category.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:user_api/user_api.dart';
@@ -84,10 +84,10 @@ class DoughnutCircularChart extends StatelessWidget {
     return <DoughnutSeries<CategoryData, String>>[
       DoughnutSeries<CategoryData, String>(
         dataSource: data,
-        xValueMapper: (CategoryData data, _) =>
+        xValueMapper: (data, _) =>
             AppFunctions.getCategoryName(data.category.name, l10n),
-        yValueMapper: (CategoryData data, _) => data.value,
-        dataLabelMapper: (CategoryData data, _) => null,
+        yValueMapper: (data, _) => data.value,
+        dataLabelMapper: (data, _) => null,
         animationDuration: 500,
         innerRadius: '55%',
         radius: '100%',

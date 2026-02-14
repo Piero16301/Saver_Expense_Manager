@@ -1,9 +1,5 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
-import 'package:firebase_ui_storage/firebase_ui_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
@@ -32,24 +28,7 @@ Future<void> main() async {
   // Setup and initialize all services
   setupServiceLocator();
   await getIt<RemoteConfigService>().initialize();
-
-  // Configure Firebase Auth providers
-  FirebaseUIAuth.configureProviders([
-    EmailAuthProvider(),
-    GoogleProvider(
-      clientId: DefaultFirebaseOptions.googleClientId,
-      redirectUri: DefaultFirebaseOptions.googleRedirectUri,
-    ),
-  ]);
-
-  // Configure Firebase Storage
-  await FirebaseUIStorage.configure(
-    FirebaseUIStorageConfiguration(
-      storage: FirebaseStorage.instance,
-      uploadRoot: FirebaseStorage.instance.ref(),
-      namingPolicy: const UuidFileUploadNamingPolicy(),
-    ),
-  );
+  await getIt<AuthenticationService>().initialize();
 
   // Get SharedPreferences instance
   final preferences = await SharedPreferences.getInstance();

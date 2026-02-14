@@ -70,18 +70,19 @@ class LinearChart extends StatelessWidget {
     );
   }
 
-  List<LineSeries<LinearChartData, String>> _buildLineSeries(
+  List<SplineSeries<LinearChartData, String>> _buildLineSeries(
     AppLocalizations l10n,
   ) {
     return data.asMap().entries.map((entry) {
       final index = entry.key;
       final seriesData = entry.value;
 
-      return LineSeries<LinearChartData, String>(
+      return SplineSeries<LinearChartData, String>(
+        splineType: SplineType.cardinal,
         dataSource: seriesData,
         width: 4,
-        xValueMapper: (LinearChartData trend, _) => trend.xValue,
-        yValueMapper: (LinearChartData trend, _) => trend.yValue,
+        xValueMapper: (trend, _) => trend.xValue,
+        yValueMapper: (trend, _) => trend.yValue,
         name: titles[index],
         color: colors[index].withValues(alpha: 0.7),
         animationDuration: 500,

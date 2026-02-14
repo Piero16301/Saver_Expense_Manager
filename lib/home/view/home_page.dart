@@ -19,7 +19,8 @@ class HomePage extends StatelessWidget {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection(AppVariables.categoriesCollection)
-          .snapshots(),
+          .snapshots()
+          .handleError((dynamic _) {}),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Scaffold(

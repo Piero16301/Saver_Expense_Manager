@@ -10,14 +10,4 @@ class HomeCubit extends Cubit<HomeState> {
   void toggleSelectedIndex(int index) {
     emit(state.copyWith(selectedIndex: index));
   }
-
-  void toggleMovementsShow() {
-    emit(
-      state.copyWith(
-        movementsShowType: state.movementsShowType.isList
-            ? MovementsShowType.chart
-            : MovementsShowType.list,
-      ),
-    );
-  }
 }

@@ -5,6 +5,8 @@ final GetIt getIt = GetIt.instance;
 
 void setupServiceLocator() {
   getIt
+    ..registerLazySingleton<StorageService>(StorageService.new)
+    ..registerLazySingleton<AuthenticationService>(AuthenticationService.new)
     ..registerLazySingleton<RemoteConfigService>(RemoteConfigService.new)
     ..registerLazySingleton<AiService>(
       () => AiService(remoteConfig: getIt<RemoteConfigService>()),

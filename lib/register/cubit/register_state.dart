@@ -1,0 +1,89 @@
+part of 'register_cubit.dart';
+
+enum RegisterStatus {
+  initial,
+  loading,
+  success,
+  failure;
+
+  bool get isInitial => this == RegisterStatus.initial;
+  bool get isLoading => this == RegisterStatus.loading;
+  bool get isSuccess => this == RegisterStatus.success;
+  bool get isFailure => this == RegisterStatus.failure;
+}
+
+class RegisterState extends Equatable {
+  const RegisterState({
+    this.email = '',
+    this.password = '',
+    this.confirmPassword = '',
+    this.status = RegisterStatus.initial,
+    this.errorMessage,
+    this.isPasswordVisible = false,
+    this.isConfirmPasswordVisible = false,
+    this.isEmailValid = true,
+    this.isPasswordValid = true,
+    this.isConfirmPasswordValid = true,
+  });
+
+  final String email;
+  final String password;
+  final String confirmPassword;
+  final RegisterStatus status;
+  final String? errorMessage;
+  final bool isPasswordVisible;
+  final bool isConfirmPasswordVisible;
+  final bool isEmailValid;
+  final bool isPasswordValid;
+  final bool isConfirmPasswordValid;
+
+  bool get isFormValid =>
+      email.isNotEmpty &&
+      password.isNotEmpty &&
+      confirmPassword.isNotEmpty &&
+      isEmailValid &&
+      isPasswordValid &&
+      isConfirmPasswordValid;
+
+  RegisterState copyWith({
+    String? email,
+    String? password,
+    String? confirmPassword,
+    RegisterStatus? status,
+    String? errorMessage,
+    bool? isPasswordVisible,
+    bool? isConfirmPasswordVisible,
+    bool? isEmailValid,
+    bool? isPasswordValid,
+    bool? isConfirmPasswordValid,
+  }) {
+    return RegisterState(
+      email: email ?? this.email,
+      password: password ?? this.password,
+      confirmPassword: confirmPassword ?? this.confirmPassword,
+      status: status ?? this.status,
+      errorMessage: errorMessage ?? this.errorMessage,
+      isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
+      isConfirmPasswordVisible:
+          isConfirmPasswordVisible ?? this.isConfirmPasswordVisible,
+      isEmailValid: isEmailValid ?? this.isEmailValid,
+      isPasswordValid: isPasswordValid ?? this.isPasswordValid,
+      isConfirmPasswordValid:
+          isConfirmPasswordValid ?? this.isConfirmPasswordValid,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        email,
+        password,
+        confirmPassword,
+        status,
+        errorMessage,
+        isPasswordVisible,
+        isConfirmPasswordVisible,
+        isEmailValid,
+        isPasswordValid,
+        isConfirmPasswordValid,
+      ];
+}
