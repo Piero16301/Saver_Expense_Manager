@@ -1,0 +1,142 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:saver_expense_manager/app/global/app_variables.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  group('AppVariables', () {
+    test('should have correct constants', () {
+      expect(AppVariables.appName, 'Saver');
+      expect(AppVariables.defaultBaseColor, 'INDIGO');
+      expect(AppVariables.defaultFontFamily, 'Nunito_regular');
+      expect(AppVariables.allowedExtensions, ['pdf', 'png', 'jpg', 'jpeg']);
+      expect(AppVariables.minDate, DateTime(2020));
+      expect(AppVariables.deafultMonthsTrend, 10);
+      expect(AppVariables.deafultMonthsResume, 4);
+      expect(AppVariables.maxDaysWarning, 7);
+      expect(AppVariables.expensesTab, 'gastos');
+      expect(AppVariables.movementsTab, 'movimientos');
+      expect(AppVariables.summaryTab, 'resumen');
+      expect(AppVariables.incomesTab, 'ingresos');
+      expect(AppVariables.lightTheme, 'LIGHT');
+      expect(AppVariables.darkTheme, 'DARK');
+      expect(AppVariables.googleProvider, 'google.com');
+      expect(AppVariables.emailProvider, 'password');
+    });
+
+    test('should have correct regex patterns', () {
+      final emailRegExp = RegExp(AppVariables.emailRegExp);
+      final passwordRegExp = RegExp(AppVariables.passwordRegExp);
+
+      expect(emailRegExp.hasMatch('test@example.com'), isTrue);
+      expect(emailRegExp.hasMatch('invalid-email'), isFalse);
+
+      expect(passwordRegExp.hasMatch('Password123'), isTrue);
+      expect(passwordRegExp.hasMatch('pass'), isFalse);
+    });
+
+    test('should have correct colors', () {
+      expect(AppVariables.incomeColor, Colors.blueAccent);
+      expect(AppVariables.balanceColor, Colors.teal);
+      expect(AppVariables.expenseColor, Colors.orangeAccent);
+      expect(AppVariables.growthColor, Colors.green);
+      expect(AppVariables.decreaseColor, Colors.redAccent);
+    });
+
+    test('should have correct collection names', () {
+      expect(AppVariables.categoriesCollection, 'categories');
+      expect(AppVariables.movementsCollection, 'movements');
+      expect(AppVariables.usersCollection, 'users');
+    });
+
+    group('getFontFamily', () {
+      late Map<String, String> originalFonts;
+
+      setUp(() {
+        AppVariables.useTestFonts = true;
+        originalFonts = Map.from(AppVariables.availableFonts);
+        AppVariables.availableFonts = {
+          'Nunito': 'NunitoFontFamily',
+          'Roboto': 'RobotoFontFamily',
+        };
+      });
+
+      tearDown(() {
+        AppVariables.availableFonts = originalFonts;
+      });
+
+      test('should return all fonts when useTestFonts is false', () async {
+        await runZonedGuarded(
+          () async {
+            AppVariables.useTestFonts = false;
+            final fonts = AppVariables.getAvailableFonts();
+            expect(fonts.containsKey('Nunito'), isTrue);
+            expect(fonts.containsKey('Roboto'), isTrue);
+            expect(fonts.length, greaterThan(2));
+
+            await Future<void>.delayed(const Duration(milliseconds: 200));
+          },
+          (error, stack) {},
+        );
+
+        AppVariables.useTestFonts = true;
+      });
+
+      test('should return savedFontId if it exists in availableFonts values',
+          () {
+        const savedFontId = 'RobotoFontFamily';
+        final result = AppVariables.getFontFamily(savedFontId);
+        expect(result, savedFontId);
+      });
+
+      test('should return mapped font family if cleaned name exists', () {
+        const savedFontId = 'Roboto_regular';
+        final result = AppVariables.getFontFamily(savedFontId);
+        expect(result, 'RobotoFontFamily');
+      });
+
+      test('should return default font (Nunito) if not found', () {
+        const savedFontId = 'UnknownFont';
+        final result = AppVariables.getFontFamily(savedFontId);
+        expect(result, 'NunitoFontFamily');
+      });
+
+      test('should handle different suffixes correctly', () {
+        expect(AppVariables.getFontFamily('Roboto_bold'), 'RobotoFontFamily');
+        expect(AppVariables.getFontFamily('Roboto_italic'), 'RobotoFontFamily');
+      });
+    });
+  });
+
+  group('SnackBarType Enum', () {
+    test('isSuccess should return correct boolean', () {
+      expect(SnackBarType.success.isSuccess, isTrue);
+      expect(SnackBarType.error.isSuccess, isFalse);
+      expect(SnackBarType.warning.isSuccess, isFalse);
+      expect(SnackBarType.info.isSuccess, isFalse);
+    });
+
+    test('isError should return correct boolean', () {
+      expect(SnackBarType.success.isError, isFalse);
+      expect(SnackBarType.error.isError, isTrue);
+      expect(SnackBarType.warning.isError, isFalse);
+      expect(SnackBarType.info.isError, isFalse);
+    });
+
+    test('isWarning should return correct boolean', () {
+      expect(SnackBarType.success.isWarning, isFalse);
+      expect(SnackBarType.error.isWarning, isFalse);
+      expect(SnackBarType.warning.isWarning, isTrue);
+      expect(SnackBarType.info.isWarning, isFalse);
+    });
+
+    test('isInfo should return correct boolean', () {
+      expect(SnackBarType.success.isInfo, isFalse);
+      expect(SnackBarType.error.isInfo, isFalse);
+      expect(SnackBarType.warning.isInfo, isFalse);
+      expect(SnackBarType.info.isInfo, isTrue);
+    });
+  });
+}

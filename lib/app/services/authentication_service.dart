@@ -23,6 +23,8 @@ class AuthenticationService {
 
   User? get currentUser => _auth.currentUser;
 
+  bool get isLoggedIn => currentUser != null;
+
   Future<void> updateDisplayName(String newName) async {
     await _auth.currentUser?.updateDisplayName(newName);
     await _auth.currentUser?.reload();

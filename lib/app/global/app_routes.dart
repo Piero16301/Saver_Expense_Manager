@@ -16,21 +16,9 @@ GoRouter goRouter() {
 
   return GoRouter(
     refreshListenable: GoRouterRefreshStream(authService.userChanges),
-    redirect: (context, state) {
-      final user = authService.currentUser;
-      final isLoggingIn = state.fullPath == LoginPage.pagePath;
-
-      final isRegistering = state.fullPath == RegisterPage.pagePath;
-
-      if (user == null) {
-        return (isLoggingIn || isRegistering) ? null : LoginPage.pagePath;
-      } else {
-        return isLoggingIn ? HomePage.pagePath : null;
-      }
-    },
-    initialLocation: authService.currentUser != null
-        ? HomePage.pagePath
-        : LoginPage.pagePath,
+    redirect: handleRedirect,
+    initialLocation:
+        authService.isLoggedIn ? HomePage.pagePath : LoginPage.pagePath,
     routes: [
       GoRoute(
         name: RegisterPage.pageName,
@@ -57,12 +45,14 @@ GoRouter goRouter() {
         path: MovementPage.pagePath,
         builder: (context, state) {
           final movement = state.extra! as Movement;
-          final type = state.pathParameters['type'] ?? 'EXPENSE';
+          final type =
+              state.pathParameters['type'] ?? CategoryType.expense.value;
           final screenType = state.pathParameters['screenType'] ?? 'ADD';
           return MovementPage(
             movement: movement,
-            type:
-                type == 'EXPENSE' ? CategoryType.expense : CategoryType.income,
+            type: type == CategoryType.expense.value
+                ? CategoryType.expense
+                : CategoryType.income,
             screenType: screenType == 'ADD'
                 ? MovementScreenType.add
                 : MovementScreenType.edit,
@@ -85,6 +75,20 @@ GoRouter goRouter() {
     ],
     debugLogDiagnostics: true,
   );
+}
+
+String? handleRedirect(BuildContext context, GoRouterState state) {
+  final authService = getIt<AuthenticationService>();
+  final userIsLoggedIn = authService.isLoggedIn;
+  final isLoggingIn = state.fullPath == LoginPage.pagePath;
+
+  final isRegistering = state.fullPath == RegisterPage.pagePath;
+
+  if (!userIsLoggedIn) {
+    return (isLoggingIn || isRegistering) ? null : LoginPage.pagePath;
+  } else {
+    return isLoggingIn ? HomePage.pagePath : null;
+  }
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {

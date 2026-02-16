@@ -4,6 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 class AppVariables {
   static const String appName = 'Saver';
 
+  @visibleForTesting
+  static bool useTestFonts = false;
+
   static const String defaultBaseColor = 'INDIGO';
   static const String defaultFontFamily = 'Nunito_regular';
   static const List<String> allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
@@ -35,18 +38,29 @@ class AppVariables {
   static const MaterialColor growthColor = Colors.green;
   static const MaterialAccentColor decreaseColor = Colors.redAccent;
 
-  static Map<String, String> availableFonts = {
-    'Merriweather': GoogleFonts.merriweather().fontFamily ?? '',
-    'Montserrat': GoogleFonts.montserrat().fontFamily ?? '',
-    'Nunito': GoogleFonts.nunito().fontFamily ?? '',
-    'Open Sans': GoogleFonts.openSans().fontFamily ?? '',
-    'Orbitron': GoogleFonts.orbitron().fontFamily ?? '',
-    'Pacifico': GoogleFonts.pacifico().fontFamily ?? '',
-    'Playfair Display': GoogleFonts.playfairDisplay().fontFamily ?? '',
-    'Poppins': GoogleFonts.poppins().fontFamily ?? '',
-    'Roboto': GoogleFonts.roboto().fontFamily ?? '',
-    'Source Code Pro': GoogleFonts.sourceCodePro().fontFamily ?? '',
-  };
+  static Map<String, String> availableFonts = getAvailableFonts();
+
+  @visibleForTesting
+  static Map<String, String> getAvailableFonts() {
+    if (useTestFonts) {
+      return {
+        'Nunito': 'Nunito',
+        'Roboto': 'Roboto',
+      };
+    }
+    return {
+      'Merriweather': GoogleFonts.merriweather().fontFamily ?? '',
+      'Montserrat': GoogleFonts.montserrat().fontFamily ?? '',
+      'Nunito': GoogleFonts.nunito().fontFamily ?? '',
+      'Open Sans': GoogleFonts.openSans().fontFamily ?? '',
+      'Orbitron': GoogleFonts.orbitron().fontFamily ?? '',
+      'Pacifico': GoogleFonts.pacifico().fontFamily ?? '',
+      'Playfair Display': GoogleFonts.playfairDisplay().fontFamily ?? '',
+      'Poppins': GoogleFonts.poppins().fontFamily ?? '',
+      'Roboto': GoogleFonts.roboto().fontFamily ?? '',
+      'Source Code Pro': GoogleFonts.sourceCodePro().fontFamily ?? '',
+    };
+  }
 
   static String getFontFamily(String savedFontId) {
     if (availableFonts.values.contains(savedFontId)) {
