@@ -26,9 +26,9 @@ class AppDropdownField<T> extends StatelessWidget {
               border: Border.all(
                 color: Theme.of(context).colorScheme.outline,
               ),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(16),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: DropdownButton<T>(
               value: selected,
               isExpanded: true,

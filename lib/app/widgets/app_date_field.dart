@@ -27,7 +27,7 @@ class AppDateField extends StatelessWidget {
         labelText: label,
         alignLabelWithHint: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
             color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
           ),

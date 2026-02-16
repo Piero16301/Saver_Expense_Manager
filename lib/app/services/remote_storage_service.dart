@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
 
-class StorageService {
-  StorageService() : _storage = FirebaseStorage.instance;
+class RemoteStorageService {
+  RemoteStorageService() : _storage = FirebaseStorage.instance;
 
   final FirebaseStorage _storage;
 

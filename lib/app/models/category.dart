@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-part 'category.g.dart';
-
 /// {@template category}
 /// A class that represents a category in the app.
 /// {@endtemplate}
@@ -16,11 +14,26 @@ class Category extends Equatable {
   });
 
   /// Creates an instance of [Category] from a [Map]
-  factory Category.fromJson(Map<String, dynamic> json) =>
-      _$CategoryFromJson(json);
+  factory Category.fromJson(Map<String, dynamic> json) {
+    return Category(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      icon: json['icon'] as String? ?? '',
+      color: json['color'] as String? ?? '',
+      type: CategoryType.categoryTypeFromJson(json['type'] as String? ?? ''),
+    );
+  }
 
   /// Creates a [Map] from an instance of [Category]
-  Map<String, dynamic> toJson() => _$CategoryToJson(this);
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'id': id,
+      'name': name,
+      'icon': icon,
+      'color': color,
+      'type': type.value,
+    };
+  }
 
   /// An empty category instance
   static const empty = Category(
@@ -47,7 +60,13 @@ class Category extends Equatable {
   final CategoryType type;
 
   @override
-  List<Object> get props => [id, name, icon, color, type];
+  List<Object> get props => [
+        id,
+        name,
+        icon,
+        color,
+        type,
+      ];
 }
 
 /// An enum that represents the type of category
@@ -58,8 +77,18 @@ enum CategoryType {
   /// Represents an income category
   income('INCOME');
 
+  /// Creates an instance of [CategoryType] from a [String]
   const CategoryType(this.value);
 
   /// The string value of the category type
   final String value;
+
+  /// Creates an instance of [CategoryType] from a [String]
+  static CategoryType categoryTypeFromJson(String type) {
+    if (type.toUpperCase() == CategoryType.income.value) {
+      return CategoryType.income;
+    } else {
+      return CategoryType.expense;
+    }
+  }
 }

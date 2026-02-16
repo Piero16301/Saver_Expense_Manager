@@ -1,6 +1,5 @@
 {
     "@@locale": "es",
-
     "selectLanguage": "Seleccionar idioma",
     "@selectLanguage": {},
     "english": "🇺🇸 Inglés",
@@ -15,12 +14,10 @@
     "@spanishFlag": {},
     "italianFlag": "🇮🇹",
     "@italianFlag": {},
-
     "expenseName": "Gasto",
     "@expenseName": {},
     "incomeName": "Ingreso",
     "@incomeName": {},
-
     "homeTitle": "Gestor de Gastos",
     "@homeTitle": {},
     "homeSubtitle": "Mantén un registro de tus gastos",
@@ -63,7 +60,6 @@
     "@errorLoadingCategories": {},
     "noCategoriesFound": "No se encontraron categorías",
     "@noCategoriesFound": {},
-
     "categoryExpenseTitle": "Gastos",
     "@categoryExpenseTitle": {},
     "categoryIncomeTitle": "Ingresos",
@@ -82,7 +78,6 @@
     "@categoryNoTrendData": {},
     "categoryNoMovements": "No se han registrado movimientos para este mes",
     "@categoryNoMovements": {},
-
     "categoryTransport": "Transporte",
     "@categoryTransport": {},
     "categoryFeeding": "Alimentación",
@@ -133,7 +128,6 @@
     "@categorySales": {},
     "categoryOthersIncome": "Otros (ingreso)",
     "@categoryOthersIncome": {},
-
     "movementNewAppbarTitle": "Nuevo movimiento",
     "@movementNewAppbarTitle": {},
     "movementEditAppbarTitle": "Editar movimiento",
@@ -163,7 +157,7 @@
     "movementCategoryTitle": "Categoría del movimiento",
     "@movementCategoryTitle": {},
     "movementCategoryAll": "Todas las categorías",
-    "@movementCategoryAll": {}, 
+    "@movementCategoryAll": {},
     "movementAmount": "Monto",
     "@movementAmount": {},
     "movementAmountHint": "Ingrese un monto",
@@ -196,21 +190,18 @@
             }
         }
     },
-
     "cancel": "Cancelar",
     "@cancel": {},
     "confirm": "Confirmar",
     "@confirm": {},
     "ok": "OK",
     "@ok": {},
-
     "movementsNoData": "No se han registrado movimientos",
     "@movementsNoData": {},
     "movementsError": "Se produjo un error al cargar los movimientos",
     "@movementsError": {},
     "movementsRetry": "Reintentar",
     "@movementsRetry": {},
-
     "profileTitle": "Perfil",
     "@profileTitle": {},
     "displayNameChanged": "El nombre de usuario ha sido cambiado a {newName}",
@@ -221,15 +212,14 @@
             }
         }
     },
-    "confirmLogoutTitle": "Cerrar Sesión",
+    "confirmLogoutTitle": "Cerrar sesión",
     "@confirmLogoutTitle": {},
     "confirmLogoutMessage": "¿Estás seguro de que deseas cerrar sesión?",
     "@confirmLogoutMessage": {},
     "logoutCancel": "Cancelar",
     "@logoutCancel": {},
-    "logoutConfirm": "Cerrar Sesión",
+    "logoutConfirm": "Cerrar sesión",
     "@logoutConfirm": {},
-
     "confirmRemoveAttachmentTitle": "Eliminar Adjunto",
     "@confirmRemoveAttachmentTitle": {},
     "confirmRemoveAttachmentMessage": "¿Estás seguro de que deseas eliminar este adjunto?",
@@ -238,7 +228,6 @@
     "@removeAttachmentCancel": {},
     "removeAttachmentConfirm": "Eliminar",
     "@removeAttachmentConfirm": {},
-
     "confirmDeleteMovementTitle": "Eliminar Movimiento",
     "@confirmDeleteMovementTitle": {},
     "confirmDeleteMovementMessage": "¿Estás seguro de que deseas eliminar este movimiento? Esta acción no se puede deshacer.",
@@ -251,7 +240,6 @@
     "@movementDeleteSuccess": {},
     "movementDeleteError": "Se produjo un error al eliminar el movimiento",
     "@movementDeleteError": {},
-
     "settingsAppBarTitle": "Ajustes",
     "@settingsAppBarTitle": {},
     "settingsLanguageTitle": "Idioma",
@@ -314,7 +302,6 @@
     "@settingsVersionTitle": {},
     "settingsUpdateDateTitle": "Fecha de actualización",
     "@settingsUpdateDateTitle": {},
-
     "loginTitle": "Iniciar sesión",
     "@loginTitle": {},
     "emailLabel": "Correo electrónico",
@@ -377,12 +364,8 @@
     "@genericError": {},
     "genericSuccess": "Operación exitosa",
     "@genericSuccess": {},
-    "registerTitle": "Crear Cuenta",
+    "registerTitle": "Crear cuenta",
     "@registerTitle": {},
-    "nameLabel": "Nombre",
-    "@nameLabel": {},
-    "enterNameHint": "Ingresa tu nombre",
-    "@enterNameHint": {},
     "registerButton": "Registrarse",
     "@registerButton": {},
     "noAccount": "¿No tienes una cuenta?",

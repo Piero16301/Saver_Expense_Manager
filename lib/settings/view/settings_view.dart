@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -55,11 +53,9 @@ class SettingsView extends StatelessWidget {
                 ).toList(),
                 onChanged: (value) {
                   if (value != null) {
-                    unawaited(
-                      context.read<AppCubit>().changeLanguage(
-                            language: value,
-                          ),
-                    );
+                    context.read<AppCubit>().changeLanguage(
+                          language: value,
+                        );
                   }
                 },
               ),
@@ -105,9 +101,7 @@ class SettingsView extends StatelessWidget {
                 ],
                 onChanged: (value) {
                   if (value != null) {
-                    unawaited(
-                      context.read<AppCubit>().changeTheme(theme: value),
-                    );
+                    context.read<AppCubit>().changeTheme(theme: value);
                   }
                 },
               ),
@@ -148,11 +142,9 @@ class SettingsView extends StatelessWidget {
                 ).toList(),
                 onChanged: (value) {
                   if (value != null) {
-                    unawaited(
-                      context.read<AppCubit>().changeBaseColor(
-                            baseColor: value,
-                          ),
-                    );
+                    context.read<AppCubit>().changeBaseColor(
+                          baseColor: value,
+                        );
                   }
                 },
               ),
@@ -175,11 +167,9 @@ class SettingsView extends StatelessWidget {
                 ).toList(),
                 onChanged: (value) {
                   if (value != null) {
-                    unawaited(
-                      context.read<AppCubit>().changeFontFamily(
-                            fontFamily: value,
-                          ),
-                    );
+                    context.read<AppCubit>().changeFontFamily(
+                          fontFamily: value,
+                        );
                   }
                 },
               ),

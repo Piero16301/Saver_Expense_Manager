@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -21,12 +19,10 @@ class AppChangeTheme extends StatelessWidget {
         onPressed: () {
           final isDark =
               context.read<AppCubit>().state.theme == AppVariables.darkTheme;
-          unawaited(
-            context.read<AppCubit>().changeTheme(
-                  theme:
-                      isDark ? AppVariables.lightTheme : AppVariables.darkTheme,
-                ),
-          );
+          context.read<AppCubit>().changeTheme(
+                theme:
+                    isDark ? AppVariables.lightTheme : AppVariables.darkTheme,
+              );
         },
         icon: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) => HugeIcon(

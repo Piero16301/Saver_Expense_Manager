@@ -1,4 +1,4 @@
-import 'package:user_api/user_api.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 class AppMocks {
   static const List<CategoryData> expensesCategoryData = <CategoryData>[

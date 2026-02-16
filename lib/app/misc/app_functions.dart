@@ -8,7 +8,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:user_api/user_api.dart';
 
 class AppFunctions {
   static String highResPicture({
@@ -497,7 +496,7 @@ class AppFunctions {
           jsonDecode(response.text ?? '') as Map<String, dynamic>? ?? {};
     }
 
-    final movement = Movement.fromModel(responseJson, categories);
+    final movement = Movement.fromAiService(responseJson, categories);
 
     return movement;
   }
@@ -507,7 +506,8 @@ class AppFunctions {
     required List<Category> categories,
     required String language,
   }) {
-    final template = getIt<RemoteConfigService>().geminiPromptTemplate;
+    final template =
+        getIt<RemoteConfigService>().geminiPromptExtractReceiptData;
     final type = movementType.name.toLowerCase();
     final categoriesStr = categories.map((e) => e.name).join(', ');
 

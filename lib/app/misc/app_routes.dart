@@ -10,7 +10,6 @@ import 'package:saver_expense_manager/movement/movement.dart';
 import 'package:saver_expense_manager/profile/profile.dart';
 import 'package:saver_expense_manager/register/register.dart';
 import 'package:saver_expense_manager/settings/settings.dart';
-import 'package:user_api/user_api.dart';
 
 GoRouter goRouter() {
   final authService = getIt<AuthenticationService>();

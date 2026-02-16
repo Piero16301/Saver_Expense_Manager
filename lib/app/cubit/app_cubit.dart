@@ -4,28 +4,27 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:user_repository/user_repository.dart';
 
 part 'app_state.dart';
 
 class AppCubit extends Cubit<AppState> {
-  AppCubit(this.userRepository) : super(const AppState());
+  AppCubit() : super(const AppState());
 
-  final UserRepository userRepository;
+  final LocalStorageService localStorage = getIt<LocalStorageService>();
 
-  Future<void> initialLoad() async {
+  void initialLoad() {
     // Setting the language to the device language if it's not set
-    final language = userRepository.getLanguage();
+    final language = localStorage.getLanguage();
     if (language == null) {
       final deviceLanguage = Platform.localeName;
-      await userRepository.saveLanguage(language: deviceLanguage);
+      localStorage.saveLanguage(language: deviceLanguage);
     }
 
     // Setting the theme to the device theme if it's not set
-    final theme = userRepository.getTheme();
+    final theme = localStorage.getTheme();
     if (theme == null) {
       final deviceBrightness = PlatformDispatcher.instance.platformBrightness;
-      await userRepository.saveTheme(
+      localStorage.saveTheme(
         theme: deviceBrightness == Brightness.dark
             ? AppVariables.darkTheme
             : AppVariables.lightTheme,
@@ -33,48 +32,48 @@ class AppCubit extends Cubit<AppState> {
     }
 
     // Setting the base color to INDIGO if it's not set
-    final baseColor = userRepository.getBaseColor();
+    final baseColor = localStorage.getBaseColor();
     if (baseColor == null) {
-      await userRepository.saveBaseColor(
+      localStorage.saveBaseColor(
         baseColor: AppVariables.defaultBaseColor,
       );
     }
 
     // Setting the font family to Nunito_regular if it's not set
-    final fontFamily = userRepository.getFontFamily();
+    final fontFamily = localStorage.getFontFamily();
     if (fontFamily == null) {
-      await userRepository.saveFontFamily(
+      localStorage.saveFontFamily(
         fontFamily: AppVariables.defaultFontFamily,
       );
     }
 
     emit(
       state.copyWith(
-        language: userRepository.getLanguage(),
-        theme: userRepository.getTheme(),
-        baseColor: userRepository.getBaseColor(),
-        fontFamily: userRepository.getFontFamily(),
+        language: localStorage.getLanguage(),
+        theme: localStorage.getTheme(),
+        baseColor: localStorage.getBaseColor(),
+        fontFamily: localStorage.getFontFamily(),
       ),
     );
   }
 
-  Future<void> changeLanguage({required String language}) async {
-    await userRepository.saveLanguage(language: language);
+  void changeLanguage({required String language}) {
+    localStorage.saveLanguage(language: language);
     emit(state.copyWith(language: language));
   }
 
-  Future<void> changeTheme({required String theme}) async {
-    await userRepository.saveTheme(theme: theme);
+  void changeTheme({required String theme}) {
+    localStorage.saveTheme(theme: theme);
     emit(state.copyWith(theme: theme));
   }
 
-  Future<void> changeBaseColor({required String baseColor}) async {
-    await userRepository.saveBaseColor(baseColor: baseColor);
+  void changeBaseColor({required String baseColor}) {
+    localStorage.saveBaseColor(baseColor: baseColor);
     emit(state.copyWith(baseColor: baseColor));
   }
 
-  Future<void> changeFontFamily({required String fontFamily}) async {
-    await userRepository.saveFontFamily(fontFamily: fontFamily);
+  void changeFontFamily({required String fontFamily}) {
+    localStorage.saveFontFamily(fontFamily: fontFamily);
     emit(state.copyWith(fontFamily: fontFamily));
   }
 }

@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:user_api/src/models/models.dart';
-
-part 'category_data.g.dart';
+import 'package:saver_expense_manager/app/models/models.dart';
 
 /// {@template category_data}
 /// A class that represents a category data for a chart
@@ -14,11 +12,21 @@ class CategoryData extends Equatable {
   });
 
   /// Creates an instance of [CategoryData] from a [Map]
-  factory CategoryData.fromJson(Map<String, dynamic> json) =>
-      _$CategoryDataFromJson(json);
+  factory CategoryData.fromJson(Map<String, dynamic> json) {
+    return CategoryData(
+      category:
+          Category.fromJson(json['category'] as Map<String, dynamic>? ?? {}),
+      value: (json['value'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
 
   /// Creates a [Map] from an instance of [CategoryData]
-  Map<String, dynamic> toJson() => _$CategoryDataToJson(this);
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'category': category.toJson(),
+      'value': value,
+    };
+  }
 
   /// Chart data category
   final Category category;

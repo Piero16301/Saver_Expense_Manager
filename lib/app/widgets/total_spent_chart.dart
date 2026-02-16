@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:user_api/user_api.dart';
 
 class TotalSpentChart extends StatelessWidget {
   const TotalSpentChart({required this.data, super.key});

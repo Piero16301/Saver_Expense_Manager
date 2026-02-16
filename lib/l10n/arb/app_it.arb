@@ -1,6 +1,5 @@
 {
     "@@locale": "it",
-
     "selectLanguage": "Seleziona la lingua",
     "@selectLanguage": {},
     "english": "🇺🇸 Inglese",
@@ -15,12 +14,10 @@
     "@spanishFlag": {},
     "italianFlag": "🇮🇹",
     "@italianFlag": {},
-
     "expenseName": "Spesa",
     "@expenseName": {},
     "incomeName": "Entrata",
     "@incomeName": {},
-
     "homeTitle": "Gestore delle spese",
     "@homeTitle": {},
     "homeSubtitle": "Tieni traccia delle tue spese",
@@ -63,7 +60,6 @@
     "@errorLoadingCategories": {},
     "noCategoriesFound": "Nessuna categoria trovata",
     "@noCategoriesFound": {},
-
     "categoryExpenseTitle": "Spese",
     "@categoryExpenseTitle": {},
     "categoryIncomeTitle": "Entrate",
@@ -82,7 +78,6 @@
     "@categoryNoTrendData": {},
     "categoryNoMovements": "Nessun movimento registrato per questo mese",
     "@categoryNoMovements": {},
-
     "categoryTransport": "Trasporto",
     "@categoryTransport": {},
     "categoryFeeding": "Alimentazione",
@@ -133,7 +128,6 @@
     "@categorySales": {},
     "categoryOthersIncome": "Altri (entrate)",
     "@categoryOthersIncome": {},
-
     "movementNewAppbarTitle": "Nuovo movimento",
     "@movementNewAppbarTitle": {},
     "movementEditAppbarTitle": "Modifica movimento",
@@ -196,21 +190,18 @@
             }
         }
     },
-
     "cancel": "Annulla",
     "@cancel": {},
     "confirm": "Conferma",
     "@confirm": {},
     "ok": "OK",
     "@ok": {},
-
     "movementsNoData": "Nessun movimento registrato",
     "@movementsNoData": {},
     "movementsError": "Si è verificato un errore durante il caricamento dei movimenti",
     "@movementsError": {},
     "movementsRetry": "Riprova",
     "@movementsRetry": {},
-
     "profileTitle": "Profilo",
     "@profileTitle": {},
     "displayNameChanged": "Il nome utente è stato cambiato in {newName}",
@@ -229,7 +220,6 @@
     "@logoutCancel": {},
     "logoutConfirm": "Disconnettersi",
     "@logoutConfirm": {},
-
     "confirmRemoveAttachmentTitle": "Rimuovi Allegato",
     "@confirmRemoveAttachmentTitle": {},
     "confirmRemoveAttachmentMessage": "Sei sicuro di voler rimuovere questo allegato?",
@@ -238,7 +228,6 @@
     "@removeAttachmentCancel": {},
     "removeAttachmentConfirm": "Rimuovi",
     "@removeAttachmentConfirm": {},
-
     "confirmDeleteMovementTitle": "Elimina Movimento",
     "@confirmDeleteMovementTitle": {},
     "confirmDeleteMovementMessage": "Sei sicuro di voler eliminare questo movimento? Questa azione non può essere annullata.",
@@ -251,7 +240,6 @@
     "@movementDeleteSuccess": {},
     "movementDeleteError": "Si è verificato un errore durante l'eliminazione del movimento",
     "@movementDeleteError": {},
-
     "settingsAppBarTitle": "Impostazioni",
     "@settingsAppBarTitle": {},
     "settingsLanguageTitle": "Lingua",
@@ -314,7 +302,6 @@
     "@settingsVersionTitle": {},
     "settingsUpdateDateTitle": "Data di aggiornamento",
     "@settingsUpdateDateTitle": {},
-
     "loginTitle": "Accesso",
     "@loginTitle": {},
     "emailLabel": "Email",
@@ -377,12 +364,8 @@
     "@genericError": {},
     "genericSuccess": "Operazione riuscita",
     "@genericSuccess": {},
-    "registerTitle": "Crea Account",
+    "registerTitle": "Crea account",
     "@registerTitle": {},
-    "nameLabel": "Nome",
-    "@nameLabel": {},
-    "enterNameHint": "Inserisci il tuo nome",
-    "@enterNameHint": {},
     "registerButton": "Registrati",
     "@registerButton": {},
     "noAccount": "Non hai un account?",
