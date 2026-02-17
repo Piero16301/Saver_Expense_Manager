@@ -11,6 +11,7 @@ class MovementState extends Equatable {
     this.price = 0.0,
     this.company = '',
     this.attachments = const <String>[],
+    this.movementRecap = '',
   });
 
   final String id;
@@ -22,6 +23,7 @@ class MovementState extends Equatable {
   final double price;
   final String company;
   final List<String> attachments;
+  final String movementRecap;
 
   MovementState copyWith({
     String? id,
@@ -33,6 +35,7 @@ class MovementState extends Equatable {
     double? price,
     String? company,
     List<String>? attachments,
+    String? movementRecap,
   }) {
     return MovementState(
       id: id ?? this.id,
@@ -44,6 +47,7 @@ class MovementState extends Equatable {
       price: price ?? this.price,
       company: company ?? this.company,
       attachments: attachments ?? this.attachments,
+      movementRecap: movementRecap ?? this.movementRecap,
     );
   }
 
@@ -58,5 +62,6 @@ class MovementState extends Equatable {
         price,
         company,
         attachments,
+        movementRecap,
       ];
 }

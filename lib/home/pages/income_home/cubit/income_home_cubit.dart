@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:user_api/user_api.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 part 'income_home_state.dart';
 

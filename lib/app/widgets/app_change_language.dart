@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -30,11 +28,8 @@ class AppChangeLanguage extends StatelessWidget {
         ),
         tooltip: l10n.selectLanguage,
         constraints: const BoxConstraints(minWidth: 60, maxWidth: 60),
-        onSelected: (newValue) {
-          unawaited(
+        onSelected: (newValue) =>
             context.read<AppCubit>().changeLanguage(language: newValue),
-          );
-        },
         itemBuilder: (context) {
           return languages.map((value) {
             return PopupMenuItem<String>(

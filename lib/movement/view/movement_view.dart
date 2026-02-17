@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/movement.dart';
-import 'package:user_api/user_api.dart';
 
 class MovementView extends StatelessWidget {
   const MovementView({required this.type, required this.screenType, super.key});
@@ -52,7 +52,7 @@ class MovementView extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
-                const SizedBox(height: 10),
+                const SizedBox(height: 5),
                 AppTextField(
                   label: l10n.movementTitle,
                   hintText: l10n.movementTitleHint,
@@ -146,6 +146,11 @@ class MovementView extends StatelessWidget {
                   openFile: context.read<MovementCubit>().attachOpen,
                   attachments: state.attachments,
                 ),
+                if (kDebugMode)
+                  MovementMetadata(
+                    id: state.id,
+                    movementRecap: state.movementRecap,
+                  ),
               ],
             ),
           ),
@@ -160,36 +165,28 @@ class MovementView extends StatelessWidget {
               unawaited(
                 showDialog<void>(
                   context: context,
-                  builder: (dialogContext) => AlertDialog(
-                    title: Text(l10n.movementDateWarningTitle),
-                    content: Text(
-                      l10n.movementDateWarningContent(
-                        AppVariables.maxDaysWarning,
-                      ),
+                  builder: (dialogContext) => AppAlertDialog(
+                    title: l10n.movementDateWarningTitle,
+                    content: l10n.movementDateWarningContent(
+                      AppVariables.maxDaysWarning,
                     ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => context.pop(),
-                        child: Text(l10n.cancel),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.pop();
-                          if (context.read<MovementCubit>().saveMovement(
-                                user.uid,
-                              )) {
-                            context.pop<bool>(true);
-                          } else {
-                            AppFunctions.showSnackBar(
-                              context,
-                              message: l10n.movementSaveError,
-                              type: SnackBarType.error,
-                            );
-                          }
-                        },
-                        child: Text(l10n.confirm),
-                      ),
-                    ],
+                    cancelLabel: l10n.cancel,
+                    confirmLabel: l10n.confirm,
+                    onCancel: () => context.pop(),
+                    onConfirm: () {
+                      context.pop();
+                      if (context.read<MovementCubit>().saveMovement(
+                            user.uid,
+                          )) {
+                        context.pop<bool>(true);
+                      } else {
+                        AppFunctions.showSnackBar(
+                          context,
+                          message: l10n.movementSaveError,
+                          type: SnackBarType.error,
+                        );
+                      }
+                    },
                   ),
                 ),
               );
@@ -231,9 +228,10 @@ class MovementView extends StatelessWidget {
         return [
           IconButton(
             onPressed: () => _showDeleteDialog(context, l10n),
-            icon: const HugeIcon(
+            icon: HugeIcon(
               icon: HugeIcons.strokeRoundedDelete02,
               strokeWidth: 2,
+              color: Theme.of(context).colorScheme.error,
             ),
           ),
         ];
@@ -244,37 +242,88 @@ class MovementView extends StatelessWidget {
     unawaited(
       showDialog<void>(
         context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: Text(l10n.confirmDeleteMovementTitle),
-          content: Text(l10n.confirmDeleteMovementMessage),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text(l10n.deleteMovementCancel),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-                if (context.read<MovementCubit>().removeMovement()) {
-                  AppFunctions.showSnackBar(
-                    context,
-                    message: l10n.movementDeleteSuccess,
-                    type: SnackBarType.success,
-                  );
-                  context.pop<bool>(true);
-                } else {
-                  AppFunctions.showSnackBar(
-                    context,
-                    message: l10n.movementDeleteError,
-                    type: SnackBarType.error,
-                  );
-                }
-              },
-              child: Text(l10n.deleteMovementConfirm),
-            ),
-          ],
+        builder: (dialogContext) => AppAlertDialog(
+          title: l10n.confirmDeleteMovementTitle,
+          content: l10n.confirmDeleteMovementMessage,
+          confirmLabel: l10n.deleteMovementConfirm,
+          cancelLabel: l10n.deleteMovementCancel,
+          onConfirm: () {
+            Navigator.of(dialogContext).pop();
+            if (context.read<MovementCubit>().removeMovement()) {
+              AppFunctions.showSnackBar(
+                context,
+                message: l10n.movementDeleteSuccess,
+                type: SnackBarType.success,
+              );
+              context.pop<bool>(true);
+            } else {
+              AppFunctions.showSnackBar(
+                context,
+                message: l10n.movementDeleteError,
+                type: SnackBarType.error,
+              );
+            }
+          },
+          onCancel: () => Navigator.of(dialogContext).pop(),
         ),
       ),
+    );
+  }
+}
+
+class MovementMetadata extends StatelessWidget {
+  const MovementMetadata({
+    required this.id,
+    required this.movementRecap,
+    super.key,
+  });
+
+  final String id;
+  final String movementRecap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        SizedBox(
+          width: double.infinity,
+          child: RichText(
+            text: TextSpan(
+              text: 'ID: ',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+              children: [
+                TextSpan(
+                  text: id,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: RichText(
+            text: TextSpan(
+              text: 'Recap: ',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+              children: [
+                TextSpan(
+                  text: movementRecap,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

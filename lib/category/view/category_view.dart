@@ -7,7 +7,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/category/category.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:user_api/user_api.dart';
 
 class CategoryView extends StatelessWidget {
   const CategoryView({super.key});

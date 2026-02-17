@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/category/category.dart';
-import 'package:user_api/user_api.dart';
 
 class CategoryPage extends StatelessWidget {
   const CategoryPage({

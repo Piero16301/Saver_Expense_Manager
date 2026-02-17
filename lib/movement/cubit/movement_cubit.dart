@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:user_api/user_api.dart';
 
 part 'movement_state.dart';
 
@@ -29,6 +28,7 @@ class MovementCubit extends Cubit<MovementState> {
         price: movement.price,
         company: movement.company,
         attachments: movement.attachments,
+        movementRecap: movement.movementRecap,
       ),
     );
   }
@@ -69,7 +69,7 @@ class MovementCubit extends Cubit<MovementState> {
 
     // Remove the file from Firebase Storage
     try {
-      await getIt<StorageService>().deleteFile(value);
+      await getIt<RemoteStorageService>().deleteFile(value);
     } on Exception catch (_) {}
   }
 
@@ -79,7 +79,8 @@ class MovementCubit extends Cubit<MovementState> {
       final filePath = '${appTemDir.path}/$value';
       final file = File(filePath);
 
-      final data = await getIt<StorageService>().getData(value) ?? Uint8List(0);
+      final data =
+          await getIt<RemoteStorageService>().getData(value) ?? Uint8List(0);
       await file.writeAsBytes(data.toList());
       await OpenFile.open(filePath);
     } on Exception catch (_) {}
@@ -95,29 +96,33 @@ class MovementCubit extends Cubit<MovementState> {
             .doc()
             .id
         : state.id;
-    unawaited(
-      FirebaseFirestore.instance
-          .collection(AppVariables.movementsCollection)
-          .doc(docId)
-          .set(
-            Movement(
-              id: docId,
-              title: state.title,
-              description: state.description,
-              date: state.date!.copyWith(
-                hour: nowDate.hour,
-                minute: nowDate.minute,
-                second: nowDate.second,
-              ),
-              category: state.category!,
-              price: state.price,
-              company: state.company,
-              attachments: state.attachments,
-              user: userId,
-            ).toJson(),
-          ),
-    );
-
+    try {
+      unawaited(
+        FirebaseFirestore.instance
+            .collection(AppVariables.movementsCollection)
+            .doc(docId)
+            .set(
+              Movement(
+                id: docId,
+                title: state.title,
+                description: state.description,
+                date: state.date!.copyWith(
+                  hour: nowDate.hour,
+                  minute: nowDate.minute,
+                  second: nowDate.second,
+                ),
+                category: state.category!,
+                price: state.price,
+                company: state.company,
+                attachments: state.attachments,
+                user: userId,
+                movementRecap: state.movementRecap,
+              ).toJson(),
+            ),
+      );
+    } on Exception catch (_) {
+      return false;
+    }
     return true;
   }
 
@@ -136,7 +141,7 @@ class MovementCubit extends Cubit<MovementState> {
 
     // Remove associated attachments from Firebase Storage
     for (final attachment in state.attachments) {
-      unawaited(getIt<StorageService>().deleteFile(attachment));
+      unawaited(getIt<RemoteStorageService>().deleteFile(attachment));
     }
 
     return true;

@@ -67,11 +67,6 @@ jobs:
       - name: 📦 Install Dependencies
         run: |
           flutter pub get
-          for package in packages/*; do
-            if [ -d "$package" ] && [ -f "$package/pubspec.yaml" ]; then
-              cd "$package" && flutter pub get && cd ../..
-            fi
-          done
       - name: ✨ Format Check
         run: |
           dart format --set-exit-if-changed .

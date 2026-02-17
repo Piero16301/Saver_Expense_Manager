@@ -1,6 +1,5 @@
 {
     "@@locale": "en",
-
     "selectLanguage": "Select language",
     "@selectLanguage": {},
     "english": "🇺🇸 English",
@@ -15,12 +14,10 @@
     "@spanishFlag": {},
     "italianFlag": "🇮🇹",
     "@italianFlag": {},
-
     "expenseName": "Expense",
     "@expenseName": {},
     "incomeName": "Income",
     "@incomeName": {},
-
     "homeTitle": "Expense Manager",
     "@homeTitle": {},
     "homeSubtitle": "Keep track of your expenses",
@@ -63,7 +60,6 @@
     "@errorLoadingCategories": {},
     "noCategoriesFound": "No categories found",
     "@noCategoriesFound": {},
-
     "categoryExpenseTitle": "Expenses",
     "@categoryExpenseTitle": {},
     "categoryIncomeTitle": "Incomes",
@@ -82,7 +78,6 @@
     "@categoryNoTrendData": {},
     "categoryNoMovements": "No movements registered for this month",
     "@categoryNoMovements": {},
-
     "categoryTransport": "Transport",
     "@categoryTransport": {},
     "categoryFeeding": "Feeding",
@@ -133,7 +128,6 @@
     "@categorySales": {},
     "categoryOthersIncome": "Others (income)",
     "@categoryOthersIncome": {},
-
     "movementNewAppbarTitle": "New movement",
     "@movementNewAppbarTitle": {},
     "movementEditAppbarTitle": "Edit movement",
@@ -196,21 +190,18 @@
             }
         }
     },
-
     "cancel": "Cancel",
     "@cancel": {},
     "confirm": "Confirm",
     "@confirm": {},
     "ok": "OK",
     "@ok": {},
-
     "movementsNoData": "No movements registered",
     "@movementsNoData": {},
     "movementsError": "An error occurred while loading the movements",
     "@movementsError": {},
     "movementsRetry": "Retry",
     "@movementsRetry": {},
-
     "profileTitle": "Profile",
     "@profileTitle": {},
     "displayNameChanged": "The username has been changed to {newName}",
@@ -229,7 +220,6 @@
     "@logoutCancel": {},
     "logoutConfirm": "Logout",
     "@logoutConfirm": {},
-
     "confirmRemoveAttachmentTitle": "Remove Attachment",
     "@confirmRemoveAttachmentTitle": {},
     "confirmRemoveAttachmentMessage": "Are you sure you want to remove this attachment?",
@@ -238,7 +228,6 @@
     "@removeAttachmentCancel": {},
     "removeAttachmentConfirm": "Remove",
     "@removeAttachmentConfirm": {},
-
     "confirmDeleteMovementTitle": "Delete Movement",
     "@confirmDeleteMovementTitle": {},
     "confirmDeleteMovementMessage": "Are you sure you want to delete this movement? This action cannot be undone.",
@@ -251,7 +240,6 @@
     "@movementDeleteSuccess": {},
     "movementDeleteError": "An error occurred while deleting the movement",
     "@movementDeleteError": {},
-
     "settingsAppBarTitle": "Settings",
     "@settingsAppBarTitle": {},
     "settingsLanguageTitle": "Language",
@@ -314,7 +302,6 @@
     "@settingsVersionTitle": {},
     "settingsUpdateDateTitle": "Last update",
     "@settingsUpdateDateTitle": {},
-
     "loginTitle": "Login",
     "@loginTitle": {},
     "emailLabel": "Email",
@@ -377,12 +364,8 @@
     "@genericError": {},
     "genericSuccess": "Operation successful",
     "@genericSuccess": {},
-    "registerTitle": "Create Account",
+    "registerTitle": "Create account",
     "@registerTitle": {},
-    "nameLabel": "Name",
-    "@nameLabel": {},
-    "enterNameHint": "Enter your name",
-    "@enterNameHint": {},
     "registerButton": "Register",
     "@registerButton": {},
     "noAccount": "Don't have an account?",

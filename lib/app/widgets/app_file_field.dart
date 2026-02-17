@@ -62,6 +62,7 @@ class AppFileField extends StatelessWidget {
                           avatar: HugeIcon(
                             icon: getAttachmentIcon(attachments[i]),
                             color: Theme.of(context).colorScheme.primary,
+                            strokeWidth: 2,
                           ),
                           onDeleted: () => _showRemoveConfirmationDialog(
                             context,
@@ -76,8 +77,12 @@ class AppFileField extends StatelessWidget {
                       onPressed: () => _handleUpload(context, appLoader),
                       icon: const HugeIcon(
                         icon: HugeIcons.strokeRoundedUpload04,
+                        strokeWidth: 2,
                       ),
-                      label: Text(labelAdd),
+                      label: Text(
+                        labelAdd,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ],
@@ -124,19 +129,13 @@ class AppFileField extends StatelessWidget {
       showDialog<bool>(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text(l10n.confirmRemoveAttachmentTitle),
-            content: Text(l10n.confirmRemoveAttachmentMessage),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: Text(l10n.removeAttachmentCancel),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: Text(l10n.removeAttachmentConfirm),
-              ),
-            ],
+          return AppAlertDialog(
+            title: l10n.confirmRemoveAttachmentTitle,
+            content: l10n.confirmRemoveAttachmentMessage,
+            confirmLabel: l10n.removeAttachmentConfirm,
+            cancelLabel: l10n.removeAttachmentCancel,
+            onConfirm: () => Navigator.of(context).pop(true),
+            onCancel: () => Navigator.of(context).pop(false),
           );
         },
       ).then((shouldRemove) {
@@ -159,7 +158,7 @@ class AppFileField extends StatelessWidget {
         final file = result.files.single;
         final ext = file.path!.split('.').last;
         final path = '${const Uuid().v4()}.$ext';
-        final name = await getIt<StorageService>().uploadFile(
+        final name = await getIt<RemoteStorageService>().uploadFile(
           File(file.path!),
           path,
         );

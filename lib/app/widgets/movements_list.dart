@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/movement.dart';
-import 'package:user_api/user_api.dart';
 
 class MovementsList extends StatelessWidget {
   const MovementsList({

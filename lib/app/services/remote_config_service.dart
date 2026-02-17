@@ -17,8 +17,10 @@ class RemoteConfigService {
 
   /// CONFIG
   static const String _configGeminiModelId = 'config_gemini_model_id';
-  static const String _configGeminiPromptTemplate =
-      'config_gemini_prompt_template';
+  static const String _configGeminiPromptExtractReceiptData =
+      'config_gemini_prompt_extract_receipt_data';
+  static const String _configGeminiPromptDetectAntExpense =
+      'config_gemini_prompt_detect_ant_expense';
 
   Future<void> initialize() async {
     await _remoteConfig.setDefaults({
@@ -26,7 +28,10 @@ class RemoteConfigService {
       _uiHomeTopCategoriesVisible: true,
       _uiHomeInitialTab: 'movimientos',
       _configGeminiModelId: 'gemini-3-flash-preview',
-      _configGeminiPromptTemplate: 'config_gemini_prompt_template',
+      _configGeminiPromptExtractReceiptData:
+          'config_gemini_prompt_extract_receipt_data',
+      _configGeminiPromptDetectAntExpense:
+          'config_gemini_prompt_detect_ant_expense',
     });
 
     try {
@@ -47,6 +52,8 @@ class RemoteConfigService {
       _remoteConfig.getBool(_uiHomeTopCategoriesVisible);
   String get homeInitialTab => _remoteConfig.getString(_uiHomeInitialTab);
   String get geminiModelId => _remoteConfig.getString(_configGeminiModelId);
-  String get geminiPromptTemplate =>
-      _remoteConfig.getString(_configGeminiPromptTemplate);
+  String get geminiPromptExtractReceiptData =>
+      _remoteConfig.getString(_configGeminiPromptExtractReceiptData);
+  String get geminiPromptDetectAntExpense =>
+      _remoteConfig.getString(_configGeminiPromptDetectAntExpense);
 }

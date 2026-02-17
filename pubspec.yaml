@@ -41,12 +41,6 @@ dependencies:
   shared_preferences: ^2.5.4
   syncfusion_flutter_charts: ^32.2.4
   syncfusion_flutter_core: ^32.2.4
-  user_api:
-    path: packages/user_api
-  user_api_remote:
-    path: packages/user_api_remote
-  user_repository:
-    path: packages/user_repository
   uuid: ^4.5.2
 
 dev_dependencies:
@@ -55,7 +49,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.4
-  very_good_analysis: ^10.1.0
+  very_good_analysis: ^10.2.0
 
 flutter_launcher_icons:
   android: true

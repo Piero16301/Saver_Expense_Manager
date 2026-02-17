@@ -17,7 +17,6 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/movement.dart';
 import 'package:saver_expense_manager/profile/profile.dart';
 import 'package:saver_expense_manager/settings/settings.dart';
-import 'package:user_api/user_api.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeView extends StatelessWidget {
@@ -266,7 +265,7 @@ class AddMovementBottomSheet extends StatelessWidget {
 
         // Upload file to Firebase Storage and build movement from file in
         // parallel
-        final uploadTask = getIt<StorageService>().uploadFile(
+        final uploadTask = getIt<RemoteStorageService>().uploadFile(
           File(file.path!),
           path,
         );
@@ -332,7 +331,7 @@ class AddMovementBottomSheet extends StatelessWidget {
 
         // Upload file to Firebase Storage and build movement from file in
         // parallel
-        final uploadTask = getIt<StorageService>().uploadFile(
+        final uploadTask = getIt<RemoteStorageService>().uploadFile(
           File(files.first),
           path,
         );

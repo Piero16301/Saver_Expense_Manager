@@ -7,7 +7,6 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/category/category.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:user_api/user_api.dart';
 
 class SummaryHomeView extends StatelessWidget {
   const SummaryHomeView({
