@@ -13,7 +13,7 @@ class ListMovementsItemHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final language = context.select<AppCubit, String>(
+    final language = context.select<AppCubit, Locale>(
       (cubit) => cubit.state.language,
     );
 
@@ -38,7 +38,7 @@ class ListMovementsItemHome extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        DateFormat.yMMMMd(language).format(movement.date),
+        DateFormat.yMMMMd(language.toString()).format(movement.date),
         style: Theme.of(context).textTheme.bodySmall,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

@@ -7,8 +7,8 @@ class AppVariables {
   @visibleForTesting
   static bool useTestFonts = false;
 
-  static const String defaultBaseColor = 'INDIGO';
-  static const String defaultFontFamily = 'Nunito_regular';
+  static const Color defaultBaseColor = Colors.green;
+  static const String defaultFontFamily = 'Poppins';
   static const List<String> allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
 
   static final minDate = DateTime(2020);
@@ -20,9 +20,6 @@ class AppVariables {
   static const String movementsTab = 'movimientos';
   static const String summaryTab = 'resumen';
   static const String incomesTab = 'ingresos';
-
-  static const String lightTheme = 'LIGHT';
-  static const String darkTheme = 'DARK';
 
   static const String googleProvider = 'google.com';
   static const String emailProvider = 'password';
@@ -40,49 +37,32 @@ class AppVariables {
 
   static Map<String, String> availableFonts = getAvailableFonts();
 
-  @visibleForTesting
   static Map<String, String> getAvailableFonts() {
-    if (useTestFonts) {
-      return {
-        'Nunito': 'Nunito',
-        'Roboto': 'Roboto',
-      };
-    }
     return {
-      'Merriweather': GoogleFonts.merriweather().fontFamily ?? '',
-      'Montserrat': GoogleFonts.montserrat().fontFamily ?? '',
-      'Nunito': GoogleFonts.nunito().fontFamily ?? '',
-      'Open Sans': GoogleFonts.openSans().fontFamily ?? '',
-      'Orbitron': GoogleFonts.orbitron().fontFamily ?? '',
-      'Pacifico': GoogleFonts.pacifico().fontFamily ?? '',
-      'Playfair Display': GoogleFonts.playfairDisplay().fontFamily ?? '',
-      'Poppins': GoogleFonts.poppins().fontFamily ?? '',
-      'Roboto': GoogleFonts.roboto().fontFamily ?? '',
-      'Source Code Pro': GoogleFonts.sourceCodePro().fontFamily ?? '',
+      'Merriweather': GoogleFonts.merriweather().fontFamily ?? 'Merriweather',
+      'Montserrat': GoogleFonts.montserrat().fontFamily ?? 'Montserrat',
+      'Nunito': GoogleFonts.nunito().fontFamily ?? 'Nunito',
+      'Open Sans': GoogleFonts.openSans().fontFamily ?? 'Open Sans',
+      'Orbitron': GoogleFonts.orbitron().fontFamily ?? 'Orbitron',
+      'Pacifico': GoogleFonts.pacifico().fontFamily ?? 'Pacifico',
+      'Playfair Display':
+          GoogleFonts.playfairDisplay().fontFamily ?? 'Playfair Display',
+      'Poppins': GoogleFonts.poppins().fontFamily ?? 'Poppins',
+      'Roboto': GoogleFonts.roboto().fontFamily ?? 'Roboto',
+      'Source Code Pro':
+          GoogleFonts.sourceCodePro().fontFamily ?? 'Source Code Pro',
     };
-  }
-
-  static String getFontFamily(String savedFontId) {
-    if (availableFonts.values.contains(savedFontId)) {
-      return savedFontId;
-    }
-
-    final cleanedName = savedFontId
-        .replaceAll('_regular', '')
-        .replaceAll('_bold', '')
-        .replaceAll('_italic', '');
-
-    final fontFamily = availableFonts[cleanedName];
-    if (fontFamily != null && fontFamily.isNotEmpty) {
-      return fontFamily;
-    }
-
-    return availableFonts['Nunito'] ?? 'Nunito';
   }
 
   static const categoriesCollection = 'categories';
   static const movementsCollection = 'movements';
   static const usersCollection = 'users';
+
+  static const List<Locale> supportedLocales = [
+    Locale('en', 'US'),
+    Locale('es', 'ES'),
+    Locale('it', 'IT'),
+  ];
 }
 
 enum SnackBarType {
@@ -105,4 +85,32 @@ enum ResumeItemType {
   income,
   expense,
   balance,
+}
+
+enum ModelType {
+  cloud,
+  local;
+
+  bool get isCloud => this == ModelType.cloud;
+  bool get isLocal => this == ModelType.local;
+
+  String get name {
+    switch (this) {
+      case ModelType.cloud:
+        return 'CLOUD';
+      case ModelType.local:
+        return 'LOCAL';
+    }
+  }
+
+  static ModelType fromName(String name) {
+    switch (name) {
+      case 'CLOUD':
+        return ModelType.cloud;
+      case 'LOCAL':
+        return ModelType.local;
+      default:
+        return ModelType.cloud;
+    }
+  }
 }

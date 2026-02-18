@@ -22,14 +22,14 @@ void main() {
       expect(ColorHelper.getColorByName('deep_purple'), Colors.deepPurple);
     });
 
-    test('getColorByName returns default color (Indigo) for invalid names', () {
-      expect(ColorHelper.getColorByName('NON_EXISTENT_COLOR'), Colors.indigo);
+    test('getColorByName returns default color (Green) for invalid names', () {
+      expect(ColorHelper.getColorByName('NON_EXISTENT_COLOR'), Colors.green);
       expect(
         ColorHelper.getColorByName('magenta'),
-        Colors.indigo,
+        Colors.green,
       );
-      expect(ColorHelper.getColorByName(''), Colors.indigo);
-      expect(ColorHelper.getColorByName('123'), Colors.indigo);
+      expect(ColorHelper.getColorByName(''), Colors.green);
+      expect(ColorHelper.getColorByName('123'), Colors.green);
     });
   });
 }

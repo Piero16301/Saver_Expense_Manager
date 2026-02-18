@@ -6,6 +6,7 @@ export 'app_dropdown_field.dart';
 export 'app_file_field.dart';
 export 'app_filled_button.dart';
 export 'app_loader.dart';
+export 'app_logo.dart';
 export 'app_outlined_button.dart';
 export 'app_text_field.dart';
 export 'doughnut_circular_chart.dart';

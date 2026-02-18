@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -475,6 +474,7 @@ class AppFunctions {
     required String language,
     required String mimeType,
     required Uint8List bytes,
+    required ModelType modelType,
   }) async {
     final prompt = getPrompt(
       movementType: movementType,
@@ -482,18 +482,32 @@ class AppFunctions {
       language: language,
     );
 
-    final response = await getIt<AiService>().model.generateContent([
-      Content.text(prompt),
-      Content.inlineData(mimeType, bytes),
-    ]);
+    String? response = '';
 
+    if (modelType.isLocal && getIt<AiService>().isLocalModelAvailable) {
+      response = await getIt<AiService>().generateContentLocal(
+        textPrompt: PromptPart.text(text: prompt),
+        imagePrompt: PromptPart.file(mimeType: mimeType, bytes: bytes),
+      );
+    } else {
+      response = await getIt<AiService>().generateContentRemote(
+        prompt: [
+          PromptPart.text(text: prompt),
+          PromptPart.file(mimeType: mimeType, bytes: bytes),
+        ],
+        responseMimeType: 'application/json',
+      );
+    }
+
+    final responseClean =
+        response?.replaceAll('```json', '').replaceAll('```', '').trim();
     var responseJson = <String, dynamic>{};
-    if (response.text?[0] == '[') {
-      final responseList = jsonDecode(response.text ?? '') as List<dynamic>;
+    if (responseClean?[0] == '[') {
+      final responseList = jsonDecode(responseClean ?? '') as List<dynamic>;
       responseJson = responseList.first as Map<String, dynamic>? ?? {};
     } else {
       responseJson =
-          jsonDecode(response.text ?? '') as Map<String, dynamic>? ?? {};
+          jsonDecode(responseClean ?? '') as Map<String, dynamic>? ?? {};
     }
 
     final movement = Movement.fromAiService(responseJson, categories);

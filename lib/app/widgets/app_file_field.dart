@@ -166,7 +166,9 @@ class AppFileField extends StatelessWidget {
         if (appLoader.isLoading) {
           appLoader.hideLoading();
         }
-        onAdd(name);
+        if (name != null) {
+          onAdd(name);
+        }
       }
     } on Exception catch (e) {
       if (appLoader.isLoading) {

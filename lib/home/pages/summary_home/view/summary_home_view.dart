@@ -315,7 +315,7 @@ class IncomesAndExpensesChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final language = context.select<AppCubit, String>(
+    final language = context.select<AppCubit, Locale>(
       (cubit) => cubit.state.language,
     );
     final l10n = AppLocalizations.of(context);
@@ -346,7 +346,7 @@ class IncomesAndExpensesChart extends StatelessWidget {
             movements: movements,
             startMonth: startMonth,
             endMonth: endMonth,
-            language: language,
+            language: language.toString(),
             selResumeItems: selResumeItems,
           ),
         ),

@@ -30,10 +30,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final darkTheme = context.select<AppCubit, String>(
-          (cubit) => cubit.state.theme,
-        ) ==
-        AppVariables.darkTheme;
+    final darkTheme = Theme.of(context).brightness == Brightness.dark;
 
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
@@ -272,14 +269,15 @@ class AddMovementBottomSheet extends StatelessWidget {
         final movementFuture = AppFunctions.buildMovementFromFile(
           movementType: movementType,
           categories: selectedCategories,
-          language: language,
+          language: language.toString(),
           mimeType: lookupMimeType(file.name) ?? 'application/pdf',
           bytes: bytes,
+          modelType: context.read<AppCubit>().state.receiptsModel,
         );
 
         final results =
             await Future.wait<dynamic>([uploadTask, movementFuture]);
-        final uploadName = results[0] as String;
+        final uploadName = results[0] as String?;
         final movement = results[1] as Movement;
 
         if (loader.isLoading) {
@@ -294,7 +292,7 @@ class AddMovementBottomSheet extends StatelessWidget {
               'screenType': 'ADD',
             },
             extra: movement.copyWith(
-              attachments: [uploadName],
+              attachments: uploadName != null ? [uploadName] : [],
             ),
           ),
         );
@@ -338,14 +336,15 @@ class AddMovementBottomSheet extends StatelessWidget {
         final movementFuture = AppFunctions.buildMovementFromFile(
           movementType: movementType,
           categories: selectedCategories,
-          language: language,
+          language: language.toString(),
           mimeType: lookupMimeType(files.first) ?? 'application/pdf',
           bytes: bytes,
+          modelType: context.read<AppCubit>().state.receiptsModel,
         );
 
         final results =
             await Future.wait<dynamic>([uploadTask, movementFuture]);
-        final uploadName = results[0] as String;
+        final uploadName = results[0] as String?;
         final movement = results[1] as Movement;
 
         if (loader.isLoading) {
@@ -359,7 +358,7 @@ class AddMovementBottomSheet extends StatelessWidget {
             'screenType': 'ADD',
           },
           extra: movement.copyWith(
-            attachments: [uploadName],
+            attachments: uploadName != null ? [uploadName] : [],
           ),
         );
       } on Exception catch (_) {

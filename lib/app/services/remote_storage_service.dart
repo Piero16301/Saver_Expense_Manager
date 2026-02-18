@@ -14,10 +14,17 @@ class RemoteStorageService {
     await _storage.ref().child(path).delete();
   }
 
-  Future<String> uploadFile(File file, String path) async {
-    final ref = _storage.ref().child(path);
-    await ref.putFile(file);
-    return ref.name;
+  Future<String?> uploadFile(File file, String path) async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isEmpty || result[0].rawAddress.isEmpty) return null;
+
+      final ref = _storage.ref().child(path);
+      await ref.putFile(file);
+      return ref.name;
+    } on Exception catch (_) {
+      return null;
+    }
   }
 
   Future<Uint8List?> getData(String path) async {

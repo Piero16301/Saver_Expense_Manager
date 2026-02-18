@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/app/global/app_variables.dart';
@@ -9,8 +8,8 @@ void main() {
   group('AppVariables', () {
     test('should have correct constants', () {
       expect(AppVariables.appName, 'Saver');
-      expect(AppVariables.defaultBaseColor, 'INDIGO');
-      expect(AppVariables.defaultFontFamily, 'Nunito_regular');
+      expect(AppVariables.defaultBaseColor, Colors.green);
+      expect(AppVariables.defaultFontFamily, 'Poppins');
       expect(AppVariables.allowedExtensions, ['pdf', 'png', 'jpg', 'jpeg']);
       expect(AppVariables.minDate, DateTime(2020));
       expect(AppVariables.deafultMonthsTrend, 10);
@@ -20,8 +19,6 @@ void main() {
       expect(AppVariables.movementsTab, 'movimientos');
       expect(AppVariables.summaryTab, 'resumen');
       expect(AppVariables.incomesTab, 'ingresos');
-      expect(AppVariables.lightTheme, 'LIGHT');
-      expect(AppVariables.darkTheme, 'DARK');
       expect(AppVariables.googleProvider, 'google.com');
       expect(AppVariables.emailProvider, 'password');
     });
@@ -49,64 +46,6 @@ void main() {
       expect(AppVariables.categoriesCollection, 'categories');
       expect(AppVariables.movementsCollection, 'movements');
       expect(AppVariables.usersCollection, 'users');
-    });
-
-    group('getFontFamily', () {
-      late Map<String, String> originalFonts;
-
-      setUp(() {
-        AppVariables.useTestFonts = true;
-        originalFonts = Map.from(AppVariables.availableFonts);
-        AppVariables.availableFonts = {
-          'Nunito': 'NunitoFontFamily',
-          'Roboto': 'RobotoFontFamily',
-        };
-      });
-
-      tearDown(() {
-        AppVariables.availableFonts = originalFonts;
-      });
-
-      test('should return all fonts when useTestFonts is false', () async {
-        await runZonedGuarded(
-          () async {
-            AppVariables.useTestFonts = false;
-            final fonts = AppVariables.getAvailableFonts();
-            expect(fonts.containsKey('Nunito'), isTrue);
-            expect(fonts.containsKey('Roboto'), isTrue);
-            expect(fonts.length, greaterThan(2));
-
-            await Future<void>.delayed(const Duration(milliseconds: 200));
-          },
-          (error, stack) {},
-        );
-
-        AppVariables.useTestFonts = true;
-      });
-
-      test('should return savedFontId if it exists in availableFonts values',
-          () {
-        const savedFontId = 'RobotoFontFamily';
-        final result = AppVariables.getFontFamily(savedFontId);
-        expect(result, savedFontId);
-      });
-
-      test('should return mapped font family if cleaned name exists', () {
-        const savedFontId = 'Roboto_regular';
-        final result = AppVariables.getFontFamily(savedFontId);
-        expect(result, 'RobotoFontFamily');
-      });
-
-      test('should return default font (Nunito) if not found', () {
-        const savedFontId = 'UnknownFont';
-        final result = AppVariables.getFontFamily(savedFontId);
-        expect(result, 'NunitoFontFamily');
-      });
-
-      test('should handle different suffixes correctly', () {
-        expect(AppVariables.getFontFamily('Roboto_bold'), 'RobotoFontFamily');
-        expect(AppVariables.getFontFamily('Roboto_italic'), 'RobotoFontFamily');
-      });
     });
   });
 
@@ -137,6 +76,30 @@ void main() {
       expect(SnackBarType.error.isInfo, isFalse);
       expect(SnackBarType.warning.isInfo, isFalse);
       expect(SnackBarType.info.isInfo, isTrue);
+    });
+  });
+
+  group('ModelType Enum', () {
+    test('isCloud should return correct boolean', () {
+      expect(ModelType.cloud.isCloud, isTrue);
+      expect(ModelType.local.isCloud, isFalse);
+    });
+
+    test('isLocal should return correct boolean', () {
+      expect(ModelType.cloud.isLocal, isFalse);
+      expect(ModelType.local.isLocal, isTrue);
+    });
+
+    test('name should return correct string', () {
+      expect(ModelType.cloud.name, 'CLOUD');
+      expect(ModelType.local.name, 'LOCAL');
+    });
+
+    test('fromName should return correct enum value', () {
+      expect(ModelType.fromName('CLOUD'), ModelType.cloud);
+      expect(ModelType.fromName('LOCAL'), ModelType.local);
+      expect(ModelType.fromName('UNKNOWN'), ModelType.cloud);
+      expect(ModelType.fromName(''), ModelType.cloud);
     });
   });
 }

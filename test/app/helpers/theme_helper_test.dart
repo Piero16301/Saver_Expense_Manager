@@ -6,11 +6,11 @@ void main() {
   group('ThemeHelper', () {
     test('getThemeByName returns correct ThemeMode for valid names', () {
       expect(
-        ThemeHelper.getThemeByName(AppVariables.lightTheme),
+        ThemeHelper.getThemeByName(ThemeMode.light.name.toUpperCase()),
         ThemeMode.light,
       );
       expect(
-        ThemeHelper.getThemeByName(AppVariables.darkTheme),
+        ThemeHelper.getThemeByName(ThemeMode.dark.name.toUpperCase()),
         ThemeMode.dark,
       );
     });
@@ -22,10 +22,9 @@ void main() {
       expect(ThemeHelper.getThemeByName('123'), ThemeMode.light);
     });
 
-    test('getThemeByName is case-sensitive and returns default for lowercase',
-        () {
+    test('getThemeByName is case-insensitive', () {
       expect(ThemeHelper.getThemeByName('light'), ThemeMode.light);
-      expect(ThemeHelper.getThemeByName('dark'), ThemeMode.light);
+      expect(ThemeHelper.getThemeByName('dark'), ThemeMode.dark);
     });
   });
 }

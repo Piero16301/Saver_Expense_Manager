@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
@@ -10,33 +12,51 @@ class LocalStorageService {
   static const kUserTheme = '__user_theme__';
   static const kUserBaseColor = '__user_base_color__';
   static const kUserFontFamily = '__user_font_family__';
+  static const kUserReceiptsModel = '__user_receipts_model__';
+  static const kUserExpensesModel = '__user_expenses_model__';
 
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  void saveLanguage({required String language}) {
-    _prefs?.setString(kUserLanguage, language).ignore();
+  void saveLanguage({required Locale language}) {
+    final languageString = '${language.languageCode}_${language.countryCode}';
+    _prefs?.setString(kUserLanguage, languageString).ignore();
   }
 
-  String? getLanguage() {
-    return _prefs?.getString(kUserLanguage);
+  Locale? getLanguage() {
+    final languageString = _prefs?.getString(kUserLanguage);
+    if (languageString == null) {
+      return null;
+    }
+    final languageParts = languageString.split('_');
+    return Locale(languageParts.first, languageParts.last);
   }
 
-  void saveTheme({required String theme}) {
-    _prefs?.setString(kUserTheme, theme).ignore();
+  void saveTheme({required ThemeMode theme}) {
+    _prefs?.setString(kUserTheme, ThemeHelper.getThemeName(theme)).ignore();
   }
 
-  String? getTheme() {
-    return _prefs?.getString(kUserTheme);
+  ThemeMode? getTheme() {
+    final themeString = _prefs?.getString(kUserTheme);
+    if (themeString == null) {
+      return null;
+    }
+    return ThemeHelper.getThemeByName(themeString);
   }
 
-  void saveBaseColor({required String baseColor}) {
-    _prefs?.setString(kUserBaseColor, baseColor).ignore();
+  void saveBaseColor({required Color baseColor}) {
+    _prefs
+        ?.setString(kUserBaseColor, ColorHelper.getColorName(baseColor))
+        .ignore();
   }
 
-  String? getBaseColor() {
-    return _prefs?.getString(kUserBaseColor);
+  Color? getBaseColor() {
+    final baseColorString = _prefs?.getString(kUserBaseColor);
+    if (baseColorString == null) {
+      return null;
+    }
+    return ColorHelper.getColorByName(baseColorString);
   }
 
   void saveFontFamily({required String fontFamily}) {
@@ -45,5 +65,39 @@ class LocalStorageService {
 
   String? getFontFamily() {
     return _prefs?.getString(kUserFontFamily);
+  }
+
+  void saveReceiptsModel({required ModelType modelType}) {
+    _prefs
+        ?.setString(
+          kUserReceiptsModel,
+          ModelTypeHelper.getModelTypeName(modelType),
+        )
+        .ignore();
+  }
+
+  ModelType? getReceiptsModel() {
+    final modelTypeString = _prefs?.getString(kUserReceiptsModel);
+    if (modelTypeString == null) {
+      return null;
+    }
+    return ModelTypeHelper.getModelTypeFromString(modelTypeString);
+  }
+
+  void saveExpensesModel({required ModelType modelType}) {
+    _prefs
+        ?.setString(
+          kUserExpensesModel,
+          ModelTypeHelper.getModelTypeName(modelType),
+        )
+        .ignore();
+  }
+
+  ModelType? getExpensesModel() {
+    final modelTypeString = _prefs?.getString(kUserExpensesModel);
+    if (modelTypeString == null) {
+      return null;
+    }
+    return ModelTypeHelper.getModelTypeFromString(modelTypeString);
   }
 }

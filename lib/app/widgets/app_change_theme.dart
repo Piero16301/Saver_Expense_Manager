@@ -17,16 +17,14 @@ class AppChangeTheme extends StatelessWidget {
       padding: padding ?? EdgeInsets.zero,
       child: IconButton(
         onPressed: () {
-          final isDark =
-              context.read<AppCubit>().state.theme == AppVariables.darkTheme;
-          context.read<AppCubit>().changeTheme(
-                theme:
-                    isDark ? AppVariables.lightTheme : AppVariables.darkTheme,
-              );
+          final isDark = context.read<AppCubit>().state.theme == ThemeMode.dark;
+          context
+              .read<AppCubit>()
+              .changeTheme(theme: isDark ? ThemeMode.light : ThemeMode.dark);
         },
         icon: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) => HugeIcon(
-            icon: state.theme == AppVariables.darkTheme
+            icon: state.theme == ThemeMode.dark
                 ? HugeIcons.strokeRoundedSun01
                 : HugeIcons.strokeRoundedMoon02,
             strokeWidth: 2,
