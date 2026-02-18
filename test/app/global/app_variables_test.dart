@@ -8,7 +8,7 @@ void main() {
   group('AppVariables', () {
     test('should have correct constants', () {
       expect(AppVariables.appName, 'Saver');
-      expect(AppVariables.defaultBaseColor, 'INDIGO');
+      expect(AppVariables.defaultBaseColor, Colors.green);
       expect(AppVariables.defaultFontFamily, 'Poppins');
       expect(AppVariables.allowedExtensions, ['pdf', 'png', 'jpg', 'jpeg']);
       expect(AppVariables.minDate, DateTime(2020));
@@ -76,6 +76,30 @@ void main() {
       expect(SnackBarType.error.isInfo, isFalse);
       expect(SnackBarType.warning.isInfo, isFalse);
       expect(SnackBarType.info.isInfo, isTrue);
+    });
+  });
+
+  group('ModelType Enum', () {
+    test('isCloud should return correct boolean', () {
+      expect(ModelType.cloud.isCloud, isTrue);
+      expect(ModelType.local.isCloud, isFalse);
+    });
+
+    test('isLocal should return correct boolean', () {
+      expect(ModelType.cloud.isLocal, isFalse);
+      expect(ModelType.local.isLocal, isTrue);
+    });
+
+    test('name should return correct string', () {
+      expect(ModelType.cloud.name, 'CLOUD');
+      expect(ModelType.local.name, 'LOCAL');
+    });
+
+    test('fromName should return correct enum value', () {
+      expect(ModelType.fromName('CLOUD'), ModelType.cloud);
+      expect(ModelType.fromName('LOCAL'), ModelType.local);
+      expect(ModelType.fromName('UNKNOWN'), ModelType.cloud);
+      expect(ModelType.fromName(''), ModelType.cloud);
     });
   });
 }

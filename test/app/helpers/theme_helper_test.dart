@@ -22,10 +22,9 @@ void main() {
       expect(ThemeHelper.getThemeByName('123'), ThemeMode.light);
     });
 
-    test('getThemeByName is case-sensitive and returns default for lowercase',
-        () {
+    test('getThemeByName is case-insensitive', () {
       expect(ThemeHelper.getThemeByName('light'), ThemeMode.light);
-      expect(ThemeHelper.getThemeByName('dark'), ThemeMode.light);
+      expect(ThemeHelper.getThemeByName('dark'), ThemeMode.dark);
     });
   });
 }

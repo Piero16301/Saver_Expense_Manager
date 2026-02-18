@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:saver_expense_manager/app/cubit/app_cubit.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 void main() {
   group('AppState', () {
@@ -15,10 +15,12 @@ void main() {
       expect(
         const AppState().props,
         equals([
-          'en_US',
-          'LIGHT',
-          'INDIGO',
-          'Nunito_regular',
+          const Locale('en', 'US'),
+          ThemeMode.system,
+          Colors.green,
+          'Poppins',
+          ModelType.cloud,
+          ModelType.cloud,
         ]),
       );
     });

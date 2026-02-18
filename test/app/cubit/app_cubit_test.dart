@@ -3,13 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:saver_expense_manager/app/cubit/app_cubit.dart';
-import 'package:saver_expense_manager/app/services/local_storage_service.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late MockLocalStorageService mockLocalStorageService;
+
+  setUpAll(() {
+    registerFallbackValue(const Locale('en', 'US'));
+    registerFallbackValue(Colors.red);
+    registerFallbackValue(ThemeMode.light);
+    registerFallbackValue(ModelType.cloud);
+  });
 
   setUp(() {
     mockLocalStorageService = MockLocalStorageService();
@@ -39,7 +47,7 @@ void main() {
             Colors.red,
           );
           when(() => mockLocalStorageService.getFontFamily())
-              .thenReturn('Roboto');
+              .thenReturn('Poppins');
         },
         build: AppCubit.new,
         act: (cubit) => cubit.initialLoad(),
@@ -186,6 +194,52 @@ void main() {
           verify(
             () => mockLocalStorageService.saveFontFamily(
               fontFamily: 'Open Sans',
+            ),
+          ).called(1);
+        },
+      );
+    });
+
+    group('changeReceiptsModel', () {
+      blocTest<AppCubit, AppState>(
+        'calls saveReceiptsModel and emits new state',
+        setUp: () {
+          when(
+            () => mockLocalStorageService.saveReceiptsModel(
+              modelType: ModelType.local,
+            ),
+          ).thenReturn(null);
+        },
+        build: AppCubit.new,
+        act: (cubit) => cubit.changeReceiptsModel(modelType: ModelType.local),
+        expect: () => [const AppState(receiptsModel: ModelType.local)],
+        verify: (_) {
+          verify(
+            () => mockLocalStorageService.saveReceiptsModel(
+              modelType: ModelType.local,
+            ),
+          ).called(1);
+        },
+      );
+    });
+
+    group('changeExpensesModel', () {
+      blocTest<AppCubit, AppState>(
+        'calls saveExpensesModel and emits new state',
+        setUp: () {
+          when(
+            () => mockLocalStorageService.saveExpensesModel(
+              modelType: ModelType.local,
+            ),
+          ).thenReturn(null);
+        },
+        build: AppCubit.new,
+        act: (cubit) => cubit.changeExpensesModel(modelType: ModelType.local),
+        expect: () => [const AppState(expensesModel: ModelType.local)],
+        verify: (_) {
+          verify(
+            () => mockLocalStorageService.saveExpensesModel(
+              modelType: ModelType.local,
             ),
           ).called(1);
         },

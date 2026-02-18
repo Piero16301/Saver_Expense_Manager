@@ -37,14 +37,7 @@ class AppVariables {
 
   static Map<String, String> availableFonts = getAvailableFonts();
 
-  @visibleForTesting
   static Map<String, String> getAvailableFonts() {
-    if (useTestFonts) {
-      return {
-        'Nunito': 'Nunito',
-        'Roboto': 'Roboto',
-      };
-    }
     return {
       'Merriweather': GoogleFonts.merriweather().fontFamily ?? 'Merriweather',
       'Montserrat': GoogleFonts.montserrat().fontFamily ?? 'Montserrat',
