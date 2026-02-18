@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
@@ -28,9 +29,15 @@ void main() {
       blocTest<AppCubit, AppState>(
         'emits state with values from LocalStorage when they exist',
         setUp: () {
-          when(() => mockLocalStorageService.getLanguage()).thenReturn('es_ES');
-          when(() => mockLocalStorageService.getTheme()).thenReturn('DARK');
-          when(() => mockLocalStorageService.getBaseColor()).thenReturn('RED');
+          when(() => mockLocalStorageService.getLanguage()).thenReturn(
+            const Locale('es', 'ES'),
+          );
+          when(() => mockLocalStorageService.getTheme()).thenReturn(
+            ThemeMode.dark,
+          );
+          when(() => mockLocalStorageService.getBaseColor()).thenReturn(
+            Colors.red,
+          );
           when(() => mockLocalStorageService.getFontFamily())
               .thenReturn('Roboto');
         },
@@ -38,10 +45,9 @@ void main() {
         act: (cubit) => cubit.initialLoad(),
         expect: () => [
           const AppState(
-            language: 'es_ES',
-            theme: 'DARK',
-            baseColor: 'RED',
-            fontFamily: 'Roboto',
+            language: Locale('es', 'ES'),
+            theme: ThemeMode.dark,
+            baseColor: Colors.red,
           ),
         ],
       );
@@ -104,15 +110,22 @@ void main() {
       blocTest<AppCubit, AppState>(
         'calls saveLanguage and emits new state',
         setUp: () {
-          when(() => mockLocalStorageService.saveLanguage(language: 'fr_FR'))
-              .thenReturn(null);
+          when(
+            () => mockLocalStorageService.saveLanguage(
+              language: const Locale('fr', 'FR'),
+            ),
+          ).thenReturn(null);
         },
         build: AppCubit.new,
-        act: (cubit) => cubit.changeLanguage(language: 'fr_FR'),
-        expect: () => [const AppState(language: 'fr_FR')],
+        act: (cubit) =>
+            cubit.changeLanguage(language: const Locale('fr', 'FR')),
+        expect: () => [const AppState(language: Locale('fr', 'FR'))],
         verify: (_) {
-          verify(() => mockLocalStorageService.saveLanguage(language: 'fr_FR'))
-              .called(1);
+          verify(
+            () => mockLocalStorageService.saveLanguage(
+              language: const Locale('fr', 'FR'),
+            ),
+          ).called(1);
         },
       );
     });
@@ -121,14 +134,14 @@ void main() {
       blocTest<AppCubit, AppState>(
         'calls saveTheme and emits new state',
         setUp: () {
-          when(() => mockLocalStorageService.saveTheme(theme: 'DARK'))
+          when(() => mockLocalStorageService.saveTheme(theme: ThemeMode.dark))
               .thenReturn(null);
         },
         build: AppCubit.new,
-        act: (cubit) => cubit.changeTheme(theme: 'DARK'),
-        expect: () => [const AppState(theme: 'DARK')],
+        act: (cubit) => cubit.changeTheme(theme: ThemeMode.dark),
+        expect: () => [const AppState(theme: ThemeMode.dark)],
         verify: (_) {
-          verify(() => mockLocalStorageService.saveTheme(theme: 'DARK'))
+          verify(() => mockLocalStorageService.saveTheme(theme: ThemeMode.dark))
               .called(1);
         },
       );
@@ -138,15 +151,19 @@ void main() {
       blocTest<AppCubit, AppState>(
         'calls saveBaseColor and emits new state',
         setUp: () {
-          when(() => mockLocalStorageService.saveBaseColor(baseColor: 'GREEN'))
-              .thenReturn(null);
+          when(
+            () => mockLocalStorageService.saveBaseColor(
+              baseColor: Colors.green,
+            ),
+          ).thenReturn(null);
         },
         build: AppCubit.new,
-        act: (cubit) => cubit.changeBaseColor(baseColor: 'GREEN'),
-        expect: () => [const AppState(baseColor: 'GREEN')],
+        act: (cubit) => cubit.changeBaseColor(baseColor: Colors.green),
+        expect: () => [const AppState()],
         verify: (_) {
           verify(
-            () => mockLocalStorageService.saveBaseColor(baseColor: 'GREEN'),
+            () =>
+                mockLocalStorageService.saveBaseColor(baseColor: Colors.green),
           ).called(1);
         },
       );

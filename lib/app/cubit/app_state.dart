@@ -2,28 +2,36 @@ part of 'app_cubit.dart';
 
 class AppState extends Equatable {
   const AppState({
-    this.language = 'en_US',
-    this.theme = 'LIGHT',
-    this.baseColor = 'INDIGO',
-    this.fontFamily = 'Nunito_regular',
+    this.language = const Locale('en', 'US'),
+    this.theme = ThemeMode.system,
+    this.baseColor = Colors.green,
+    this.fontFamily = 'Poppins',
+    this.receiptsModel = ModelType.cloud,
+    this.expensesModel = ModelType.cloud,
   });
 
-  final String language;
-  final String theme;
-  final String baseColor;
+  final Locale language;
+  final ThemeMode theme;
+  final Color baseColor;
   final String fontFamily;
+  final ModelType receiptsModel;
+  final ModelType expensesModel;
 
   AppState copyWith({
-    String? language,
-    String? theme,
-    String? baseColor,
+    Locale? language,
+    ThemeMode? theme,
+    Color? baseColor,
     String? fontFamily,
+    ModelType? receiptsModel,
+    ModelType? expensesModel,
   }) {
     return AppState(
       language: language ?? this.language,
       theme: theme ?? this.theme,
       baseColor: baseColor ?? this.baseColor,
       fontFamily: fontFamily ?? this.fontFamily,
+      receiptsModel: receiptsModel ?? this.receiptsModel,
+      expensesModel: expensesModel ?? this.expensesModel,
     );
   }
 
@@ -33,5 +41,7 @@ class AppState extends Equatable {
         theme,
         baseColor,
         fontFamily,
+        receiptsModel,
+        expensesModel,
       ];
 }

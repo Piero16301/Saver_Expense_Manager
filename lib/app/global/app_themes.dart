@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:saver_expense_manager/app/app.dart';
 
 class AppThemes {
   static ThemeData lightTheme({
-    required String baseColor,
+    required Color baseColor,
     required String fontFamily,
   }) {
-    final color = ColorHelper.getColorByName(baseColor);
-    final colorScheme = ColorScheme.fromSeed(seedColor: color);
-    final realFontFamily = AppVariables.getFontFamily(fontFamily);
+    final colorScheme = ColorScheme.fromSeed(seedColor: baseColor);
 
     return ThemeData(
       textTheme: ThemeData.light().textTheme.apply(
-            fontFamily: realFontFamily,
+            fontFamily: fontFamily,
           ),
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: color,
+        seedColor: baseColor,
       ),
       snackBarTheme: SnackBarThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -39,23 +36,21 @@ class AppThemes {
   }
 
   static ThemeData darkTheme({
-    required String baseColor,
+    required Color baseColor,
     required String fontFamily,
   }) {
-    final color = ColorHelper.getColorByName(baseColor);
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: color,
+      seedColor: baseColor,
       brightness: Brightness.dark,
     );
-    final realFontFamily = AppVariables.getFontFamily(fontFamily);
 
     return ThemeData(
       textTheme: ThemeData.dark().textTheme.apply(
-            fontFamily: realFontFamily,
+            fontFamily: fontFamily,
           ),
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: color,
+        seedColor: baseColor,
         brightness: Brightness.dark,
       ),
       snackBarTheme: SnackBarThemeData(

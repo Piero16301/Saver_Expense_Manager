@@ -57,16 +57,7 @@ class LoginView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           // Logo
-                          Center(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Image.asset(
-                                'assets/images/app-main-logo.png',
-                                width: 100,
-                                height: 100,
-                              ),
-                            ),
-                          ),
+                          const AppLogo(),
                           const SizedBox(height: 48),
 
                           // Title

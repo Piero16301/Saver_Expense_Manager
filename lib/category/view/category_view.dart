@@ -175,7 +175,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
     final category = context.select<CategoryCubit, Category>(
       (cubit) => cubit.state.category,
     );
-    final language = context.select<AppCubit, String>(
+    final language = context.select<AppCubit, Locale>(
       (cubit) => cubit.state.language,
     );
     final user = FirebaseAuth.instance.currentUser;
@@ -228,7 +228,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
                   as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
               startMonth: startMonth,
               endMonth: endMonth,
-              language: language,
+              language: language.toString(),
             );
 
             return Expanded(

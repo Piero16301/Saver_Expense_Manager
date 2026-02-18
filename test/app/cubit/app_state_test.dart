@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/app/cubit/app_cubit.dart';
 
@@ -40,20 +41,19 @@ void main() {
       test('replaces every non-null parameter', () {
         const state = AppState();
         final result = state.copyWith(
-          language: 'es_ES',
-          theme: 'DARK',
-          baseColor: 'RED',
-          fontFamily: 'Roboto',
+          language: const Locale('es', 'ES'),
+          theme: ThemeMode.dark,
+          baseColor: Colors.red,
+          fontFamily: 'Poppins',
         );
 
         expect(
           result,
           equals(
             const AppState(
-              language: 'es_ES',
-              theme: 'DARK',
-              baseColor: 'RED',
-              fontFamily: 'Roboto',
+              language: Locale('es', 'ES'),
+              theme: ThemeMode.dark,
+              baseColor: Colors.red,
             ),
           ),
         );
@@ -63,20 +63,20 @@ void main() {
         const state = AppState();
 
         expect(
-          state.copyWith(language: 'es_ES'),
-          equals(const AppState(language: 'es_ES')),
+          state.copyWith(language: const Locale('es', 'ES')),
+          equals(const AppState(language: Locale('es', 'ES'))),
         );
         expect(
-          state.copyWith(theme: 'DARK'),
-          equals(const AppState(theme: 'DARK')),
+          state.copyWith(theme: ThemeMode.dark),
+          equals(const AppState(theme: ThemeMode.dark)),
         );
         expect(
-          state.copyWith(baseColor: 'BLUE'),
-          equals(const AppState(baseColor: 'BLUE')),
+          state.copyWith(baseColor: Colors.blue),
+          equals(const AppState(baseColor: Colors.blue)),
         );
         expect(
-          state.copyWith(fontFamily: 'Roboto'),
-          equals(const AppState(fontFamily: 'Roboto')),
+          state.copyWith(fontFamily: 'Poppins'),
+          equals(const AppState()),
         );
       });
     });

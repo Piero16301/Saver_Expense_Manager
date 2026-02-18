@@ -20,7 +20,7 @@ class MovementsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final language = context.select<AppCubit, String>(
+    final language = context.select<AppCubit, Locale>(
       (cubit) => cubit.state.language,
     );
 
@@ -90,7 +90,7 @@ class MovementsList extends StatelessWidget {
               ),
             ),
             leading: Text(
-              AppExtensions.largeDateFormat(language)
+              AppExtensions.largeDateFormat(language.toString())
                   .format(movement.date)
                   .replaceFirst(' ', '\n')
                   .toUpperCase(),

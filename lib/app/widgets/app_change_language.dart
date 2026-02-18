@@ -14,16 +14,15 @@ class AppChangeLanguage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final currentLocale = Localizations.localeOf(context).languageCode;
-    final languages =
-        AppLocalizations.supportedLocales.map((e) => e.languageCode).toList();
+    final currentLocale = Localizations.localeOf(context);
+    const languages = AppVariables.supportedLocales;
 
     return Padding(
       padding: padding ?? EdgeInsets.zero,
-      child: PopupMenuButton<String>(
+      child: PopupMenuButton<Locale>(
         initialValue: currentLocale,
         icon: Text(
-          _getFlag(currentLocale, l10n),
+          _getFlag(currentLocale.languageCode, l10n),
           style: const TextStyle(fontSize: 22),
         ),
         tooltip: l10n.selectLanguage,
@@ -32,12 +31,12 @@ class AppChangeLanguage extends StatelessWidget {
             context.read<AppCubit>().changeLanguage(language: newValue),
         itemBuilder: (context) {
           return languages.map((value) {
-            return PopupMenuItem<String>(
+            return PopupMenuItem<Locale>(
               value: value,
               padding: EdgeInsets.zero,
               child: Center(
                 child: Text(
-                  _getFlag(value, l10n),
+                  _getFlag(value.languageCode, l10n),
                   style: const TextStyle(fontSize: 22),
                 ),
               ),

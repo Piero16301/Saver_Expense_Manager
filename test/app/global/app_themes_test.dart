@@ -12,7 +12,7 @@ void main() {
     group('lightTheme', () {
       test('returns a ThemeData with light brightness', () {
         final theme = AppThemes.lightTheme(
-          baseColor: 'INDIGO',
+          baseColor: Colors.green,
           fontFamily: 'Nunito',
         );
 
@@ -21,11 +21,11 @@ void main() {
 
       test('applies color scheme from base color', () {
         final themeRed = AppThemes.lightTheme(
-          baseColor: 'RED',
+          baseColor: Colors.red,
           fontFamily: 'Nunito',
         );
         final themeIndigo = AppThemes.lightTheme(
-          baseColor: 'INDIGO',
+          baseColor: Colors.indigo,
           fontFamily: 'Nunito',
         );
 
@@ -37,7 +37,7 @@ void main() {
 
       test('applies font family', () {
         final theme = AppThemes.lightTheme(
-          baseColor: 'INDIGO',
+          baseColor: Colors.green,
           fontFamily: 'Nunito',
         );
 
@@ -46,7 +46,7 @@ void main() {
 
       test('sets snackBarTheme correctly', () {
         final theme = AppThemes.lightTheme(
-          baseColor: 'INDIGO',
+          baseColor: Colors.green,
           fontFamily: 'Nunito',
         );
 
@@ -58,7 +58,7 @@ void main() {
     group('darkTheme', () {
       test('returns a ThemeData with dark brightness', () {
         final theme = AppThemes.darkTheme(
-          baseColor: 'INDIGO',
+          baseColor: Colors.green,
           fontFamily: 'Nunito',
         );
 
@@ -67,11 +67,11 @@ void main() {
 
       test('applies color scheme from base color', () {
         final themeRed = AppThemes.darkTheme(
-          baseColor: 'RED',
+          baseColor: Colors.red,
           fontFamily: 'Nunito',
         );
         final themeIndigo = AppThemes.darkTheme(
-          baseColor: 'INDIGO',
+          baseColor: Colors.indigo,
           fontFamily: 'Nunito',
         );
 
@@ -83,7 +83,7 @@ void main() {
 
       test('applies font family', () {
         final theme = AppThemes.darkTheme(
-          baseColor: 'INDIGO',
+          baseColor: Colors.green,
           fontFamily: 'Roboto',
         );
 
