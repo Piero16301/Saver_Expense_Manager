@@ -25,10 +25,10 @@ Future<void> main() async {
           ? const AndroidDebugProvider()
           : const AndroidPlayIntegrityProvider(),
     ),
-    getIt<AiService>().initialize(),
-    getIt<RemoteConfigService>().initialize(),
     getIt<AuthenticationService>().initialize(),
     getIt<LocalStorageService>().initialize(),
+    getIt<RemoteConfigService>().initialize(),
+    getIt<AiService>().initialize(),
     RiveNative.init(),
   ]);
 

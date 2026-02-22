@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -11,8 +9,10 @@ class ExpensesHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final auth = getIt<AuthenticationService>();
+    final user = auth.currentUser;
     final l10n = AppLocalizations.of(context);
+    final databaseService = getIt<DatabaseService>();
 
     return BlocBuilder<ExpensesHomeCubit, ExpensesHomeState>(
       builder: (context, state) => Column(
@@ -23,8 +23,8 @@ class ExpensesHomeView extends StatelessWidget {
             onForward: () => context.read<ExpensesHomeCubit>().nextMonth(),
             onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
           ),
-          StreamBuilder<QuerySnapshot>(
-            stream: AppFunctions.getMonthMovements(
+          StreamBuilder<List<Movement>>(
+            stream: databaseService.getMonthMovementsStream(
               userId: user!.uid,
               monthSelected: state.monthSelected!,
               type: CategoryType.expense,
@@ -36,15 +36,14 @@ class ExpensesHomeView extends StatelessWidget {
                 );
               }
 
-              if (snapshot.data!.docs.isEmpty) {
+              if (snapshot.data!.isEmpty) {
                 return Expanded(
                   child: Center(child: Text(l10n.homeNoExpenses)),
                 );
               }
 
               final data = AppFunctions.buildChartData(
-                docs: snapshot.data!.docs
-                    as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+                movements: snapshot.data!,
               );
 
               return Expanded(

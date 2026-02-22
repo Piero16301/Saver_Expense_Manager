@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
@@ -16,7 +15,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   final AuthenticationService _authService;
-  StreamSubscription<User?>? _userSubscription;
+  StreamSubscription<AppUser?>? _userSubscription;
 
   void _init() {
     _userSubscription = _authService.userChanges.listen((user) {

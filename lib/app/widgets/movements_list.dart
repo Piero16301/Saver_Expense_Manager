@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_pagination/firebase_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,14 +22,16 @@ class MovementsList extends StatelessWidget {
     final language = context.select<AppCubit, Locale>(
       (cubit) => cubit.state.language,
     );
+    final auth = getIt<AuthenticationService>();
+    final databaseService = getIt<DatabaseService>();
 
     return Expanded(
       child: FirestorePagination(
         key: ValueKey('$filterCategory-$monthSelected'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: AppFunctions.getCategoryMovements(
-          userId: FirebaseAuth.instance.currentUser!.uid,
+        query: databaseService.getCategoryMovementsQuery(
+          userId: auth.currentUser!.uid,
           monthSelected: monthSelected,
           category: filterCategory,
         ),

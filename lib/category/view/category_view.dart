@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -178,8 +176,10 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
     final language = context.select<AppCubit, Locale>(
       (cubit) => cubit.state.language,
     );
-    final user = FirebaseAuth.instance.currentUser;
+    final auth = getIt<AuthenticationService>();
+    final user = auth.currentUser;
     final l10n = AppLocalizations.of(context);
+    final databaseService = getIt<DatabaseService>();
 
     return Column(
       children: [
@@ -203,8 +203,8 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
           },
         ),
         const SizedBox(height: 20),
-        StreamBuilder<QuerySnapshot>(
-          stream: AppFunctions.getTrendChart(
+        StreamBuilder<List<Movement>>(
+          stream: databaseService.getTrendChartStream(
             userId: user!.uid,
             startMonth: startMonth,
             endMonth: endMonth,
@@ -217,15 +217,14 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
               );
             }
 
-            if (snapshot.data!.docs.isEmpty) {
+            if (snapshot.data!.isEmpty) {
               return Expanded(
                 child: Center(child: Text(l10n.categoryNoTrendData)),
               );
             }
 
             final data = AppFunctions.buildTrendData(
-              docs: snapshot.data!.docs
-                  as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+              movements: snapshot.data!,
               startMonth: startMonth,
               endMonth: endMonth,
               language: language.toString(),

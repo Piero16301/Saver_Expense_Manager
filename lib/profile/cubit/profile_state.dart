@@ -12,14 +12,14 @@ class ProfileState extends Equatable {
   });
 
   final ProfileStatus status;
-  final User? user;
+  final AppUser? user;
   final String userName;
   final bool isEditingName;
   final String? errorMessage;
 
   ProfileState copyWith({
     ProfileStatus? status,
-    User? user,
+    AppUser? user,
     String? userName,
     bool? isEditingName,
     String? errorMessage,

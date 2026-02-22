@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -29,12 +28,12 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final auth = getIt<AuthenticationService>();
     final darkTheme = Theme.of(context).brightness == Brightness.dark;
 
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      initialData: FirebaseAuth.instance.currentUser,
+    return StreamBuilder<AppUser?>(
+      stream: auth.authStateChanges,
+      initialData: auth.currentUser,
       builder: (context, snapshot) {
         if (snapshot.data == null) {
           return const SizedBox.shrink();
@@ -62,7 +61,7 @@ class HomeView extends StatelessWidget {
               actions: [
                 IconButton(
                   padding: EdgeInsets.zero,
-                  icon: user?.photoURL == null
+                  icon: snapshot.data?.photoURL == null
                       ? Container(
                           width: 34,
                           height: 34,
@@ -94,7 +93,9 @@ class HomeView extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(17),
                             child: Image.network(
-                              AppFunctions.highResPicture(url: user!.photoURL),
+                              AppFunctions.highResPicture(
+                                url: snapshot.data!.photoURL,
+                              ),
                               fit: BoxFit.cover,
                             ),
                           ),

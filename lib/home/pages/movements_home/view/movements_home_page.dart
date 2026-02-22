@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -11,11 +10,10 @@ class MovementsHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final databaseService = getIt<DatabaseService>();
 
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: FirebaseFirestore.instance
-          .collection(AppVariables.categoriesCollection)
-          .snapshots(),
+    return StreamBuilder<List<Category>>(
+      stream: databaseService.getCategoriesStream(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Scaffold(
@@ -34,7 +32,7 @@ class MovementsHomePage extends StatelessWidget {
           );
         }
 
-        if (snapshot.data!.docs.isEmpty) {
+        if (snapshot.data!.isEmpty) {
           return Scaffold(
             body: Center(
               child: Text(
@@ -45,9 +43,7 @@ class MovementsHomePage extends StatelessWidget {
           );
         }
 
-        final categories = snapshot.data!.docs
-            .map((category) => Category.fromJson(category.data()))
-            .toList();
+        final categories = snapshot.data!;
 
         return BlocProvider(
           create: (context) => MovementsHomeCubit(),

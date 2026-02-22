@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:saver_expense_manager/app/models/models.dart';
 import 'package:saver_expense_manager/firebase_options.dart';
 
 class AuthenticationService {
@@ -19,10 +20,15 @@ class AuthenticationService {
     }
   }
 
-  Stream<User?> get userChanges => _auth.userChanges();
-
-  User? get currentUser => _auth.currentUser;
-
+  Stream<AppUser?> get userChanges => _auth
+      .userChanges()
+      .map((u) => u == null ? null : AppUser.fromFirebaseUser(u));
+  Stream<AppUser?> get authStateChanges => _auth
+      .authStateChanges()
+      .map((u) => u == null ? null : AppUser.fromFirebaseUser(u));
+  AppUser? get currentUser => _auth.currentUser == null
+      ? null
+      : AppUser.fromFirebaseUser(_auth.currentUser!);
   bool get isLoggedIn => currentUser != null;
 
   Future<void> updateDisplayName(String newName) async {

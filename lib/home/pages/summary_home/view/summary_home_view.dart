@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -21,10 +20,11 @@ class SummaryHomeView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final remoteConfig = getIt<RemoteConfigService>();
     final auth = getIt<AuthenticationService>().auth;
+    final databaseService = getIt<DatabaseService>();
 
     return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
-      builder: (context, state) => StreamBuilder<QuerySnapshot>(
-        stream: AppFunctions.getUserMovementsRange(
+      builder: (context, state) => StreamBuilder<List<Movement>>(
+        stream: databaseService.getUserMovementsRangeStream(
           userId: auth.currentUser!.uid,
           startMonth: state.startMonth!,
           endMonth: state.endMonth!,
@@ -34,14 +34,11 @@ class SummaryHomeView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (snapshot.data!.docs.isEmpty) {
+          if (snapshot.data!.isEmpty) {
             return Center(child: Text(l10n.movementsNoData));
           }
 
-          final docs = snapshot.data!.docs
-              as List<QueryDocumentSnapshot<Map<String, dynamic>>>;
-          final movements =
-              docs.map((e) => Movement.fromJson(e.data())).toList();
+          final movements = snapshot.data!;
 
           return Column(
             spacing: 16,

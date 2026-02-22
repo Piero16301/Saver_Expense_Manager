@@ -328,13 +328,14 @@ class ListMovementsHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = getIt<AuthenticationService>().auth;
+    final databaseService = getIt<DatabaseService>();
 
     return Expanded(
       child: FirestorePagination(
         key: ValueKey('$filterType-$filterCategory'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: AppFunctions.getUserMovements(
+        query: databaseService.getUserMovementsQuery(
           userId: auth.currentUser!.uid,
           type: filterType,
           category: filterCategory,

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
@@ -91,14 +90,16 @@ class MovementCubit extends Cubit<MovementState> {
 
     // Save movement in Firebase Firestore
     final docId = state.id.isEmpty
-        ? FirebaseFirestore.instance
+        ? getIt<DatabaseService>()
+            .firestore
             .collection(AppVariables.movementsCollection)
             .doc()
             .id
         : state.id;
     try {
       unawaited(
-        FirebaseFirestore.instance
+        getIt<DatabaseService>()
+            .firestore
             .collection(AppVariables.movementsCollection)
             .doc(docId)
             .set(
@@ -133,7 +134,8 @@ class MovementCubit extends Cubit<MovementState> {
 
     // Remove movement from Firebase Firestore
     unawaited(
-      FirebaseFirestore.instance
+      getIt<DatabaseService>()
+          .firestore
           .collection(AppVariables.movementsCollection)
           .doc(state.id)
           .delete(),
