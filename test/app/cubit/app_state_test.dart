@@ -19,8 +19,6 @@ void main() {
           ThemeMode.system,
           Colors.green,
           'Poppins',
-          ModelType.cloud,
-          ModelType.cloud,
         ]),
       );
     });
