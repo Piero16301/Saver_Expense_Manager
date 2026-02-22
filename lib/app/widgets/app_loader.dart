@@ -12,6 +12,7 @@ class AppLoader {
   late String _message;
   late double _size;
   bool _isLoading = false;
+  int _loadingSessionId = 0;
 
   Future<void> showLoading({
     String? message,
@@ -22,6 +23,7 @@ class AppLoader {
     _message = message ?? l10n.loading;
     _size = size;
     _isLoading = true;
+    final sessionId = ++_loadingSessionId;
 
     await showGeneralDialog<void>(
       context: context,
@@ -57,7 +59,11 @@ class AppLoader {
           ),
         ),
       ),
-    ).then((_) => _isLoading = false);
+    ).then((_) {
+      if (_loadingSessionId == sessionId) {
+        _isLoading = false;
+      }
+    });
   }
 
   void hideLoading() {

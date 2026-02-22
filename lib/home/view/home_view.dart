@@ -253,9 +253,29 @@ class AddMovementBottomSheet extends StatelessWidget {
     );
 
     if (result != null) {
-      unawaited(loader.showLoading());
+      unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+
+      final hasInternet = await AppFunctions.hasInternetConnection();
+      final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+
+      unawaited(
+        loader.showLoading(
+          message:
+              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+        ),
+      );
 
       try {
+        if (modelType.isLocal &&
+            !AppVariables.imageExtensions
+                .contains(result.files.first.extension)) {
+          throw Exception('INVALID_LOCAL_MODEL_FILE_INPUT');
+        }
+
         final file = result.files.single;
         final ext = file.path!.split('.').last;
         final path = '${const Uuid().v4()}.$ext';
@@ -273,7 +293,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           language: language.toString(),
           mimeType: lookupMimeType(file.name) ?? 'application/pdf',
           bytes: bytes,
-          modelType: context.read<AppCubit>().state.receiptsModel,
+          modelType: modelType,
         );
 
         final results =
@@ -297,16 +317,24 @@ class AddMovementBottomSheet extends StatelessWidget {
             ),
           ),
         );
-      } on Exception catch (_) {
+      } on Exception catch (e) {
         if (loader.isLoading) {
           loader.hideLoading();
         }
         Navigator.of(context).pop();
-        AppFunctions.showSnackBar(
-          context,
-          message: l10n.genericError,
-          type: SnackBarType.error,
-        );
+        if (e.toString().contains('INVALID_LOCAL_MODEL_FILE_INPUT')) {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.invalidLocalModelFileInput,
+            type: SnackBarType.error,
+          );
+        } else {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.genericError,
+            type: SnackBarType.error,
+          );
+        }
       }
     }
   }
@@ -321,9 +349,29 @@ class AddMovementBottomSheet extends StatelessWidget {
     final files = await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
 
     if (files.isNotEmpty) {
-      unawaited(loader.showLoading());
+      unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+
+      final hasInternet = await AppFunctions.hasInternetConnection();
+      final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+
+      unawaited(
+        loader.showLoading(
+          message:
+              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+        ),
+      );
 
       try {
+        if (modelType.isLocal &&
+            !AppVariables.imageExtensions
+                .contains(files.first.split('.').last)) {
+          throw Exception('INVALID_LOCAL_MODEL_FILE_INPUT');
+        }
+
         final ext = files.first.split('.').last;
         final path = '${const Uuid().v4()}.$ext';
         final bytes = await File(files.first).readAsBytes();
@@ -340,7 +388,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           language: language.toString(),
           mimeType: lookupMimeType(files.first) ?? 'application/pdf',
           bytes: bytes,
-          modelType: context.read<AppCubit>().state.receiptsModel,
+          modelType: modelType,
         );
 
         final results =
@@ -362,16 +410,24 @@ class AddMovementBottomSheet extends StatelessWidget {
             attachments: uploadName != null ? [uploadName] : [],
           ),
         );
-      } on Exception catch (_) {
+      } on Exception catch (e) {
         if (loader.isLoading) {
           loader.hideLoading();
         }
         Navigator.of(context).pop();
-        AppFunctions.showSnackBar(
-          context,
-          message: l10n.genericError,
-          type: SnackBarType.error,
-        );
+        if (e.toString().contains('INVALID_LOCAL_MODEL_FILE_INPUT')) {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.invalidLocalModelFileInput,
+            type: SnackBarType.error,
+          );
+        } else {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.genericError,
+            type: SnackBarType.error,
+          );
+        }
       }
     }
   }

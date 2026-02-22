@@ -10,6 +10,7 @@ class AppVariables {
   static const Color defaultBaseColor = Colors.green;
   static const String defaultFontFamily = 'Poppins';
   static const List<String> allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
+  static const List<String> imageExtensions = ['png', 'jpg', 'jpeg'];
 
   static final minDate = DateTime(2020);
   static const deafultMonthsTrend = 10;

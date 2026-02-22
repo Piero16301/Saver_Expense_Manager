@@ -199,51 +199,5 @@ void main() {
         },
       );
     });
-
-    group('changeReceiptsModel', () {
-      blocTest<AppCubit, AppState>(
-        'calls saveReceiptsModel and emits new state',
-        setUp: () {
-          when(
-            () => mockLocalStorageService.saveReceiptsModel(
-              modelType: ModelType.local,
-            ),
-          ).thenReturn(null);
-        },
-        build: AppCubit.new,
-        act: (cubit) => cubit.changeReceiptsModel(modelType: ModelType.local),
-        expect: () => [const AppState(receiptsModel: ModelType.local)],
-        verify: (_) {
-          verify(
-            () => mockLocalStorageService.saveReceiptsModel(
-              modelType: ModelType.local,
-            ),
-          ).called(1);
-        },
-      );
-    });
-
-    group('changeExpensesModel', () {
-      blocTest<AppCubit, AppState>(
-        'calls saveExpensesModel and emits new state',
-        setUp: () {
-          when(
-            () => mockLocalStorageService.saveExpensesModel(
-              modelType: ModelType.local,
-            ),
-          ).thenReturn(null);
-        },
-        build: AppCubit.new,
-        act: (cubit) => cubit.changeExpensesModel(modelType: ModelType.local),
-        expect: () => [const AppState(expensesModel: ModelType.local)],
-        verify: (_) {
-          verify(
-            () => mockLocalStorageService.saveExpensesModel(
-              modelType: ModelType.local,
-            ),
-          ).called(1);
-        },
-      );
-    });
   });
 }

@@ -12,8 +12,6 @@ class LocalStorageService {
   static const kUserTheme = '__user_theme__';
   static const kUserBaseColor = '__user_base_color__';
   static const kUserFontFamily = '__user_font_family__';
-  static const kUserReceiptsModel = '__user_receipts_model__';
-  static const kUserExpensesModel = '__user_expenses_model__';
 
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
@@ -65,39 +63,5 @@ class LocalStorageService {
 
   String? getFontFamily() {
     return _prefs?.getString(kUserFontFamily);
-  }
-
-  void saveReceiptsModel({required ModelType modelType}) {
-    _prefs
-        ?.setString(
-          kUserReceiptsModel,
-          ModelTypeHelper.getModelTypeName(modelType),
-        )
-        .ignore();
-  }
-
-  ModelType? getReceiptsModel() {
-    final modelTypeString = _prefs?.getString(kUserReceiptsModel);
-    if (modelTypeString == null) {
-      return null;
-    }
-    return ModelTypeHelper.getModelTypeFromString(modelTypeString);
-  }
-
-  void saveExpensesModel({required ModelType modelType}) {
-    _prefs
-        ?.setString(
-          kUserExpensesModel,
-          ModelTypeHelper.getModelTypeName(modelType),
-        )
-        .ignore();
-  }
-
-  ModelType? getExpensesModel() {
-    final modelTypeString = _prefs?.getString(kUserExpensesModel);
-    if (modelTypeString == null) {
-      return null;
-    }
-    return ModelTypeHelper.getModelTypeFromString(modelTypeString);
   }
 }

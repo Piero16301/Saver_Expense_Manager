@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 class RemoteStorageService {
   RemoteStorageService() : _storage = FirebaseStorage.instance;
@@ -16,8 +17,9 @@ class RemoteStorageService {
 
   Future<String?> uploadFile(File file, String path) async {
     try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isEmpty || result[0].rawAddress.isEmpty) return null;
+      if (!(await AppFunctions.hasInternetConnection())) {
+        return null;
+      }
 
       final ref = _storage.ref().child(path);
       await ref.putFile(file);

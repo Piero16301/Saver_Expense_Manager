@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +22,20 @@ class AppFunctions {
         return url.replaceAll('s96-c', 's400-c');
       case ImageResolutionType.high:
         return url.replaceAll('s96-c', 's600-c');
+    }
+  }
+
+  static Future<bool> hasInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(const Duration(seconds: 5));
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    } on TimeoutException catch (_) {
+      return false;
+    } on Exception catch (_) {
+      return false;
     }
   }
 
