@@ -191,4 +191,65 @@ class DatabaseService {
       return snapshot.docs.map((doc) => Movement.fromJson(doc.data())).toList();
     });
   }
+
+  Stream<List<Movement>> getMovementsStream({
+    required String userId,
+    DateTime? from,
+    DateTime? to,
+    int? limit,
+  }) {
+    var query = _firestore
+        .collection(AppVariables.movementsCollection)
+        .where('user', isEqualTo: userId);
+
+    if (from != null) {
+      query = query.where(
+        'date',
+        isGreaterThanOrEqualTo: Timestamp.fromDate(from),
+      );
+    }
+
+    if (to != null) {
+      query = query.where(
+        'date',
+        isLessThan: Timestamp.fromDate(to),
+      );
+    }
+
+    if (limit != null) {
+      query = query.limit(limit);
+    }
+
+    return query.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => Movement.fromJson(doc.data())).toList();
+    });
+  }
+
+  Future<List<Movement>> getMovements({
+    required String userId,
+    DateTime? from,
+    DateTime? to,
+  }) {
+    var query = _firestore
+        .collection(AppVariables.movementsCollection)
+        .where('user', isEqualTo: userId);
+
+    if (from != null) {
+      query = query.where(
+        'date',
+        isGreaterThanOrEqualTo: Timestamp.fromDate(from),
+      );
+    }
+
+    if (to != null) {
+      query = query.where(
+        'date',
+        isLessThan: Timestamp.fromDate(to),
+      );
+    }
+
+    return query.get().then((snapshot) {
+      return snapshot.docs.map((doc) => Movement.fromJson(doc.data())).toList();
+    });
+  }
 }

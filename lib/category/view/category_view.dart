@@ -179,7 +179,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
     final auth = getIt<AuthenticationService>();
     final user = auth.currentUser;
     final l10n = AppLocalizations.of(context);
-    final databaseService = getIt<DatabaseService>();
+    final database = getIt<DatabaseService>();
 
     return Column(
       children: [
@@ -204,7 +204,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
         ),
         const SizedBox(height: 20),
         StreamBuilder<List<Movement>>(
-          stream: databaseService.getTrendChartStream(
+          stream: database.getTrendChartStream(
             userId: user!.uid,
             startMonth: startMonth,
             endMonth: endMonth,

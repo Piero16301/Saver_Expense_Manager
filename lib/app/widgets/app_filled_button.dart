@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class AppFilledButton extends StatelessWidget {
   const AppFilledButton({
@@ -8,14 +7,16 @@ class AppFilledButton extends StatelessWidget {
     this.label,
     this.innerPadding,
     this.color,
+    this.isOnlyIcon = false,
     super.key,
   });
 
   final void Function()? onPressed;
-  final List<List<dynamic>>? icon;
+  final Widget? icon;
   final String? label;
   final EdgeInsetsGeometry? innerPadding;
   final Color? color;
+  final bool isOnlyIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +29,16 @@ class AppFilledButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
       ),
-      icon: icon != null ? HugeIcon(icon: icon!, strokeWidth: 2) : null,
-      label: Text(
-        label ?? '',
-        style: TextStyle(
-          fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      icon: icon != null && !isOnlyIcon ? icon : null,
+      label: label != null
+          ? Text(
+              label ?? '',
+              style: TextStyle(
+                fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            )
+          : icon!,
     );
   }
 }

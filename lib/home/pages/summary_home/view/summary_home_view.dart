@@ -20,11 +20,11 @@ class SummaryHomeView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final remoteConfig = getIt<RemoteConfigService>();
     final auth = getIt<AuthenticationService>().auth;
-    final databaseService = getIt<DatabaseService>();
+    final database = getIt<DatabaseService>();
 
     return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
       builder: (context, state) => StreamBuilder<List<Movement>>(
-        stream: databaseService.getUserMovementsRangeStream(
+        stream: database.getUserMovementsRangeStream(
           userId: auth.currentUser!.uid,
           startMonth: state.startMonth!,
           endMonth: state.endMonth!,

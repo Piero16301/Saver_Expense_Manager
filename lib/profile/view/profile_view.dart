@@ -239,7 +239,10 @@ class ProfileView extends StatelessWidget {
                       width: double.infinity,
                       child: AppFilledButton(
                         onPressed: () => _logout(context),
-                        icon: HugeIcons.strokeRoundedLogout01,
+                        icon: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedLogout01,
+                          strokeWidth: 2,
+                        ),
                         label: l10n.logoutConfirm,
                       ),
                     ),

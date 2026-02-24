@@ -273,7 +273,7 @@ class AddMovementBottomSheet extends StatelessWidget {
         if (modelType.isLocal &&
             !AppVariables.imageExtensions
                 .contains(result.files.first.extension)) {
-          throw Exception('INVALID_LOCAL_MODEL_FILE_INPUT');
+          throw Exception(AppVariables.unsupportedLocalModelFile);
         }
 
         final file = result.files.single;
@@ -322,7 +322,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           loader.hideLoading();
         }
         Navigator.of(context).pop();
-        if (e.toString().contains('INVALID_LOCAL_MODEL_FILE_INPUT')) {
+        if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
           AppFunctions.showSnackBar(
             context,
             message: l10n.invalidLocalModelFileInput,
@@ -369,7 +369,7 @@ class AddMovementBottomSheet extends StatelessWidget {
         if (modelType.isLocal &&
             !AppVariables.imageExtensions
                 .contains(files.first.split('.').last)) {
-          throw Exception('INVALID_LOCAL_MODEL_FILE_INPUT');
+          throw Exception(AppVariables.unsupportedLocalModelFile);
         }
 
         final ext = files.first.split('.').last;
@@ -415,7 +415,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           loader.hideLoading();
         }
         Navigator.of(context).pop();
-        if (e.toString().contains('INVALID_LOCAL_MODEL_FILE_INPUT')) {
+        if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
           AppFunctions.showSnackBar(
             context,
             message: l10n.invalidLocalModelFileInput,

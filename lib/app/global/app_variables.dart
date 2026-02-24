@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class AppVariables {
   static const String appName = 'Saver';
@@ -11,11 +12,14 @@ class AppVariables {
   static const String defaultFontFamily = 'Poppins';
   static const List<String> allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
   static const List<String> imageExtensions = ['png', 'jpg', 'jpeg'];
+  static const String unsupportedLocalModelFile =
+      'UNSUPPORTED_LOCAL_MODEL_FILE';
 
   static final minDate = DateTime(2020);
   static const deafultMonthsTrend = 10;
   static const deafultMonthsResume = 4;
   static const maxDaysWarning = 7;
+  static final DateFormat formatDate = DateFormat('dd/MM/yyyy');
 
   static const String expensesTab = 'gastos';
   static const String movementsTab = 'movimientos';

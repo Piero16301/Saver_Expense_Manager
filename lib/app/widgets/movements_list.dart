@@ -23,14 +23,14 @@ class MovementsList extends StatelessWidget {
       (cubit) => cubit.state.language,
     );
     final auth = getIt<AuthenticationService>();
-    final databaseService = getIt<DatabaseService>();
+    final database = getIt<DatabaseService>();
 
     return Expanded(
       child: FirestorePagination(
         key: ValueKey('$filterCategory-$monthSelected'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: databaseService.getCategoryMovementsQuery(
+        query: database.getCategoryMovementsQuery(
           userId: auth.currentUser!.uid,
           monthSelected: monthSelected,
           category: filterCategory,

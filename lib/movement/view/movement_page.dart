@@ -22,10 +22,10 @@ class MovementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final databaseService = getIt<DatabaseService>();
+    final database = getIt<DatabaseService>();
 
     return StreamBuilder<List<Category>>(
-      stream: databaseService.getCategoriesStream(),
+      stream: database.getCategoriesStream(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Scaffold(

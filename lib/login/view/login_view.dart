@@ -120,7 +120,10 @@ class LoginView extends StatelessWidget {
                                 : () => context
                                     .read<LoginCubit>()
                                     .loginWithEmail(l10n),
-                            icon: HugeIcons.strokeRoundedLogin01,
+                            icon: const HugeIcon(
+                              icon: HugeIcons.strokeRoundedLogin01,
+                              strokeWidth: 2,
+                            ),
                             label: state.status.isLoading
                                 ? l10n.loginLoading
                                 : l10n.loginButton,

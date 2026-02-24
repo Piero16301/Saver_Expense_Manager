@@ -12,7 +12,7 @@ class IncomeHomeView extends StatelessWidget {
     final auth = getIt<AuthenticationService>();
     final user = auth.currentUser;
     final l10n = AppLocalizations.of(context);
-    final databaseService = getIt<DatabaseService>();
+    final database = getIt<DatabaseService>();
 
     return BlocBuilder<IncomeHomeCubit, IncomeHomeState>(
       builder: (context, state) => Column(
@@ -24,7 +24,7 @@ class IncomeHomeView extends StatelessWidget {
             onChangeMonth: context.read<IncomeHomeCubit>().changeMonth,
           ),
           StreamBuilder<List<Movement>>(
-            stream: databaseService.getMonthMovementsStream(
+            stream: database.getMonthMovementsStream(
               userId: user!.uid,
               monthSelected: state.monthSelected!,
               type: CategoryType.income,

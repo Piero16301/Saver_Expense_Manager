@@ -378,6 +378,46 @@ class AppFunctions {
         .replaceAll('{{categories}}', categoriesStr);
   }
 
+  static Future<List<String>?> getAntRecommendations({
+    required String userId,
+    required String language,
+  }) async {
+    final template = getIt<RemoteConfigService>().geminiPromptDetectAntExpense;
+    final lookbackDays = getIt<RemoteConfigService>().geminiAntLookbackDays;
+
+    final now = DateTime.now();
+    final fromDate = now.subtract(Duration(days: lookbackDays));
+
+    final movements = await getIt<DatabaseService>().getMovements(
+      userId: userId,
+      from: DateTime(fromDate.year, fromDate.month, fromDate.day),
+      to: DateTime(now.year, now.month, now.day, 23, 59, 59, 999),
+    );
+
+    final prompt = template
+        .replaceAll(
+          '{{transactions_list}}',
+          movements.map((e) => '- ${e.movementRecap}').join('\n'),
+        )
+        .replaceAll('{{language}}', language)
+        .replaceAll('{{lookbackDays}}', lookbackDays.toString());
+
+    String? response = '';
+    final aiService = getIt<AiService>();
+
+    if (aiService.isLocalModelAvailable) {
+      response = await aiService.generateContentLocal(
+        textPrompt: PromptPart.text(text: prompt),
+      );
+    } else {
+      response = await aiService.generateContentRemote(
+        prompt: [PromptPart.text(text: prompt)],
+      );
+    }
+
+    return response?.split('|||').map((e) => e.trim()).toList();
+  }
+
   static String getCategoryName(String category, AppLocalizations l10n) {
     switch (category) {
       case 'TRANSPORT':

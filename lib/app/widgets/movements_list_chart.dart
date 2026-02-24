@@ -17,14 +17,14 @@ class MovementsListChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = getIt<AuthenticationService>();
-    final databaseService = getIt<DatabaseService>();
+    final database = getIt<DatabaseService>();
 
     return Expanded(
       child: FirestorePagination(
         key: ValueKey('$expenseType-$monthSelected'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: databaseService.getExpenseTypeMovementsQuery(
+        query: database.getExpenseTypeMovementsQuery(
           userId: auth.currentUser!.uid,
           monthSelected: monthSelected,
           expenseType: expenseType,

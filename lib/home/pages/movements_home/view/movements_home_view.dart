@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_pagination/firebase_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
@@ -18,17 +19,41 @@ class MovementsHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authentication = getIt<AuthenticationService>();
+    final database = getIt<DatabaseService>();
+
     return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
       builder: (context, state) => Column(
+        spacing: 8,
         children: [
-          FilterMovementsHome(
-            categories: categories,
-            filterType: state.filterType,
-            filterCategory: state.filterCategory,
-            onFilterTypeChanged:
-                context.read<MovementsHomeCubit>().updateFilterType,
-            onFilterCategoryChanged:
-                context.read<MovementsHomeCubit>().updateFilterCategory,
+          StreamBuilder<List<Movement>>(
+            stream: database.getMovementsStream(
+              userId: authentication.auth.currentUser!.uid,
+              limit: 1,
+            ),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox.shrink();
+              }
+
+              if (snapshot.hasError) {
+                return const SizedBox.shrink();
+              }
+
+              if (snapshot.data!.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              return FilterMovementsAntResumeHome(
+                categories: categories,
+                filterType: state.filterType,
+                filterCategory: state.filterCategory,
+                onFilterTypeChanged:
+                    context.read<MovementsHomeCubit>().updateFilterType,
+                onFilterCategoryChanged:
+                    context.read<MovementsHomeCubit>().updateFilterCategory,
+              );
+            },
           ),
           ListMovementsHome(
             filterType: state.filterType,
@@ -40,8 +65,8 @@ class MovementsHomeView extends StatelessWidget {
   }
 }
 
-class FilterMovementsHome extends StatelessWidget {
-  const FilterMovementsHome({
+class FilterMovementsAntResumeHome extends StatelessWidget {
+  const FilterMovementsAntResumeHome({
     required this.categories,
     required this.onFilterTypeChanged,
     required this.onFilterCategoryChanged,
@@ -66,84 +91,131 @@ class FilterMovementsHome extends StatelessWidget {
       ).compareTo(AppFunctions.getCategoryName(b.name, l10n)),
     );
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+    return Column(
       children: [
-        InkWell(
-          onTap: () => _showFilterTypeMenu(context, filterType),
-          borderRadius: BorderRadius.circular(8),
-          child: Chip(
-            padding: const EdgeInsets.all(4),
-            backgroundColor: filterType != null
-                ? Theme.of(context).colorScheme.secondaryContainer
-                : null,
-            side: filterType == null
-                ? null
-                : BorderSide(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
+        Row(
+          children: [
+            BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
+              builder: (context, state) {
+                return SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: AppFilledButton(
+                    icon: state.recommendationsStatus.isLoading
+                        ? Image.asset(
+                            'assets/animations/gemini-loading.gif',
+                          )
+                        : const HugeIcon(
+                            icon: HugeIcons.strokeRoundedAiIdea,
+                            strokeWidth: 2,
+                          ),
+                    onPressed: state.recommendationsStatus.isLoading
+                        ? null
+                        : state.recommendationsStatus.isSuccess
+                            ? () => context
+                                .read<MovementsHomeCubit>()
+                                .changeShowRecommendations()
+                            : () => context
+                                .read<MovementsHomeCubit>()
+                                .getRecommendations(),
+                    isOnlyIcon: true,
+                    innerPadding: const EdgeInsets.all(6),
                   ),
-            label: Row(
-              spacing: 4,
-              children: [
-                if (filterType != null)
-                  HugeIcon(
-                    icon: filterType == CategoryType.income
-                        ? HugeIcons.strokeRoundedMoneyAdd01
-                        : HugeIcons.strokeRoundedMoneyRemove01,
-                  ),
-                if (filterType != null)
-                  Text(
-                    filterType == CategoryType.income
-                        ? l10n.incomeName
-                        : l10n.expenseName,
-                  ),
-                if (filterType == null) Text(l10n.movementType),
-                if (filterType == null)
-                  const HugeIcon(icon: HugeIcons.strokeRoundedArrowDown01),
-              ],
+                );
+              },
             ),
-          ),
-        ),
-        if (filterType != null) const SizedBox(width: 8),
-        if (filterType != null)
-          InkWell(
-            onTap: () => _showFilterCategoryMenu(context, filterCategory),
-            borderRadius: BorderRadius.circular(8),
-            child: Chip(
-              padding: const EdgeInsets.all(4),
-              backgroundColor: filterCategory != null
-                  ? Theme.of(context).colorScheme.secondaryContainer
-                  : null,
-              side: filterCategory == null
-                  ? null
-                  : BorderSide(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                    ),
-              label: Row(
-                spacing: 4,
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  if (filterCategory != null)
-                    HugeIcon(
-                      icon: AppFunctions.getCategoryIcon(
-                        filterCategory!.icon,
+                  InkWell(
+                    onTap: () => _showFilterTypeMenu(context, filterType),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Chip(
+                      padding: const EdgeInsets.all(4),
+                      backgroundColor: filterType != null
+                          ? Theme.of(context).colorScheme.secondaryContainer
+                          : null,
+                      side: filterType == null
+                          ? null
+                          : BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                            ),
+                      label: Row(
+                        spacing: 4,
+                        children: [
+                          if (filterType != null)
+                            HugeIcon(
+                              icon: filterType == CategoryType.income
+                                  ? HugeIcons.strokeRoundedMoneyAdd01
+                                  : HugeIcons.strokeRoundedMoneyRemove01,
+                            ),
+                          if (filterType != null)
+                            Text(
+                              filterType == CategoryType.income
+                                  ? l10n.incomeName
+                                  : l10n.expenseName,
+                            ),
+                          if (filterType == null) Text(l10n.movementType),
+                          if (filterType == null)
+                            const HugeIcon(
+                              icon: HugeIcons.strokeRoundedArrowDown01,
+                            ),
+                        ],
                       ),
                     ),
-                  if (filterCategory != null)
-                    Text(
-                      AppFunctions.getCategoryName(
-                        filterCategory!.name,
-                        l10n,
+                  ),
+                  if (filterType != null) const SizedBox(width: 8),
+                  if (filterType != null)
+                    InkWell(
+                      onTap: () =>
+                          _showFilterCategoryMenu(context, filterCategory),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Chip(
+                        padding: const EdgeInsets.all(4),
+                        backgroundColor: filterCategory != null
+                            ? Theme.of(context).colorScheme.secondaryContainer
+                            : null,
+                        side: filterCategory == null
+                            ? null
+                            : BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
+                              ),
+                        label: Row(
+                          spacing: 4,
+                          children: [
+                            if (filterCategory != null)
+                              HugeIcon(
+                                icon: AppFunctions.getCategoryIcon(
+                                  filterCategory!.icon,
+                                ),
+                              ),
+                            if (filterCategory != null)
+                              Text(
+                                AppFunctions.getCategoryName(
+                                  filterCategory!.name,
+                                  l10n,
+                                ),
+                              ),
+                            if (filterCategory == null) Text(l10n.movementType),
+                            if (filterCategory == null)
+                              const HugeIcon(
+                                icon: HugeIcons.strokeRoundedArrowDown01,
+                              ),
+                          ],
+                        ),
                       ),
-                    ),
-                  if (filterCategory == null) Text(l10n.movementType),
-                  if (filterCategory == null)
-                    const HugeIcon(
-                      icon: HugeIcons.strokeRoundedArrowDown01,
                     ),
                 ],
               ),
             ),
-          ),
+          ],
+        ),
+        const AntRecommendationsWidget(),
       ],
     );
   }
@@ -328,14 +400,14 @@ class ListMovementsHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final auth = getIt<AuthenticationService>().auth;
-    final databaseService = getIt<DatabaseService>();
+    final database = getIt<DatabaseService>();
 
     return Expanded(
       child: FirestorePagination(
         key: ValueKey('$filterType-$filterCategory'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: databaseService.getUserMovementsQuery(
+        query: database.getUserMovementsQuery(
           userId: auth.currentUser!.uid,
           type: filterType,
           category: filterCategory,
@@ -354,6 +426,50 @@ class ListMovementsHome extends StatelessWidget {
           return ListMovementsItemHome(movement: movement);
         },
       ),
+    );
+  }
+}
+
+class AntRecommendationsWidget extends StatelessWidget {
+  const AntRecommendationsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
+      builder: (context, state) {
+        if (!state.recommendationsStatus.isSuccess ||
+            state.recommendations == null ||
+            state.recommendations!.isEmpty ||
+            !state.showRecommendations) {
+          return const SizedBox.shrink();
+        }
+
+        return SizedBox(
+          height: 160,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: PageView.builder(
+              controller: PageController(viewportFraction: 0.93),
+              itemCount: state.recommendations!.length,
+              itemBuilder: (context, index) {
+                final recommendation = state.recommendations![index];
+                return Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: SingleChildScrollView(
+                      child: MarkdownBody(
+                        data: recommendation,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -141,7 +141,10 @@ class RegisterView extends StatelessWidget {
                                 : () => context
                                     .read<RegisterCubit>()
                                     .register(l10n),
-                            icon: HugeIcons.strokeRoundedUserAdd01,
+                            icon: const HugeIcon(
+                              icon: HugeIcons.strokeRoundedUserAdd01,
+                              strokeWidth: 2,
+                            ),
                             label: state.status.isLoading
                                 ? l10n.loading
                                 : l10n.registerButton,

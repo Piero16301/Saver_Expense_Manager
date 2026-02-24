@@ -12,6 +12,8 @@ class LocalStorageService {
   static const kUserTheme = '__user_theme__';
   static const kUserBaseColor = '__user_base_color__';
   static const kUserFontFamily = '__user_font_family__';
+  static const kUserRecommendationsDate = '__user_recommendations_date__';
+  static const kUserRecommendations = '__user_recommendations__';
 
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
@@ -63,5 +65,30 @@ class LocalStorageService {
 
   String? getFontFamily() {
     return _prefs?.getString(kUserFontFamily);
+  }
+
+  void saveRecommendationsDate({required DateTime date}) {
+    _prefs
+        ?.setString(
+          kUserRecommendationsDate,
+          AppVariables.formatDate.format(date),
+        )
+        .ignore();
+  }
+
+  DateTime? getRecommendationsDate() {
+    final dateString = _prefs?.getString(kUserRecommendationsDate);
+    if (dateString == null) {
+      return null;
+    }
+    return AppVariables.formatDate.parse(dateString);
+  }
+
+  void saveRecommendations({required List<String> recommendations}) {
+    _prefs?.setStringList(kUserRecommendations, recommendations).ignore();
+  }
+
+  List<String>? getRecommendations() {
+    return _prefs?.getStringList(kUserRecommendations);
   }
 }

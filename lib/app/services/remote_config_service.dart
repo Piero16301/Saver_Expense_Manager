@@ -21,6 +21,8 @@ class RemoteConfigService {
       'config_gemini_prompt_extract_receipt_data';
   static const String _configGeminiPromptDetectAntExpense =
       'config_gemini_prompt_detect_ant_expense';
+  static const String _configGeminiAntLookbackDays =
+      'config_gemini_ant_lookback_days';
 
   Future<void> initialize() async {
     await _remoteConfig.setDefaults({
@@ -32,6 +34,7 @@ class RemoteConfigService {
           'config_gemini_prompt_extract_receipt_data',
       _configGeminiPromptDetectAntExpense:
           'config_gemini_prompt_detect_ant_expense',
+      _configGeminiAntLookbackDays: 30,
     });
 
     try {
@@ -56,4 +59,6 @@ class RemoteConfigService {
       _remoteConfig.getString(_configGeminiPromptExtractReceiptData);
   String get geminiPromptDetectAntExpense =>
       _remoteConfig.getString(_configGeminiPromptDetectAntExpense);
+  int get geminiAntLookbackDays =>
+      _remoteConfig.getInt(_configGeminiAntLookbackDays);
 }
