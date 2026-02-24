@@ -19,6 +19,13 @@ class AppVariables {
   static const deafultMonthsTrend = 10;
   static const deafultMonthsResume = 4;
   static const maxDaysWarning = 7;
+
+  static const animationDuration = Duration(milliseconds: 400);
+  static const snackBarDuration = Duration(seconds: 5);
+  static const timeoutDuration = Duration(seconds: 5);
+  static const remoteConfigFetchTimeout = Duration(minutes: 1);
+  static const remoteConfigMinimumFetchInterval = Duration(hours: 1);
+
   static final DateFormat formatDate = DateFormat('dd/MM/yyyy');
 
   static const String expensesTab = 'gastos';
@@ -43,6 +50,20 @@ class AppVariables {
   static Map<String, String> availableFonts = getAvailableFonts();
 
   static Map<String, String> getAvailableFonts() {
+    if (useTestFonts) {
+      return {
+        'Merriweather': 'Merriweather',
+        'Montserrat': 'Montserrat',
+        'Nunito': 'Nunito',
+        'Open Sans': 'Open Sans',
+        'Orbitron': 'Orbitron',
+        'Pacifico': 'Pacifico',
+        'Playfair Display': 'Playfair Display',
+        'Poppins': 'Poppins',
+        'Roboto': 'Roboto',
+        'Source Code Pro': 'Source Code Pro',
+      };
+    }
     return {
       'Merriweather': GoogleFonts.merriweather().fontFamily ?? 'Merriweather',
       'Montserrat': GoogleFonts.montserrat().fontFamily ?? 'Montserrat',

@@ -41,8 +41,8 @@ android {
         applicationId = "com.pmorales.saver.expense.manager"
         minSdk = 28
         targetSdk = 36
-        versionCode = 31
-        versionName = "2.7.0"
+        versionCode = 32
+        versionName = "2.7.1"
 
         // Configuración para tamaño de página de 16KB
         ndk {

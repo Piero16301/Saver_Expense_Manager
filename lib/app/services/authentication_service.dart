@@ -4,15 +4,20 @@ import 'package:saver_expense_manager/app/models/models.dart';
 import 'package:saver_expense_manager/firebase_options.dart';
 
 class AuthenticationService {
-  AuthenticationService() : _auth = FirebaseAuth.instance;
+  AuthenticationService({
+    FirebaseAuth? firebaseAuth,
+    GoogleSignIn? googleSignIn,
+  })  : _auth = firebaseAuth ?? FirebaseAuth.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
 
   final FirebaseAuth _auth;
+  final GoogleSignIn _googleSignIn;
 
   FirebaseAuth get auth => _auth;
 
   Future<void> initialize() async {
     try {
-      await GoogleSignIn.instance.initialize(
+      await _googleSignIn.initialize(
         serverClientId: DefaultFirebaseOptions.googleClientId,
       );
     } on Exception catch (_) {
@@ -49,19 +54,16 @@ class AuthenticationService {
 
   Future<UserCredential?> linkWithGoogle() async {
     try {
-      final googleUser = await GoogleSignIn.instance.authenticate();
+      final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
 
-      if (googleAuth.idToken != null) {
-        final credential = GoogleAuthProvider.credential(
-          idToken: googleAuth.idToken,
-        );
-        return await _auth.currentUser?.linkWithCredential(credential);
-      }
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      return await _auth.currentUser?.linkWithCredential(credential);
     } catch (e) {
       rethrow;
     }
-    return null;
   }
 
   Future<UserCredential?> linkWithEmailPassword({
@@ -75,19 +77,16 @@ class AuthenticationService {
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final googleUser = await GoogleSignIn.instance.authenticate();
+      final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
 
-      if (googleAuth.idToken != null) {
-        final credential = GoogleAuthProvider.credential(
-          idToken: googleAuth.idToken,
-        );
-        return await _auth.signInWithCredential(credential);
-      }
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      return await _auth.signInWithCredential(credential);
     } catch (e) {
       rethrow;
     }
-    return null;
   }
 
   Future<UserCredential> signInWithEmailAndPassword(

@@ -1,6 +1,7 @@
 // services/remote_config_service.dart
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 class RemoteConfigService {
   RemoteConfigService({FirebaseRemoteConfig? remoteConfig})
@@ -40,9 +41,10 @@ class RemoteConfigService {
     try {
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
-          fetchTimeout: const Duration(minutes: 1),
-          minimumFetchInterval:
-              kDebugMode ? Duration.zero : const Duration(hours: 1),
+          fetchTimeout: AppVariables.remoteConfigFetchTimeout,
+          minimumFetchInterval: kDebugMode
+              ? Duration.zero
+              : AppVariables.remoteConfigMinimumFetchInterval,
         ),
       );
       await _remoteConfig.fetchAndActivate();

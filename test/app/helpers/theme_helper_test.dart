@@ -1,30 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/app/helpers/theme_helper.dart';
 
 void main() {
   group('ThemeHelper', () {
-    test('getThemeByName returns correct ThemeMode for valid names', () {
-      expect(
-        ThemeHelper.getThemeByName(ThemeMode.light.name.toUpperCase()),
-        ThemeMode.light,
-      );
-      expect(
-        ThemeHelper.getThemeByName(ThemeMode.dark.name.toUpperCase()),
-        ThemeMode.dark,
-      );
+    test('getThemeName returns correct string for ThemeMode', () {
+      expect(ThemeHelper.getThemeName(ThemeMode.light), equals('LIGHT'));
+      expect(ThemeHelper.getThemeName(ThemeMode.dark), equals('DARK'));
+      expect(ThemeHelper.getThemeName(ThemeMode.system), equals('SYSTEM'));
     });
 
-    test('getThemeByName returns default ThemeMode (light) for invalid names',
-        () {
-      expect(ThemeHelper.getThemeByName('UNKNOWN_THEME'), ThemeMode.light);
-      expect(ThemeHelper.getThemeByName(''), ThemeMode.light);
-      expect(ThemeHelper.getThemeByName('123'), ThemeMode.light);
+    test('getThemeByName returns correct ThemeMode for valid string', () {
+      expect(ThemeHelper.getThemeByName('LIGHT'), equals(ThemeMode.light));
+      expect(ThemeHelper.getThemeByName('light'), equals(ThemeMode.light));
+      expect(ThemeHelper.getThemeByName('DARK'), equals(ThemeMode.dark));
+      expect(ThemeHelper.getThemeByName('SYSTEM'), equals(ThemeMode.system));
     });
 
-    test('getThemeByName is case-insensitive', () {
-      expect(ThemeHelper.getThemeByName('light'), ThemeMode.light);
-      expect(ThemeHelper.getThemeByName('dark'), ThemeMode.dark);
+    test('getThemeByName returns ThemeMode.light for invalid string', () {
+      expect(ThemeHelper.getThemeByName('INVALID'), equals(ThemeMode.light));
     });
   });
 }

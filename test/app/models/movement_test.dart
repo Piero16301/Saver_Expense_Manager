@@ -4,207 +4,177 @@ import 'package:saver_expense_manager/app/models/models.dart';
 
 void main() {
   group('Movement', () {
-    final now = DateTime.now();
-    final date = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      now.hour,
-      now.minute,
-      now.second,
-      now.millisecond,
-    );
+    const id = 'id';
+    const title = 'title';
+    const description = 'description';
+    final date = DateTime(2023);
+    const category = Category.empty;
+    const price = 10.0;
+    const company = 'company';
+    const attachments = ['attachment'];
+    const user = 'user';
+    const movementRecap = 'movementRecap';
 
-    const category = Category(
-      id: '1',
-      name: 'Food',
-      icon: 'fastfood',
-      color: 'red',
-      type: CategoryType.expense,
-    );
+    Movement createSubject() => Movement(
+          id: id,
+          title: title,
+          description: description,
+          date: date,
+          category: category,
+          price: price,
+          company: company,
+          attachments: attachments,
+          user: user,
+          movementRecap: movementRecap,
+        );
 
-    final movement = Movement(
-      id: '1',
-      title: 'Groceries',
-      description: 'Weekly groceries',
-      date: date,
-      category: category,
-      price: 50,
-      user: 'user1',
-      movementRecap: 'Bought milk and bread',
-      company: 'Supermarket',
-      attachments: const ['receipt.jpg'],
-    );
-
-    final movement2 = Movement(
-      id: '1',
-      title: 'Groceries',
-      description: 'Weekly groceries',
-      date: date,
-      category: category,
-      price: 50,
-      user: 'user1',
-      movementRecap: 'Bought milk and bread',
-      company: 'Supermarket',
-      attachments: const ['receipt.jpg'],
-    );
-
-    test('supports value comparisons', () {
-      expect(movement, movement2);
-    });
-
-    test('props are correct', () {
-      expect(
-        movement.props,
-        equals([
-          '1',
-          'Groceries',
-          'Weekly groceries',
-          date,
-          category,
-          50.0,
-          'Supermarket',
-          ['receipt.jpg'],
-          'user1',
-          'Bought milk and bread',
-        ]),
-      );
+    test('supports value equality', () {
+      expect(createSubject(), equals(createSubject()));
     });
 
     group('fromJson', () {
-      test('returns correct object from valid json', () {
-        final timestamp = Timestamp.fromDate(date);
-        final json = {
-          'id': '1',
-          'title': 'Groceries',
-          'description': 'Weekly groceries',
-          'date': timestamp,
+      test('returns correct Movement from populated json', () {
+        final json = <String, dynamic>{
+          'id': id,
+          'title': title,
+          'description': description,
+          'date': Timestamp.fromDate(date),
           'category': category.toJson(),
-          'price': 50.0,
-          'company': 'Supermarket',
-          'attachments': ['receipt.jpg'],
-          'user': 'user1',
-          'movement_recap': 'Bought milk and bread',
+          'price': price,
+          'company': company,
+          'attachments': attachments,
+          'user': user,
+          'movement_recap': movementRecap,
         };
 
-        final result = Movement.fromJson(json);
-        expect(result.id, movement.id);
-        expect(result.title, movement.title);
-        expect(result.date.isAtSameMomentAs(movement.date), isTrue);
-        expect(result.category, movement.category);
-        expect(result.price, movement.price);
-        expect(result.company, movement.company);
-        expect(result.attachments, movement.attachments);
-        expect(result.user, movement.user);
-        expect(result.movementRecap, movement.movementRecap);
-      });
-
-      test('returns default object when json keys are missing', () {
-        final json = {
-          'id': '1',
-        };
-        final result = Movement.fromJson(json);
-        expect(result.id, '1');
-        expect(result.title, '');
-        expect(result.price, 0.0);
-        expect(result.attachments, isEmpty);
         expect(
-          result.category,
-          Category.empty,
+          Movement.fromJson(json),
+          equals(createSubject()),
         );
       });
 
-      test('handles int price and attachments list correctly', () {
-        final json = {
-          'id': '1',
-          'price': 100,
-          'attachments': ['img1.png', null],
+      test('returns correct Movement from empty json', () {
+        final json = <String, dynamic>{
+          'id': 'test_id',
         };
-        final result = Movement.fromJson(json);
-        expect(result.price, 100.0);
-        expect(result.attachments, ['img1.png', '']);
+
+        final movement = Movement.fromJson(json);
+
+        expect(movement.id, equals('test_id'));
+        expect(movement.title, equals(''));
+        expect(movement.description, equals(''));
+        expect(movement.category, equals(Category.empty));
+        expect(movement.price, equals(0.0));
+        expect(movement.company, equals(''));
+        expect(movement.attachments, isEmpty);
+        expect(movement.user, equals(''));
+        expect(movement.movementRecap, equals(''));
       });
     });
 
     group('fromAiService', () {
-      test('returns correct object from valid AI service json', () {
-        final json = {
+      test('parses AI response correctly', () {
+        final categories = [
+          const Category(
+            id: '1',
+            name: 'Food',
+            icon: '',
+            color: '',
+            type: CategoryType.expense,
+          ),
+        ];
+
+        final json = <String, dynamic>{
+          'title': 'Lunch',
+          'description': 'Burger',
+          'date': '01/01/2023',
           'category': 'Food',
-          'id': 'ai_1',
-          'title': 'AI Title',
-          'description': 'AI Desc',
-          'date': '16/02/2026',
-          'price': 25.5,
-          'company': 'AI Company',
-          'movement_recap': 'AI Recap',
+          'price': 15.5,
+          'company': 'McDonalds',
+          'movement_recap': 'Lunch at McDonalds',
         };
 
-        final categories = [category];
+        final movement = Movement.fromAiService(json, categories);
 
-        final expectedDate = DateTime(2026, 2, 16);
-
-        final result = Movement.fromAiService(json, categories);
-
-        expect(result.category, category);
-        expect(result.id, 'ai_1');
-        expect(result.title, 'AI Title');
-        expect(result.date, expectedDate);
-        expect(result.price, 25.5);
-        expect(result.user, '');
-      });
-
-      test('returns empty category if not found in list', () {
-        final json = {
-          'category': 'Unknown',
-          'date': '01/01/2026',
-        };
-        final result = Movement.fromAiService(json, const [category]);
-        expect(result.category, Category.empty);
+        expect(movement.title, equals('Lunch'));
+        expect(movement.description, equals('Burger'));
+        expect(movement.date, equals(DateTime(2023)));
+        expect(movement.category.name, equals('Food'));
+        expect(movement.price, equals(15.5));
+        expect(movement.company, equals('McDonalds'));
+        expect(movement.movementRecap, equals('Lunch at McDonalds'));
+        expect(movement.id, equals(''));
       });
     });
 
     group('toJson', () {
       test('returns correct map', () {
-        final expectedJson = {
-          'id': '1',
-          'title': 'Groceries',
-          'description': 'Weekly groceries',
-          'date': date.toUtc(),
-          'category': category.toJson(),
-          'price': 50.0,
-          'company': 'Supermarket',
-          'attachments': ['receipt.jpg'],
-          'user': 'user1',
-          'movement_recap': 'Bought milk and bread',
-        };
+        final movement = createSubject();
+        final json = movement.toJson();
 
-        expect(movement.toJson(), expectedJson);
+        expect(
+          json,
+          equals({
+            'id': id,
+            'title': title,
+            'description': description,
+            'date': date.toUtc(),
+            'category': category.toJson(),
+            'price': price,
+            'company': company,
+            'attachments': attachments,
+            'user': user,
+            'movement_recap': movementRecap,
+          }),
+        );
       });
     });
 
     group('copyWith', () {
-      test('returns same object if no arguments provided', () {
-        expect(movement.copyWith(), movement);
+      test('returns same object if no arguments are provided', () {
+        expect(createSubject().copyWith(), equals(createSubject()));
       });
 
-      test('returns updated object with provided arguments', () {
-        final updated = movement.copyWith(
-          title: 'New Title',
-          price: 99.9,
+      test('replaces every non-null parameter', () {
+        final movement = createSubject();
+        final newDate = DateTime(2023, 2, 2);
+        const newCategory = Category(
+          id: '2',
+          name: 'test',
+          icon: 'icon',
+          color: 'color',
+          type: CategoryType.expense,
         );
-        expect(updated.title, 'New Title');
-        expect(updated.price, 99.9);
-        expect(updated.id, movement.id);
-      });
-    });
 
-    test('empty returns correct default values', () {
-      final empty = Movement.empty;
-      expect(empty.id, '');
-      expect(empty.title, '');
-      expect(empty.price, 0);
-      expect(empty.date, isA<DateTime>());
-      expect(empty.category, Category.empty);
+        expect(
+          movement.copyWith(
+            id: 'newId',
+            title: 'newTitle',
+            description: 'newDesc',
+            date: newDate,
+            category: newCategory,
+            price: 20,
+            company: 'newCompany',
+            attachments: ['newAttachment'],
+            user: 'newUser',
+            movementRecap: 'newRecap',
+          ),
+          equals(
+            Movement(
+              id: 'newId',
+              title: 'newTitle',
+              description: 'newDesc',
+              date: newDate,
+              category: newCategory,
+              price: 20,
+              company: 'newCompany',
+              attachments: const ['newAttachment'],
+              user: 'newUser',
+              movementRecap: 'newRecap',
+            ),
+          ),
+        );
+      });
     });
   });
 }

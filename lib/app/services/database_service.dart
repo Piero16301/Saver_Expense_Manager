@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class DatabaseService {
-  DatabaseService() : _firestore = FirebaseFirestore.instance;
+  DatabaseService({FirebaseFirestore? firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
 

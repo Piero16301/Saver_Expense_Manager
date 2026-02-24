@@ -5,7 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class RemoteStorageService {
-  RemoteStorageService() : _storage = FirebaseStorage.instance;
+  RemoteStorageService({FirebaseStorage? storage})
+      : _storage = storage ?? FirebaseStorage.instance;
 
   final FirebaseStorage _storage;
 

@@ -74,19 +74,23 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
           ..saveRecommendations(recommendations: recommendations)
           ..saveRecommendationsDate(date: nowDate);
       }
-      emit(
-        state.copyWith(
-          recommendationsStatus: RecommendationsStatus.success,
-          recommendations: recommendations,
-          showRecommendations: true,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            recommendationsStatus: RecommendationsStatus.success,
+            recommendations: recommendations,
+            showRecommendations: true,
+          ),
+        );
+      }
     } on Exception catch (_) {
-      emit(
-        state.copyWith(
-          recommendationsStatus: RecommendationsStatus.failure,
-        ),
-      );
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            recommendationsStatus: RecommendationsStatus.failure,
+          ),
+        );
+      }
     }
   }
 }

@@ -28,7 +28,7 @@ class AppFunctions {
   static Future<bool> hasInternetConnection() async {
     try {
       final result = await InternetAddress.lookup('google.com')
-          .timeout(const Duration(seconds: 5));
+          .timeout(AppVariables.timeoutDuration);
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
     } on SocketException catch (_) {
       return false;
@@ -106,7 +106,7 @@ class AppFunctions {
           borderRadius: BorderRadius.circular(12),
         ),
         margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 5),
+        duration: AppVariables.snackBarDuration,
       ),
     );
   }

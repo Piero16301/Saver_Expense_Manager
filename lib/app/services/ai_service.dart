@@ -9,13 +9,16 @@ class AiService {
   AiService({
     required RemoteConfigService remoteConfig,
     required AuthenticationService authentication,
+    FirebaseAI? remoteModel,
+    GeminiNanoAndroid? localModel,
   }) {
     _remoteConfig = remoteConfig;
-    _remoteModel = FirebaseAI.googleAI(
-      appCheck: FirebaseAppCheck.instance,
-      auth: authentication.auth,
-    );
-    _localModel = GeminiNanoAndroid();
+    _remoteModel = remoteModel ??
+        FirebaseAI.googleAI(
+          appCheck: FirebaseAppCheck.instance,
+          auth: authentication.auth,
+        );
+    _localModel = localModel ?? GeminiNanoAndroid();
   }
 
   bool get isLocalModelAvailable => _isLocalModelAvailable;

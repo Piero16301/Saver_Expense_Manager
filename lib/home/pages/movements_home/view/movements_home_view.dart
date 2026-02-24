@@ -437,37 +437,51 @@ class AntRecommendationsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
       builder: (context, state) {
-        if (!state.recommendationsStatus.isSuccess ||
-            state.recommendations == null ||
-            state.recommendations!.isEmpty ||
-            !state.showRecommendations) {
-          return const SizedBox.shrink();
-        }
-
-        return SizedBox(
-          height: 160,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: PageView.builder(
-              controller: PageController(viewportFraction: 0.93),
-              itemCount: state.recommendations!.length,
-              itemBuilder: (context, index) {
-                final recommendation = state.recommendations![index];
-                return Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.symmetric(horizontal: 6),
+        return AnimatedSwitcher(
+          duration: AppVariables.animationDuration,
+          switchInCurve: Curves.easeInOut,
+          switchOutCurve: Curves.easeInOut,
+          transitionBuilder: (child, animation) {
+            return SizeTransition(
+              sizeFactor: animation,
+              axisAlignment: -1,
+              child: FadeTransition(
+                opacity: animation,
+                child: child,
+              ),
+            );
+          },
+          child: (!state.recommendationsStatus.isSuccess ||
+                  state.recommendations == null ||
+                  state.recommendations!.isEmpty ||
+                  !state.showRecommendations)
+              ? const SizedBox.shrink(key: ValueKey('empty'))
+              : SizedBox(
+                  key: const ValueKey('recommendations'),
+                  height: 160,
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: SingleChildScrollView(
-                      child: MarkdownBody(
-                        data: recommendation,
-                      ),
+                    padding: const EdgeInsets.only(top: 8),
+                    child: PageView.builder(
+                      controller: PageController(viewportFraction: 0.93),
+                      itemCount: state.recommendations!.length,
+                      itemBuilder: (context, index) {
+                        final recommendation = state.recommendations![index];
+                        return Card(
+                          elevation: 2,
+                          margin: const EdgeInsets.symmetric(horizontal: 6),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: SingleChildScrollView(
+                              child: MarkdownBody(
+                                data: recommendation,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                );
-              },
-            ),
-          ),
+                ),
         );
       },
     );
