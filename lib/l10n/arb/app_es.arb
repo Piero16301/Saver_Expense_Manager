@@ -68,6 +68,8 @@
     "@errorLoadingCategories": {},
     "noCategoriesFound": "No se encontraron categorías",
     "@noCategoriesFound": {},
+    "categoryDetailsTitle": "Detalles de la categoría",
+    "@categoryDetailsTitle": {},
     "categoryExpenseTitle": "Gastos",
     "@categoryExpenseTitle": {},
     "categoryIncomeTitle": "Ingresos",

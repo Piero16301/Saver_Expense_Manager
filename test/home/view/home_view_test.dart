@@ -107,6 +107,13 @@ void main() {
 
   group('HomeView', () {
     testWidgets('renders properly with initial state', (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
       await mockNetworkImagesFor(() async {
         await tester.pumpApp(buildSubject());
         await tester.pumpAndSettle();
@@ -116,7 +123,31 @@ void main() {
       });
     });
 
+    testWidgets('renders properly in landscape mode', (tester) async {
+      tester.view.physicalSize = const Size(800, 400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await mockNetworkImagesFor(() async {
+        await tester.pumpApp(buildSubject());
+        await tester.pumpAndSettle();
+
+        expect(find.byType(NavigationRailHome), findsOneWidget);
+        expect(find.byType(FloatingActionButton), findsOneWidget);
+      });
+    });
+
     testWidgets('renders correct body based on selected index', (tester) async {
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
       when(() => mockHomeCubit.state)
           .thenReturn(const HomeState(selectedIndex: 1));
 

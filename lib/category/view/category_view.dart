@@ -12,14 +12,14 @@ class CategoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return BlocBuilder<CategoryCubit, CategoryState>(
       builder: (context, state) => Scaffold(
         appBar: AppBar(
           title: Text(
-            state.category.type == CategoryType.expense
-                ? l10n.categoryExpenseTitle
-                : l10n.categoryIncomeTitle,
+            l10n.categoryDetailsTitle,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -41,13 +41,21 @@ class CategoryView extends StatelessWidget {
             bottom: 30,
             top: 10,
           ),
-          child: Column(
-            spacing: 10,
-            children: [
-              CategoryIconAndName(category: state.category),
-              CategoryTabBar(category: state.category),
-            ],
-          ),
+          child: isLandscape
+              ? Row(
+                  spacing: 20,
+                  children: [
+                    CategoryIconAndName(category: state.category),
+                    CategoryTabBar(category: state.category),
+                  ],
+                )
+              : Column(
+                  spacing: 10,
+                  children: [
+                    CategoryIconAndName(category: state.category),
+                    CategoryTabBar(category: state.category),
+                  ],
+                ),
         ),
       ),
     );
@@ -67,6 +75,7 @@ class CategoryIconAndName extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       spacing: 10,
       children: [
         CircleAvatar(
@@ -184,23 +193,28 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
     return Column(
       children: [
         const SizedBox(height: 20),
-        MonthRangeSelector(
-          startMonth: startMonth,
-          endMonth: endMonth,
-          onChangeStartMonth: (date) {
-            if (date != null) {
-              setState(() {
-                startMonth = date;
-              });
-            }
-          },
-          onChangeEndMonth: (date) {
-            if (date != null) {
-              setState(() {
-                endMonth = date;
-              });
-            }
-          },
+        ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppVariables.tabletMaxWidth,
+          ),
+          child: MonthRangeSelector(
+            startMonth: startMonth,
+            endMonth: endMonth,
+            onChangeStartMonth: (date) {
+              if (date != null) {
+                setState(() {
+                  startMonth = date;
+                });
+              }
+            },
+            onChangeEndMonth: (date) {
+              if (date != null) {
+                setState(() {
+                  endMonth = date;
+                });
+              }
+            },
+          ),
         ),
         const SizedBox(height: 20),
         StreamBuilder<List<Movement>>(
@@ -263,41 +277,46 @@ class _TabMovementsCategoryState extends State<TabMovementsCategory> {
     return Column(
       children: [
         const SizedBox(height: 20),
-        MonthSelector(
-          monthSelected: monthSelected,
-          onBack: () {
-            if (monthSelected.month == 1) {
-              setState(() {
-                monthSelected = DateTime(monthSelected.year - 1, 12);
-              });
-            } else {
-              setState(() {
-                monthSelected = DateTime(
-                  monthSelected.year,
-                  monthSelected.month - 1,
-                );
-              });
-            }
-          },
-          onForward: () {
-            if (monthSelected.month == 12) {
-              setState(() {
-                monthSelected = DateTime(monthSelected.year + 1);
-              });
-            } else {
-              setState(() {
-                monthSelected = DateTime(
-                  monthSelected.year,
-                  monthSelected.month + 1,
-                );
-              });
-            }
-          },
-          onChangeMonth: (month) => setState(() {
-            if (month != null) {
-              monthSelected = DateTime(month.year, month.month);
-            }
-          }),
+        ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppVariables.tabletMaxWidth,
+          ),
+          child: MonthSelector(
+            monthSelected: monthSelected,
+            onBack: () {
+              if (monthSelected.month == 1) {
+                setState(() {
+                  monthSelected = DateTime(monthSelected.year - 1, 12);
+                });
+              } else {
+                setState(() {
+                  monthSelected = DateTime(
+                    monthSelected.year,
+                    monthSelected.month - 1,
+                  );
+                });
+              }
+            },
+            onForward: () {
+              if (monthSelected.month == 12) {
+                setState(() {
+                  monthSelected = DateTime(monthSelected.year + 1);
+                });
+              } else {
+                setState(() {
+                  monthSelected = DateTime(
+                    monthSelected.year,
+                    monthSelected.month + 1,
+                  );
+                });
+              }
+            },
+            onChangeMonth: (month) => setState(() {
+              if (month != null) {
+                monthSelected = DateTime(month.year, month.month);
+              }
+            }),
+          ),
         ),
         const SizedBox(height: 10),
         MovementsList(filterCategory: category, monthSelected: monthSelected),

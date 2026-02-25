@@ -21,6 +21,8 @@ class SummaryHomeView extends StatelessWidget {
     final remoteConfig = getIt<RemoteConfigService>();
     final auth = getIt<AuthenticationService>().auth;
     final database = getIt<DatabaseService>();
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
       builder: (context, state) => StreamBuilder<List<Movement>>(
@@ -40,17 +42,23 @@ class SummaryHomeView extends StatelessWidget {
 
           final movements = snapshot.data!;
 
-          return Column(
+          final monthSelector = ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppVariables.tabletMaxWidth,
+            ),
+            child: MonthRangeSelector(
+              startMonth: state.startMonth!,
+              endMonth: state.endMonth!,
+              onChangeStartMonth: (date) =>
+                  context.read<SummaryHomeCubit>().changeStartMonth(date),
+              onChangeEndMonth: (date) =>
+                  context.read<SummaryHomeCubit>().changeEndMonth(date),
+            ),
+          );
+
+          final charts = Column(
             spacing: 16,
             children: [
-              MonthRangeSelector(
-                startMonth: state.startMonth!,
-                endMonth: state.endMonth!,
-                onChangeStartMonth: (date) =>
-                    context.read<SummaryHomeCubit>().changeStartMonth(date),
-                onChangeEndMonth: (date) =>
-                    context.read<SummaryHomeCubit>().changeEndMonth(date),
-              ),
               if (remoteConfig.isHomeSummaryCardsVisible)
                 ResumeMovementsChart(
                   movements: movements,
@@ -65,11 +73,44 @@ class SummaryHomeView extends StatelessWidget {
                 endMonth: state.endMonth!,
                 selResumeItems: state.selResumeItems,
               ),
-              if (remoteConfig.isHomeTopCategoriesVisible)
-                CategoriesResumeCards(
+            ],
+          );
+
+          final categoriesCard = remoteConfig.isHomeTopCategoriesVisible
+              ? CategoriesResumeCards(
                   movements: movements,
                   categories: categories,
-                ),
+                )
+              : const SizedBox.shrink();
+
+          return Column(
+            spacing: 16,
+            children: [
+              monthSelector,
+              Expanded(
+                child: isLandscape
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        spacing: 16,
+                        children: [
+                          Expanded(
+                            child: charts,
+                          ),
+                          if (remoteConfig.isHomeTopCategoriesVisible)
+                            SizedBox(
+                              width: 200,
+                              child: categoriesCard,
+                            ),
+                        ],
+                      )
+                    : Column(
+                        spacing: 16,
+                        children: [
+                          Expanded(child: charts),
+                          categoriesCard,
+                        ],
+                      ),
+              ),
             ],
           );
         },
@@ -386,96 +427,153 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
       (s, item) => s + item.totalExpense,
     );
 
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
+    final categoriesListBuilder = ListView.separated(
+      physics: const BouncingScrollPhysics(),
+      scrollDirection: isLandscape ? Axis.vertical : Axis.horizontal,
+      padding: EdgeInsets.zero,
+      itemCount: sortedCategories.length,
+      separatorBuilder: (context, index) => SizedBox(
+        width: isLandscape ? 0 : 12,
+        height: isLandscape ? 12 : 0,
+      ),
+      itemBuilder: (context, index) {
+        final categoryData = sortedCategories[index];
+        final percentage = totalExpenses > 0
+            ? (categoryData.totalExpense / totalExpenses * 100)
+            : 0.0;
+        final ranking = index + 1;
+
+        return InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => context.pushNamed(
+            CategoryPage.pageName,
+            extra: categoryData.category,
+          ),
+          child: CategoryExpenseCard(
+            category: categoryData.category,
+            amount: categoryData.totalExpense,
+            percentage: percentage,
+            ranking: ranking,
+          ),
+        );
+      },
+    );
+
     return Visibility(
       visible: sortedCategories.isNotEmpty,
-      child: Column(
-        children: [
-          Row(
-            spacing: 12,
-            children: [
-              SizedBox(
-                height: 180,
-                child: SegmentedButton<CategoryType>(
-                  direction: Axis.vertical,
-                  showSelectedIcon: false,
-                  segments: [
-                    ButtonSegment<CategoryType>(
-                      value: CategoryType.expense,
-                      label: HugeIcon(
-                        icon: HugeIcons.strokeRoundedMoneyRemove01,
-                        strokeWidth: 2,
-                        color: selectedFilter == CategoryType.expense
-                            ? AppVariables.expenseColor
-                            : null,
+      child: isLandscape
+          ? Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<CategoryType>(
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment<CategoryType>(
+                        value: CategoryType.expense,
+                        label: HugeIcon(
+                          icon: HugeIcons.strokeRoundedMoneyRemove01,
+                          strokeWidth: 2,
+                          color: selectedFilter == CategoryType.expense
+                              ? AppVariables.expenseColor
+                              : null,
+                        ),
+                      ),
+                      ButtonSegment<CategoryType>(
+                        value: CategoryType.income,
+                        label: HugeIcon(
+                          icon: HugeIcons.strokeRoundedMoneyAdd01,
+                          strokeWidth: 2,
+                          color: selectedFilter == CategoryType.income
+                              ? AppVariables.incomeColor
+                              : null,
+                        ),
+                      ),
+                    ],
+                    selected: {selectedFilter},
+                    onSelectionChanged: (newSelection) {
+                      setState(() {
+                        selectedFilter = newSelection.first;
+                      });
+                    },
+                    style: const ButtonStyle(
+                      visualDensity: VisualDensity.compact,
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
                       ),
                     ),
-                    ButtonSegment<CategoryType>(
-                      value: CategoryType.income,
-                      label: HugeIcon(
-                        icon: HugeIcons.strokeRoundedMoneyAdd01,
-                        strokeWidth: 2,
-                        color: selectedFilter == CategoryType.income
-                            ? AppVariables.incomeColor
-                            : null,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Expanded(child: categoriesListBuilder),
+              ],
+            )
+          : Column(
+              children: [
+                Row(
+                  spacing: 12,
+                  children: [
+                    SizedBox(
+                      height: 180,
+                      child: SegmentedButton<CategoryType>(
+                        direction: Axis.vertical,
+                        showSelectedIcon: false,
+                        segments: [
+                          ButtonSegment<CategoryType>(
+                            value: CategoryType.expense,
+                            label: HugeIcon(
+                              icon: HugeIcons.strokeRoundedMoneyRemove01,
+                              strokeWidth: 2,
+                              color: selectedFilter == CategoryType.expense
+                                  ? AppVariables.expenseColor
+                                  : null,
+                            ),
+                          ),
+                          ButtonSegment<CategoryType>(
+                            value: CategoryType.income,
+                            label: HugeIcon(
+                              icon: HugeIcons.strokeRoundedMoneyAdd01,
+                              strokeWidth: 2,
+                              color: selectedFilter == CategoryType.income
+                                  ? AppVariables.incomeColor
+                                  : null,
+                            ),
+                          ),
+                        ],
+                        selected: {selectedFilter},
+                        onSelectionChanged: (newSelection) {
+                          setState(() {
+                            selectedFilter = newSelection.first;
+                          });
+                        },
+                        style: const ButtonStyle(
+                          visualDensity: VisualDensity.compact,
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        height: 180,
+                        width: double.infinity,
+                        child: categoriesListBuilder,
                       ),
                     ),
                   ],
-                  selected: {selectedFilter},
-                  onSelectionChanged: (newSelection) {
-                    setState(() {
-                      selectedFilter = newSelection.first;
-                    });
-                  },
-                  style: const ButtonStyle(
-                    visualDensity: VisualDensity.compact,
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                      ),
-                    ),
-                  ),
                 ),
-              ),
-              Expanded(
-                child: SizedBox(
-                  height: 180,
-                  width: double.infinity,
-                  child: ListView.separated(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.zero,
-                    itemCount: sortedCategories.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(width: 12),
-                    itemBuilder: (context, index) {
-                      final categoryData = sortedCategories[index];
-                      final percentage = totalExpenses > 0
-                          ? (categoryData.totalExpense / totalExpenses * 100)
-                          : 0.0;
-                      final ranking = index + 1;
-
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(16),
-                        onTap: () => context.pushNamed(
-                          CategoryPage.pageName,
-                          extra: categoryData.category,
-                        ),
-                        child: CategoryExpenseCard(
-                          category: categoryData.category,
-                          amount: categoryData.totalExpense,
-                          percentage: percentage,
-                          ranking: ranking,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-        ],
-      ),
+                const SizedBox(height: 12),
+              ],
+            ),
     );
   }
 }
@@ -529,8 +627,12 @@ class CategoryExpenseCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final categoryColor = HexColor.fromHex(category.color);
 
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
     return SizedBox(
-      width: 180,
+      width: isLandscape ? double.infinity : 180,
+      height: 180,
       child: Card(
         elevation: 2,
         shape: RoundedRectangleBorder(

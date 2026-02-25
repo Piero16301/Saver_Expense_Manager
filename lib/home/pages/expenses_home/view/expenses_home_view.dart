@@ -13,15 +13,23 @@ class ExpensesHomeView extends StatelessWidget {
     final user = auth.currentUser;
     final l10n = AppLocalizations.of(context);
     final database = getIt<DatabaseService>();
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return BlocBuilder<ExpensesHomeCubit, ExpensesHomeState>(
       builder: (context, state) => Column(
+        spacing: 16,
         children: [
-          MonthSelector(
-            monthSelected: state.monthSelected!,
-            onBack: () => context.read<ExpensesHomeCubit>().previousMonth(),
-            onForward: () => context.read<ExpensesHomeCubit>().nextMonth(),
-            onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
+          ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppVariables.tabletMaxWidth,
+            ),
+            child: MonthSelector(
+              monthSelected: state.monthSelected!,
+              onBack: () => context.read<ExpensesHomeCubit>().previousMonth(),
+              onForward: () => context.read<ExpensesHomeCubit>().nextMonth(),
+              onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
+            ),
           ),
           StreamBuilder<List<Movement>>(
             stream: database.getMonthMovementsStream(
@@ -46,23 +54,53 @@ class ExpensesHomeView extends StatelessWidget {
                 movements: snapshot.data!,
               );
 
+              Widget doughnutChart = DoughnutCircularChart(
+                data: data..sort((a, b) => b.value.compareTo(a.value)),
+                selectedIndex: state.selectedIndex,
+                onPointTap: (p0) => context
+                    .read<ExpensesHomeCubit>()
+                    .changeExplodeIndex(p0.pointIndex),
+              );
+
+              if (isLandscape) {
+                doughnutChart = Expanded(child: doughnutChart);
+              }
+
+              final charts = Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: isLandscape ? 16 : 0,
+                children: [
+                  TotalSpentChart(data: data),
+                  doughnutChart,
+                ],
+              );
+
+              final list = MovementsListChart(
+                expenseType: CategoryType.expense,
+                monthSelected: state.monthSelected!,
+              );
+
               return Expanded(
-                child: Column(
-                  children: [
-                    TotalSpentChart(data: data),
-                    DoughnutCircularChart(
-                      data: data..sort((a, b) => b.value.compareTo(a.value)),
-                      selectedIndex: state.selectedIndex,
-                      onPointTap: (p0) => context
-                          .read<ExpensesHomeCubit>()
-                          .changeExplodeIndex(p0.pointIndex),
-                    ),
-                    MovementsListChart(
-                      expenseType: CategoryType.expense,
-                      monthSelected: state.monthSelected!,
-                    ),
-                  ],
-                ),
+                child: isLandscape
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 16,
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 32),
+                              child: charts,
+                            ),
+                          ),
+                          list,
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          charts,
+                          list,
+                        ],
+                      ),
               );
             },
           ),
