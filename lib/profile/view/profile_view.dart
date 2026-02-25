@@ -60,216 +60,211 @@ class ProfileView extends StatelessWidget {
                   .any((p) => p.providerId == AppVariables.emailProvider);
 
               return Align(
-                  alignment: Alignment.topCenter,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(20),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: AppVariables.tabletMaxWidth,
-                      ),
-                      child: Column(
-                        children: [
-                          // User Avatar
-                          CircleAvatar(
-                            radius: 80,
-                            backgroundColor: Theme.of(context)
-                                .primaryColor
-                                .withValues(alpha: 0.1),
-                            child: user.photoURL == null
-                                ? Container(
-                                    width: 160,
-                                    height: 160,
-                                    foregroundDecoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        width: 5,
-                                      ),
-                                    ),
-                                    padding: const EdgeInsets.all(18),
-                                    child: HugeIcon(
-                                      icon: HugeIcons.strokeRoundedUser,
-                                      strokeWidth: 2,
+                alignment: Alignment.topCenter,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: AppVariables.tabletMaxWidth,
+                    ),
+                    child: Column(
+                      children: [
+                        // User Avatar
+                        CircleAvatar(
+                          radius: 80,
+                          backgroundColor: Theme.of(context)
+                              .primaryColor
+                              .withValues(alpha: 0.1),
+                          child: user.photoURL == null
+                              ? Container(
+                                  width: 160,
+                                  height: 160,
+                                  foregroundDecoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
                                       color:
                                           Theme.of(context).colorScheme.primary,
-                                    ),
-                                  )
-                                : Container(
-                                    width: 160,
-                                    height: 160,
-                                    foregroundDecoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        width: 5,
-                                      ),
-                                    ),
-                                    padding: const EdgeInsets.all(4),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(80),
-                                      child: Image.network(
-                                        AppFunctions.highResPicture(
-                                          url: user.photoURL,
-                                          resolution: ImageResolutionType.high,
-                                        ),
-                                        fit: BoxFit.cover,
-                                      ),
+                                      width: 5,
                                     ),
                                   ),
-                          ),
-                          const SizedBox(height: 20),
-
-                          // Name Section
-                          Row(
-                            spacing: 10,
-                            children: [
-                              if (state.isEditingName)
-                                Expanded(
-                                  child: AppTextField(
-                                    key: ValueKey(
-                                      state.isEditingName,
-                                    ),
-                                    label: l10n.nameLabel,
-                                    initialValue: state.userName.isEmpty
-                                        ? user.displayName
-                                        : state.userName,
-                                    hintText: l10n.enterNameHint,
-                                    onChanged: (value) => context
-                                        .read<ProfileCubit>()
-                                        .nameChanged(value),
+                                  padding: const EdgeInsets.all(18),
+                                  child: HugeIcon(
+                                    icon: HugeIcons.strokeRoundedUser,
+                                    strokeWidth: 2,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                   ),
                                 )
-                              else
-                                Expanded(
-                                  child: Text(
-                                    user.displayName ?? l10n.noName,
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                    overflow: TextOverflow.ellipsis,
+                              : Container(
+                                  width: 160,
+                                  height: 160,
+                                  foregroundDecoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      width: 5,
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(4),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(80),
+                                    child: Image.network(
+                                      AppFunctions.highResPicture(
+                                        url: user.photoURL,
+                                        resolution: ImageResolutionType.high,
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              if (state.isEditingName) ...[
-                                IconButton(
-                                  onPressed: () => context
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Name Section
+                        Row(
+                          spacing: 10,
+                          children: [
+                            if (state.isEditingName)
+                              Expanded(
+                                child: AppTextField(
+                                  key: ValueKey(
+                                    state.isEditingName,
+                                  ),
+                                  label: l10n.nameLabel,
+                                  initialValue: state.userName.isEmpty
+                                      ? user.displayName
+                                      : state.userName,
+                                  hintText: l10n.enterNameHint,
+                                  onChanged: (value) => context
                                       .read<ProfileCubit>()
-                                      .saveName(l10n),
-                                  icon: HugeIcon(
-                                    icon: HugeIcons
-                                        .strokeRoundedCheckmarkCircle01,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    size: 28,
-                                  ),
+                                      .nameChanged(value),
                                 ),
-                                IconButton(
-                                  onPressed: () => context
-                                      .read<ProfileCubit>()
-                                      .toggleEditingName(),
-                                  icon: HugeIcon(
-                                    icon: HugeIcons.strokeRoundedCancelCircle,
-                                    color: Theme.of(context).colorScheme.error,
-                                    size: 28,
-                                  ),
+                              )
+                            else
+                              Expanded(
+                                child: Text(
+                                  user.displayName ?? l10n.noName,
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ] else
-                                IconButton(
-                                  onPressed: () => context
-                                      .read<ProfileCubit>()
-                                      .toggleEditingName(),
-                                  icon: HugeIcon(
-                                    icon: HugeIcons.strokeRoundedEdit01,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    size: 28,
-                                  ),
+                              ),
+                            if (state.isEditingName) ...[
+                              IconButton(
+                                onPressed: () =>
+                                    context.read<ProfileCubit>().saveName(l10n),
+                                icon: HugeIcon(
+                                  icon:
+                                      HugeIcons.strokeRoundedCheckmarkCircle01,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 28,
                                 ),
+                              ),
+                              IconButton(
+                                onPressed: () => context
+                                    .read<ProfileCubit>()
+                                    .toggleEditingName(),
+                                icon: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedCancelCircle,
+                                  color: Theme.of(context).colorScheme.error,
+                                  size: 28,
+                                ),
+                              ),
+                            ] else
+                              IconButton(
+                                onPressed: () => context
+                                    .read<ProfileCubit>()
+                                    .toggleEditingName(),
+                                icon: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedEdit01,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 28,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Linked Accounts Section
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            l10n.linkedAccountsTitle,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Card(
+                          child: Column(
+                            children: [
+                              // Google Provider
+                              _ProviderListTile(
+                                icon: HugeIcons.strokeRoundedGoogle,
+                                title: l10n.googleProvider,
+                                isConnected: isGoogleLinked,
+                                subtitle: isGoogleLinked
+                                    ? providers
+                                        .firstWhere(
+                                          (p) =>
+                                              p.providerId ==
+                                              AppVariables.googleProvider,
+                                        )
+                                        .email!
+                                    : null,
+                                onLink: () => context
+                                    .read<ProfileCubit>()
+                                    .linkGoogle(l10n),
+                                onUnlink: () => _unlinkProvider(
+                                  context,
+                                  AppVariables.googleProvider,
+                                ),
+                              ),
+                              const Divider(height: 1),
+                              // Email Provider
+                              _ProviderListTile(
+                                icon: HugeIcons.strokeRoundedMail01,
+                                title: l10n.emailProvider,
+                                isConnected: isEmailLinked,
+                                subtitle: isEmailLinked
+                                    ? providers
+                                        .firstWhere(
+                                          (p) =>
+                                              p.providerId ==
+                                              AppVariables.emailProvider,
+                                        )
+                                        .email!
+                                    : null,
+                                onLink: () => _showLinkEmailDialog(context),
+                                onUnlink: () => _unlinkProvider(
+                                  context,
+                                  AppVariables.emailProvider,
+                                ),
+                              ),
                             ],
                           ),
-                          const SizedBox(height: 20),
-
-                          // Linked Accounts Section
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              l10n.linkedAccountsTitle,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                        ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          child: AppFilledButton(
+                            onPressed: () => _logout(context),
+                            icon: const HugeIcon(
+                              icon: HugeIcons.strokeRoundedLogout01,
+                              strokeWidth: 2,
                             ),
+                            label: l10n.logoutConfirm,
                           ),
-                          const SizedBox(height: 10),
-                          Card(
-                            child: Column(
-                              children: [
-                                // Google Provider
-                                _ProviderListTile(
-                                  icon: HugeIcons.strokeRoundedGoogle,
-                                  title: l10n.googleProvider,
-                                  isConnected: isGoogleLinked,
-                                  subtitle: isGoogleLinked
-                                      ? providers
-                                          .firstWhere(
-                                            (p) =>
-                                                p.providerId ==
-                                                AppVariables.googleProvider,
-                                          )
-                                          .email!
-                                      : null,
-                                  onLink: () => context
-                                      .read<ProfileCubit>()
-                                      .linkGoogle(l10n),
-                                  onUnlink: () => _unlinkProvider(
-                                    context,
-                                    AppVariables.googleProvider,
-                                  ),
-                                ),
-                                const Divider(height: 1),
-                                // Email Provider
-                                _ProviderListTile(
-                                  icon: HugeIcons.strokeRoundedMail01,
-                                  title: l10n.emailProvider,
-                                  isConnected: isEmailLinked,
-                                  subtitle: isEmailLinked
-                                      ? providers
-                                          .firstWhere(
-                                            (p) =>
-                                                p.providerId ==
-                                                AppVariables.emailProvider,
-                                          )
-                                          .email!
-                                      : null,
-                                  onLink: () => _showLinkEmailDialog(context),
-                                  onUnlink: () => _unlinkProvider(
-                                    context,
-                                    AppVariables.emailProvider,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            child: AppFilledButton(
-                              onPressed: () => _logout(context),
-                              icon: const HugeIcon(
-                                icon: HugeIcons.strokeRoundedLogout01,
-                                strokeWidth: 2,
-                              ),
-                              label: l10n.logoutConfirm,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ));
+                  ),
+                ),
+              );
             },
           ),
         ),
