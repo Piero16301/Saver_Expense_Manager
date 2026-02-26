@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class AppVariables {
   static const String appName = 'Saver';
@@ -10,11 +11,24 @@ class AppVariables {
   static const Color defaultBaseColor = Colors.green;
   static const String defaultFontFamily = 'Poppins';
   static const List<String> allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
+  static const List<String> imageExtensions = ['png', 'jpg', 'jpeg'];
+  static const String unsupportedLocalModelFile =
+      'UNSUPPORTED_LOCAL_MODEL_FILE';
 
   static final minDate = DateTime(2020);
   static const deafultMonthsTrend = 10;
   static const deafultMonthsResume = 4;
   static const maxDaysWarning = 7;
+  static const tabletMaxWidth = 500.0;
+  static const tabletMaxHeight = 400.0;
+
+  static const animationDuration = Duration(milliseconds: 400);
+  static const snackBarDuration = Duration(seconds: 5);
+  static const timeoutDuration = Duration(seconds: 5);
+  static const remoteConfigFetchTimeout = Duration(minutes: 1);
+  static const remoteConfigMinimumFetchInterval = Duration(hours: 1);
+
+  static final DateFormat formatDate = DateFormat('dd/MM/yyyy');
 
   static const String expensesTab = 'gastos';
   static const String movementsTab = 'movimientos';
@@ -38,6 +52,20 @@ class AppVariables {
   static Map<String, String> availableFonts = getAvailableFonts();
 
   static Map<String, String> getAvailableFonts() {
+    if (useTestFonts) {
+      return {
+        'Merriweather': 'Merriweather',
+        'Montserrat': 'Montserrat',
+        'Nunito': 'Nunito',
+        'Open Sans': 'Open Sans',
+        'Orbitron': 'Orbitron',
+        'Pacifico': 'Pacifico',
+        'Playfair Display': 'Playfair Display',
+        'Poppins': 'Poppins',
+        'Roboto': 'Roboto',
+        'Source Code Pro': 'Source Code Pro',
+      };
+    }
     return {
       'Merriweather': GoogleFonts.merriweather().fontFamily ?? 'Merriweather',
       'Montserrat': GoogleFonts.montserrat().fontFamily ?? 'Montserrat',

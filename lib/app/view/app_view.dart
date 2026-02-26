@@ -41,7 +41,7 @@ class _AppViewState extends State<AppView> {
           fontFamily: state.fontFamily,
         ),
         themeAnimationCurve: Curves.easeInOut,
-        themeAnimationDuration: const Duration(milliseconds: 500),
+        themeAnimationDuration: AppVariables.animationDuration,
         themeMode: state.theme,
       ),
     );

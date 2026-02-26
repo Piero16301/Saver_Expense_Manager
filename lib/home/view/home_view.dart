@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -29,12 +28,12 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final auth = getIt<AuthenticationService>();
     final darkTheme = Theme.of(context).brightness == Brightness.dark;
 
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      initialData: FirebaseAuth.instance.currentUser,
+    return StreamBuilder<AppUser?>(
+      stream: auth.authStateChanges,
+      initialData: auth.currentUser,
       builder: (context, snapshot) {
         if (snapshot.data == null) {
           return const SizedBox.shrink();
@@ -62,7 +61,7 @@ class HomeView extends StatelessWidget {
               actions: [
                 IconButton(
                   padding: EdgeInsets.zero,
-                  icon: user?.photoURL == null
+                  icon: snapshot.data?.photoURL == null
                       ? Container(
                           width: 34,
                           height: 34,
@@ -94,7 +93,9 @@ class HomeView extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(17),
                             child: Image.network(
-                              AppFunctions.highResPicture(url: user!.photoURL),
+                              AppFunctions.highResPicture(
+                                url: snapshot.data!.photoURL,
+                              ),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -108,9 +109,11 @@ class HomeView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
+                  duration: AppVariables.animationDuration,
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  ),
                   child: _getSelectedBody(
                     state.selectedIndex,
                   ),
@@ -252,9 +255,29 @@ class AddMovementBottomSheet extends StatelessWidget {
     );
 
     if (result != null) {
-      unawaited(loader.showLoading());
+      unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+
+      final hasInternet = await AppFunctions.hasInternetConnection();
+      final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+
+      unawaited(
+        loader.showLoading(
+          message:
+              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+        ),
+      );
 
       try {
+        if (modelType.isLocal &&
+            !AppVariables.imageExtensions
+                .contains(result.files.first.extension)) {
+          throw Exception(AppVariables.unsupportedLocalModelFile);
+        }
+
         final file = result.files.single;
         final ext = file.path!.split('.').last;
         final path = '${const Uuid().v4()}.$ext';
@@ -272,7 +295,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           language: language.toString(),
           mimeType: lookupMimeType(file.name) ?? 'application/pdf',
           bytes: bytes,
-          modelType: context.read<AppCubit>().state.receiptsModel,
+          modelType: modelType,
         );
 
         final results =
@@ -296,16 +319,24 @@ class AddMovementBottomSheet extends StatelessWidget {
             ),
           ),
         );
-      } on Exception catch (_) {
+      } on Exception catch (e) {
         if (loader.isLoading) {
           loader.hideLoading();
         }
         Navigator.of(context).pop();
-        AppFunctions.showSnackBar(
-          context,
-          message: l10n.genericError,
-          type: SnackBarType.error,
-        );
+        if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.invalidLocalModelFileInput,
+            type: SnackBarType.error,
+          );
+        } else {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.genericError,
+            type: SnackBarType.error,
+          );
+        }
       }
     }
   }
@@ -320,9 +351,29 @@ class AddMovementBottomSheet extends StatelessWidget {
     final files = await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
 
     if (files.isNotEmpty) {
-      unawaited(loader.showLoading());
+      unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+
+      final hasInternet = await AppFunctions.hasInternetConnection();
+      final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+
+      unawaited(
+        loader.showLoading(
+          message:
+              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+        ),
+      );
 
       try {
+        if (modelType.isLocal &&
+            !AppVariables.imageExtensions
+                .contains(files.first.split('.').last)) {
+          throw Exception(AppVariables.unsupportedLocalModelFile);
+        }
+
         final ext = files.first.split('.').last;
         final path = '${const Uuid().v4()}.$ext';
         final bytes = await File(files.first).readAsBytes();
@@ -339,7 +390,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           language: language.toString(),
           mimeType: lookupMimeType(files.first) ?? 'application/pdf',
           bytes: bytes,
-          modelType: context.read<AppCubit>().state.receiptsModel,
+          modelType: modelType,
         );
 
         final results =
@@ -361,16 +412,24 @@ class AddMovementBottomSheet extends StatelessWidget {
             attachments: uploadName != null ? [uploadName] : [],
           ),
         );
-      } on Exception catch (_) {
+      } on Exception catch (e) {
         if (loader.isLoading) {
           loader.hideLoading();
         }
         Navigator.of(context).pop();
-        AppFunctions.showSnackBar(
-          context,
-          message: l10n.genericError,
-          type: SnackBarType.error,
-        );
+        if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.invalidLocalModelFileInput,
+            type: SnackBarType.error,
+          );
+        } else {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.genericError,
+            type: SnackBarType.error,
+          );
+        }
       }
     }
   }

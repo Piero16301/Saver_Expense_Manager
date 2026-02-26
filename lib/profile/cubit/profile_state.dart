@@ -1,6 +1,16 @@
 part of 'profile_cubit.dart';
 
-enum ProfileStatus { initial, loading, success, failure }
+enum ProfileStatus {
+  initial,
+  loading,
+  success,
+  failure;
+
+  bool get isInitial => this == ProfileStatus.initial;
+  bool get isLoading => this == ProfileStatus.loading;
+  bool get isSuccess => this == ProfileStatus.success;
+  bool get isFailure => this == ProfileStatus.failure;
+}
 
 class ProfileState extends Equatable {
   const ProfileState({
@@ -12,14 +22,14 @@ class ProfileState extends Equatable {
   });
 
   final ProfileStatus status;
-  final User? user;
+  final AppUser? user;
   final String userName;
   final bool isEditingName;
   final String? errorMessage;
 
   ProfileState copyWith({
     ProfileStatus? status,
-    User? user,
+    AppUser? user,
     String? userName,
     bool? isEditingName,
     String? errorMessage,

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_pagination/firebase_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -17,13 +16,16 @@ class MovementsListChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final auth = getIt<AuthenticationService>();
+    final database = getIt<DatabaseService>();
+
     return Expanded(
       child: FirestorePagination(
         key: ValueKey('$expenseType-$monthSelected'),
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
-        query: AppFunctions.getExpenseTypeMovements(
-          userId: FirebaseAuth.instance.currentUser!.uid,
+        query: database.getExpenseTypeMovementsQuery(
+          userId: auth.currentUser!.uid,
           monthSelected: monthSelected,
           expenseType: expenseType,
         ),

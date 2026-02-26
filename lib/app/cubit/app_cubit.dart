@@ -43,24 +43,12 @@ class AppCubit extends Cubit<AppState> {
       fontFamily = defaultFont;
     }
 
-    final receiptsModel = localStorage.getReceiptsModel();
-    if (receiptsModel == null) {
-      localStorage.saveReceiptsModel(modelType: ModelType.cloud);
-    }
-
-    final expensesModel = localStorage.getExpensesModel();
-    if (expensesModel == null) {
-      localStorage.saveExpensesModel(modelType: ModelType.cloud);
-    }
-
     emit(
       state.copyWith(
         language: localStorage.getLanguage(),
         theme: localStorage.getTheme(),
         baseColor: localStorage.getBaseColor(),
         fontFamily: localStorage.getFontFamily(),
-        receiptsModel: localStorage.getReceiptsModel(),
-        expensesModel: localStorage.getExpensesModel(),
       ),
     );
   }
@@ -83,15 +71,5 @@ class AppCubit extends Cubit<AppState> {
   void changeFontFamily({required String fontFamily}) {
     localStorage.saveFontFamily(fontFamily: fontFamily);
     emit(state.copyWith(fontFamily: fontFamily));
-  }
-
-  void changeReceiptsModel({required ModelType modelType}) {
-    localStorage.saveReceiptsModel(modelType: modelType);
-    emit(state.copyWith(receiptsModel: modelType));
-  }
-
-  void changeExpensesModel({required ModelType modelType}) {
-    localStorage.saveExpensesModel(modelType: modelType);
-    emit(state.copyWith(expensesModel: modelType));
   }
 }

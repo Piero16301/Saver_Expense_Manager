@@ -2,18 +2,23 @@ import 'dart:typed_data';
 
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class AiService {
-  AiService({required RemoteConfigService remoteConfig}) {
+  AiService({
+    required RemoteConfigService remoteConfig,
+    required AuthenticationService authentication,
+    FirebaseAI? remoteModel,
+    GeminiNanoAndroid? localModel,
+  }) {
     _remoteConfig = remoteConfig;
-    _remoteModel = FirebaseAI.googleAI(
-      appCheck: FirebaseAppCheck.instance,
-      auth: FirebaseAuth.instance,
-    );
-    _localModel = GeminiNanoAndroid();
+    _remoteModel = remoteModel ??
+        FirebaseAI.googleAI(
+          appCheck: FirebaseAppCheck.instance,
+          auth: authentication.auth,
+        );
+    _localModel = localModel ?? GeminiNanoAndroid();
   }
 
   bool get isLocalModelAvailable => _isLocalModelAvailable;

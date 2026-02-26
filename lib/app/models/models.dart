@@ -1,3 +1,4 @@
+export 'app_user.dart';
 export 'category.dart';
 export 'category_data.dart';
 export 'category_expense_data.dart';

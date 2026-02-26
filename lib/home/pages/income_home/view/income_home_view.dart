@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -11,20 +9,30 @@ class IncomeHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final auth = getIt<AuthenticationService>();
+    final user = auth.currentUser;
     final l10n = AppLocalizations.of(context);
+    final database = getIt<DatabaseService>();
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return BlocBuilder<IncomeHomeCubit, IncomeHomeState>(
       builder: (context, state) => Column(
+        spacing: 16,
         children: [
-          MonthSelector(
-            monthSelected: state.monthSelected!,
-            onBack: () => context.read<IncomeHomeCubit>().previousMonth(),
-            onForward: () => context.read<IncomeHomeCubit>().nextMonth(),
-            onChangeMonth: context.read<IncomeHomeCubit>().changeMonth,
+          ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppVariables.tabletMaxWidth,
+            ),
+            child: MonthSelector(
+              monthSelected: state.monthSelected!,
+              onBack: () => context.read<IncomeHomeCubit>().previousMonth(),
+              onForward: () => context.read<IncomeHomeCubit>().nextMonth(),
+              onChangeMonth: context.read<IncomeHomeCubit>().changeMonth,
+            ),
           ),
-          StreamBuilder<QuerySnapshot>(
-            stream: AppFunctions.getMonthMovements(
+          StreamBuilder<List<Movement>>(
+            stream: database.getMonthMovementsStream(
               userId: user!.uid,
               monthSelected: state.monthSelected!,
               type: CategoryType.income,
@@ -36,32 +44,67 @@ class IncomeHomeView extends StatelessWidget {
                 );
               }
 
-              if (snapshot.data!.docs.isEmpty) {
+              if (snapshot.data!.isEmpty) {
                 return Expanded(child: Center(child: Text(l10n.homeNoIncomes)));
               }
 
               final data = AppFunctions.buildChartData(
-                docs: snapshot.data!.docs
-                    as List<QueryDocumentSnapshot<Map<String, dynamic>>>,
+                movements: snapshot.data!,
+              );
+
+              final Widget doughnutChart = DoughnutCircularChart(
+                data: data,
+                selectedIndex: state.selectedIndex,
+                onPointTap: (p0) => context
+                    .read<IncomeHomeCubit>()
+                    .changeExplodeIndex(p0.pointIndex),
+              );
+
+              final list = MovementsListChart(
+                expenseType: CategoryType.income,
+                monthSelected: state.monthSelected!,
               );
 
               return Expanded(
-                child: Column(
-                  children: [
-                    TotalSpentChart(data: data),
-                    DoughnutCircularChart(
-                      data: data,
-                      selectedIndex: state.selectedIndex,
-                      onPointTap: (p0) => context
-                          .read<IncomeHomeCubit>()
-                          .changeExplodeIndex(p0.pointIndex),
-                    ),
-                    MovementsListChart(
-                      expenseType: CategoryType.income,
-                      monthSelected: state.monthSelected!,
-                    ),
-                  ],
-                ),
+                child: isLandscape
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        spacing: 16,
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                spacing: isLandscape ? 16 : 0,
+                                children: [
+                                  TotalSpentChart(data: data),
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxHeight: AppVariables.tabletMaxHeight,
+                                    ),
+                                    child: doughnutChart,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          list,
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: isLandscape ? 16 : 0,
+                            children: [
+                              TotalSpentChart(data: data),
+                              doughnutChart,
+                            ],
+                          ),
+                          list,
+                        ],
+                      ),
               );
             },
           ),

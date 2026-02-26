@@ -3,20 +3,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 void main() {
-  group('AppLocalizationsX', () {
-    testWidgets('l10n returns AppLocalizations instance', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: Builder(
-            builder: (context) {
-              expect(context.l10n, isA<AppLocalizations>());
-              return const SizedBox();
-            },
-          ),
+  testWidgets('AppLocalizationsX returns l10n instance', (tester) async {
+    BuildContext? testContext;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (context) {
+            testContext = context;
+            return const Placeholder();
+          },
         ),
-      );
-    });
+      ),
+    );
+
+    expect(testContext, isNotNull);
+    final l10n = testContext!.l10n;
+    expect(l10n, isA<AppLocalizations>());
   });
 }

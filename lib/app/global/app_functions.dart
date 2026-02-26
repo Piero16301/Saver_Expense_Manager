@@ -1,6 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -21,6 +22,20 @@ class AppFunctions {
         return url.replaceAll('s96-c', 's400-c');
       case ImageResolutionType.high:
         return url.replaceAll('s96-c', 's600-c');
+    }
+  }
+
+  static Future<bool> hasInternetConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(AppVariables.timeoutDuration);
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
+    } on TimeoutException catch (_) {
+      return false;
+    } on Exception catch (_) {
+      return false;
     }
   }
 
@@ -91,7 +106,7 @@ class AppFunctions {
           borderRadius: BorderRadius.circular(12),
         ),
         margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 5),
+        duration: AppVariables.snackBarDuration,
       ),
     );
   }
@@ -100,61 +115,6 @@ class AppFunctions {
     final now = DateTime.now();
     final targetDate = DateTime(now.year, now.month - (month - 1));
     return targetDate;
-  }
-
-  static Stream<QuerySnapshot<Object?>>? getMonthMovements({
-    required String userId,
-    required DateTime monthSelected,
-    required CategoryType type,
-  }) {
-    return FirebaseFirestore.instance
-        .collection(AppVariables.movementsCollection)
-        .where('user', isEqualTo: userId)
-        .where('category.type', isEqualTo: type.value)
-        .where(
-          'date',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(
-            DateTime(monthSelected.year, monthSelected.month),
-          ),
-        )
-        .where(
-          'date',
-          isLessThan: Timestamp.fromDate(
-            DateTime(
-              monthSelected.month == 12
-                  ? monthSelected.year + 1
-                  : monthSelected.year,
-              monthSelected.month == 12 ? 1 : monthSelected.month + 1,
-            ),
-          ),
-        )
-        .snapshots();
-  }
-
-  static Stream<QuerySnapshot<Object?>>? getUserMovementsRange({
-    required String userId,
-    required DateTime startMonth,
-    required DateTime endMonth,
-  }) {
-    return FirebaseFirestore.instance
-        .collection(AppVariables.movementsCollection)
-        .where('user', isEqualTo: userId)
-        .where(
-          'date',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(
-            DateTime(startMonth.year, startMonth.month),
-          ),
-        )
-        .where(
-          'date',
-          isLessThan: Timestamp.fromDate(
-            DateTime(
-              endMonth.month == 12 ? endMonth.year + 1 : endMonth.year,
-              endMonth.month == 12 ? 1 : endMonth.month + 1,
-            ),
-          ),
-        )
-        .snapshots();
   }
 
   static (double, double, double, double) calculateIncomesAndExpenses({
@@ -230,93 +190,9 @@ class AppFunctions {
     return categoryExpenses;
   }
 
-  static Query<Map<String, dynamic>> getCategoryMovements({
-    required String userId,
-    required DateTime monthSelected,
-    required Category category,
-  }) {
-    return FirebaseFirestore.instance
-        .collection(AppVariables.movementsCollection)
-        .where('user', isEqualTo: userId)
-        .where('category.id', isEqualTo: category.id)
-        .where(
-          'date',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(
-            DateTime(monthSelected.year, monthSelected.month),
-          ),
-        )
-        .where(
-          'date',
-          isLessThan: Timestamp.fromDate(
-            DateTime(
-              monthSelected.month == 12
-                  ? monthSelected.year + 1
-                  : monthSelected.year,
-              monthSelected.month == 12 ? 1 : monthSelected.month + 1,
-            ),
-          ),
-        )
-        .orderBy('date', descending: true);
-  }
-
-  static Query<Map<String, dynamic>> getExpenseTypeMovements({
-    required String userId,
-    required DateTime monthSelected,
-    required CategoryType expenseType,
-  }) {
-    return FirebaseFirestore.instance
-        .collection(AppVariables.movementsCollection)
-        .where('user', isEqualTo: userId)
-        .where('category.type', isEqualTo: expenseType.value)
-        .where(
-          'date',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(
-            DateTime(monthSelected.year, monthSelected.month),
-          ),
-        )
-        .where(
-          'date',
-          isLessThan: Timestamp.fromDate(
-            DateTime(
-              monthSelected.month == 12
-                  ? monthSelected.year + 1
-                  : monthSelected.year,
-              monthSelected.month == 12 ? 1 : monthSelected.month + 1,
-            ),
-          ),
-        )
-        .orderBy('date', descending: true);
-  }
-
-  static Query<Map<String, dynamic>> getUserMovements({
-    required String userId,
-    required CategoryType? type,
-    required Category? category,
-  }) {
-    var query = FirebaseFirestore.instance
-        .collection(AppVariables.movementsCollection)
-        .where('user', isEqualTo: userId);
-
-    if (type != null) {
-      query = query.where(
-        'category.type',
-        isEqualTo: type == CategoryType.expense
-            ? CategoryType.expense.value
-            : CategoryType.income.value,
-      );
-    }
-
-    if (category != null) {
-      query = query.where('category.id', isEqualTo: category.id);
-    }
-
-    return query.orderBy('date', descending: true);
-  }
-
   static List<CategoryData> buildChartData({
-    required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+    required List<Movement> movements,
   }) {
-    final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
     final data = <CategoryData>[];
     final categories = <Category>[];
     for (final element in movements) {
@@ -336,41 +212,12 @@ class AppFunctions {
     return data..sort((a, b) => b.value.compareTo(a.value));
   }
 
-  static Stream<QuerySnapshot<Object?>>? getTrendChart({
-    required String userId,
-    required DateTime startMonth,
-    required DateTime endMonth,
-    required Category category,
-  }) {
-    return FirebaseFirestore.instance
-        .collection(AppVariables.movementsCollection)
-        .where('user', isEqualTo: userId)
-        .where('category.id', isEqualTo: category.id)
-        .where(
-          'date',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(
-            DateTime(startMonth.year, startMonth.month),
-          ),
-        )
-        .where(
-          'date',
-          isLessThan: Timestamp.fromDate(
-            DateTime(
-              endMonth.month == 12 ? endMonth.year + 1 : endMonth.year,
-              endMonth.month == 12 ? 1 : endMonth.month + 1,
-            ),
-          ),
-        )
-        .snapshots();
-  }
-
   static List<LinearChartData> buildTrendData({
-    required List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+    required List<Movement> movements,
     required DateTime startMonth,
     required DateTime endMonth,
     required String language,
   }) {
-    final movements = docs.map((e) => Movement.fromJson(e.data())).toList();
     final data = <LinearChartData>[];
     for (var i = startMonth;
         i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
@@ -529,6 +376,46 @@ class AppFunctions {
         .replaceAll('{{type}}', type)
         .replaceAll('{{language}}', language)
         .replaceAll('{{categories}}', categoriesStr);
+  }
+
+  static Future<List<String>?> getAntRecommendations({
+    required String userId,
+    required String language,
+  }) async {
+    final template = getIt<RemoteConfigService>().geminiPromptDetectAntExpense;
+    final lookbackDays = getIt<RemoteConfigService>().geminiAntLookbackDays;
+
+    final now = DateTime.now();
+    final fromDate = now.subtract(Duration(days: lookbackDays));
+
+    final movements = await getIt<DatabaseService>().getMovements(
+      userId: userId,
+      from: DateTime(fromDate.year, fromDate.month, fromDate.day),
+      to: DateTime(now.year, now.month, now.day, 23, 59, 59, 999),
+    );
+
+    final prompt = template
+        .replaceAll(
+          '{{transactions_list}}',
+          movements.map((e) => '- ${e.movementRecap}').join('\n'),
+        )
+        .replaceAll('{{language}}', language)
+        .replaceAll('{{lookbackDays}}', lookbackDays.toString());
+
+    String? response = '';
+    final aiService = getIt<AiService>();
+
+    if (aiService.isLocalModelAvailable) {
+      response = await aiService.generateContentLocal(
+        textPrompt: PromptPart.text(text: prompt),
+      );
+    } else {
+      response = await aiService.generateContentRemote(
+        prompt: [PromptPart.text(text: prompt)],
+      );
+    }
+
+    return response?.split('|||').map((e) => e.trim()).toList();
   }
 
   static String getCategoryName(String category, AppLocalizations l10n) {

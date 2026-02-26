@@ -1,7 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
@@ -9,130 +8,155 @@ class MockLocalStorageService extends Mock implements LocalStorageService {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  AppVariables.useTestFonts = true;
 
-  late MockLocalStorageService mockLocalStorageService;
+  group('AppState', () {
+    test('supports value equality', () {
+      expect(const AppState(), equals(const AppState()));
+    });
 
-  setUpAll(() {
-    registerFallbackValue(const Locale('en', 'US'));
-    registerFallbackValue(Colors.red);
-    registerFallbackValue(ThemeMode.light);
-    registerFallbackValue(ModelType.cloud);
-  });
+    test('copyWith returns correct instance', () {
+      const state = AppState();
+      const language = Locale('es', 'ES');
+      const theme = ThemeMode.dark;
+      const baseColor = Colors.red;
+      const fontFamily = 'Roboto';
 
-  setUp(() {
-    mockLocalStorageService = MockLocalStorageService();
-    GetIt.I.registerSingleton<LocalStorageService>(mockLocalStorageService);
-  });
+      expect(
+        state.copyWith(
+          language: language,
+          theme: theme,
+          baseColor: baseColor,
+          fontFamily: fontFamily,
+        ),
+        equals(
+          const AppState(
+            language: language,
+            theme: theme,
+            baseColor: baseColor,
+            fontFamily: fontFamily,
+          ),
+        ),
+      );
+    });
 
-  tearDown(() async {
-    await GetIt.I.reset();
+    test('copyWith uses original values if none provided', () {
+      const state = AppState();
+      expect(state.copyWith(), equals(state));
+    });
   });
 
   group('AppCubit', () {
-    test('initial state is AppState()', () {
-      expect(AppCubit().state, const AppState());
+    late MockLocalStorageService localStorage;
+
+    setUp(() {
+      localStorage = MockLocalStorageService();
+      TestWidgetsFlutterBinding.ensureInitialized();
+      getIt.registerSingleton<LocalStorageService>(localStorage);
+    });
+
+    tearDown(getIt.reset);
+
+    test('initial state is correct', () {
+      expect(AppCubit().state, equals(const AppState()));
     });
 
     group('initialLoad', () {
       blocTest<AppCubit, AppState>(
-        'emits state with values from LocalStorage when they exist',
-        setUp: () {
-          when(() => mockLocalStorageService.getLanguage()).thenReturn(
-            const Locale('es', 'ES'),
-          );
-          when(() => mockLocalStorageService.getTheme()).thenReturn(
-            ThemeMode.dark,
-          );
-          when(() => mockLocalStorageService.getBaseColor()).thenReturn(
-            Colors.red,
-          );
-          when(() => mockLocalStorageService.getFontFamily())
-              .thenReturn('Poppins');
+        'emits correct state and saves defaults when local storage is empty',
+        build: () {
+          when(() => localStorage.getLanguage()).thenReturn(null);
+          when(() => localStorage.getTheme()).thenReturn(null);
+          when(() => localStorage.getBaseColor()).thenReturn(null);
+          when(() => localStorage.getFontFamily()).thenReturn(null);
+
+          when(
+            () => localStorage.saveLanguage(
+              language: AppVariables.supportedLocales.first,
+            ),
+          ).thenAnswer((_) async {});
+          when(() => localStorage.saveTheme(theme: ThemeMode.system))
+              .thenAnswer((_) async {});
+          when(
+            () => localStorage.saveBaseColor(
+              baseColor: AppVariables.defaultBaseColor,
+            ),
+          ).thenAnswer((_) async {});
+          when(
+            () => localStorage.saveFontFamily(
+              fontFamily: AppVariables.defaultFontFamily,
+            ),
+          ).thenAnswer((_) async {});
+
+          return AppCubit();
         },
-        build: AppCubit.new,
+        act: (cubit) => cubit.initialLoad(),
+        expect: () => [const AppState()],
+        verify: (_) {
+          verify(
+            () => localStorage.saveLanguage(
+              language: AppVariables.supportedLocales.first,
+            ),
+          ).called(1);
+          verify(() => localStorage.saveTheme(theme: ThemeMode.system))
+              .called(1);
+          verify(
+            () => localStorage.saveBaseColor(
+              baseColor: AppVariables.defaultBaseColor,
+            ),
+          ).called(1);
+          verify(
+            () => localStorage.saveFontFamily(
+              fontFamily: AppVariables.defaultFontFamily,
+            ),
+          ).called(1);
+        },
+      );
+
+      blocTest<AppCubit, AppState>(
+        'emits correct state using stored values',
+        build: () {
+          const language = Locale('es', 'ES');
+          const theme = ThemeMode.dark;
+          const baseColor = Colors.red;
+          const fontFamily = 'Open Sans';
+
+          when(() => localStorage.getLanguage()).thenReturn(language);
+          when(() => localStorage.getTheme()).thenReturn(theme);
+          when(() => localStorage.getBaseColor()).thenReturn(baseColor);
+          when(() => localStorage.getFontFamily()).thenReturn(fontFamily);
+
+          return AppCubit();
+        },
         act: (cubit) => cubit.initialLoad(),
         expect: () => [
           const AppState(
             language: Locale('es', 'ES'),
             theme: ThemeMode.dark,
             baseColor: Colors.red,
+            fontFamily: 'Open Sans',
           ),
         ],
-      );
-
-      blocTest<AppCubit, AppState>(
-        'saves and emits default values when LocalStorage is empty',
-        setUp: () {
-          when(() => mockLocalStorageService.getLanguage()).thenReturn(null);
-          when(
-            () => mockLocalStorageService.saveLanguage(
-              language: any(named: 'language'),
-            ),
-          ).thenReturn(null);
-
-          when(() => mockLocalStorageService.getTheme()).thenReturn(null);
-          when(
-            () => mockLocalStorageService.saveTheme(theme: any(named: 'theme')),
-          ).thenReturn(null);
-
-          when(() => mockLocalStorageService.getBaseColor()).thenReturn(null);
-          when(
-            () => mockLocalStorageService.saveBaseColor(
-              baseColor: any(named: 'baseColor'),
-            ),
-          ).thenReturn(null);
-
-          when(() => mockLocalStorageService.getFontFamily()).thenReturn(null);
-          when(
-            () => mockLocalStorageService.saveFontFamily(
-              fontFamily: any(named: 'fontFamily'),
-            ),
-          ).thenReturn(null);
-        },
-        build: AppCubit.new,
-        act: (cubit) => cubit.initialLoad(),
-        verify: (_) {
-          verify(
-            () => mockLocalStorageService.saveLanguage(
-              language: any(named: 'language'),
-            ),
-          ).called(1);
-          verify(
-            () => mockLocalStorageService.saveTheme(theme: any(named: 'theme')),
-          ).called(1);
-          verify(
-            () => mockLocalStorageService.saveBaseColor(
-              baseColor: any(named: 'baseColor'),
-            ),
-          ).called(1);
-          verify(
-            () => mockLocalStorageService.saveFontFamily(
-              fontFamily: any(named: 'fontFamily'),
-            ),
-          ).called(1);
-        },
       );
     });
 
     group('changeLanguage', () {
       blocTest<AppCubit, AppState>(
-        'calls saveLanguage and emits new state',
-        setUp: () {
+        'emits correct state and calls localStorage',
+        build: () {
           when(
-            () => mockLocalStorageService.saveLanguage(
-              language: const Locale('fr', 'FR'),
-            ),
-          ).thenReturn(null);
+            () => localStorage.saveLanguage(language: const Locale('es', 'ES')),
+          ).thenAnswer((_) async {});
+          return AppCubit();
         },
-        build: AppCubit.new,
         act: (cubit) =>
-            cubit.changeLanguage(language: const Locale('fr', 'FR')),
-        expect: () => [const AppState(language: Locale('fr', 'FR'))],
+            cubit.changeLanguage(language: const Locale('es', 'ES')),
+        expect: () => [
+          const AppState(language: Locale('es', 'ES')),
+        ],
         verify: (_) {
           verify(
-            () => mockLocalStorageService.saveLanguage(
-              language: const Locale('fr', 'FR'),
-            ),
+            () => localStorage.saveLanguage(language: const Locale('es', 'ES')),
           ).called(1);
         },
       );
@@ -140,108 +164,56 @@ void main() {
 
     group('changeTheme', () {
       blocTest<AppCubit, AppState>(
-        'calls saveTheme and emits new state',
-        setUp: () {
-          when(() => mockLocalStorageService.saveTheme(theme: ThemeMode.dark))
-              .thenReturn(null);
+        'emits correct state and calls localStorage',
+        build: () {
+          when(() => localStorage.saveTheme(theme: ThemeMode.dark))
+              .thenAnswer((_) async {});
+          return AppCubit();
         },
-        build: AppCubit.new,
         act: (cubit) => cubit.changeTheme(theme: ThemeMode.dark),
-        expect: () => [const AppState(theme: ThemeMode.dark)],
+        expect: () => [
+          const AppState(theme: ThemeMode.dark),
+        ],
         verify: (_) {
-          verify(() => mockLocalStorageService.saveTheme(theme: ThemeMode.dark))
-              .called(1);
+          verify(() => localStorage.saveTheme(theme: ThemeMode.dark)).called(1);
         },
       );
     });
 
     group('changeBaseColor', () {
       blocTest<AppCubit, AppState>(
-        'calls saveBaseColor and emits new state',
-        setUp: () {
-          when(
-            () => mockLocalStorageService.saveBaseColor(
-              baseColor: Colors.green,
-            ),
-          ).thenReturn(null);
+        'emits correct state and calls localStorage',
+        build: () {
+          when(() => localStorage.saveBaseColor(baseColor: Colors.red))
+              .thenAnswer((_) async {});
+          return AppCubit();
         },
-        build: AppCubit.new,
-        act: (cubit) => cubit.changeBaseColor(baseColor: Colors.green),
-        expect: () => [const AppState()],
+        act: (cubit) => cubit.changeBaseColor(baseColor: Colors.red),
+        expect: () => [
+          const AppState(baseColor: Colors.red),
+        ],
         verify: (_) {
-          verify(
-            () =>
-                mockLocalStorageService.saveBaseColor(baseColor: Colors.green),
-          ).called(1);
+          verify(() => localStorage.saveBaseColor(baseColor: Colors.red))
+              .called(1);
         },
       );
     });
 
     group('changeFontFamily', () {
       blocTest<AppCubit, AppState>(
-        'calls saveFontFamily and emits new state',
-        setUp: () {
-          when(
-            () => mockLocalStorageService.saveFontFamily(
-              fontFamily: 'Open Sans',
-            ),
-          ).thenReturn(null);
+        'emits correct state and calls localStorage',
+        build: () {
+          when(() => localStorage.saveFontFamily(fontFamily: 'Merriweather'))
+              .thenAnswer((_) async {});
+          return AppCubit();
         },
-        build: AppCubit.new,
-        act: (cubit) => cubit.changeFontFamily(fontFamily: 'Open Sans'),
-        expect: () => [const AppState(fontFamily: 'Open Sans')],
+        act: (cubit) => cubit.changeFontFamily(fontFamily: 'Merriweather'),
+        expect: () => [
+          const AppState(fontFamily: 'Merriweather'),
+        ],
         verify: (_) {
-          verify(
-            () => mockLocalStorageService.saveFontFamily(
-              fontFamily: 'Open Sans',
-            ),
-          ).called(1);
-        },
-      );
-    });
-
-    group('changeReceiptsModel', () {
-      blocTest<AppCubit, AppState>(
-        'calls saveReceiptsModel and emits new state',
-        setUp: () {
-          when(
-            () => mockLocalStorageService.saveReceiptsModel(
-              modelType: ModelType.local,
-            ),
-          ).thenReturn(null);
-        },
-        build: AppCubit.new,
-        act: (cubit) => cubit.changeReceiptsModel(modelType: ModelType.local),
-        expect: () => [const AppState(receiptsModel: ModelType.local)],
-        verify: (_) {
-          verify(
-            () => mockLocalStorageService.saveReceiptsModel(
-              modelType: ModelType.local,
-            ),
-          ).called(1);
-        },
-      );
-    });
-
-    group('changeExpensesModel', () {
-      blocTest<AppCubit, AppState>(
-        'calls saveExpensesModel and emits new state',
-        setUp: () {
-          when(
-            () => mockLocalStorageService.saveExpensesModel(
-              modelType: ModelType.local,
-            ),
-          ).thenReturn(null);
-        },
-        build: AppCubit.new,
-        act: (cubit) => cubit.changeExpensesModel(modelType: ModelType.local),
-        expect: () => [const AppState(expensesModel: ModelType.local)],
-        verify: (_) {
-          verify(
-            () => mockLocalStorageService.saveExpensesModel(
-              modelType: ModelType.local,
-            ),
-          ).called(1);
+          verify(() => localStorage.saveFontFamily(fontFamily: 'Merriweather'))
+              .called(1);
         },
       );
     });

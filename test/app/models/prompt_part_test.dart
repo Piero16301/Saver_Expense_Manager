@@ -6,36 +6,34 @@ import 'package:saver_expense_manager/app/models/prompt_part.dart';
 void main() {
   group('PromptPart', () {
     test('text constructor creates correct instance', () {
-      const text = 'Hello world';
-      final promptPart = PromptPart.text(text: text);
+      final part = PromptPart.text(text: 'Hello');
 
-      expect(promptPart.type, PromptPartType.text);
-      expect(promptPart.text, text);
-      expect(promptPart.mimeType, isNull);
-      expect(promptPart.bytes, isNull);
+      expect(part.type, equals(PromptPartType.text));
+      expect(part.text, equals('Hello'));
+      expect(part.mimeType, isNull);
+      expect(part.bytes, isNull);
     });
 
     test('file constructor creates correct instance', () {
-      const mimeType = 'image/png';
       final bytes = Uint8List.fromList([1, 2, 3]);
-      final promptPart = PromptPart.file(mimeType: mimeType, bytes: bytes);
+      final part = PromptPart.file(mimeType: 'image/jpeg', bytes: bytes);
 
-      expect(promptPart.type, PromptPartType.file);
-      expect(promptPart.mimeType, mimeType);
-      expect(promptPart.bytes, bytes);
-      expect(promptPart.text, isNull);
+      expect(part.type, equals(PromptPartType.file));
+      expect(part.mimeType, equals('image/jpeg'));
+      expect(part.bytes, equals(bytes));
+      expect(part.text, isNull);
     });
   });
 
   group('PromptPartType', () {
-    test('isText returns true for text type', () {
+    test('isText returns true only for text', () {
       expect(PromptPartType.text.isText, isTrue);
-      expect(PromptPartType.text.isFile, isFalse);
+      expect(PromptPartType.file.isText, isFalse);
     });
 
-    test('isFile returns true for file type', () {
+    test('isFile returns true only for file', () {
       expect(PromptPartType.file.isFile, isTrue);
-      expect(PromptPartType.file.isText, isFalse);
+      expect(PromptPartType.text.isFile, isFalse);
     });
   });
 }

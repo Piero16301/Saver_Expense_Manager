@@ -1,17 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:saver_expense_manager/app/models/models.dart';
 import 'package:saver_expense_manager/firebase_options.dart';
 
 class AuthenticationService {
-  AuthenticationService() : _auth = FirebaseAuth.instance;
+  AuthenticationService({
+    FirebaseAuth? firebaseAuth,
+    GoogleSignIn? googleSignIn,
+  })  : _auth = firebaseAuth ?? FirebaseAuth.instance,
+        _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
 
   final FirebaseAuth _auth;
+  final GoogleSignIn _googleSignIn;
 
   FirebaseAuth get auth => _auth;
 
   Future<void> initialize() async {
     try {
-      await GoogleSignIn.instance.initialize(
+      await _googleSignIn.initialize(
         serverClientId: DefaultFirebaseOptions.googleClientId,
       );
     } on Exception catch (_) {
@@ -19,10 +25,15 @@ class AuthenticationService {
     }
   }
 
-  Stream<User?> get userChanges => _auth.userChanges();
-
-  User? get currentUser => _auth.currentUser;
-
+  Stream<AppUser?> get userChanges => _auth
+      .userChanges()
+      .map((u) => u == null ? null : AppUser.fromFirebaseUser(u));
+  Stream<AppUser?> get authStateChanges => _auth
+      .authStateChanges()
+      .map((u) => u == null ? null : AppUser.fromFirebaseUser(u));
+  AppUser? get currentUser => _auth.currentUser == null
+      ? null
+      : AppUser.fromFirebaseUser(_auth.currentUser!);
   bool get isLoggedIn => currentUser != null;
 
   Future<void> updateDisplayName(String newName) async {
@@ -43,19 +54,16 @@ class AuthenticationService {
 
   Future<UserCredential?> linkWithGoogle() async {
     try {
-      final googleUser = await GoogleSignIn.instance.authenticate();
+      final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
 
-      if (googleAuth.idToken != null) {
-        final credential = GoogleAuthProvider.credential(
-          idToken: googleAuth.idToken,
-        );
-        return await _auth.currentUser?.linkWithCredential(credential);
-      }
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      return await _auth.currentUser?.linkWithCredential(credential);
     } catch (e) {
       rethrow;
     }
-    return null;
   }
 
   Future<UserCredential?> linkWithEmailPassword({
@@ -69,19 +77,16 @@ class AuthenticationService {
 
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final googleUser = await GoogleSignIn.instance.authenticate();
+      final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
 
-      if (googleAuth.idToken != null) {
-        final credential = GoogleAuthProvider.credential(
-          idToken: googleAuth.idToken,
-        );
-        return await _auth.signInWithCredential(credential);
-      }
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+      return await _auth.signInWithCredential(credential);
     } catch (e) {
       rethrow;
     }
-    return null;
   }
 
   Future<UserCredential> signInWithEmailAndPassword(

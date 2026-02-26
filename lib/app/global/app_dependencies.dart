@@ -5,11 +5,15 @@ final GetIt getIt = GetIt.instance;
 
 void setupServiceLocator() {
   getIt
-    ..registerLazySingleton<RemoteStorageService>(RemoteStorageService.new)
     ..registerLazySingleton<AuthenticationService>(AuthenticationService.new)
-    ..registerLazySingleton<RemoteConfigService>(RemoteConfigService.new)
+    ..registerLazySingleton<DatabaseService>(DatabaseService.new)
     ..registerLazySingleton<LocalStorageService>(LocalStorageService.new)
+    ..registerLazySingleton<RemoteStorageService>(RemoteStorageService.new)
+    ..registerLazySingleton<RemoteConfigService>(RemoteConfigService.new)
     ..registerLazySingleton<AiService>(
-      () => AiService(remoteConfig: getIt<RemoteConfigService>()),
+      () => AiService(
+        remoteConfig: getIt<RemoteConfigService>(),
+        authentication: getIt<AuthenticationService>(),
+      ),
     );
 }

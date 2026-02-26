@@ -1,6 +1,7 @@
 // services/remote_config_service.dart
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 class RemoteConfigService {
   RemoteConfigService({FirebaseRemoteConfig? remoteConfig})
@@ -21,6 +22,8 @@ class RemoteConfigService {
       'config_gemini_prompt_extract_receipt_data';
   static const String _configGeminiPromptDetectAntExpense =
       'config_gemini_prompt_detect_ant_expense';
+  static const String _configGeminiAntLookbackDays =
+      'config_gemini_ant_lookback_days';
 
   Future<void> initialize() async {
     await _remoteConfig.setDefaults({
@@ -32,14 +35,16 @@ class RemoteConfigService {
           'config_gemini_prompt_extract_receipt_data',
       _configGeminiPromptDetectAntExpense:
           'config_gemini_prompt_detect_ant_expense',
+      _configGeminiAntLookbackDays: 30,
     });
 
     try {
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
-          fetchTimeout: const Duration(minutes: 1),
-          minimumFetchInterval:
-              kDebugMode ? Duration.zero : const Duration(hours: 1),
+          fetchTimeout: AppVariables.remoteConfigFetchTimeout,
+          minimumFetchInterval: kDebugMode
+              ? Duration.zero
+              : AppVariables.remoteConfigMinimumFetchInterval,
         ),
       );
       await _remoteConfig.fetchAndActivate();
@@ -56,4 +61,6 @@ class RemoteConfigService {
       _remoteConfig.getString(_configGeminiPromptExtractReceiptData);
   String get geminiPromptDetectAntExpense =>
       _remoteConfig.getString(_configGeminiPromptDetectAntExpense);
+  int get geminiAntLookbackDays =>
+      _remoteConfig.getInt(_configGeminiAntLookbackDays);
 }

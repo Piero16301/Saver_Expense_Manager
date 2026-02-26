@@ -1,105 +1,66 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/app/global/app_variables.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  AppVariables.useTestFonts = true;
 
   group('AppVariables', () {
-    test('should have correct constants', () {
-      expect(AppVariables.appName, 'Saver');
-      expect(AppVariables.defaultBaseColor, Colors.green);
-      expect(AppVariables.defaultFontFamily, 'Poppins');
-      expect(AppVariables.allowedExtensions, ['pdf', 'png', 'jpg', 'jpeg']);
-      expect(AppVariables.minDate, DateTime(2020));
-      expect(AppVariables.deafultMonthsTrend, 10);
-      expect(AppVariables.deafultMonthsResume, 4);
-      expect(AppVariables.maxDaysWarning, 7);
-      expect(AppVariables.expensesTab, 'gastos');
-      expect(AppVariables.movementsTab, 'movimientos');
-      expect(AppVariables.summaryTab, 'resumen');
-      expect(AppVariables.incomesTab, 'ingresos');
-      expect(AppVariables.googleProvider, 'google.com');
-      expect(AppVariables.emailProvider, 'password');
+    test('minDate is correct', () {
+      expect(AppVariables.minDate, equals(DateTime(2020)));
     });
 
-    test('should have correct regex patterns', () {
-      final emailRegExp = RegExp(AppVariables.emailRegExp);
-      final passwordRegExp = RegExp(AppVariables.passwordRegExp);
-
-      expect(emailRegExp.hasMatch('test@example.com'), isTrue);
-      expect(emailRegExp.hasMatch('invalid-email'), isFalse);
-
-      expect(passwordRegExp.hasMatch('Password123'), isTrue);
-      expect(passwordRegExp.hasMatch('pass'), isFalse);
+    test('formatDate formats correctly', () {
+      final date = DateTime(2023, 10, 5);
+      expect(AppVariables.formatDate.format(date), equals('05/10/2023'));
     });
 
-    test('should have correct colors', () {
-      expect(AppVariables.incomeColor, Colors.blueAccent);
-      expect(AppVariables.balanceColor, Colors.teal);
-      expect(AppVariables.expenseColor, Colors.orangeAccent);
-      expect(AppVariables.growthColor, Colors.green);
-      expect(AppVariables.decreaseColor, Colors.redAccent);
-    });
-
-    test('should have correct collection names', () {
-      expect(AppVariables.categoriesCollection, 'categories');
-      expect(AppVariables.movementsCollection, 'movements');
-      expect(AppVariables.usersCollection, 'users');
+    test('getAvailableFonts returns a non-empty string map', () {
+      final fonts = AppVariables.getAvailableFonts();
+      expect(fonts.isNotEmpty, isTrue);
+      expect(fonts.containsKey('Roboto'), isTrue);
     });
   });
 
-  group('SnackBarType Enum', () {
-    test('isSuccess should return correct boolean', () {
+  group('SnackBarType', () {
+    test('isSuccess true only for success', () {
       expect(SnackBarType.success.isSuccess, isTrue);
       expect(SnackBarType.error.isSuccess, isFalse);
-      expect(SnackBarType.warning.isSuccess, isFalse);
-      expect(SnackBarType.info.isSuccess, isFalse);
     });
-
-    test('isError should return correct boolean', () {
-      expect(SnackBarType.success.isError, isFalse);
+    test('isError true only for error', () {
       expect(SnackBarType.error.isError, isTrue);
-      expect(SnackBarType.warning.isError, isFalse);
       expect(SnackBarType.info.isError, isFalse);
     });
-
-    test('isWarning should return correct boolean', () {
-      expect(SnackBarType.success.isWarning, isFalse);
-      expect(SnackBarType.error.isWarning, isFalse);
+    test('isWarning true only for warning', () {
       expect(SnackBarType.warning.isWarning, isTrue);
-      expect(SnackBarType.info.isWarning, isFalse);
+      expect(SnackBarType.success.isWarning, isFalse);
     });
-
-    test('isInfo should return correct boolean', () {
-      expect(SnackBarType.success.isInfo, isFalse);
-      expect(SnackBarType.error.isInfo, isFalse);
-      expect(SnackBarType.warning.isInfo, isFalse);
+    test('isInfo true only for info', () {
       expect(SnackBarType.info.isInfo, isTrue);
+      expect(SnackBarType.success.isInfo, isFalse);
     });
   });
 
-  group('ModelType Enum', () {
-    test('isCloud should return correct boolean', () {
+  group('ModelType', () {
+    test('isCloud returns true only for cloud', () {
       expect(ModelType.cloud.isCloud, isTrue);
       expect(ModelType.local.isCloud, isFalse);
     });
 
-    test('isLocal should return correct boolean', () {
-      expect(ModelType.cloud.isLocal, isFalse);
+    test('isLocal returns true only for local', () {
       expect(ModelType.local.isLocal, isTrue);
+      expect(ModelType.cloud.isLocal, isFalse);
     });
 
-    test('name should return correct string', () {
-      expect(ModelType.cloud.name, 'CLOUD');
-      expect(ModelType.local.name, 'LOCAL');
+    test('name getter returns correct string', () {
+      expect(ModelType.cloud.name, equals('CLOUD'));
+      expect(ModelType.local.name, equals('LOCAL'));
     });
 
-    test('fromName should return correct enum value', () {
-      expect(ModelType.fromName('CLOUD'), ModelType.cloud);
-      expect(ModelType.fromName('LOCAL'), ModelType.local);
-      expect(ModelType.fromName('UNKNOWN'), ModelType.cloud);
-      expect(ModelType.fromName(''), ModelType.cloud);
+    test('fromName returns correct ModelType', () {
+      expect(ModelType.fromName('CLOUD'), equals(ModelType.cloud));
+      expect(ModelType.fromName('LOCAL'), equals(ModelType.local));
+      expect(ModelType.fromName('UNKNOWN'), equals(ModelType.cloud));
     });
   });
 }

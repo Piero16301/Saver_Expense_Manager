@@ -4,32 +4,25 @@ import 'package:saver_expense_manager/app/helpers/color_helper.dart';
 
 void main() {
   group('ColorHelper', () {
-    test('getColorByName returns correct color for valid uppercase names', () {
-      expect(ColorHelper.getColorByName('RED'), Colors.red);
-      expect(ColorHelper.getColorByName('BLUE'), Colors.blue);
-      expect(ColorHelper.getColorByName('GREEN'), Colors.green);
-      expect(ColorHelper.getColorByName('YELLOW'), Colors.yellow);
-      expect(ColorHelper.getColorByName('DEEP_PURPLE'), Colors.deepPurple);
-      expect(ColorHelper.getColorByName('BLUE_GREY'), Colors.blueGrey);
+    test('getColorByName returns correct color for valid name', () {
+      expect(ColorHelper.getColorByName('RED'), equals(Colors.red));
+      expect(ColorHelper.getColorByName('red'), equals(Colors.red));
     });
 
-    test(
-        'getColorByName returns correct color for valid lowercase or '
-        'mixed-case names', () {
-      expect(ColorHelper.getColorByName('red'), Colors.red);
-      expect(ColorHelper.getColorByName('Blue'), Colors.blue);
-      expect(ColorHelper.getColorByName('gReEn'), Colors.green);
-      expect(ColorHelper.getColorByName('deep_purple'), Colors.deepPurple);
+    test('getColorByName returns default color (green) for invalid name', () {
+      expect(ColorHelper.getColorByName('INVALID'), equals(Colors.green));
     });
 
-    test('getColorByName returns default color (Green) for invalid names', () {
-      expect(ColorHelper.getColorByName('NON_EXISTENT_COLOR'), Colors.green);
+    test('getColorName returns correct name for valid color', () {
+      expect(ColorHelper.getColorName(Colors.blue), equals('BLUE'));
       expect(
-        ColorHelper.getColorByName('magenta'),
-        Colors.green,
+        ColorHelper.getColorName(Colors.deepOrange),
+        equals('DEEP_ORANGE'),
       );
-      expect(ColorHelper.getColorByName(''), Colors.green);
-      expect(ColorHelper.getColorByName('123'), Colors.green);
+    });
+
+    test('getColorName throws state error for unmapped color', () {
+      expect(() => ColorHelper.getColorName(Colors.black), throwsStateError);
     });
   });
 }

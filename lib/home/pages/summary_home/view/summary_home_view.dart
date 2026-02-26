@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -21,10 +20,13 @@ class SummaryHomeView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final remoteConfig = getIt<RemoteConfigService>();
     final auth = getIt<AuthenticationService>().auth;
+    final database = getIt<DatabaseService>();
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
-      builder: (context, state) => StreamBuilder<QuerySnapshot>(
-        stream: AppFunctions.getUserMovementsRange(
+      builder: (context, state) => StreamBuilder<List<Movement>>(
+        stream: database.getUserMovementsRangeStream(
           userId: auth.currentUser!.uid,
           startMonth: state.startMonth!,
           endMonth: state.endMonth!,
@@ -34,45 +36,101 @@ class SummaryHomeView extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (snapshot.data!.docs.isEmpty) {
+          if (snapshot.data!.isEmpty) {
             return Center(child: Text(l10n.movementsNoData));
           }
 
-          final docs = snapshot.data!.docs
-              as List<QueryDocumentSnapshot<Map<String, dynamic>>>;
-          final movements =
-              docs.map((e) => Movement.fromJson(e.data())).toList();
+          final movements = snapshot.data!;
+
+          final monthSelector = ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppVariables.tabletMaxWidth,
+            ),
+            child: MonthRangeSelector(
+              startMonth: state.startMonth!,
+              endMonth: state.endMonth!,
+              onChangeStartMonth: (date) =>
+                  context.read<SummaryHomeCubit>().changeStartMonth(date),
+              onChangeEndMonth: (date) =>
+                  context.read<SummaryHomeCubit>().changeEndMonth(date),
+            ),
+          );
+
+          final resumeMovementsChart = ResumeMovementsChart(
+            movements: movements,
+            endMonth: state.endMonth!,
+            selResumeItems: state.selResumeItems,
+            onChangeResumeItems: (type) =>
+                context.read<SummaryHomeCubit>().toggleResumeItem(type),
+          );
+
+          final incomesAndExpensesChart = IncomesAndExpensesChart(
+            movements: movements,
+            startMonth: state.startMonth!,
+            endMonth: state.endMonth!,
+            selResumeItems: state.selResumeItems,
+          );
+
+          final charts = isLandscape
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: 16,
+                  children: [
+                    if (remoteConfig.isHomeSummaryCardsVisible)
+                      SizedBox(
+                        width: 150,
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: resumeMovementsChart,
+                        ),
+                      ),
+                    incomesAndExpensesChart,
+                  ],
+                )
+              : Column(
+                  spacing: 16,
+                  children: [
+                    if (remoteConfig.isHomeSummaryCardsVisible)
+                      resumeMovementsChart,
+                    incomesAndExpensesChart,
+                  ],
+                );
+
+          final categoriesCard = remoteConfig.isHomeTopCategoriesVisible
+              ? CategoriesResumeCards(
+                  movements: movements,
+                  categories: categories,
+                )
+              : const SizedBox.shrink();
 
           return Column(
             spacing: 16,
             children: [
-              MonthRangeSelector(
-                startMonth: state.startMonth!,
-                endMonth: state.endMonth!,
-                onChangeStartMonth: (date) =>
-                    context.read<SummaryHomeCubit>().changeStartMonth(date),
-                onChangeEndMonth: (date) =>
-                    context.read<SummaryHomeCubit>().changeEndMonth(date),
+              monthSelector,
+              Expanded(
+                child: isLandscape
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        spacing: 16,
+                        children: [
+                          Expanded(
+                            child: charts,
+                          ),
+                          if (remoteConfig.isHomeTopCategoriesVisible)
+                            SizedBox(
+                              width: 200,
+                              child: categoriesCard,
+                            ),
+                        ],
+                      )
+                    : Column(
+                        spacing: 16,
+                        children: [
+                          Expanded(child: charts),
+                          categoriesCard,
+                        ],
+                      ),
               ),
-              if (remoteConfig.isHomeSummaryCardsVisible)
-                ResumeMovementsChart(
-                  movements: movements,
-                  endMonth: state.endMonth!,
-                  selResumeItems: state.selResumeItems,
-                  onChangeResumeItems: (type) =>
-                      context.read<SummaryHomeCubit>().toggleResumeItem(type),
-                ),
-              IncomesAndExpensesChart(
-                movements: movements,
-                startMonth: state.startMonth!,
-                endMonth: state.endMonth!,
-                selResumeItems: state.selResumeItems,
-              ),
-              if (remoteConfig.isHomeTopCategoriesVisible)
-                CategoriesResumeCards(
-                  movements: movements,
-                  categories: categories,
-                ),
             ],
           );
         },
@@ -112,50 +170,61 @@ class ResumeMovementsChart extends StatelessWidget {
       currentMonthIncomes - currentMonthExpenses,
     );
 
-    return Row(
-      spacing: 8,
-      children: [
-        ResumeItemCardMovements(
-          type: ResumeItemType.income,
-          value: currentMonthIncomes,
-          difference: pastMonthIncomes == 0
-              ? (currentMonthIncomes > 0 ? 100 : 0)
-              : ((currentMonthIncomes - pastMonthIncomes) /
-                      pastMonthIncomes *
-                      100)
-                  .roundToDouble(),
-          color: AppVariables.incomeColor,
-          isSelected: selResumeItems[ResumeItemType.income] ?? true,
-          onTap: onChangeResumeItems,
-        ),
-        ResumeItemCardMovements(
-          type: ResumeItemType.balance,
-          value: currentMonthIncomes - currentMonthExpenses,
-          difference: pastMonthBalance == 0
-              ? (currentMonthBalance > 0 ? 100 : 0)
-              : ((currentMonthBalance - pastMonthBalance) /
-                      pastMonthBalance *
-                      100)
-                  .roundToDouble(),
-          color: AppVariables.balanceColor,
-          isSelected: selResumeItems[ResumeItemType.balance] ?? true,
-          onTap: onChangeResumeItems,
-        ),
-        ResumeItemCardMovements(
-          type: ResumeItemType.expense,
-          value: currentMonthExpenses,
-          difference: pastMonthExpenses == 0
-              ? (currentMonthExpenses > 0 ? 100 : 0)
-              : ((currentMonthExpenses - pastMonthExpenses) /
-                      pastMonthExpenses *
-                      100)
-                  .roundToDouble(),
-          color: AppVariables.expenseColor,
-          isSelected: selResumeItems[ResumeItemType.expense] ?? true,
-          onTap: onChangeResumeItems,
-        ),
-      ],
-    );
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
+    final children = [
+      ResumeItemCardMovements(
+        type: ResumeItemType.income,
+        value: currentMonthIncomes,
+        difference: pastMonthIncomes == 0
+            ? (currentMonthIncomes > 0 ? 100 : 0)
+            : ((currentMonthIncomes - pastMonthIncomes) /
+                    pastMonthIncomes *
+                    100)
+                .roundToDouble(),
+        color: AppVariables.incomeColor,
+        isSelected: selResumeItems[ResumeItemType.income] ?? true,
+        onTap: onChangeResumeItems,
+      ),
+      ResumeItemCardMovements(
+        type: ResumeItemType.balance,
+        value: currentMonthIncomes - currentMonthExpenses,
+        difference: pastMonthBalance == 0
+            ? (currentMonthBalance > 0 ? 100 : 0)
+            : ((currentMonthBalance - pastMonthBalance) /
+                    pastMonthBalance *
+                    100)
+                .roundToDouble(),
+        color: AppVariables.balanceColor,
+        isSelected: selResumeItems[ResumeItemType.balance] ?? true,
+        onTap: onChangeResumeItems,
+      ),
+      ResumeItemCardMovements(
+        type: ResumeItemType.expense,
+        value: currentMonthExpenses,
+        difference: pastMonthExpenses == 0
+            ? (currentMonthExpenses > 0 ? 100 : 0)
+            : ((currentMonthExpenses - pastMonthExpenses) /
+                    pastMonthExpenses *
+                    100)
+                .roundToDouble(),
+        color: AppVariables.expenseColor,
+        isSelected: selResumeItems[ResumeItemType.expense] ?? true,
+        onTap: onChangeResumeItems,
+      ),
+    ];
+
+    return isLandscape
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 8,
+            children: children,
+          )
+        : Row(
+            spacing: 8,
+            children: children,
+          );
   }
 }
 
@@ -222,80 +291,88 @@ class ResumeItemCardMovements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Opacity(
-        opacity: isSelected ? 1.0 : 0.5,
-        child: Card(
-          margin: EdgeInsets.zero,
-          elevation: isSelected ? 2 : 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-              color: isSelected
-                  ? color.withValues(alpha: 0.5)
-                  : Colors.transparent,
-              width: 2,
-            ),
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
+    final card = Opacity(
+      opacity: isSelected ? 1.0 : 0.5,
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: isSelected ? 2 : 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color:
+                isSelected ? color.withValues(alpha: 0.5) : Colors.transparent,
+            width: 2,
           ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: onTap != null ? () => onTap!(type) : null,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                spacing: 8,
-                children: [
-                  Row(
-                    spacing: 8,
-                    children: [
-                      HugeIcon(
-                        icon: _icon,
-                        size: 20,
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap != null ? () => onTap!(type) : null,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              spacing: 8,
+              children: [
+                Row(
+                  spacing: 8,
+                  children: [
+                    HugeIcon(
+                      icon: _icon,
+                      size: 20,
+                      color: color,
+                    ),
+                    Text(
+                      _title(context),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
+                ),
+                Text(
+                  _valueFormatted(),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: color,
                       ),
-                      Text(
-                        _title(context),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    _valueFormatted(),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 4,
-                    children: [
-                      HugeIcon(
-                        icon: difference >= 0
-                            ? HugeIcons.strokeRoundedArrowUpDouble
-                            : HugeIcons.strokeRoundedArrowDownDouble,
-                        size: 16,
-                        color: _differenceColor,
-                      ),
-                      Text(
-                        '${difference >= 0 ? '+' : ''}'
-                        '${difference.abs().toInt()}%',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: _differenceColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 4,
+                  children: [
+                    HugeIcon(
+                      icon: difference >= 0
+                          ? HugeIcons.strokeRoundedArrowUpDouble
+                          : HugeIcons.strokeRoundedArrowDownDouble,
+                      size: 16,
+                      color: _differenceColor,
+                    ),
+                    Text(
+                      '${difference >= 0 ? '+' : ''}'
+                      '${difference.abs().toInt()}%',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: _differenceColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
+
+    return isLandscape
+        ? SizedBox(
+            height: 110,
+            child: card,
+          )
+        : Expanded(child: card);
   }
 }
 
@@ -389,96 +466,153 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
       (s, item) => s + item.totalExpense,
     );
 
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
+    final categoriesListBuilder = ListView.separated(
+      physics: const BouncingScrollPhysics(),
+      scrollDirection: isLandscape ? Axis.vertical : Axis.horizontal,
+      padding: EdgeInsets.zero,
+      itemCount: sortedCategories.length,
+      separatorBuilder: (context, index) => SizedBox(
+        width: isLandscape ? 0 : 12,
+        height: isLandscape ? 12 : 0,
+      ),
+      itemBuilder: (context, index) {
+        final categoryData = sortedCategories[index];
+        final percentage = totalExpenses > 0
+            ? (categoryData.totalExpense / totalExpenses * 100)
+            : 0.0;
+        final ranking = index + 1;
+
+        return InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => context.pushNamed(
+            CategoryPage.pageName,
+            extra: categoryData.category,
+          ),
+          child: CategoryExpenseCard(
+            category: categoryData.category,
+            amount: categoryData.totalExpense,
+            percentage: percentage,
+            ranking: ranking,
+          ),
+        );
+      },
+    );
+
     return Visibility(
       visible: sortedCategories.isNotEmpty,
-      child: Column(
-        children: [
-          Row(
-            spacing: 12,
-            children: [
-              SizedBox(
-                height: 180,
-                child: SegmentedButton<CategoryType>(
-                  direction: Axis.vertical,
-                  showSelectedIcon: false,
-                  segments: [
-                    ButtonSegment<CategoryType>(
-                      value: CategoryType.expense,
-                      label: HugeIcon(
-                        icon: HugeIcons.strokeRoundedMoneyRemove01,
-                        strokeWidth: 2,
-                        color: selectedFilter == CategoryType.expense
-                            ? AppVariables.expenseColor
-                            : null,
+      child: isLandscape
+          ? Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<CategoryType>(
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment<CategoryType>(
+                        value: CategoryType.expense,
+                        label: HugeIcon(
+                          icon: HugeIcons.strokeRoundedMoneyRemove01,
+                          strokeWidth: 2,
+                          color: selectedFilter == CategoryType.expense
+                              ? AppVariables.expenseColor
+                              : null,
+                        ),
+                      ),
+                      ButtonSegment<CategoryType>(
+                        value: CategoryType.income,
+                        label: HugeIcon(
+                          icon: HugeIcons.strokeRoundedMoneyAdd01,
+                          strokeWidth: 2,
+                          color: selectedFilter == CategoryType.income
+                              ? AppVariables.incomeColor
+                              : null,
+                        ),
+                      ),
+                    ],
+                    selected: {selectedFilter},
+                    onSelectionChanged: (newSelection) {
+                      setState(() {
+                        selectedFilter = newSelection.first;
+                      });
+                    },
+                    style: const ButtonStyle(
+                      visualDensity: VisualDensity.compact,
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
                       ),
                     ),
-                    ButtonSegment<CategoryType>(
-                      value: CategoryType.income,
-                      label: HugeIcon(
-                        icon: HugeIcons.strokeRoundedMoneyAdd01,
-                        strokeWidth: 2,
-                        color: selectedFilter == CategoryType.income
-                            ? AppVariables.incomeColor
-                            : null,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Expanded(child: categoriesListBuilder),
+              ],
+            )
+          : Column(
+              children: [
+                Row(
+                  spacing: 12,
+                  children: [
+                    SizedBox(
+                      height: 180,
+                      child: SegmentedButton<CategoryType>(
+                        direction: Axis.vertical,
+                        showSelectedIcon: false,
+                        segments: [
+                          ButtonSegment<CategoryType>(
+                            value: CategoryType.expense,
+                            label: HugeIcon(
+                              icon: HugeIcons.strokeRoundedMoneyRemove01,
+                              strokeWidth: 2,
+                              color: selectedFilter == CategoryType.expense
+                                  ? AppVariables.expenseColor
+                                  : null,
+                            ),
+                          ),
+                          ButtonSegment<CategoryType>(
+                            value: CategoryType.income,
+                            label: HugeIcon(
+                              icon: HugeIcons.strokeRoundedMoneyAdd01,
+                              strokeWidth: 2,
+                              color: selectedFilter == CategoryType.income
+                                  ? AppVariables.incomeColor
+                                  : null,
+                            ),
+                          ),
+                        ],
+                        selected: {selectedFilter},
+                        onSelectionChanged: (newSelection) {
+                          setState(() {
+                            selectedFilter = newSelection.first;
+                          });
+                        },
+                        style: const ButtonStyle(
+                          visualDensity: VisualDensity.compact,
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(16)),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        height: 180,
+                        width: double.infinity,
+                        child: categoriesListBuilder,
                       ),
                     ),
                   ],
-                  selected: {selectedFilter},
-                  onSelectionChanged: (newSelection) {
-                    setState(() {
-                      selectedFilter = newSelection.first;
-                    });
-                  },
-                  style: const ButtonStyle(
-                    visualDensity: VisualDensity.compact,
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                      ),
-                    ),
-                  ),
                 ),
-              ),
-              Expanded(
-                child: SizedBox(
-                  height: 180,
-                  width: double.infinity,
-                  child: ListView.separated(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.zero,
-                    itemCount: sortedCategories.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(width: 12),
-                    itemBuilder: (context, index) {
-                      final categoryData = sortedCategories[index];
-                      final percentage = totalExpenses > 0
-                          ? (categoryData.totalExpense / totalExpenses * 100)
-                          : 0.0;
-                      final ranking = index + 1;
-
-                      return InkWell(
-                        borderRadius: BorderRadius.circular(16),
-                        onTap: () => context.pushNamed(
-                          CategoryPage.pageName,
-                          extra: categoryData.category,
-                        ),
-                        child: CategoryExpenseCard(
-                          category: categoryData.category,
-                          amount: categoryData.totalExpense,
-                          percentage: percentage,
-                          ranking: ranking,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-        ],
-      ),
+                const SizedBox(height: 12),
+              ],
+            ),
     );
   }
 }
@@ -532,8 +666,12 @@ class CategoryExpenseCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final categoryColor = HexColor.fromHex(category.color);
 
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
     return SizedBox(
-      width: 180,
+      width: isLandscape ? double.infinity : 180,
+      height: 180,
       child: Card(
         elevation: 2,
         shape: RoundedRectangleBorder(

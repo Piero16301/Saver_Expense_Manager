@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +18,8 @@ class MovementView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
+    final auth = getIt<AuthenticationService>();
+    final user = auth.currentUser!;
     final l10n = AppLocalizations.of(context);
     final selectedDate = context.select<MovementCubit, DateTime>(
       (cubit) => cubit.state.date!,

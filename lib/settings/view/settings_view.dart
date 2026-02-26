@@ -47,10 +47,6 @@ class SettingsView extends StatelessWidget {
               SizedBox(height: 4),
               FontSettingsCard(),
               Divider(),
-              ReceiptsSettingsCard(),
-              SizedBox(height: 4),
-              ExpensesSettingsCard(),
-              Divider(),
               SettingsAppSpecs(),
             ],
           ),
@@ -292,96 +288,6 @@ class FontSettingsCard extends StatelessWidget {
       onChanged: (value) {
         if (value != null) {
           context.read<AppCubit>().changeFontFamily(fontFamily: value);
-        }
-      },
-    );
-  }
-}
-
-class ReceiptsSettingsCard extends StatelessWidget {
-  const ReceiptsSettingsCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final state = context.watch<AppCubit>().state;
-
-    return SettingsCardBlock<ModelType>(
-      title: l10n.settingsReceiptsModelTitle,
-      value: state.receiptsModel,
-      items: ModelType.values.map(
-        (entry) {
-          return DropdownMenuItem<ModelType>(
-            value: entry,
-            child: Row(
-              spacing: 12,
-              children: [
-                HugeIcon(
-                  icon: entry.isLocal
-                      ? HugeIcons.strokeRoundedAiPhone02
-                      : HugeIcons.strokeRoundedAiCloud02,
-                  size: 20,
-                  strokeWidth: 2,
-                ),
-                Text(
-                  '${entry.name[0].toUpperCase()}${entry.name.substring(1)}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontFamily: entry.name,
-                      ),
-                ),
-              ],
-            ),
-          );
-        },
-      ).toList(),
-      onChanged: (value) {
-        if (value != null) {
-          context.read<AppCubit>().changeReceiptsModel(modelType: value);
-        }
-      },
-    );
-  }
-}
-
-class ExpensesSettingsCard extends StatelessWidget {
-  const ExpensesSettingsCard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final state = context.watch<AppCubit>().state;
-
-    return SettingsCardBlock<ModelType>(
-      title: l10n.settingsExpensesModelTitle,
-      value: state.expensesModel,
-      items: ModelType.values.map(
-        (entry) {
-          return DropdownMenuItem<ModelType>(
-            value: entry,
-            child: Row(
-              spacing: 12,
-              children: [
-                HugeIcon(
-                  icon: entry.isLocal
-                      ? HugeIcons.strokeRoundedAiPhone02
-                      : HugeIcons.strokeRoundedAiCloud02,
-                  size: 20,
-                  strokeWidth: 2,
-                ),
-                Text(
-                  '${entry.name[0].toUpperCase()}${entry.name.substring(1)}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontFamily: entry.name,
-                      ),
-                ),
-              ],
-            ),
-          );
-        },
-      ).toList(),
-      onChanged: (value) {
-        if (value != null) {
-          context.read<AppCubit>().changeExpensesModel(modelType: value);
         }
       },
     );

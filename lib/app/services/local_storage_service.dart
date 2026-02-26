@@ -12,8 +12,8 @@ class LocalStorageService {
   static const kUserTheme = '__user_theme__';
   static const kUserBaseColor = '__user_base_color__';
   static const kUserFontFamily = '__user_font_family__';
-  static const kUserReceiptsModel = '__user_receipts_model__';
-  static const kUserExpensesModel = '__user_expenses_model__';
+  static const kUserRecommendationsDate = '__user_recommendations_date__';
+  static const kUserRecommendations = '__user_recommendations__';
 
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
@@ -67,37 +67,28 @@ class LocalStorageService {
     return _prefs?.getString(kUserFontFamily);
   }
 
-  void saveReceiptsModel({required ModelType modelType}) {
+  void saveRecommendationsDate({required DateTime date}) {
     _prefs
         ?.setString(
-          kUserReceiptsModel,
-          ModelTypeHelper.getModelTypeName(modelType),
+          kUserRecommendationsDate,
+          AppVariables.formatDate.format(date),
         )
         .ignore();
   }
 
-  ModelType? getReceiptsModel() {
-    final modelTypeString = _prefs?.getString(kUserReceiptsModel);
-    if (modelTypeString == null) {
+  DateTime? getRecommendationsDate() {
+    final dateString = _prefs?.getString(kUserRecommendationsDate);
+    if (dateString == null) {
       return null;
     }
-    return ModelTypeHelper.getModelTypeFromString(modelTypeString);
+    return AppVariables.formatDate.parse(dateString);
   }
 
-  void saveExpensesModel({required ModelType modelType}) {
-    _prefs
-        ?.setString(
-          kUserExpensesModel,
-          ModelTypeHelper.getModelTypeName(modelType),
-        )
-        .ignore();
+  void saveRecommendations({required List<String> recommendations}) {
+    _prefs?.setStringList(kUserRecommendations, recommendations).ignore();
   }
 
-  ModelType? getExpensesModel() {
-    final modelTypeString = _prefs?.getString(kUserExpensesModel);
-    if (modelTypeString == null) {
-      return null;
-    }
-    return ModelTypeHelper.getModelTypeFromString(modelTypeString);
+  List<String>? getRecommendations() {
+    return _prefs?.getStringList(kUserRecommendations);
   }
 }
