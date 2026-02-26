@@ -52,25 +52,12 @@ class IncomeHomeView extends StatelessWidget {
                 movements: snapshot.data!,
               );
 
-              Widget doughnutChart = DoughnutCircularChart(
+              final Widget doughnutChart = DoughnutCircularChart(
                 data: data,
                 selectedIndex: state.selectedIndex,
                 onPointTap: (p0) => context
                     .read<IncomeHomeCubit>()
                     .changeExplodeIndex(p0.pointIndex),
-              );
-
-              if (isLandscape) {
-                doughnutChart = Expanded(child: doughnutChart);
-              }
-
-              final charts = Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: isLandscape ? 16 : 0,
-                children: [
-                  TotalSpentChart(data: data),
-                  doughnutChart,
-                ],
               );
 
               final list = MovementsListChart(
@@ -85,9 +72,21 @@ class IncomeHomeView extends StatelessWidget {
                         spacing: 16,
                         children: [
                           Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 32),
-                              child: charts,
+                            child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                spacing: isLandscape ? 16 : 0,
+                                children: [
+                                  TotalSpentChart(data: data),
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints(
+                                      maxHeight: AppVariables.tabletMaxHeight,
+                                    ),
+                                    child: doughnutChart,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           list,
@@ -95,7 +94,14 @@ class IncomeHomeView extends StatelessWidget {
                       )
                     : Column(
                         children: [
-                          charts,
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            spacing: isLandscape ? 16 : 0,
+                            children: [
+                              TotalSpentChart(data: data),
+                              doughnutChart,
+                            ],
+                          ),
                           list,
                         ],
                       ),

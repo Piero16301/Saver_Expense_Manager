@@ -20,6 +20,7 @@ class AppVariables {
   static const deafultMonthsResume = 4;
   static const maxDaysWarning = 7;
   static const tabletMaxWidth = 500.0;
+  static const tabletMaxHeight = 400.0;
 
   static const animationDuration = Duration(milliseconds: 400);
   static const snackBarDuration = Duration(seconds: 5);

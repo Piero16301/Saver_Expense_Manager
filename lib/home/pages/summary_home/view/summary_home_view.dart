@@ -56,25 +56,45 @@ class SummaryHomeView extends StatelessWidget {
             ),
           );
 
-          final charts = Column(
-            spacing: 16,
-            children: [
-              if (remoteConfig.isHomeSummaryCardsVisible)
-                ResumeMovementsChart(
-                  movements: movements,
-                  endMonth: state.endMonth!,
-                  selResumeItems: state.selResumeItems,
-                  onChangeResumeItems: (type) =>
-                      context.read<SummaryHomeCubit>().toggleResumeItem(type),
-                ),
-              IncomesAndExpensesChart(
-                movements: movements,
-                startMonth: state.startMonth!,
-                endMonth: state.endMonth!,
-                selResumeItems: state.selResumeItems,
-              ),
-            ],
+          final resumeMovementsChart = ResumeMovementsChart(
+            movements: movements,
+            endMonth: state.endMonth!,
+            selResumeItems: state.selResumeItems,
+            onChangeResumeItems: (type) =>
+                context.read<SummaryHomeCubit>().toggleResumeItem(type),
           );
+
+          final incomesAndExpensesChart = IncomesAndExpensesChart(
+            movements: movements,
+            startMonth: state.startMonth!,
+            endMonth: state.endMonth!,
+            selResumeItems: state.selResumeItems,
+          );
+
+          final charts = isLandscape
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: 16,
+                  children: [
+                    if (remoteConfig.isHomeSummaryCardsVisible)
+                      SizedBox(
+                        width: 150,
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: resumeMovementsChart,
+                        ),
+                      ),
+                    incomesAndExpensesChart,
+                  ],
+                )
+              : Column(
+                  spacing: 16,
+                  children: [
+                    if (remoteConfig.isHomeSummaryCardsVisible)
+                      resumeMovementsChart,
+                    incomesAndExpensesChart,
+                  ],
+                );
 
           final categoriesCard = remoteConfig.isHomeTopCategoriesVisible
               ? CategoriesResumeCards(
@@ -150,50 +170,61 @@ class ResumeMovementsChart extends StatelessWidget {
       currentMonthIncomes - currentMonthExpenses,
     );
 
-    return Row(
-      spacing: 8,
-      children: [
-        ResumeItemCardMovements(
-          type: ResumeItemType.income,
-          value: currentMonthIncomes,
-          difference: pastMonthIncomes == 0
-              ? (currentMonthIncomes > 0 ? 100 : 0)
-              : ((currentMonthIncomes - pastMonthIncomes) /
-                      pastMonthIncomes *
-                      100)
-                  .roundToDouble(),
-          color: AppVariables.incomeColor,
-          isSelected: selResumeItems[ResumeItemType.income] ?? true,
-          onTap: onChangeResumeItems,
-        ),
-        ResumeItemCardMovements(
-          type: ResumeItemType.balance,
-          value: currentMonthIncomes - currentMonthExpenses,
-          difference: pastMonthBalance == 0
-              ? (currentMonthBalance > 0 ? 100 : 0)
-              : ((currentMonthBalance - pastMonthBalance) /
-                      pastMonthBalance *
-                      100)
-                  .roundToDouble(),
-          color: AppVariables.balanceColor,
-          isSelected: selResumeItems[ResumeItemType.balance] ?? true,
-          onTap: onChangeResumeItems,
-        ),
-        ResumeItemCardMovements(
-          type: ResumeItemType.expense,
-          value: currentMonthExpenses,
-          difference: pastMonthExpenses == 0
-              ? (currentMonthExpenses > 0 ? 100 : 0)
-              : ((currentMonthExpenses - pastMonthExpenses) /
-                      pastMonthExpenses *
-                      100)
-                  .roundToDouble(),
-          color: AppVariables.expenseColor,
-          isSelected: selResumeItems[ResumeItemType.expense] ?? true,
-          onTap: onChangeResumeItems,
-        ),
-      ],
-    );
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
+    final children = [
+      ResumeItemCardMovements(
+        type: ResumeItemType.income,
+        value: currentMonthIncomes,
+        difference: pastMonthIncomes == 0
+            ? (currentMonthIncomes > 0 ? 100 : 0)
+            : ((currentMonthIncomes - pastMonthIncomes) /
+                    pastMonthIncomes *
+                    100)
+                .roundToDouble(),
+        color: AppVariables.incomeColor,
+        isSelected: selResumeItems[ResumeItemType.income] ?? true,
+        onTap: onChangeResumeItems,
+      ),
+      ResumeItemCardMovements(
+        type: ResumeItemType.balance,
+        value: currentMonthIncomes - currentMonthExpenses,
+        difference: pastMonthBalance == 0
+            ? (currentMonthBalance > 0 ? 100 : 0)
+            : ((currentMonthBalance - pastMonthBalance) /
+                    pastMonthBalance *
+                    100)
+                .roundToDouble(),
+        color: AppVariables.balanceColor,
+        isSelected: selResumeItems[ResumeItemType.balance] ?? true,
+        onTap: onChangeResumeItems,
+      ),
+      ResumeItemCardMovements(
+        type: ResumeItemType.expense,
+        value: currentMonthExpenses,
+        difference: pastMonthExpenses == 0
+            ? (currentMonthExpenses > 0 ? 100 : 0)
+            : ((currentMonthExpenses - pastMonthExpenses) /
+                    pastMonthExpenses *
+                    100)
+                .roundToDouble(),
+        color: AppVariables.expenseColor,
+        isSelected: selResumeItems[ResumeItemType.expense] ?? true,
+        onTap: onChangeResumeItems,
+      ),
+    ];
+
+    return isLandscape
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 8,
+            children: children,
+          )
+        : Row(
+            spacing: 8,
+            children: children,
+          );
   }
 }
 
@@ -260,80 +291,88 @@ class ResumeItemCardMovements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Opacity(
-        opacity: isSelected ? 1.0 : 0.5,
-        child: Card(
-          margin: EdgeInsets.zero,
-          elevation: isSelected ? 2 : 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-              color: isSelected
-                  ? color.withValues(alpha: 0.5)
-                  : Colors.transparent,
-              width: 2,
-            ),
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+
+    final card = Opacity(
+      opacity: isSelected ? 1.0 : 0.5,
+      child: Card(
+        margin: EdgeInsets.zero,
+        elevation: isSelected ? 2 : 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color:
+                isSelected ? color.withValues(alpha: 0.5) : Colors.transparent,
+            width: 2,
           ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: onTap != null ? () => onTap!(type) : null,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                spacing: 8,
-                children: [
-                  Row(
-                    spacing: 8,
-                    children: [
-                      HugeIcon(
-                        icon: _icon,
-                        size: 20,
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap != null ? () => onTap!(type) : null,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              spacing: 8,
+              children: [
+                Row(
+                  spacing: 8,
+                  children: [
+                    HugeIcon(
+                      icon: _icon,
+                      size: 20,
+                      color: color,
+                    ),
+                    Text(
+                      _title(context),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
+                ),
+                Text(
+                  _valueFormatted(),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
                         color: color,
                       ),
-                      Text(
-                        _title(context),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    _valueFormatted(),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: color,
-                        ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 4,
-                    children: [
-                      HugeIcon(
-                        icon: difference >= 0
-                            ? HugeIcons.strokeRoundedArrowUpDouble
-                            : HugeIcons.strokeRoundedArrowDownDouble,
-                        size: 16,
-                        color: _differenceColor,
-                      ),
-                      Text(
-                        '${difference >= 0 ? '+' : ''}'
-                        '${difference.abs().toInt()}%',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: _differenceColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 4,
+                  children: [
+                    HugeIcon(
+                      icon: difference >= 0
+                          ? HugeIcons.strokeRoundedArrowUpDouble
+                          : HugeIcons.strokeRoundedArrowDownDouble,
+                      size: 16,
+                      color: _differenceColor,
+                    ),
+                    Text(
+                      '${difference >= 0 ? '+' : ''}'
+                      '${difference.abs().toInt()}%',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: _differenceColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
+
+    return isLandscape
+        ? SizedBox(
+            height: 110,
+            child: card,
+          )
+        : Expanded(child: card);
   }
 }
 

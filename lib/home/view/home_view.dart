@@ -30,8 +30,6 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = getIt<AuthenticationService>();
     final darkTheme = Theme.of(context).brightness == Brightness.dark;
-    final isLandscape =
-        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return StreamBuilder<AppUser?>(
       stream: auth.authStateChanges,
@@ -108,29 +106,21 @@ class HomeView extends StatelessWidget {
               actionsPadding: const EdgeInsets.only(right: 8),
             ),
             body: SafeArea(
-              child: Row(
-                children: [
-                  if (isLandscape) const NavigationRailHome(),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: AnimatedSwitcher(
-                        duration: AppVariables.animationDuration,
-                        transitionBuilder: (child, animation) => FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        ),
-                        child: _getSelectedBody(
-                          state.selectedIndex,
-                        ),
-                      ),
-                    ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: AnimatedSwitcher(
+                  duration: AppVariables.animationDuration,
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: animation,
+                    child: child,
                   ),
-                ],
+                  child: _getSelectedBody(
+                    state.selectedIndex,
+                  ),
+                ),
               ),
             ),
-            bottomNavigationBar:
-                !isLandscape ? const BottomNavigationBarHome() : null,
+            bottomNavigationBar: const BottomNavigationBarHome(),
             floatingActionButton:
                 _getFloatingActionButton(context, state.selectedIndex),
           ),
@@ -235,54 +225,6 @@ class BottomNavigationBarHome extends StatelessWidget {
               strokeWidth: 2,
             ),
             label: l10n.homeIncomeTitle,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class NavigationRailHome extends StatelessWidget {
-  const NavigationRailHome({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
-    return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) => NavigationRail(
-        selectedIndex: state.selectedIndex,
-        onDestinationSelected: (index) =>
-            context.read<HomeCubit>().toggleSelectedIndex(index),
-        labelType: NavigationRailLabelType.all,
-        destinations: [
-          NavigationRailDestination(
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedMoneyRemove01,
-              strokeWidth: 2,
-            ),
-            label: Text(l10n.homeExpensesTitle),
-          ),
-          NavigationRailDestination(
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedTaskDaily01,
-              strokeWidth: 2,
-            ),
-            label: Text(l10n.homeMovementsTitle),
-          ),
-          NavigationRailDestination(
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedChart02,
-              strokeWidth: 2,
-            ),
-            label: Text(l10n.homeSummaryTitle),
-          ),
-          NavigationRailDestination(
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedMoneyAdd01,
-              strokeWidth: 2,
-            ),
-            label: Text(l10n.homeIncomeTitle),
           ),
         ],
       ),

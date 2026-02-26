@@ -135,7 +135,6 @@ void main() {
         await tester.pumpApp(buildSubject());
         await tester.pumpAndSettle();
 
-        expect(find.byType(NavigationRailHome), findsOneWidget);
         expect(find.byType(FloatingActionButton), findsOneWidget);
       });
     });
