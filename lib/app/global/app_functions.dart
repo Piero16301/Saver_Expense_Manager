@@ -475,6 +475,138 @@ class AppFunctions {
     }
   }
 
+  static Widget? getCategoryAnimatedIcon(Category category, double size) {
+    switch (category.name) {
+      case 'TRANSPORT':
+        return TransportAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'FEEDING':
+        return FeedingAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'HEALTH':
+        return HealthAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'ENTERTAINMENT':
+        return EntertainmentAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'TRIPS':
+        return TripsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'TECHNOLOGY':
+        return TechnologyAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'EDUCATION':
+        return EducationAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'FASHION':
+        return FashionAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'TAXES':
+        return TaxesAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'INSURANCE':
+        return InsuranceAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'DWELLING':
+        return DwellingAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'GIFTS':
+        return GiftsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'OTHERS_EXPENSE':
+        return OthersExpenseAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'SALARY':
+        return SalaryAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'BUSINESS':
+        return BusinessAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'FREELANCE':
+        return FreelanceAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'RENTALS':
+        return RentalsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'INVESTMENTS':
+        return InvestmentsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'INTERESTS':
+        return InterestsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'PENSIONS':
+        return PensionsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'DIVIDENDS':
+        return DividendsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'AWARDS':
+        return AwardsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'REFUNDS':
+        return RefundsAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'SALES':
+        return SalesAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      case 'OTHERS_INCOME':
+        return OthersIncomeAnimatedIcon(
+          color: HexColor.fromHex(category.color),
+          size: size,
+        );
+      default:
+        return null;
+    }
+  }
+
   static List<List<dynamic>> getCategoryIcon(String icon) {
     switch (icon) {
       case 'DIRECTIONS_CAR':

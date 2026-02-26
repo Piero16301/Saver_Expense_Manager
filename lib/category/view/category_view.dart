@@ -43,9 +43,12 @@ class CategoryView extends StatelessWidget {
           ),
           child: isLandscape
               ? Row(
-                  spacing: 20,
+                  spacing: 10,
                   children: [
-                    CategoryIconAndName(category: state.category),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: CategoryIconAndName(category: state.category),
+                    ),
                     CategoryTabBar(category: state.category),
                   ],
                 )
@@ -78,21 +81,19 @@ class CategoryIconAndName extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       spacing: 10,
       children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundColor: HexColor.fromHex(
-            category.color,
-          ).withValues(alpha: 0.3),
-          child: HugeIcon(
-            icon: AppFunctions.getCategoryIcon(category.icon),
-            size: 60,
-            color: HexColor.fromHex(category.color),
-            strokeWidth: 2,
-          ),
+        SizedBox.square(
+          dimension: 200,
+          child: AppFunctions.getCategoryAnimatedIcon(category, 90) ??
+              HugeIcon(
+                icon: AppFunctions.getCategoryIcon(category.icon),
+                size: 70,
+                color: HexColor.fromHex(category.color),
+                strokeWidth: 2,
+              ),
         ),
         Text(
           AppFunctions.getCategoryName(category.name, l10n).toUpperCase(),
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
         ),
