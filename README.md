@@ -59,6 +59,9 @@ flowchart TD
     end
   end
 
+  %% Invisible link to force vertical ordering (Mobile App above Cloud Backend)
+  SharedPrefs ~~~ FirebaseAuth
+
   subgraph "Cloud Backend & AI"
     direction TB
     FirebaseAuth((Firebase Auth))
