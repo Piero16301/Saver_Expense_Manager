@@ -397,7 +397,7 @@ class AppFunctions {
     final prompt = template
         .replaceAll(
           '{{transactions_list}}',
-          movements.map((e) => '- ${e.movementRecap}').join('\n'),
+          movements.map((e) => '- ${getMovementRecap(e)}').join('\n'),
         )
         .replaceAll('{{language}}', language)
         .replaceAll('{{lookbackDays}}', lookbackDays.toString());
@@ -416,6 +416,12 @@ class AppFunctions {
     }
 
     return response?.split('|||').map((e) => e.trim()).toList();
+  }
+
+  static String getMovementRecap(Movement movement) {
+    return movement.movementRecap
+        .replaceAll('{{amount}}', movement.price.toStringAsFixed(2))
+        .replaceAll('{{date}}', AppVariables.formatDate.format(movement.date));
   }
 
   static String getCategoryName(String category, AppLocalizations l10n) {

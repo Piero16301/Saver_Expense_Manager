@@ -30,7 +30,7 @@ class AiService {
   late final RemoteConfigService _remoteConfig;
   late final FirebaseAI _remoteModel;
   late final GeminiNanoAndroid _localModel;
-  late final bool _isLocalModelAvailable;
+  bool _isLocalModelAvailable = false;
 
   Future<String?> generateContentRemote({
     required List<PromptPart> prompt,

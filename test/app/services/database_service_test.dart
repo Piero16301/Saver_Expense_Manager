@@ -192,5 +192,113 @@ void main() {
 
       expect(result, isEmpty);
     });
+    test('getMonthMovementsStream handles December dates', () async {
+      final date = DateTime(2023, 12, 15);
+      final stream = databaseService.getMonthMovementsStream(
+        userId: 'user_1',
+        monthSelected: date,
+        type: CategoryType.income,
+      );
+      final docs = await stream.first;
+      expect(docs, isEmpty);
+    });
+
+    test('getUserMovementsRangeStream handles December dates', () async {
+      final stream = databaseService.getUserMovementsRangeStream(
+        userId: 'user_1',
+        startMonth: DateTime(2023, 10),
+        endMonth: DateTime(2023, 12, 31),
+      );
+      final docs = await stream.first;
+
+      expect(docs, isEmpty);
+    });
+
+    test('getCategoryMovementsQuery handles December dates', () async {
+      const category = Category(
+        id: 'cat_1',
+        name: 'Food',
+        icon: '',
+        color: '',
+        type: CategoryType.expense,
+      );
+      final query = databaseService.getCategoryMovementsQuery(
+        userId: 'user_1',
+        monthSelected: DateTime(2023, 12, 15),
+        category: category,
+      );
+
+      final snapshot = await query.get();
+      expect(snapshot.docs, isEmpty);
+    });
+
+    test('getExpenseTypeMovementsQuery handles December dates', () async {
+      final query = databaseService.getExpenseTypeMovementsQuery(
+        userId: 'user_1',
+        monthSelected: DateTime(2023, 12, 15),
+        expenseType: CategoryType.income,
+      );
+
+      final snapshot = await query.get();
+      expect(snapshot.docs, isEmpty);
+    });
+
+    test('getUserMovementsQuery handles null type and category', () async {
+      final query = databaseService.getUserMovementsQuery(
+        userId: 'user_1',
+        type: null,
+        category: null,
+      );
+
+      final snapshot = await query.get();
+      expect(snapshot.docs, isEmpty);
+    });
+
+    test('getUserMovementsQuery handles income type', () async {
+      final query = databaseService.getUserMovementsQuery(
+        userId: 'user_1',
+        type: CategoryType.income,
+        category: const Category(
+          id: 'cat_1',
+          name: 'Food',
+          icon: '',
+          color: '',
+          type: CategoryType.income,
+        ),
+      );
+
+      final snapshot = await query.get();
+      expect(snapshot.docs, isEmpty);
+    });
+
+    test('getTrendChartStream handles December dates', () async {
+      const category = Category(
+        id: 'cat_1',
+        name: 'Food',
+        icon: '',
+        color: '',
+        type: CategoryType.expense,
+      );
+      final stream = databaseService.getTrendChartStream(
+        userId: 'user_1',
+        startMonth: DateTime(2023, 8),
+        endMonth: DateTime(2023, 12),
+        category: category,
+      );
+
+      final snapshot = await stream.first;
+      expect(snapshot, isEmpty);
+    });
+
+    test('getMovementsStream handles null from, to, and limit', () async {
+      final stream = databaseService.getMovementsStream(userId: 'user_1');
+      final snapshot = await stream.first;
+      expect(snapshot, isEmpty);
+    });
+
+    test('getMovements handles null from, to', () async {
+      final result = await databaseService.getMovements(userId: 'user_1');
+      expect(result, isEmpty);
+    });
   });
 }
