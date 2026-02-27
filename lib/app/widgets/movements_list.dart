@@ -53,7 +53,7 @@ class MovementsList extends StatelessWidget {
                 'type': movement.category.type == CategoryType.income
                     ? CategoryType.income.value
                     : CategoryType.expense.value,
-                'screenType': 'EDIT',
+                'screenType': MovementScreenType.edit.name.toUpperCase(),
               },
               extra: movement,
             ),

@@ -47,13 +47,14 @@ GoRouter goRouter() {
           final movement = state.extra! as Movement;
           final type =
               state.pathParameters['type'] ?? CategoryType.expense.value;
-          final screenType = state.pathParameters['screenType'] ?? 'ADD';
+          final screenType = state.pathParameters['screenType'] ??
+              MovementScreenType.add.name.toUpperCase();
           return MovementPage(
             movement: movement,
             type: type == CategoryType.expense.value
                 ? CategoryType.expense
                 : CategoryType.income,
-            screenType: screenType == 'ADD'
+            screenType: screenType == MovementScreenType.add.name.toUpperCase()
                 ? MovementScreenType.add
                 : MovementScreenType.edit,
           );

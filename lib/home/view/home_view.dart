@@ -312,7 +312,7 @@ class AddMovementBottomSheet extends StatelessWidget {
             MovementPage.pageName,
             pathParameters: {
               'type': movementType.value,
-              'screenType': 'ADD',
+              'screenType': MovementScreenType.add.name.toUpperCase(),
             },
             extra: movement.copyWith(
               attachments: uploadName != null ? [uploadName] : [],
@@ -406,7 +406,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           MovementPage.pageName,
           pathParameters: {
             'type': movementType.value,
-            'screenType': 'ADD',
+            'screenType': MovementScreenType.add.name.toUpperCase(),
           },
           extra: movement.copyWith(
             attachments: uploadName != null ? [uploadName] : [],
@@ -492,7 +492,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                       MovementPage.pageName,
                       pathParameters: {
                         'type': movementType.value,
-                        'screenType': 'ADD',
+                        'screenType': MovementScreenType.add.name.toUpperCase(),
                       },
                       extra: Movement.empty,
                     ),
