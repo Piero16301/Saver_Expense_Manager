@@ -200,6 +200,28 @@
             }
         }
     },
+    "movementExpenseRecapTemplate": "Pago de <<amount>> en {company} por {title} el <<date>>",
+    "@movementExpenseRecapTemplate": {
+        "placeholders": {
+            "company": {
+                "type": "String"
+            },
+            "title": {
+                "type": "String"
+            }
+        }
+    },
+    "movementIncomeRecapTemplate": "Ingreso de <<amount>> en {company} por {title} el <<date>>",
+    "@movementIncomeRecapTemplate": {
+        "placeholders": {
+            "company": {
+                "type": "String"
+            },
+            "title": {
+                "type": "String"
+            }
+        }
+    },
     "cancel": "Cancelar",
     "@cancel": {},
     "confirm": "Confirmar",

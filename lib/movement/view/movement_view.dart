@@ -177,6 +177,7 @@ class MovementView extends StatelessWidget {
                       context.pop();
                       if (context.read<MovementCubit>().saveMovement(
                             user.uid,
+                            l10n,
                           )) {
                         context.pop<bool>(true);
                       } else {
@@ -191,7 +192,7 @@ class MovementView extends StatelessWidget {
                 ),
               );
             } else {
-              if (context.read<MovementCubit>().saveMovement(user.uid)) {
+              if (context.read<MovementCubit>().saveMovement(user.uid, l10n)) {
                 context.pop<bool>(true);
               } else {
                 AppFunctions.showSnackBar(
