@@ -38,6 +38,16 @@ void main() {
       verify(() => mockRemoteConfig.fetchAndActivate()).called(1);
     });
 
+    test('initialize catches exceptions from fetchAndActivate', () async {
+      when(() => mockRemoteConfig.setDefaults(any())).thenAnswer((_) async {});
+      when(() => mockRemoteConfig.setConfigSettings(any()))
+          .thenAnswer((_) async {});
+      when(() => mockRemoteConfig.fetchAndActivate())
+          .thenThrow(Exception('fetch failed'));
+
+      await expectLater(remoteConfigService.initialize(), completes);
+    });
+
     test('getters return correct values', () {
       when(() => mockRemoteConfig.getBool('ui_home_summary_cards_visible'))
           .thenReturn(true);

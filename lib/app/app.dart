@@ -1,3 +1,4 @@
+export 'animations/animations.dart';
 export 'cubit/app_cubit.dart';
 export 'global/global.dart';
 export 'helpers/helpers.dart';
