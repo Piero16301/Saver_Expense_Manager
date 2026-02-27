@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rive/rive.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class AppLoader {
@@ -40,16 +40,15 @@ class AppLoader {
                 SizedBox(
                   width: _size,
                   height: _size,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const AppLoaderWidget(),
-                      Image.asset(
-                        'assets/images/logo-no-bg-light.png',
-                        width: _size / 3,
-                        height: _size / 3,
-                      ),
-                    ],
+                  child: CircularLoadingAnimation(
+                    outerCircleColor: const Color(0xFF2D6E44),
+                    innerCircleColor: const Color(0xFF96C38C),
+                    backgroundColor: Colors.white,
+                    centerWidget: Image.asset(
+                      'assets/images/logo-no-bg-light.png',
+                      width: _size / 3,
+                      height: _size / 3,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -74,62 +73,4 @@ class AppLoader {
   }
 
   bool get isLoading => _isLoading;
-}
-
-class AppLoaderWidget extends StatefulWidget {
-  const AppLoaderWidget({super.key});
-
-  @override
-  State<AppLoaderWidget> createState() => _AppLoaderWidgetState();
-}
-
-class _AppLoaderWidgetState extends State<AppLoaderWidget> {
-  File? file;
-  Artboard? artboard;
-  SingleAnimationPainter? painter;
-  bool isInitialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_init());
-  }
-
-  Future<void> _init() async {
-    final riveFile = (await File.asset(
-      'assets/animations/loader.riv',
-      riveFactory: Factory.rive,
-    ))!;
-    final rivePainter = SingleAnimationPainter('Animation 1');
-    final riveArtboard = riveFile.defaultArtboard();
-
-    if (mounted) {
-      setState(() {
-        file = riveFile;
-        painter = rivePainter;
-        artboard = riveArtboard;
-        isInitialized = true;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    painter?.dispose();
-    artboard?.dispose();
-    file?.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!isInitialized || artboard == null || painter == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    return RiveArtboardWidget(
-      artboard: artboard!,
-      painter: painter!,
-    );
-  }
 }

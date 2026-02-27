@@ -40,7 +40,6 @@ dependencies:
   open_file: ^3.5.11
   package_info_plus: ^9.0.0
   path_provider: ^2.1.5
-  rive: ^0.14.3
   shared_preferences: ^2.5.4
   syncfusion_flutter_charts: ^32.2.7
   syncfusion_flutter_core: ^32.2.7

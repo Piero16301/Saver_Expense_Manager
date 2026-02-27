@@ -1,5 +1,6 @@
 export 'awards_animated_icon.dart';
 export 'business_animated_icon.dart';
+export 'circular_loading_animation.dart';
 export 'dividends_animated_icon.dart';
 export 'dwelling_animated_icon.dart';
 export 'education_animated_icon.dart';
