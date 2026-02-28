@@ -2,6 +2,8 @@
     "@@locale": "en",
     "selectLanguage": "Select language",
     "@selectLanguage": {},
+    "selectTheme": "Select theme",
+    "@selectTheme": {},
     "english": "🇺🇸 English",
     "@english": {},
     "spanish": "🇪🇸 Spanish",
@@ -178,6 +180,8 @@
     "@movementCompany": {},
     "movementCompanyHint": "Enter a company (optional)",
     "@movementCompanyHint": {},
+    "movementCompanyError": "The company is required",
+    "@movementCompanyError": {},
     "movementAttachments": "Attachments (optional)",
     "@movementAttachments": {},
     "movementAddAttachment": "Add attachment",
@@ -244,6 +248,8 @@
             }
         }
     },
+    "unlinkProviderError": "You can't unlink the only provider",
+    "@unlinkProviderError": {},
     "confirmLogoutTitle": "Logout",
     "@confirmLogoutTitle": {},
     "confirmLogoutMessage": "Are you sure you want to logout?",
@@ -382,6 +388,12 @@
     "@emailLinkingNotImplemented": {},
     "nameLabel": "Name",
     "@nameLabel": {},
+    "nameHint": "Enter your name",
+    "@nameHint": {},
+    "nameRequired": "Name is required",
+    "@nameRequired": {},
+    "invalidNameFormat": "Invalid name format",
+    "@invalidNameFormat": {},
     "confirmUnlinkProviderTitle": "Unlink Account",
     "@confirmUnlinkProviderTitle": {},
     "confirmUnlinkProviderMessage": "Are you sure you want to unlink this account?",
@@ -411,5 +423,7 @@
     "haveAccount": "Already have an account?",
     "@haveAccount": {},
     "loginSuccess": "Login successful",
-    "@loginSuccess": {}
+    "@loginSuccess": {},
+    "registerSuccess": "Register successful",
+    "@registerSuccess": {}
 }

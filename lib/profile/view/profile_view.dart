@@ -222,6 +222,7 @@ class ProfileView extends StatelessWidget {
                                 onUnlink: () => _unlinkProvider(
                                   context,
                                   AppVariables.googleProvider,
+                                  providers,
                                 ),
                               ),
                               const Divider(height: 1),
@@ -243,6 +244,7 @@ class ProfileView extends StatelessWidget {
                                 onUnlink: () => _unlinkProvider(
                                   context,
                                   AppVariables.emailProvider,
+                                  providers,
                                 ),
                               ),
                             ],
@@ -291,8 +293,22 @@ class ProfileView extends StatelessWidget {
     }
   }
 
-  Future<void> _unlinkProvider(BuildContext context, String providerId) async {
+  Future<void> _unlinkProvider(
+    BuildContext context,
+    String providerId,
+    List<AppUserInfo> providers,
+  ) async {
     final l10n = AppLocalizations.of(context);
+
+    if (providers.length == 1) {
+      AppFunctions.showSnackBar(
+        context,
+        message: l10n.unlinkProviderError,
+        type: SnackBarType.error,
+      );
+      return;
+    }
+
     final shouldUnlink = await showDialog<bool>(
       context: context,
       builder: (context) => AppAlertDialog(

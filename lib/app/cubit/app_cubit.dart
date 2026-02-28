@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +16,9 @@ class AppCubit extends Cubit<AppState> {
     // Setting the language to the device language if it's not set
     final language = localStorage.getLanguage();
     if (language == null) {
-      final deviceLanguage = AppVariables.supportedLocales.first;
+      final deviceLocale = Platform.localeName.split('_').first;
+      final deviceLanguage = AppVariables.deviceLanguageMap[deviceLocale] ??
+          AppVariables.supportedLocales.first;
       localStorage.saveLanguage(language: deviceLanguage);
     }
 

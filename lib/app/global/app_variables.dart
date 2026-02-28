@@ -38,6 +38,8 @@ class AppVariables {
   static const String googleProvider = 'google.com';
   static const String emailProvider = 'password';
 
+  static const String nameRegExp =
+      r'^(?=.{2,}$)[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+(?: [a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]+)*$';
   static const String emailRegExp =
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
   static const String passwordRegExp = r'^(?=.*[a-z])(?=.*[A-Z]).{6,}$';
@@ -91,6 +93,12 @@ class AppVariables {
     Locale('es', 'ES'),
     Locale('it', 'IT'),
   ];
+
+  static const Map<String, Locale> deviceLanguageMap = {
+    'en': Locale('en', 'US'),
+    'es': Locale('es', 'ES'),
+    'it': Locale('it', 'IT'),
+  };
 }
 
 enum SnackBarType {

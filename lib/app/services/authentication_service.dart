@@ -105,4 +105,9 @@ class AuthenticationService {
       password: password,
     );
   }
+
+  Future<void> updateUserName(String newName) async {
+    await _auth.currentUser?.updateDisplayName(newName);
+    await _auth.currentUser?.reload();
+  }
 }

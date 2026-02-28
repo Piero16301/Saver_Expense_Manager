@@ -2,6 +2,8 @@
     "@@locale": "es",
     "selectLanguage": "Seleccionar idioma",
     "@selectLanguage": {},
+    "selectTheme": "Seleccionar tema",
+    "@selectTheme": {},
     "english": "🇺🇸 Inglés",
     "@english": {},
     "spanish": "🇪🇸 Español",
@@ -178,6 +180,8 @@
     "@movementCompany": {},
     "movementCompanyHint": "Ingrese una empresa (opcional)",
     "@movementCompanyHint": {},
+    "movementCompanyError": "La empresa es obligatoria",
+    "@movementCompanyError": {},
     "movementAttachments": "Adjuntos (opcional)",
     "@movementAttachments": {},
     "movementAddAttachment": "Agregar adjunto",
@@ -244,6 +248,8 @@
             }
         }
     },
+    "unlinkProviderError": "No se puede desvincular el único proveedor",
+    "@unlinkProviderError": {},
     "confirmLogoutTitle": "Cerrar sesión",
     "@confirmLogoutTitle": {},
     "confirmLogoutMessage": "¿Estás seguro de que deseas cerrar sesión?",
@@ -382,6 +388,12 @@
     "@emailLinkingNotImplemented": {},
     "nameLabel": "Nombre",
     "@nameLabel": {},
+    "nameHint": "Ingrese su nombre",
+    "@nameHint": {},
+    "nameRequired": "El nombre es obligatorio",
+    "@nameRequired": {},
+    "invalidNameFormat": "Formato de nombre inválido",
+    "@invalidNameFormat": {},
     "confirmUnlinkProviderTitle": "Desvincular Cuenta",
     "@confirmUnlinkProviderTitle": {},
     "confirmUnlinkProviderMessage": "¿Estás seguro de que deseas desvincular esta cuenta?",
@@ -411,5 +423,7 @@
     "haveAccount": "¿Ya tienes una cuenta?",
     "@haveAccount": {},
     "loginSuccess": "Inicio de sesión exitoso",
-    "@loginSuccess": {}
+    "@loginSuccess": {},
+    "registerSuccess": "Registro exitoso",
+    "@registerSuccess": {}
 }

@@ -14,35 +14,36 @@ class AppChangeLanguage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final currentLocale = Localizations.localeOf(context);
     const languages = AppVariables.supportedLocales;
 
-    return Padding(
-      padding: padding ?? EdgeInsets.zero,
-      child: PopupMenuButton<Locale>(
-        initialValue: currentLocale,
-        icon: Text(
-          _getFlag(currentLocale.languageCode, l10n),
-          style: const TextStyle(fontSize: 22),
-        ),
-        tooltip: l10n.selectLanguage,
-        constraints: const BoxConstraints(minWidth: 60, maxWidth: 60),
-        onSelected: (newValue) =>
-            context.read<AppCubit>().changeLanguage(language: newValue),
-        itemBuilder: (context) {
-          return languages.map((value) {
-            return PopupMenuItem<Locale>(
-              value: value,
-              padding: EdgeInsets.zero,
-              child: Center(
-                child: Text(
-                  _getFlag(value.languageCode, l10n),
-                  style: const TextStyle(fontSize: 22),
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, state) => Padding(
+        padding: padding ?? EdgeInsets.zero,
+        child: PopupMenuButton<Locale>(
+          initialValue: state.language,
+          icon: Text(
+            _getFlag(state.language.languageCode, l10n),
+            style: const TextStyle(fontSize: 22),
+          ),
+          tooltip: l10n.selectLanguage,
+          constraints: const BoxConstraints(minWidth: 60, maxWidth: 60),
+          onSelected: (value) =>
+              context.read<AppCubit>().changeLanguage(language: value),
+          itemBuilder: (context) {
+            return languages.map((value) {
+              return PopupMenuItem<Locale>(
+                value: value,
+                padding: EdgeInsets.zero,
+                child: Center(
+                  child: Text(
+                    _getFlag(value.languageCode, l10n),
+                    style: const TextStyle(fontSize: 22),
+                  ),
                 ),
-              ),
-            );
-          }).toList();
-        },
+              );
+            }).toList();
+          },
+        ),
       ),
     );
   }

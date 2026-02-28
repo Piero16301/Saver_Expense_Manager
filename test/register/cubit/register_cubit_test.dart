@@ -116,6 +116,7 @@ void main() {
       'register emits [loading, success] on successful auth',
       build: () => registerCubit,
       seed: () => const RegisterState(
+        name: 'Piero',
         email: 'test@test.com',
         password: 'Password123!',
         confirmPassword: 'Password123!',
@@ -127,16 +128,20 @@ void main() {
             any(),
           ),
         ).thenAnswer((_) async => FakeUserCredential());
+        when(() => mockAuthenticationService.updateUserName(any()))
+            .thenAnswer((_) async => Future<void>.value());
       },
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [
         RegisterState(
+          name: 'Piero',
           email: 'test@test.com',
           password: 'Password123!',
           confirmPassword: 'Password123!',
           status: RegisterStatus.loading,
         ),
         RegisterState(
+          name: 'Piero',
           email: 'test@test.com',
           password: 'Password123!',
           confirmPassword: 'Password123!',
@@ -149,6 +154,7 @@ void main() {
       'register emits [loading, failure] on auth exception',
       build: () => registerCubit,
       seed: () => const RegisterState(
+        name: 'Piero',
         email: 'test@test.com',
         password: 'Password123!',
         confirmPassword: 'Password123!',
@@ -160,16 +166,20 @@ void main() {
             any(),
           ),
         ).thenThrow(Exception('Error'));
+        when(() => mockAuthenticationService.updateUserName(any()))
+            .thenAnswer((_) async => Future<void>.value());
       },
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [
         RegisterState(
+          name: 'Piero',
           email: 'test@test.com',
           password: 'Password123!',
           confirmPassword: 'Password123!',
           status: RegisterStatus.loading,
         ),
         RegisterState(
+          name: 'Piero',
           email: 'test@test.com',
           password: 'Password123!',
           confirmPassword: 'Password123!',

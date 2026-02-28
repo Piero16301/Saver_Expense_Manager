@@ -12,6 +12,7 @@ class MovementState extends Equatable {
     this.company = '',
     this.attachments = const <String>[],
     this.movementRecap = '',
+    this.formKey,
   });
 
   final String id;
@@ -24,6 +25,7 @@ class MovementState extends Equatable {
   final String company;
   final List<String> attachments;
   final String movementRecap;
+  final GlobalKey<FormState>? formKey;
 
   MovementState copyWith({
     String? id,
@@ -36,6 +38,7 @@ class MovementState extends Equatable {
     String? company,
     List<String>? attachments,
     String? movementRecap,
+    GlobalKey<FormState>? formKey,
   }) {
     return MovementState(
       id: id ?? this.id,
@@ -48,6 +51,7 @@ class MovementState extends Equatable {
       company: company ?? this.company,
       attachments: attachments ?? this.attachments,
       movementRecap: movementRecap ?? this.movementRecap,
+      formKey: formKey ?? this.formKey,
     );
   }
 
@@ -63,5 +67,6 @@ class MovementState extends Equatable {
         company,
         attachments,
         movementRecap,
+        formKey,
       ];
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class AppChangeTheme extends StatelessWidget {
   const AppChangeTheme({
@@ -13,22 +14,43 @@ class AppChangeTheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: padding ?? EdgeInsets.zero,
-      child: IconButton(
-        onPressed: () {
-          final isDark = context.read<AppCubit>().state.theme == ThemeMode.dark;
-          context
-              .read<AppCubit>()
-              .changeTheme(theme: isDark ? ThemeMode.light : ThemeMode.dark);
-        },
-        icon: BlocBuilder<AppCubit, AppState>(
-          builder: (context, state) => HugeIcon(
-            icon: state.theme == ThemeMode.dark
-                ? HugeIcons.strokeRoundedSun01
-                : HugeIcons.strokeRoundedMoon02,
+    final l10n = AppLocalizations.of(context);
+
+    return BlocBuilder<AppCubit, AppState>(
+      builder: (context, state) => Padding(
+        padding: padding ?? EdgeInsets.zero,
+        child: PopupMenuButton<ThemeMode>(
+          initialValue: state.theme,
+          icon: HugeIcon(
+            icon: state.theme == ThemeMode.light
+                ? HugeIcons.strokeRoundedSun03
+                : (state.theme == ThemeMode.dark
+                    ? HugeIcons.strokeRoundedMoon02
+                    : HugeIcons.strokeRoundedSmartPhone01),
             strokeWidth: 2,
           ),
+          tooltip: l10n.selectTheme,
+          constraints: const BoxConstraints(minWidth: 60, maxWidth: 60),
+          onSelected: (value) =>
+              context.read<AppCubit>().changeTheme(theme: value),
+          itemBuilder: (context) {
+            return ThemeMode.values.map((value) {
+              return PopupMenuItem<ThemeMode>(
+                value: value,
+                padding: EdgeInsets.zero,
+                child: Center(
+                  child: HugeIcon(
+                    icon: value == ThemeMode.light
+                        ? HugeIcons.strokeRoundedSun03
+                        : (value == ThemeMode.dark
+                            ? HugeIcons.strokeRoundedMoon02
+                            : HugeIcons.strokeRoundedSmartPhone01),
+                    strokeWidth: 2,
+                  ),
+                ),
+              );
+            }).toList();
+          },
         ),
       ),
     );

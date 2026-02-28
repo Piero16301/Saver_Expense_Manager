@@ -14,6 +14,7 @@ enum RegisterStatus {
 
 class RegisterState extends Equatable {
   const RegisterState({
+    this.name = '',
     this.email = '',
     this.password = '',
     this.confirmPassword = '',
@@ -21,11 +22,13 @@ class RegisterState extends Equatable {
     this.errorMessage,
     this.isPasswordVisible = false,
     this.isConfirmPasswordVisible = false,
+    this.isNameValid = true,
     this.isEmailValid = true,
     this.isPasswordValid = true,
     this.isConfirmPasswordValid = true,
   });
 
+  final String name;
   final String email;
   final String password;
   final String confirmPassword;
@@ -33,19 +36,23 @@ class RegisterState extends Equatable {
   final String? errorMessage;
   final bool isPasswordVisible;
   final bool isConfirmPasswordVisible;
+  final bool isNameValid;
   final bool isEmailValid;
   final bool isPasswordValid;
   final bool isConfirmPasswordValid;
 
   bool get isFormValid =>
+      name.isNotEmpty &&
       email.isNotEmpty &&
       password.isNotEmpty &&
       confirmPassword.isNotEmpty &&
+      isNameValid &&
       isEmailValid &&
       isPasswordValid &&
       isConfirmPasswordValid;
 
   RegisterState copyWith({
+    String? name,
     String? email,
     String? password,
     String? confirmPassword,
@@ -53,11 +60,13 @@ class RegisterState extends Equatable {
     String? errorMessage,
     bool? isPasswordVisible,
     bool? isConfirmPasswordVisible,
+    bool? isNameValid,
     bool? isEmailValid,
     bool? isPasswordValid,
     bool? isConfirmPasswordValid,
   }) {
     return RegisterState(
+      name: name ?? this.name,
       email: email ?? this.email,
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
@@ -66,6 +75,7 @@ class RegisterState extends Equatable {
       isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
       isConfirmPasswordVisible:
           isConfirmPasswordVisible ?? this.isConfirmPasswordVisible,
+      isNameValid: isNameValid ?? this.isNameValid,
       isEmailValid: isEmailValid ?? this.isEmailValid,
       isPasswordValid: isPasswordValid ?? this.isPasswordValid,
       isConfirmPasswordValid:
@@ -75,6 +85,7 @@ class RegisterState extends Equatable {
 
   @override
   List<Object?> get props => [
+        name,
         email,
         password,
         confirmPassword,
@@ -82,6 +93,7 @@ class RegisterState extends Equatable {
         errorMessage,
         isPasswordVisible,
         isConfirmPasswordVisible,
+        isNameValid,
         isEmailValid,
         isPasswordValid,
         isConfirmPasswordValid,

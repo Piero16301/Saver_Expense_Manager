@@ -472,6 +472,7 @@ class AntRecommendationsWidget extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(12),
                             child: SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
                               child: MarkdownBody(
                                 data: recommendation,
                               ),

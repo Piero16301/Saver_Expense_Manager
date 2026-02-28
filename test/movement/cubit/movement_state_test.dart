@@ -25,6 +25,7 @@ void main() {
           '',
           const <String>[],
           '',
+          null,
         ]),
       );
     });

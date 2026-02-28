@@ -12,6 +12,15 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   final AuthenticationService _authService;
 
+  void nameChanged(String value) {
+    emit(
+      state.copyWith(
+        name: value,
+        isNameValid: _validateName(value),
+      ),
+    );
+  }
+
   void emailChanged(String value) {
     emit(
       state.copyWith(
@@ -38,6 +47,11 @@ class RegisterCubit extends Cubit<RegisterState> {
         isConfirmPasswordValid: value == state.password,
       ),
     );
+  }
+
+  bool _validateName(String name) {
+    final nameRegex = RegExp(AppVariables.nameRegExp);
+    return nameRegex.hasMatch(name);
   }
 
   bool _validateEmail(String email) {
@@ -71,6 +85,7 @@ class RegisterCubit extends Cubit<RegisterState> {
         state.password,
       );
       emit(state.copyWith(status: RegisterStatus.success));
+      await _authService.updateUserName(state.name);
     } on Exception catch (_) {
       emit(
         state.copyWith(
