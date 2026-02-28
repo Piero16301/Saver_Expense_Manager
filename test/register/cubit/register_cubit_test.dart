@@ -128,6 +128,8 @@ void main() {
             any(),
           ),
         ).thenAnswer((_) async => FakeUserCredential());
+        when(() => mockAuthenticationService.updateUserName(any()))
+            .thenAnswer((_) async => Future<void>.value());
       },
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [
@@ -164,6 +166,8 @@ void main() {
             any(),
           ),
         ).thenThrow(Exception('Error'));
+        when(() => mockAuthenticationService.updateUserName(any()))
+            .thenAnswer((_) async => Future<void>.value());
       },
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [
