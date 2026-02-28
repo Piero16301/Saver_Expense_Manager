@@ -2,6 +2,8 @@
     "@@locale": "it",
     "selectLanguage": "Seleziona la lingua",
     "@selectLanguage": {},
+    "selectTheme": "Seleziona tema",
+    "@selectTheme": {},
     "english": "🇺🇸 Inglese",
     "@english": {},
     "spanish": "🇪🇸 Spagnolo",
@@ -178,6 +180,8 @@
     "@movementCompany": {},
     "movementCompanyHint": "Inserisci un'azienda (opzionale)",
     "@movementCompanyHint": {},
+    "movementCompanyError": "L'azienda è obbligatoria",
+    "@movementCompanyError": {},
     "movementAttachments": "Allegati (opzionale)",
     "@movementAttachments": {},
     "movementAddAttachment": "Aggiungi allegato",
@@ -244,6 +248,8 @@
             }
         }
     },
+    "unlinkProviderError": "Non si può disconnettere l'unico provider",
+    "@unlinkProviderError": {},
     "confirmLogoutTitle": "Disconnettersi",
     "@confirmLogoutTitle": {},
     "confirmLogoutMessage": "Sei sicuro di voler uscire?",
@@ -382,6 +388,12 @@
     "@emailLinkingNotImplemented": {},
     "nameLabel": "Nome",
     "@nameLabel": {},
+    "nameHint": "Inserisci il tuo nome",
+    "@nameHint": {},
+    "nameRequired": "Il nome è obbligatorio",
+    "@nameRequired": {},
+    "invalidNameFormat": "Formato nome non valido",
+    "@invalidNameFormat": {},
     "confirmUnlinkProviderTitle": "Scollega Account",
     "@confirmUnlinkProviderTitle": {},
     "confirmUnlinkProviderMessage": "Sei sicuro di voler scollegare questo account?",
@@ -411,5 +423,7 @@
     "haveAccount": "Hai già un account?",
     "@haveAccount": {},
     "loginSuccess": "Accesso riuscito",
-    "@loginSuccess": {}
+    "@loginSuccess": {},
+    "registerSuccess": "Registrazione riuscita",
+    "@registerSuccess": {}
 }

@@ -100,7 +100,7 @@ class AppFunctions {
                 ? Colors.red
                 : type.isWarning
                     ? Colors.orange
-                    : Theme.of(context).colorScheme.primary,
+                    : Colors.blue,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),

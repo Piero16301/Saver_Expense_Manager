@@ -41,18 +41,18 @@ void main() {
       build: () => movementCubit,
       act: (cubit) => cubit.init(movement, categories),
       expect: () => [
-        MovementState(
-          id: 'm1',
-          title: 'Coffee',
-          description: 'Morning',
-          date: date,
-          categories: categories,
-          category: category,
-          price: 5,
-          company: 'Starbucks',
-          attachments: const ['file1'],
-          movementRecap: 'Recap',
-        ),
+        isA<MovementState>()
+            .having((s) => s.id, 'id', 'm1')
+            .having((s) => s.title, 'title', 'Coffee')
+            .having((s) => s.description, 'description', 'Morning')
+            .having((s) => s.date, 'date', date)
+            .having((s) => s.categories, 'categories', categories)
+            .having((s) => s.category, 'category', category)
+            .having((s) => s.price, 'price', 5)
+            .having((s) => s.company, 'company', 'Starbucks')
+            .having((s) => s.attachments, 'attachments', const ['file1'])
+            .having((s) => s.movementRecap, 'movementRecap', 'Recap')
+            .having((s) => s.formKey, 'formKey', isNotNull),
       ],
     );
 

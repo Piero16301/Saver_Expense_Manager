@@ -21,9 +21,6 @@ class MovementView extends StatelessWidget {
     final auth = getIt<AuthenticationService>();
     final user = auth.currentUser!;
     final l10n = AppLocalizations.of(context);
-    final selectedDate = context.select<MovementCubit, DateTime>(
-      (cubit) => cubit.state.date!,
-    );
 
     return BlocBuilder<MovementCubit, MovementState>(
       builder: (context, state) => Scaffold(
@@ -50,159 +47,121 @@ class MovementView extends StatelessWidget {
               const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 50),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                const SizedBox(height: 5),
-                AppTextField(
-                  label: l10n.movementTitle,
-                  hintText: l10n.movementTitleHint,
-                  errorText: l10n.movementTitleError,
-                  onChanged: context.read<MovementCubit>().titleChanged,
-                  prefix: const HugeIcon(icon: HugeIcons.strokeRoundedTextFont),
-                  initialValue: state.title,
-                  maxLength: 50,
-                ),
-                const SizedBox(height: 20),
-                AppTextField(
-                  label: l10n.movementDescription,
-                  hintText: l10n.movementDescriptionHint,
-                  errorText: l10n.movementDescriptionError,
-                  onChanged: context.read<MovementCubit>().descriptionChanged,
-                  prefix: const HugeIcon(icon: HugeIcons.strokeRoundedNote),
-                  initialValue: state.description,
-                  maxLines: 7,
-                  maxLength: 300,
-                ),
-                const SizedBox(height: 20),
-                AppDateField(
-                  label: l10n.movementDate,
-                  initialDate: state.date!,
-                  onDateChanged: context.read<MovementCubit>().dateChanged,
-                ),
-                const SizedBox(height: 20),
-                AppDropdownField<Category>(
-                  label: l10n.movementCategory,
-                  options: state.categories
-                      .map(
-                        (category) => DropdownMenuItem<Category>(
-                          value: category,
-                          child: Row(
-                            spacing: 12,
-                            children: [
-                              HugeIcon(
-                                icon:
-                                    AppFunctions.getCategoryIcon(category.icon),
-                              ),
-                              Text(
-                                AppFunctions.getCategoryName(
-                                  category.name,
-                                  l10n,
-                                ),
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                  selected: state.category,
-                  leadingIcon:
-                      AppFunctions.getCategoryIcon(state.category!.icon),
-                  onChanged: context.read<MovementCubit>().categoryChanged,
-                ),
-                const SizedBox(height: 20),
-                AppTextField(
-                  label: l10n.movementAmount,
-                  hintText: l10n.movementAmountHint,
-                  errorText: l10n.movementAmountError,
-                  onChanged: context.read<MovementCubit>().priceChanged,
-                  prefix: const HugeIcon(icon: HugeIcons.strokeRoundedMoney01),
-                  initialValue:
-                      state.price == 0 ? '' : state.price.toStringAsFixed(2),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^\d+\.?\d{0,2}'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                AppTextField(
-                  label: l10n.movementCompany,
-                  hintText: l10n.movementCompanyHint,
-                  isRequired: false,
-                  onChanged: context.read<MovementCubit>().companyChanged,
-                  prefix:
-                      const HugeIcon(icon: HugeIcons.strokeRoundedBuilding01),
-                  initialValue: state.company,
-                  maxLength: 50,
-                ),
-                const SizedBox(height: 20),
-                AppFileField(
-                  label: l10n.movementAttachments,
-                  labelAdd: l10n.movementAddAttachment,
-                  onAdd: context.read<MovementCubit>().attachAdd,
-                  onRemove: context.read<MovementCubit>().attachRemove,
-                  openFile: context.read<MovementCubit>().attachOpen,
-                  attachments: state.attachments,
-                ),
-                if (kDebugMode)
-                  MovementMetadata(
-                    id: state.id,
-                    movementRecap: state.movementRecap,
+            child: Form(
+              key: state.formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                children: [
+                  const SizedBox(height: 5),
+                  AppTextField(
+                    label: l10n.movementTitle,
+                    hintText: l10n.movementTitleHint,
+                    errorText: l10n.movementTitleError,
+                    onChanged: context.read<MovementCubit>().titleChanged,
+                    prefix:
+                        const HugeIcon(icon: HugeIcons.strokeRoundedTextFont),
+                    initialValue: state.title,
+                    maxLength: 50,
                   ),
-              ],
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    label: l10n.movementDescription,
+                    hintText: l10n.movementDescriptionHint,
+                    errorText: l10n.movementDescriptionError,
+                    onChanged: context.read<MovementCubit>().descriptionChanged,
+                    prefix: const HugeIcon(icon: HugeIcons.strokeRoundedNote),
+                    initialValue: state.description,
+                    maxLines: 7,
+                    maxLength: 300,
+                  ),
+                  const SizedBox(height: 20),
+                  AppDateField(
+                    label: l10n.movementDate,
+                    initialDate: state.date!,
+                    onDateChanged: context.read<MovementCubit>().dateChanged,
+                  ),
+                  const SizedBox(height: 20),
+                  AppDropdownField<Category>(
+                    label: l10n.movementCategory,
+                    options: state.categories
+                        .map(
+                          (category) => DropdownMenuItem<Category>(
+                            value: category,
+                            child: Row(
+                              spacing: 12,
+                              children: [
+                                HugeIcon(
+                                  icon: AppFunctions.getCategoryIcon(
+                                    category.icon,
+                                  ),
+                                ),
+                                Text(
+                                  AppFunctions.getCategoryName(
+                                    category.name,
+                                    l10n,
+                                  ),
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    selected: state.category,
+                    leadingIcon:
+                        AppFunctions.getCategoryIcon(state.category!.icon),
+                    onChanged: context.read<MovementCubit>().categoryChanged,
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    label: l10n.movementAmount,
+                    hintText: l10n.movementAmountHint,
+                    errorText: l10n.movementAmountError,
+                    onChanged: context.read<MovementCubit>().priceChanged,
+                    prefix:
+                        const HugeIcon(icon: HugeIcons.strokeRoundedMoney01),
+                    initialValue:
+                        state.price == 0 ? '' : state.price.toStringAsFixed(2),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d+\.?\d{0,2}'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  AppTextField(
+                    label: l10n.movementCompany,
+                    hintText: l10n.movementCompanyHint,
+                    errorText: l10n.movementCompanyError,
+                    onChanged: context.read<MovementCubit>().companyChanged,
+                    prefix:
+                        const HugeIcon(icon: HugeIcons.strokeRoundedBuilding01),
+                    initialValue: state.company,
+                    maxLength: 50,
+                  ),
+                  const SizedBox(height: 20),
+                  AppFileField(
+                    label: l10n.movementAttachments,
+                    labelAdd: l10n.movementAddAttachment,
+                    onAdd: context.read<MovementCubit>().attachAdd,
+                    onRemove: context.read<MovementCubit>().attachRemove,
+                    openFile: context.read<MovementCubit>().attachOpen,
+                    attachments: state.attachments,
+                  ),
+                  if (kDebugMode)
+                    MovementMetadata(
+                      id: state.id,
+                      movementRecap: state.movementRecap,
+                    ),
+                ],
+              ),
             ),
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            if (selectedDate.isBefore(
-              DateTime.now().subtract(
-                const Duration(days: AppVariables.maxDaysWarning),
-              ),
-            )) {
-              unawaited(
-                showDialog<void>(
-                  context: context,
-                  builder: (dialogContext) => AppAlertDialog(
-                    title: l10n.movementDateWarningTitle,
-                    content: l10n.movementDateWarningContent(
-                      AppVariables.maxDaysWarning,
-                    ),
-                    cancelLabel: l10n.cancel,
-                    confirmLabel: l10n.confirm,
-                    onCancel: () => context.pop(),
-                    onConfirm: () {
-                      context.pop();
-                      if (context.read<MovementCubit>().saveMovement(
-                            user.uid,
-                            l10n,
-                          )) {
-                        context.pop<bool>(true);
-                      } else {
-                        AppFunctions.showSnackBar(
-                          context,
-                          message: l10n.movementSaveError,
-                          type: SnackBarType.error,
-                        );
-                      }
-                    },
-                  ),
-                ),
-              );
-            } else {
-              if (context.read<MovementCubit>().saveMovement(user.uid, l10n)) {
-                context.pop<bool>(true);
-              } else {
-                AppFunctions.showSnackBar(
-                  context,
-                  message: l10n.movementSaveError,
-                  type: SnackBarType.error,
-                );
-              }
-            }
-          },
+          onPressed: () =>
+              _onSaveButtonPressed(context, state.date!, user.uid, l10n),
           child: const HugeIcon(
             icon: HugeIcons.strokeRoundedFloppyDisk,
             strokeWidth: 2,
@@ -210,6 +169,69 @@ class MovementView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onSaveButtonPressed(
+    BuildContext context,
+    DateTime selectedDate,
+    String uid,
+    AppLocalizations l10n,
+  ) {
+    if (selectedDate.isBefore(
+      DateTime.now().subtract(
+        const Duration(days: AppVariables.maxDaysWarning),
+      ),
+    )) {
+      unawaited(
+        showDialog<void>(
+          context: context,
+          builder: (dialogContext) => AppAlertDialog(
+            title: l10n.movementDateWarningTitle,
+            content: l10n.movementDateWarningContent(
+              AppVariables.maxDaysWarning,
+            ),
+            cancelLabel: l10n.cancel,
+            confirmLabel: l10n.confirm,
+            onCancel: () => context.pop(),
+            onConfirm: () => _onConfirmDialog(context, uid, l10n),
+          ),
+        ),
+      );
+    } else {
+      final result = context.read<MovementCubit>().saveMovement(uid, l10n);
+      if (result == null) return;
+
+      if (result) {
+        context.pop<bool>(true);
+      } else {
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.movementSaveError,
+          type: SnackBarType.error,
+        );
+      }
+    }
+  }
+
+  void _onConfirmDialog(
+    BuildContext context,
+    String uid,
+    AppLocalizations l10n,
+  ) {
+    context.pop();
+
+    final result = context.read<MovementCubit>().saveMovement(uid, l10n);
+    if (result == null) return;
+
+    if (result) {
+      context.pop<bool>(true);
+    } else {
+      AppFunctions.showSnackBar(
+        context,
+        message: l10n.movementSaveError,
+        type: SnackBarType.error,
+      );
+    }
   }
 
   String _appBarTitle(AppLocalizations l10n) {

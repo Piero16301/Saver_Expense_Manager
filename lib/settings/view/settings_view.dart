@@ -32,23 +32,30 @@ class SettingsView extends StatelessWidget {
               ),
             ),
           ),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
-            children: const [
-              Row(
-                spacing: 4,
-                children: [
-                  LocaleSettingsCard(),
-                  ThemeSettingsCard(),
+          body: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppVariables.tabletMaxWidth,
+              ),
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: const [
+                  Row(
+                    spacing: 4,
+                    children: [
+                      LocaleSettingsCard(),
+                      ThemeSettingsCard(),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  ColorSettingsCard(),
+                  SizedBox(height: 4),
+                  FontSettingsCard(),
+                  Divider(),
+                  SettingsAppSpecs(),
                 ],
               ),
-              SizedBox(height: 4),
-              ColorSettingsCard(),
-              SizedBox(height: 4),
-              FontSettingsCard(),
-              Divider(),
-              SettingsAppSpecs(),
-            ],
+            ),
           ),
         );
       },
@@ -125,7 +132,7 @@ class ThemeSettingsCard extends StatelessWidget {
                       ? HugeIcons.strokeRoundedSun03
                       : (themeMode == ThemeMode.dark
                           ? HugeIcons.strokeRoundedMoon02
-                          : HugeIcons.strokeRoundedFan01),
+                          : HugeIcons.strokeRoundedSmartPhone01),
                   size: 20,
                   strokeWidth: 2,
                 ),

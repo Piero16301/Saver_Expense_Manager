@@ -116,6 +116,7 @@ void main() {
       'register emits [loading, success] on successful auth',
       build: () => registerCubit,
       seed: () => const RegisterState(
+        name: 'Piero',
         email: 'test@test.com',
         password: 'Password123!',
         confirmPassword: 'Password123!',
@@ -131,12 +132,14 @@ void main() {
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [
         RegisterState(
+          name: 'Piero',
           email: 'test@test.com',
           password: 'Password123!',
           confirmPassword: 'Password123!',
           status: RegisterStatus.loading,
         ),
         RegisterState(
+          name: 'Piero',
           email: 'test@test.com',
           password: 'Password123!',
           confirmPassword: 'Password123!',
@@ -149,6 +152,7 @@ void main() {
       'register emits [loading, failure] on auth exception',
       build: () => registerCubit,
       seed: () => const RegisterState(
+        name: 'Piero',
         email: 'test@test.com',
         password: 'Password123!',
         confirmPassword: 'Password123!',
@@ -164,12 +168,14 @@ void main() {
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [
         RegisterState(
+          name: 'Piero',
           email: 'test@test.com',
           password: 'Password123!',
           confirmPassword: 'Password123!',
           status: RegisterStatus.loading,
         ),
         RegisterState(
+          name: 'Piero',
           email: 'test@test.com',
           password: 'Password123!',
           confirmPassword: 'Password123!',

@@ -24,6 +24,13 @@ class RegisterView extends StatelessWidget {
             type: SnackBarType.error,
           );
         }
+        if (state.status.isSuccess) {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.registerSuccess,
+            type: SnackBarType.success,
+          );
+        }
       },
       child: Scaffold(
         body: SafeArea(
@@ -32,10 +39,10 @@ class RegisterView extends StatelessWidget {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  AppChangeLanguage(
-                    padding: EdgeInsets.only(top: 16, right: 8),
-                  ),
                   AppChangeTheme(
+                    padding: EdgeInsets.only(top: 16, left: 16),
+                  ),
+                  AppChangeLanguage(
                     padding: EdgeInsets.only(top: 16, right: 16),
                   ),
                 ],
@@ -62,6 +69,24 @@ class RegisterView extends StatelessWidget {
                               l10n.registerTitle,
                               style: Theme.of(context).textTheme.headlineMedium,
                               textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 24),
+
+                            // Name Field
+                            AppTextField(
+                              label: l10n.nameLabel,
+                              hintText: l10n.nameHint,
+                              keyboardType: TextInputType.name,
+                              prefix: const HugeIcon(
+                                icon: HugeIcons.strokeRoundedUser,
+                              ),
+                              onChanged: (value) => context
+                                  .read<RegisterCubit>()
+                                  .nameChanged(value),
+                              errorText: l10n.nameRequired,
+                              overrideErrorText: !state.isNameValid
+                                  ? l10n.invalidNameFormat
+                                  : null,
                             ),
                             const SizedBox(height: 24),
 

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,6 +30,7 @@ class MovementCubit extends Cubit<MovementState> {
         company: movement.company,
         attachments: movement.attachments,
         movementRecap: movement.movementRecap,
+        formKey: GlobalKey<FormState>(),
       ),
     );
   }
@@ -86,7 +88,11 @@ class MovementCubit extends Cubit<MovementState> {
     } on Exception catch (_) {}
   }
 
-  bool saveMovement(String userId, AppLocalizations l10n) {
+  bool? saveMovement(String userId, AppLocalizations l10n) {
+    if (!(state.formKey?.currentState?.validate() ?? false)) {
+      return null;
+    }
+
     final nowDate = DateTime.now();
 
     // Save movement in Firebase Firestore

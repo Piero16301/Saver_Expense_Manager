@@ -37,12 +37,12 @@ class LoginView extends StatelessWidget {
           child: Stack(
             children: [
               const Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppChangeLanguage(
-                    padding: EdgeInsets.only(top: 16, right: 8),
-                  ),
                   AppChangeTheme(
+                    padding: EdgeInsets.only(top: 16, left: 16),
+                  ),
+                  AppChangeLanguage(
                     padding: EdgeInsets.only(top: 16, right: 16),
                   ),
                 ],
