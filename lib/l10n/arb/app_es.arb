@@ -140,6 +140,8 @@
     "@categorySales": {},
     "categoryOthersIncome": "Otros (ingreso)",
     "@categoryOthersIncome": {},
+    "antRecommendationsError": "Ocurrió un error al cargar las recomendaciones",
+    "@antRecommendationsError": {},
     "movementNewAppbarTitle": "Nuevo movimiento",
     "@movementNewAppbarTitle": {},
     "movementEditAppbarTitle": "Editar movimiento",

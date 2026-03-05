@@ -19,10 +19,21 @@ class MovementsHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final authentication = getIt<AuthenticationService>();
     final database = getIt<DatabaseService>();
 
-    return BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
+    return BlocConsumer<MovementsHomeCubit, MovementsHomeState>(
+      listener: (context, state) {
+        if (state.recommendationsStatus.isFailure) {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.antRecommendationsError,
+            type: SnackBarType.error,
+          );
+          context.read<MovementsHomeCubit>().resetRecommendationsStatus();
+        }
+      },
       builder: (context, state) => Column(
         spacing: 8,
         children: [

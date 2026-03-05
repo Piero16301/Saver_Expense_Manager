@@ -37,6 +37,10 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
     emit(state.copyWith(showRecommendations: !state.showRecommendations));
   }
 
+  void resetRecommendationsStatus() {
+    emit(state.copyWith(recommendationsStatus: RecommendationsStatus.initial));
+  }
+
   Future<void> getRecommendations() async {
     final localStorage = getIt<LocalStorageService>();
     var nowDate = DateTime.now();

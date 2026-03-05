@@ -402,17 +402,23 @@ class AppFunctions {
         .replaceAll('{{language}}', language)
         .replaceAll('{{lookbackDays}}', lookbackDays.toString());
 
-    String? response = '';
+    String? response;
     final aiService = getIt<AiService>();
 
-    if (aiService.isLocalModelAvailable) {
-      response = await aiService.generateContentLocal(
-        textPrompt: PromptPart.text(text: prompt),
-      );
-    } else {
+    final hasInternet = await AppFunctions.hasInternetConnection();
+
+    if (hasInternet) {
       response = await aiService.generateContentRemote(
         prompt: [PromptPart.text(text: prompt)],
       );
+    } else {
+      if (aiService.isLocalModelAvailable) {
+        response = await aiService.generateContentLocal(
+          textPrompt: PromptPart.text(text: prompt),
+        );
+      } else {
+        throw Exception('NO_LOCAL_MODEL_AVAILABLE');
+      }
     }
 
     return response?.split('|||').map((e) => e.trim()).toList();
