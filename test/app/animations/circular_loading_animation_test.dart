@@ -34,7 +34,6 @@ void main() {
       expect(container.constraints?.maxWidth, 150.0);
       expect(container.constraints?.maxHeight, 150.0);
 
-      // Cleanup to avoid pending timer
       await tester.pumpWidget(const SizedBox());
     });
 
@@ -54,7 +53,6 @@ void main() {
 
       expect(find.byKey(const Key('center_widget')), findsOneWidget);
 
-      // Cleanup
       await tester.pumpWidget(const SizedBox());
     });
 
@@ -74,7 +72,6 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
-      // Rebuild with different colors to trigger shouldRepaint
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -89,7 +86,6 @@ void main() {
 
       await tester.pump();
 
-      // Rebuild with same parameters to test shouldRepaint false branch
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -104,7 +100,6 @@ void main() {
 
       await tester.pump();
 
-      // Destroy widget tree to stop the repeating animation controller
       await tester.pumpWidget(const SizedBox());
     });
   });

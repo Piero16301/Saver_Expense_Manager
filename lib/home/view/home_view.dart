@@ -254,89 +254,90 @@ class AddMovementBottomSheet extends StatelessWidget {
       allowedExtensions: AppVariables.allowedExtensions,
     );
 
-    if (result != null) {
-      unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+    if (result == null) {
+      return;
+    }
 
-      final hasInternet = await AppFunctions.hasInternetConnection();
-      final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+    unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+
+    final hasInternet = await AppFunctions.hasInternetConnection();
+    final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+
+    if (loader.isLoading) {
+      loader.hideLoading();
+    }
+
+    unawaited(
+      loader.showLoading(
+        message:
+            modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+      ),
+    );
+
+    try {
+      if (modelType.isLocal &&
+          !AppVariables.imageExtensions
+              .contains(result.files.first.extension)) {
+        throw Exception(AppVariables.unsupportedLocalModelFile);
+      }
+
+      final file = result.files.single;
+      final ext = file.path!.split('.').last;
+      final path = '${const Uuid().v4()}.$ext';
+      final bytes = await file.xFile.readAsBytes();
+
+      // Upload file to Firebase Storage and build movement from file in
+      // parallel
+      final uploadTask = getIt<RemoteStorageService>().uploadFile(
+        File(file.path!),
+        path,
+      );
+      final movementFuture = AppFunctions.buildMovementFromFile(
+        movementType: movementType,
+        categories: selectedCategories,
+        language: language.toString(),
+        mimeType: lookupMimeType(file.name) ?? 'application/pdf',
+        bytes: bytes,
+        modelType: modelType,
+      );
+
+      final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
+      final uploadName = results[0] as String?;
+      final movement = results[1] as Movement;
 
       if (loader.isLoading) {
         loader.hideLoading();
       }
-
+      Navigator.of(context).pop();
       unawaited(
-        loader.showLoading(
-          message:
-              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+        context.pushNamed(
+          MovementPage.pageName,
+          pathParameters: {
+            'type': movementType.value,
+            'screenType': MovementScreenType.add.name.toUpperCase(),
+          },
+          extra: movement.copyWith(
+            attachments: uploadName != null ? [uploadName] : [],
+          ),
         ),
       );
-
-      try {
-        if (modelType.isLocal &&
-            !AppVariables.imageExtensions
-                .contains(result.files.first.extension)) {
-          throw Exception(AppVariables.unsupportedLocalModelFile);
-        }
-
-        final file = result.files.single;
-        final ext = file.path!.split('.').last;
-        final path = '${const Uuid().v4()}.$ext';
-        final bytes = await file.xFile.readAsBytes();
-
-        // Upload file to Firebase Storage and build movement from file in
-        // parallel
-        final uploadTask = getIt<RemoteStorageService>().uploadFile(
-          File(file.path!),
-          path,
+    } on Exception catch (e) {
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+      Navigator.of(context).pop();
+      if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.invalidLocalModelFileInput,
+          type: SnackBarType.error,
         );
-        final movementFuture = AppFunctions.buildMovementFromFile(
-          movementType: movementType,
-          categories: selectedCategories,
-          language: language.toString(),
-          mimeType: lookupMimeType(file.name) ?? 'application/pdf',
-          bytes: bytes,
-          modelType: modelType,
+      } else {
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.genericError,
+          type: SnackBarType.error,
         );
-
-        final results =
-            await Future.wait<dynamic>([uploadTask, movementFuture]);
-        final uploadName = results[0] as String?;
-        final movement = results[1] as Movement;
-
-        if (loader.isLoading) {
-          loader.hideLoading();
-        }
-        Navigator.of(context).pop();
-        unawaited(
-          context.pushNamed(
-            MovementPage.pageName,
-            pathParameters: {
-              'type': movementType.value,
-              'screenType': MovementScreenType.add.name.toUpperCase(),
-            },
-            extra: movement.copyWith(
-              attachments: uploadName != null ? [uploadName] : [],
-            ),
-          ),
-        );
-      } on Exception catch (e) {
-        if (loader.isLoading) {
-          loader.hideLoading();
-        }
-        Navigator.of(context).pop();
-        if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
-          AppFunctions.showSnackBar(
-            context,
-            message: l10n.invalidLocalModelFileInput,
-            type: SnackBarType.error,
-          );
-        } else {
-          AppFunctions.showSnackBar(
-            context,
-            message: l10n.genericError,
-            type: SnackBarType.error,
-          );
-        }
       }
     }
   }
@@ -350,86 +351,86 @@ class AddMovementBottomSheet extends StatelessWidget {
 
     final files = await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
 
-    if (files.isNotEmpty) {
-      unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+    if (files.isEmpty) {
+      return;
+    }
 
-      final hasInternet = await AppFunctions.hasInternetConnection();
-      final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+    unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+
+    final hasInternet = await AppFunctions.hasInternetConnection();
+    final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+
+    if (loader.isLoading) {
+      loader.hideLoading();
+    }
+
+    unawaited(
+      loader.showLoading(
+        message:
+            modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+      ),
+    );
+
+    try {
+      if (modelType.isLocal &&
+          !AppVariables.imageExtensions.contains(files.first.split('.').last)) {
+        throw Exception(AppVariables.unsupportedLocalModelFile);
+      }
+
+      final ext = files.first.split('.').last;
+      final path = '${const Uuid().v4()}.$ext';
+      final bytes = await File(files.first).readAsBytes();
+
+      // Upload file to Firebase Storage and build movement from file in
+      // parallel
+      final uploadTask = getIt<RemoteStorageService>().uploadFile(
+        File(files.first),
+        path,
+      );
+      final movementFuture = AppFunctions.buildMovementFromFile(
+        movementType: movementType,
+        categories: selectedCategories,
+        language: language.toString(),
+        mimeType: lookupMimeType(files.first) ?? 'application/pdf',
+        bytes: bytes,
+        modelType: modelType,
+      );
+
+      final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
+      final uploadName = results[0] as String?;
+      final movement = results[1] as Movement;
 
       if (loader.isLoading) {
         loader.hideLoading();
       }
-
-      unawaited(
-        loader.showLoading(
-          message:
-              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+      Navigator.of(context).pop();
+      await context.pushNamed(
+        MovementPage.pageName,
+        pathParameters: {
+          'type': movementType.value,
+          'screenType': MovementScreenType.add.name.toUpperCase(),
+        },
+        extra: movement.copyWith(
+          attachments: uploadName != null ? [uploadName] : [],
         ),
       );
-
-      try {
-        if (modelType.isLocal &&
-            !AppVariables.imageExtensions
-                .contains(files.first.split('.').last)) {
-          throw Exception(AppVariables.unsupportedLocalModelFile);
-        }
-
-        final ext = files.first.split('.').last;
-        final path = '${const Uuid().v4()}.$ext';
-        final bytes = await File(files.first).readAsBytes();
-
-        // Upload file to Firebase Storage and build movement from file in
-        // parallel
-        final uploadTask = getIt<RemoteStorageService>().uploadFile(
-          File(files.first),
-          path,
+    } on Exception catch (e) {
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+      Navigator.of(context).pop();
+      if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.invalidLocalModelFileInput,
+          type: SnackBarType.error,
         );
-        final movementFuture = AppFunctions.buildMovementFromFile(
-          movementType: movementType,
-          categories: selectedCategories,
-          language: language.toString(),
-          mimeType: lookupMimeType(files.first) ?? 'application/pdf',
-          bytes: bytes,
-          modelType: modelType,
+      } else {
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.genericError,
+          type: SnackBarType.error,
         );
-
-        final results =
-            await Future.wait<dynamic>([uploadTask, movementFuture]);
-        final uploadName = results[0] as String?;
-        final movement = results[1] as Movement;
-
-        if (loader.isLoading) {
-          loader.hideLoading();
-        }
-        Navigator.of(context).pop();
-        await context.pushNamed(
-          MovementPage.pageName,
-          pathParameters: {
-            'type': movementType.value,
-            'screenType': MovementScreenType.add.name.toUpperCase(),
-          },
-          extra: movement.copyWith(
-            attachments: uploadName != null ? [uploadName] : [],
-          ),
-        );
-      } on Exception catch (e) {
-        if (loader.isLoading) {
-          loader.hideLoading();
-        }
-        Navigator.of(context).pop();
-        if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
-          AppFunctions.showSnackBar(
-            context,
-            message: l10n.invalidLocalModelFileInput,
-            type: SnackBarType.error,
-          );
-        } else {
-          AppFunctions.showSnackBar(
-            context,
-            message: l10n.genericError,
-            type: SnackBarType.error,
-          );
-        }
       }
     }
   }
