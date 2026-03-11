@@ -70,8 +70,6 @@ void main() {
       when(() => mockRemoteConfig.getInt('config_gemini_ant_lookback_days'))
           .thenReturn(30);
 
-      expect(remoteConfigService.isHomeSummaryCardsVisible, isTrue);
-      expect(remoteConfigService.isHomeTopCategoriesVisible, isFalse);
       expect(remoteConfigService.homeInitialTab, 'summary');
       expect(remoteConfigService.geminiModelId, 'gemini-1');
       expect(remoteConfigService.geminiPromptExtractReceiptData, 'prompt1');

@@ -16,7 +16,6 @@ class Movement extends Equatable {
     required this.category,
     required this.price,
     required this.user,
-    required this.movementRecap,
     this.company = '',
     this.attachments = const <String>[],
   });
@@ -37,7 +36,6 @@ class Movement extends Equatable {
               .toList() ??
           [],
       user: json['user'] as String? ?? '',
-      movementRecap: json['movement_recap'] as String? ?? '',
     );
   }
 
@@ -60,7 +58,6 @@ class Movement extends Equatable {
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       company: json['company'] as String? ?? '',
       user: '',
-      movementRecap: json['movement_recap'] as String? ?? '',
     );
   }
 
@@ -76,7 +73,6 @@ class Movement extends Equatable {
       'company': company,
       'attachments': attachments,
       'user': user,
-      'movement_recap': movementRecap,
     };
   }
 
@@ -89,7 +85,6 @@ class Movement extends Equatable {
     category: Category.empty,
     price: 0,
     user: '',
-    movementRecap: '',
   );
 
   /// Movement id
@@ -119,9 +114,6 @@ class Movement extends Equatable {
   /// Movement user
   final String user;
 
-  /// Movement summary
-  final String movementRecap;
-
   /// Copies the current instance of [Movement] with some new values
   Movement copyWith({
     String? id,
@@ -133,7 +125,6 @@ class Movement extends Equatable {
     String? company,
     List<String>? attachments,
     String? user,
-    String? movementRecap,
   }) {
     return Movement(
       id: id ?? this.id,
@@ -145,7 +136,6 @@ class Movement extends Equatable {
       company: company ?? this.company,
       attachments: attachments ?? this.attachments,
       user: user ?? this.user,
-      movementRecap: movementRecap ?? this.movementRecap,
     );
   }
 
@@ -160,6 +150,5 @@ class Movement extends Equatable {
         company,
         attachments,
         user,
-        movementRecap,
       ];
 }

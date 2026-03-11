@@ -91,4 +91,7 @@ enum CategoryType {
       return CategoryType.expense;
     }
   }
+
+  bool get isExpense => this == CategoryType.expense;
+  bool get isIncome => this == CategoryType.income;
 }

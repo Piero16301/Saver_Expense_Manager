@@ -191,7 +191,6 @@ void main() {
           date: DateTime.now(),
           category: category,
           user: 'user1',
-          movementRecap: 'Lunch recap',
         ),
       ];
 

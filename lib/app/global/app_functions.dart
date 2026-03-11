@@ -381,6 +381,7 @@ class AppFunctions {
   static Future<List<String>?> getAntRecommendations({
     required String userId,
     required String language,
+    required AppLocalizations l10n,
   }) async {
     final template = getIt<RemoteConfigService>().geminiPromptDetectAntExpense;
     final lookbackDays = getIt<RemoteConfigService>().geminiAntLookbackDays;
@@ -397,7 +398,7 @@ class AppFunctions {
     final prompt = template
         .replaceAll(
           '{{transactions_list}}',
-          movements.map((e) => '- ${getMovementRecap(e)}').join('\n'),
+          movements.map((e) => '- ${getMovementRecap(l10n, e)}').join('\n'),
         )
         .replaceAll('{{language}}', language)
         .replaceAll('{{lookbackDays}}', lookbackDays.toString());
@@ -424,10 +425,22 @@ class AppFunctions {
     return response?.split('|||').map((e) => e.trim()).toList();
   }
 
-  static String getMovementRecap(Movement movement) {
-    return movement.movementRecap
-        .replaceAll('{{amount}}', movement.price.toStringAsFixed(2))
-        .replaceAll('{{date}}', AppVariables.formatDate.format(movement.date));
+  static String getMovementRecap(AppLocalizations l10n, Movement movement) {
+    if (movement.category.type.isExpense) {
+      return l10n.movementExpenseRecapTemplate(
+        movement.price.toStringAsFixed(2),
+        movement.company,
+        movement.title,
+        AppVariables.formatDate.format(movement.date),
+      );
+    } else {
+      return l10n.movementIncomeRecapTemplate(
+        movement.price.toStringAsFixed(2),
+        movement.company,
+        movement.title,
+        AppVariables.formatDate.format(movement.date),
+      );
+    }
   }
 
   static String getCategoryName(String category, AppLocalizations l10n) {

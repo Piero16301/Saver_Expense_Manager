@@ -151,7 +151,6 @@ void main() {
           color: 'FF00FF00',
           type: CategoryType.expense,
         ),
-        movementRecap: 'Lunch recap',
         user: 'user123',
       );
 
@@ -187,7 +186,6 @@ void main() {
           color: 'FF00FF00',
           type: CategoryType.expense,
         ),
-        movementRecap: 'Dinner recap',
         user: 'user123',
       );
 

@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/l10n/l10n.dart';
 
 part 'movements_home_state.dart';
 
 class MovementsHomeCubit extends Cubit<MovementsHomeState> {
-  MovementsHomeCubit() : super(const MovementsHomeState()) {
-    unawaited(getRecommendations());
+  MovementsHomeCubit({required this.l10n}) : super(const MovementsHomeState()) {
+    unawaited(getRecommendations(l10n: l10n));
   }
+
+  final AppLocalizations l10n;
 
   void updateFilterType(CategoryType? type) {
     emit(
@@ -41,7 +44,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
     emit(state.copyWith(recommendationsStatus: RecommendationsStatus.initial));
   }
 
-  Future<void> getRecommendations() async {
+  Future<void> getRecommendations({required AppLocalizations l10n}) async {
     final localStorage = getIt<LocalStorageService>();
     var nowDate = DateTime.now();
     nowDate = DateTime(nowDate.year, nowDate.month, nowDate.day);
@@ -72,6 +75,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
       final recommendations = await AppFunctions.getAntRecommendations(
         userId: auth.currentUser!.uid,
         language: '${language.languageCode}-${language.countryCode}',
+        l10n: l10n,
       );
       if (recommendations != null) {
         localStorage

@@ -50,7 +50,6 @@ void main() {
         ),
         price: 15,
         user: 'user_1',
-        movementRecap: r'Lunch: $15.0',
       );
 
       await fakeFirestore
@@ -85,7 +84,6 @@ void main() {
         category: Category.empty,
         price: 15,
         user: 'user_1',
-        movementRecap: '',
       );
 
       await fakeFirestore

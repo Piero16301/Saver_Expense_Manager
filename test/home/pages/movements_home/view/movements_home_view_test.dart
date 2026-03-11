@@ -224,7 +224,6 @@ void main() {
         price: 10,
         date: DateTime(2024, 3),
         category: _testCategories.first,
-        movementRecap: 'recap',
         user: 'user123',
       );
       when(
@@ -251,7 +250,6 @@ void main() {
         price: 10,
         date: DateTime(2024, 3),
         category: _testCategories.first,
-        movementRecap: 'recap',
         user: 'user123',
       );
       when(
@@ -282,7 +280,6 @@ void main() {
         price: 10,
         date: DateTime(2024, 3),
         category: _testCategories.first,
-        movementRecap: 'recap',
         user: 'user123',
       );
       when(
@@ -312,7 +309,6 @@ void main() {
         price: 5,
         date: DateTime(2024, 3),
         category: _testCategories.first,
-        movementRecap: 'recap',
         user: 'user123',
       );
       when(
@@ -377,7 +373,6 @@ void main() {
             price: 1,
             date: DateTime(2024),
             category: _testCategories.first,
-            movementRecap: 'r',
             user: 'user123',
           ),
         ]),

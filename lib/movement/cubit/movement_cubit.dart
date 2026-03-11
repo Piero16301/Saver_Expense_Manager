@@ -29,7 +29,6 @@ class MovementCubit extends Cubit<MovementState> {
         price: movement.price,
         company: movement.company,
         attachments: movement.attachments,
-        movementRecap: movement.movementRecap,
         formKey: GlobalKey<FormState>(),
       ),
     );
@@ -124,9 +123,6 @@ class MovementCubit extends Cubit<MovementState> {
                 company: state.company,
                 attachments: state.attachments,
                 user: userId,
-                movementRecap: state.movementRecap.isNotEmpty
-                    ? state.movementRecap
-                    : buildMovementRecap(l10n),
               ).toJson(),
             ),
       );
@@ -134,20 +130,6 @@ class MovementCubit extends Cubit<MovementState> {
       return false;
     }
     return true;
-  }
-
-  String buildMovementRecap(AppLocalizations l10n) {
-    if (state.category?.type == CategoryType.expense) {
-      return l10n
-          .movementExpenseRecapTemplate(state.company, state.title)
-          .replaceAll('<<amount>>', '{{amount}}')
-          .replaceAll('<<date>>', '{{date}}');
-    } else {
-      return l10n
-          .movementIncomeRecapTemplate(state.company, state.title)
-          .replaceAll('<<amount>>', '{{amount}}')
-          .replaceAll('<<date>>', '{{date}}');
-    }
   }
 
   bool removeMovement() {

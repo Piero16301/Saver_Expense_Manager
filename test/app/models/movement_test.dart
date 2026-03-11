@@ -13,7 +13,6 @@ void main() {
     const company = 'company';
     const attachments = ['attachment'];
     const user = 'user';
-    const movementRecap = 'movementRecap';
 
     Movement createSubject() => Movement(
           id: id,
@@ -25,7 +24,6 @@ void main() {
           company: company,
           attachments: attachments,
           user: user,
-          movementRecap: movementRecap,
         );
 
     test('supports value equality', () {
@@ -44,7 +42,6 @@ void main() {
           'company': company,
           'attachments': attachments,
           'user': user,
-          'movement_recap': movementRecap,
         };
 
         expect(
@@ -68,7 +65,6 @@ void main() {
         expect(movement.company, equals(''));
         expect(movement.attachments, isEmpty);
         expect(movement.user, equals(''));
-        expect(movement.movementRecap, equals(''));
       });
     });
 
@@ -91,7 +87,6 @@ void main() {
           'category': 'Food',
           'price': 15.5,
           'company': 'McDonalds',
-          'movement_recap': 'Lunch at McDonalds',
         };
 
         final movement = Movement.fromAiService(json, categories);
@@ -102,7 +97,6 @@ void main() {
         expect(movement.category.name, equals('Food'));
         expect(movement.price, equals(15.5));
         expect(movement.company, equals('McDonalds'));
-        expect(movement.movementRecap, equals('Lunch at McDonalds'));
         expect(movement.id, equals(''));
       });
     });
@@ -124,7 +118,6 @@ void main() {
             'company': company,
             'attachments': attachments,
             'user': user,
-            'movement_recap': movementRecap,
           }),
         );
       });
@@ -157,7 +150,6 @@ void main() {
             company: 'newCompany',
             attachments: ['newAttachment'],
             user: 'newUser',
-            movementRecap: 'newRecap',
           ),
           equals(
             Movement(
@@ -170,7 +162,6 @@ void main() {
               company: 'newCompany',
               attachments: const ['newAttachment'],
               user: 'newUser',
-              movementRecap: 'newRecap',
             ),
           ),
         );
