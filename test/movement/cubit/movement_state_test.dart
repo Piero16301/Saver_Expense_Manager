@@ -24,7 +24,6 @@ void main() {
           0.0,
           '',
           const <String>[],
-          '',
           null,
         ]),
       );
@@ -50,7 +49,6 @@ void main() {
           price: 15,
           company: 'Co',
           attachments: ['att1'],
-          movementRecap: 'Recap',
         ),
         equals(
           MovementState(
@@ -63,7 +61,6 @@ void main() {
             price: 15,
             company: 'Co',
             attachments: const ['att1'],
-            movementRecap: 'Recap',
           ),
         ),
       );

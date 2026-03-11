@@ -46,7 +46,7 @@ class MovementsHomePage extends StatelessWidget {
         final categories = snapshot.data!;
 
         return BlocProvider(
-          create: (context) => MovementsHomeCubit(),
+          create: (context) => MovementsHomeCubit(l10n: l10n),
           child: MovementsHomeView(categories: categories),
         );
       },

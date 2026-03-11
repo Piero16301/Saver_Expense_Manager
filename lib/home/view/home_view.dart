@@ -242,7 +242,7 @@ class AddMovementBottomSheet extends StatelessWidget {
   final List<Category> categories;
   final CategoryType movementType;
 
-  Future<void> _handleFilePick(BuildContext context) async {
+  Future<void> handleFilePick(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final language = context.read<AppCubit>().state.language;
     final selectedCategories =
@@ -342,7 +342,7 @@ class AddMovementBottomSheet extends StatelessWidget {
     }
   }
 
-  Future<void> _handleDocumentScan(BuildContext context) async {
+  Future<void> handleDocumentScan(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final language = context.read<AppCubit>().state.language;
     final selectedCategories =
@@ -476,12 +476,12 @@ class AddMovementBottomSheet extends StatelessWidget {
               TonalButtonActionHome(
                 title: l10n.homeFile,
                 icon: HugeIcons.strokeRoundedUpload04,
-                onPressed: () => _handleFilePick(context),
+                onPressed: () => handleFilePick(context),
               ),
               TonalButtonActionHome(
                 title: l10n.homeScan,
                 icon: HugeIcons.strokeRoundedCamera01,
-                onPressed: () => _handleDocumentScan(context),
+                onPressed: () => handleDocumentScan(context),
               ),
               TonalButtonActionHome(
                 title: l10n.homeEnter,

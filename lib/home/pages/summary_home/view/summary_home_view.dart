@@ -18,7 +18,6 @@ class SummaryHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final remoteConfig = getIt<RemoteConfigService>();
     final auth = getIt<AuthenticationService>().auth;
     final database = getIt<DatabaseService>();
     final isLandscape =
@@ -76,32 +75,28 @@ class SummaryHomeView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: 16,
                   children: [
-                    if (remoteConfig.isHomeSummaryCardsVisible)
-                      SizedBox(
-                        width: 150,
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: resumeMovementsChart,
-                        ),
+                    SizedBox(
+                      width: 150,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: resumeMovementsChart,
                       ),
+                    ),
                     incomesAndExpensesChart,
                   ],
                 )
               : Column(
                   spacing: 16,
                   children: [
-                    if (remoteConfig.isHomeSummaryCardsVisible)
-                      resumeMovementsChart,
+                    resumeMovementsChart,
                     incomesAndExpensesChart,
                   ],
                 );
 
-          final categoriesCard = remoteConfig.isHomeTopCategoriesVisible
-              ? CategoriesResumeCards(
-                  movements: movements,
-                  categories: categories,
-                )
-              : const SizedBox.shrink();
+          final categoriesCard = CategoriesResumeCards(
+            movements: movements,
+            categories: categories,
+          );
 
           return Column(
             spacing: 16,
@@ -116,11 +111,10 @@ class SummaryHomeView extends StatelessWidget {
                           Expanded(
                             child: charts,
                           ),
-                          if (remoteConfig.isHomeTopCategoriesVisible)
-                            SizedBox(
-                              width: 200,
-                              child: categoriesCard,
-                            ),
+                          SizedBox(
+                            width: 200,
+                            child: categoriesCard,
+                          ),
                         ],
                       )
                     : Column(
@@ -291,9 +285,6 @@ class ResumeItemCardMovements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape =
-        MediaQuery.orientationOf(context) == Orientation.landscape;
-
     final card = Opacity(
       opacity: isSelected ? 1.0 : 0.5,
       child: Card(
@@ -367,12 +358,7 @@ class ResumeItemCardMovements extends StatelessWidget {
       ),
     );
 
-    return isLandscape
-        ? SizedBox(
-            height: 110,
-            child: card,
-          )
-        : Expanded(child: card);
+    return Expanded(child: card);
   }
 }
 

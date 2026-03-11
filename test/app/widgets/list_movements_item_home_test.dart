@@ -26,7 +26,6 @@ void main() {
         type: CategoryType.expense,
       ),
       user: 'user1',
-      movementRecap: 'Lunch summary',
     );
 
     setUp(() {

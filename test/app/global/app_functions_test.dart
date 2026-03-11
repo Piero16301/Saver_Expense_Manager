@@ -225,7 +225,6 @@ void main() {
             price: 100,
             date: DateTime(testDate.year, testDate.month - 1, 15),
             category: categoryIncome,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
           Movement(
@@ -235,7 +234,6 @@ void main() {
             price: 50,
             date: DateTime(testDate.year, testDate.month - 1, 15),
             category: categoryExpense,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
           Movement(
@@ -245,7 +243,6 @@ void main() {
             price: 200,
             date: DateTime(testDate.year, testDate.month, 15),
             category: categoryIncome,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
           Movement(
@@ -255,7 +252,6 @@ void main() {
             price: 75,
             date: DateTime(testDate.year, testDate.month, 15),
             category: categoryExpense,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
         ];
@@ -289,7 +285,6 @@ void main() {
             price: 100,
             date: DateTime.now(),
             category: category2,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
           Movement(
@@ -299,7 +294,6 @@ void main() {
             price: 50,
             date: DateTime.now(),
             category: category2,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
         ];
@@ -569,7 +563,6 @@ void main() {
             price: 100,
             date: DateTime.now(),
             category: categoryIncome,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
           Movement(
@@ -579,7 +572,6 @@ void main() {
             price: 50,
             date: DateTime.now(),
             category: categoryExpense,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
           Movement(
@@ -589,7 +581,6 @@ void main() {
             price: 200,
             date: DateTime.now(),
             category: categoryIncome,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
         ];
@@ -621,7 +612,6 @@ void main() {
             price: 100,
             date: DateTime(2023, 1, 15),
             category: categoryExpense,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
           Movement(
@@ -631,7 +621,6 @@ void main() {
             price: 50,
             date: DateTime(2023, 2, 10),
             category: categoryExpense,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
         ];
@@ -677,7 +666,6 @@ void main() {
             price: 100,
             date: DateTime(2023, 1, 15),
             category: categoryIncome,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
           Movement(
@@ -687,7 +675,6 @@ void main() {
             price: 50,
             date: DateTime(2023, 1, 10),
             category: categoryExpense,
-            movementRecap: 'desc',
             user: 'user_1',
           ),
         ];
@@ -708,32 +695,6 @@ void main() {
         expect(result[0][0].yValue, equals(100));
         expect(result[1][0].yValue, equals(50));
         expect(result[2][0].yValue, equals(50));
-      });
-    });
-
-    group('getMovementRecap', () {
-      const categoryIncome = Category(
-        id: '1',
-        name: 'Income Category',
-        type: CategoryType.income,
-        color: '#FFFFFF',
-        icon: 'TEST',
-      );
-      test('returns formatted recap', () {
-        final movement = Movement(
-          id: '1',
-          title: 'desc',
-          description: 'desc',
-          price: 100.50,
-          date: DateTime(2023, 1, 15),
-          category: categoryIncome,
-          movementRecap: 'Spent {{amount}} on {{date}}',
-          user: 'user_1',
-        );
-
-        final result = AppFunctions.getMovementRecap(movement);
-
-        expect(result, equals('Spent 100.50 on 15/01/2023'));
       });
     });
 
@@ -846,6 +807,7 @@ void main() {
         final mockRemoteConfig = MockRemoteConfigService();
         final mockAiService = MockAiService();
         final mockDatabaseService = MockDatabaseService();
+        final mockL10n = MockAppLocalizations();
 
         when(() => mockRemoteConfig.geminiPromptDetectAntExpense)
             .thenReturn('Prompt {{transactions_list}}');
@@ -874,6 +836,7 @@ void main() {
         final result = await AppFunctions.getAntRecommendations(
           userId: 'user_1',
           language: 'en',
+          l10n: mockL10n,
         );
 
         expect(result, isNotNull);

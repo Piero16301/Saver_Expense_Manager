@@ -206,24 +206,36 @@
             }
         }
     },
-    "movementExpenseRecapTemplate": "Pago de <<amount>> en {company} por {title} el <<date>>",
+    "movementExpenseRecapTemplate": "Pago de {amount} en {company} por {title} el {date}",
     "@movementExpenseRecapTemplate": {
         "placeholders": {
+            "amount": {
+                "type": "String"
+            },
             "company": {
                 "type": "String"
             },
             "title": {
+                "type": "String"
+            },
+            "date": {
                 "type": "String"
             }
         }
     },
-    "movementIncomeRecapTemplate": "Ingreso de <<amount>> en {company} por {title} el <<date>>",
+    "movementIncomeRecapTemplate": "Ingreso de {amount} en {company} por {title} el {date}",
     "@movementIncomeRecapTemplate": {
         "placeholders": {
+            "amount": {
+                "type": "String"
+            },
             "company": {
                 "type": "String"
             },
             "title": {
+                "type": "String"
+            },
+            "date": {
                 "type": "String"
             }
         }

@@ -45,116 +45,128 @@ class MovementView extends StatelessWidget {
         body: Padding(
           padding:
               const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 50),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Form(
-              key: state.formKey,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: Column(
-                children: [
-                  const SizedBox(height: 5),
-                  AppTextField(
-                    label: l10n.movementTitle,
-                    hintText: l10n.movementTitleHint,
-                    errorText: l10n.movementTitleError,
-                    onChanged: context.read<MovementCubit>().titleChanged,
-                    prefix:
-                        const HugeIcon(icon: HugeIcons.strokeRoundedTextFont),
-                    initialValue: state.title,
-                    maxLength: 50,
+          child: Center(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Form(
+                key: state.formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppVariables.tabletMaxWidth,
                   ),
-                  const SizedBox(height: 20),
-                  AppTextField(
-                    label: l10n.movementDescription,
-                    hintText: l10n.movementDescriptionHint,
-                    errorText: l10n.movementDescriptionError,
-                    onChanged: context.read<MovementCubit>().descriptionChanged,
-                    prefix: const HugeIcon(icon: HugeIcons.strokeRoundedNote),
-                    initialValue: state.description,
-                    maxLines: 7,
-                    maxLength: 300,
-                  ),
-                  const SizedBox(height: 20),
-                  AppDateField(
-                    label: l10n.movementDate,
-                    initialDate: state.date!,
-                    onDateChanged: context.read<MovementCubit>().dateChanged,
-                  ),
-                  const SizedBox(height: 20),
-                  AppDropdownField<Category>(
-                    label: l10n.movementCategory,
-                    options: state.categories
-                        .map(
-                          (category) => DropdownMenuItem<Category>(
-                            value: category,
-                            child: Row(
-                              spacing: 12,
-                              children: [
-                                HugeIcon(
-                                  icon: AppFunctions.getCategoryIcon(
-                                    category.icon,
-                                  ),
-                                ),
-                                Text(
-                                  AppFunctions.getCategoryName(
-                                    category.name,
-                                    l10n,
-                                  ),
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                        .toList(),
-                    selected: state.category,
-                    leadingIcon:
-                        AppFunctions.getCategoryIcon(state.category!.icon),
-                    onChanged: context.read<MovementCubit>().categoryChanged,
-                  ),
-                  const SizedBox(height: 20),
-                  AppTextField(
-                    label: l10n.movementAmount,
-                    hintText: l10n.movementAmountHint,
-                    errorText: l10n.movementAmountError,
-                    onChanged: context.read<MovementCubit>().priceChanged,
-                    prefix:
-                        const HugeIcon(icon: HugeIcons.strokeRoundedMoney01),
-                    initialValue:
-                        state.price == 0 ? '' : state.price.toStringAsFixed(2),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d+\.?\d{0,2}'),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 5),
+                      AppTextField(
+                        label: l10n.movementTitle,
+                        hintText: l10n.movementTitleHint,
+                        errorText: l10n.movementTitleError,
+                        onChanged: context.read<MovementCubit>().titleChanged,
+                        prefix: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedTextFont,
+                        ),
+                        initialValue: state.title,
+                        maxLength: 50,
                       ),
+                      const SizedBox(height: 20),
+                      AppTextField(
+                        label: l10n.movementDescription,
+                        hintText: l10n.movementDescriptionHint,
+                        errorText: l10n.movementDescriptionError,
+                        onChanged:
+                            context.read<MovementCubit>().descriptionChanged,
+                        prefix:
+                            const HugeIcon(icon: HugeIcons.strokeRoundedNote),
+                        initialValue: state.description,
+                        maxLines: 7,
+                        maxLength: 300,
+                      ),
+                      const SizedBox(height: 20),
+                      AppDateField(
+                        label: l10n.movementDate,
+                        initialDate: state.date!,
+                        onDateChanged:
+                            context.read<MovementCubit>().dateChanged,
+                      ),
+                      const SizedBox(height: 20),
+                      AppDropdownField<Category>(
+                        label: l10n.movementCategory,
+                        options: state.categories
+                            .map(
+                              (category) => DropdownMenuItem<Category>(
+                                value: category,
+                                child: Row(
+                                  spacing: 12,
+                                  children: [
+                                    HugeIcon(
+                                      icon: AppFunctions.getCategoryIcon(
+                                        category.icon,
+                                      ),
+                                    ),
+                                    Text(
+                                      AppFunctions.getCategoryName(
+                                        category.name,
+                                        l10n,
+                                      ),
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        selected: state.category,
+                        leadingIcon:
+                            AppFunctions.getCategoryIcon(state.category!.icon),
+                        onChanged:
+                            context.read<MovementCubit>().categoryChanged,
+                      ),
+                      const SizedBox(height: 20),
+                      AppTextField(
+                        label: l10n.movementAmount,
+                        hintText: l10n.movementAmountHint,
+                        errorText: l10n.movementAmountError,
+                        onChanged: context.read<MovementCubit>().priceChanged,
+                        prefix: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedMoney01,
+                        ),
+                        initialValue: state.price == 0
+                            ? ''
+                            : state.price.toStringAsFixed(2),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d+\.?\d{0,2}'),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      AppTextField(
+                        label: l10n.movementCompany,
+                        hintText: l10n.movementCompanyHint,
+                        errorText: l10n.movementCompanyError,
+                        onChanged: context.read<MovementCubit>().companyChanged,
+                        prefix: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedBuilding01,
+                        ),
+                        initialValue: state.company,
+                        maxLength: 50,
+                      ),
+                      const SizedBox(height: 20),
+                      AppFileField(
+                        label: l10n.movementAttachments,
+                        labelAdd: l10n.movementAddAttachment,
+                        onAdd: context.read<MovementCubit>().attachAdd,
+                        onRemove: context.read<MovementCubit>().attachRemove,
+                        openFile: context.read<MovementCubit>().attachOpen,
+                        attachments: state.attachments,
+                      ),
+                      if (kDebugMode) MovementMetadata(id: state.id),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  AppTextField(
-                    label: l10n.movementCompany,
-                    hintText: l10n.movementCompanyHint,
-                    errorText: l10n.movementCompanyError,
-                    onChanged: context.read<MovementCubit>().companyChanged,
-                    prefix:
-                        const HugeIcon(icon: HugeIcons.strokeRoundedBuilding01),
-                    initialValue: state.company,
-                    maxLength: 50,
-                  ),
-                  const SizedBox(height: 20),
-                  AppFileField(
-                    label: l10n.movementAttachments,
-                    labelAdd: l10n.movementAddAttachment,
-                    onAdd: context.read<MovementCubit>().attachAdd,
-                    onRemove: context.read<MovementCubit>().attachRemove,
-                    openFile: context.read<MovementCubit>().attachOpen,
-                    attachments: state.attachments,
-                  ),
-                  if (kDebugMode)
-                    MovementMetadata(
-                      id: state.id,
-                      movementRecap: state.movementRecap,
-                    ),
-                ],
+                ),
               ),
             ),
           ),
@@ -297,12 +309,10 @@ class MovementView extends StatelessWidget {
 class MovementMetadata extends StatelessWidget {
   const MovementMetadata({
     required this.id,
-    required this.movementRecap,
     super.key,
   });
 
   final String id;
-  final String movementRecap;
 
   @override
   Widget build(BuildContext context) {
@@ -322,24 +332,6 @@ class MovementMetadata extends StatelessWidget {
               children: [
                 TextSpan(
                   text: id,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(
-          width: double.infinity,
-          child: RichText(
-            text: TextSpan(
-              text: 'Recap: ',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-              children: [
-                TextSpan(
-                  text: movementRecap,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],

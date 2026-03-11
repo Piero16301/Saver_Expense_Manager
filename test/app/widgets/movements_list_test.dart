@@ -125,7 +125,6 @@ void main() {
         date: date,
         category: testCategory,
         user: 'user1',
-        movementRecap: '',
       );
 
       await fakeFirestore

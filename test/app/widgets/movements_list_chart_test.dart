@@ -99,7 +99,6 @@ void main() {
           color: 'FF00FF00',
           type: CategoryType.expense,
         ),
-        movementRecap: 'Lunch recap',
         user: 'user1',
       );
 

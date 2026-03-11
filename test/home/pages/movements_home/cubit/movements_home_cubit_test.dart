@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
+import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
@@ -12,6 +13,8 @@ class MockAuthenticationService extends Mock implements AuthenticationService {}
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
 class MockFirebaseUser extends Mock implements User {}
+
+class MockAppLocalizations extends Mock implements AppLocalizations {}
 
 DateTime get _todayDate {
   final now = DateTime.now();
@@ -60,7 +63,8 @@ void main() {
   tearDown(getIt.reset);
 
   Future<MovementsHomeCubit> buildCubit() async {
-    final cubit = MovementsHomeCubit();
+    final mockL10n = MockAppLocalizations();
+    final cubit = MovementsHomeCubit(l10n: mockL10n);
     await Future<void>.delayed(Duration.zero);
     return cubit;
   }

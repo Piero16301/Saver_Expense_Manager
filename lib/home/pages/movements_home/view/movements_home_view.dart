@@ -128,7 +128,7 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
                                 .changeShowRecommendations()
                             : () => context
                                 .read<MovementsHomeCubit>()
-                                .getRecommendations(),
+                                .getRecommendations(l10n: l10n),
                     isOnlyIcon: true,
                     innerPadding: const EdgeInsets.all(6),
                   ),

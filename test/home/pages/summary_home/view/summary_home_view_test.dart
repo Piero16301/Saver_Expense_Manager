@@ -72,11 +72,6 @@ void main() {
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
 
-    when(() => mockRemoteConfigService.isHomeSummaryCardsVisible)
-        .thenReturn(true);
-    when(() => mockRemoteConfigService.isHomeTopCategoriesVisible)
-        .thenReturn(true);
-
     if (getIt.isRegistered<DatabaseService>()) {
       await getIt.unregister<DatabaseService>();
     }
@@ -228,7 +223,6 @@ void main() {
           date: DateTime.now(),
           category: testCategories.first,
           user: 'user123',
-          movementRecap: 'Lunch recap',
         ),
       ];
 
@@ -260,7 +254,6 @@ void main() {
           date: DateTime.now(),
           category: testCategories.first,
           user: 'user123',
-          movementRecap: 'Lunch recap',
         ),
       ];
 
@@ -291,7 +284,6 @@ void main() {
           date: DateTime.now(),
           category: testCategories.first,
           user: 'user123',
-          movementRecap: 'Lunch recap',
         ),
       ];
 
@@ -327,7 +319,6 @@ void main() {
           date: DateTime.now(),
           category: testCategories.first,
           user: 'user123',
-          movementRecap: 'Lunch recap',
         ),
       ];
 
@@ -366,7 +357,6 @@ void main() {
           date: DateTime.now(),
           category: testCategories.first,
           user: 'user123',
-          movementRecap: 'Lunch recap',
         ),
         Movement(
           id: '2',
@@ -376,7 +366,6 @@ void main() {
           date: DateTime.now(),
           category: testCategories.last,
           user: 'user123',
-          movementRecap: 'Salary recap',
         ),
       ];
 

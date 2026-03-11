@@ -218,7 +218,6 @@ void main() {
           color: 'FF0000FF',
           type: CategoryType.income,
         ),
-        movementRecap: 'Salary recap',
         user: 'user123',
       );
 
@@ -254,7 +253,6 @@ void main() {
           color: 'FF0000FF',
           type: CategoryType.income,
         ),
-        movementRecap: 'Freelance recap',
         user: 'user123',
       );
 
