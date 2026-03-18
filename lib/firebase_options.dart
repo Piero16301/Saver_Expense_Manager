@@ -52,8 +52,8 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCliGUV5JtQkDDsIqFK_SXW9HzUzI8S63Y',
-    appId: '1:269318126118:ios:ccccf972db5c7042fb04e7',
+    apiKey: 'AIzaSyDjHJTHg_QH6D3Jd0EXdaU7_a8Wunijksg',
+    appId: '1:269318126118:ios:6d066e01d36f5381fb04e7',
     messagingSenderId: '269318126118',
     projectId: 'saver-expense-manager',
     storageBucket: 'saver-expense-manager.firebasestorage.app',
