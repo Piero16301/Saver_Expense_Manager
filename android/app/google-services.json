@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "269318126118-cp3js8sb2v0961q8mg3c6h4gtq22pmml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pmorales.saver.expense.manager",
+            "certificate_hash": "383d45e852679d7372951cb0f73306d7c92dbb31"
+          }
+        },
+        {
           "client_id": "269318126118-jk0bofoe2le4s3i9q21dgi61kv5vp0r2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

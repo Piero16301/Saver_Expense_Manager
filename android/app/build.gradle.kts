@@ -36,7 +36,7 @@ android {
 
     defaultConfig {
         applicationId = "com.pmorales.saver.expense.manager"
-        minSdk = 28
+        minSdk = 29
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
