@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,11 +14,23 @@ class AppView extends StatefulWidget {
 
 class _AppViewState extends State<AppView> {
   late final GoRouter _router;
+  StreamSubscription<AppUser?>? _authSubscription;
 
   @override
   void initState() {
     super.initState();
     _router = goRouter();
+
+    final authService = getIt<AuthenticationService>();
+    _authSubscription = authService.authStateChanges.listen((user) {
+      getIt<AnalyticsService>().setUserId(id: user?.uid ?? '');
+    });
+  }
+
+  @override
+  void dispose() {
+    unawaited(_authSubscription?.cancel());
+    super.dispose();
   }
 
   @override

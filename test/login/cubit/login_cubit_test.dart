@@ -12,14 +12,37 @@ class MockAppLocalizations extends Mock implements AppLocalizations {}
 
 class MockUserCredential extends Mock implements UserCredential {}
 
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
 void main() {
   late MockAuthenticationService mockAuthService;
   late MockAppLocalizations mockL10n;
+  late MockAnalyticsService mockAnalyticsService;
 
-  setUp(() {
+  setUp(() async {
     mockAuthService = MockAuthenticationService();
     mockL10n = MockAppLocalizations();
+    mockAnalyticsService = MockAnalyticsService();
+
+    if (getIt.isRegistered<AnalyticsService>()) {
+      await getIt.unregister<AnalyticsService>();
+    }
+    getIt.registerSingleton<AnalyticsService>(mockAnalyticsService);
+
+    when(
+      () => mockAnalyticsService.logEvent(
+        name: any(named: 'name'),
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
+
+    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
+        .thenAnswer((_) {});
+
     when(() => mockL10n.genericError).thenReturn('Generic Error');
+    when(() => mockAuthService.currentUser).thenReturn(null);
+    when(() => mockAuthService.authStateChanges)
+        .thenAnswer((_) => const Stream.empty());
   });
 
   group('LoginState', () {
