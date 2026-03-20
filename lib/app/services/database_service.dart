@@ -230,27 +230,32 @@ class DatabaseService {
     required String userId,
     DateTime? from,
     DateTime? to,
-  }) {
-    var query = _firestore
-        .collection(AppVariables.movementsCollection)
-        .where('user', isEqualTo: userId);
+  }) async {
+    final performance = getIt<PerformanceService>();
+    final trace = await performance.startTrace('firestore_get_movements');
+    try {
+      var query = _firestore
+          .collection(AppVariables.movementsCollection)
+          .where('user', isEqualTo: userId);
 
-    if (from != null) {
-      query = query.where(
-        'date',
-        isGreaterThanOrEqualTo: Timestamp.fromDate(from),
-      );
-    }
+      if (from != null) {
+        query = query.where(
+          'date',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(from),
+        );
+      }
 
-    if (to != null) {
-      query = query.where(
-        'date',
-        isLessThan: Timestamp.fromDate(to),
-      );
-    }
+      if (to != null) {
+        query = query.where(
+          'date',
+          isLessThan: Timestamp.fromDate(to),
+        );
+      }
 
-    return query.get().then((snapshot) {
+      final snapshot = await query.get();
       return snapshot.docs.map((doc) => Movement.fromJson(doc.data())).toList();
-    });
+    } finally {
+      await performance.stopTrace(trace);
+    }
   }
 }

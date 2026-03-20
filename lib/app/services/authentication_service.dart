@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:saver_expense_manager/app/models/models.dart';
+import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/firebase_options.dart';
 
 class AuthenticationService {
@@ -76,6 +76,8 @@ class AuthenticationService {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
+    final performance = getIt<PerformanceService>();
+    final trace = await performance.startTrace('auth_sign_in_google');
     try {
       final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
@@ -86,6 +88,8 @@ class AuthenticationService {
       return await _auth.signInWithCredential(credential);
     } catch (e) {
       rethrow;
+    } finally {
+      await performance.stopTrace(trace);
     }
   }
 
@@ -93,17 +97,32 @@ class AuthenticationService {
     String email,
     String password,
   ) async {
-    return _auth.signInWithEmailAndPassword(email: email, password: password);
+    final performance = getIt<PerformanceService>();
+    final trace = await performance.startTrace('auth_sign_in_email');
+    try {
+      return await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } finally {
+      await performance.stopTrace(trace);
+    }
   }
 
   Future<UserCredential> signUpWithEmailAndPassword(
     String email,
     String password,
   ) async {
-    return _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    final performance = getIt<PerformanceService>();
+    final trace = await performance.startTrace('auth_sign_up_email');
+    try {
+      return await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } finally {
+      await performance.stopTrace(trace);
+    }
   }
 
   Future<void> updateUserName(String newName) async {

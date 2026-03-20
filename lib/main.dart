@@ -23,6 +23,8 @@ Future<void> main() async {
   }
 
   // Initialize services and plugins in parallel
+  final performance = getIt<PerformanceService>();
+  final trace = await performance.startTrace('app_initialization');
   await Future.wait([
     FirebaseAppCheck.instance.activate(
       providerAndroid: kDebugMode
@@ -30,12 +32,16 @@ Future<void> main() async {
               debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'],
             )
           : const AndroidPlayIntegrityProvider(),
+      providerApple: AppleDebugProvider(
+        debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'],
+      ),
     ),
     getIt<AuthenticationService>().initialize(),
     getIt<LocalStorageService>().initialize(),
     getIt<RemoteConfigService>().initialize(),
     getIt<AiService>().initialize(),
   ]);
+  await performance.stopTrace(trace);
 
   // Bootstrap the app
   await bootstrap(() => const AppPage());

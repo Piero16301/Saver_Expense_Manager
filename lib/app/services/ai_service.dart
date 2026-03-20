@@ -40,32 +40,41 @@ class AiService {
       return null;
     }
 
-    final remoteModel = _remoteModel.generativeModel(
-      model: _remoteConfig.geminiModelId,
-      safetySettings: [
-        SafetySetting(
-          HarmCategory.dangerousContent,
-          HarmBlockThreshold.none,
-          null,
+    final performance = getIt<PerformanceService>();
+    final trace = await performance.startTrace('gemini_generate_remote');
+    try {
+      final remoteModel = _remoteModel.generativeModel(
+        model: _remoteConfig.geminiModelId,
+        safetySettings: [
+          SafetySetting(
+            HarmCategory.dangerousContent,
+            HarmBlockThreshold.none,
+            null,
+          ),
+        ],
+        generationConfig: GenerationConfig(
+          responseMimeType: responseMimeType,
         ),
-      ],
-      generationConfig: GenerationConfig(
-        responseMimeType: responseMimeType,
-      ),
-    );
+      );
 
-    final contentPrompt = prompt.map((p) {
-      switch (p.type) {
-        case PromptPartType.text:
-          return Content.text(p.text ?? '');
-        case PromptPartType.file:
-          return Content.inlineData(p.mimeType ?? '', p.bytes ?? Uint8List(0));
-      }
-    });
+      final contentPrompt = prompt.map((p) {
+        switch (p.type) {
+          case PromptPartType.text:
+            return Content.text(p.text ?? '');
+          case PromptPartType.file:
+            return Content.inlineData(
+              p.mimeType ?? '',
+              p.bytes ?? Uint8List(0),
+            );
+        }
+      });
 
-    final response = await remoteModel.generateContent(contentPrompt);
+      final response = await remoteModel.generateContent(contentPrompt);
 
-    return response.text;
+      return response.text;
+    } finally {
+      await performance.stopTrace(trace);
+    }
   }
 
   Future<String?> generateContentLocal({
@@ -84,17 +93,23 @@ class AiService {
       return null;
     }
 
-    if (imagePrompt != null &&
-        imagePrompt.mimeType != 'image/jpeg' &&
-        imagePrompt.mimeType != 'image/png') {
-      return null;
+    final performance = getIt<PerformanceService>();
+    final trace = await performance.startTrace('gemini_generate_local');
+    try {
+      if (imagePrompt != null &&
+          imagePrompt.mimeType != 'image/jpeg' &&
+          imagePrompt.mimeType != 'image/png') {
+        return null;
+      }
+
+      final response = await _localModel.generate(
+        prompt: textPrompt.text ?? '',
+        image: imagePrompt?.bytes,
+      );
+
+      return response.first.isEmpty ? null : response.first;
+    } finally {
+      await performance.stopTrace(trace);
     }
-
-    final response = await _localModel.generate(
-      prompt: textPrompt.text ?? '',
-      image: imagePrompt?.bytes,
-    );
-
-    return response.first.isEmpty ? null : response.first;
   }
 }

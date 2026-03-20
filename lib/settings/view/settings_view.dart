@@ -1,3 +1,4 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -79,9 +80,22 @@ class LocaleSettingsCard extends StatelessWidget {
         (locale) {
           return DropdownMenuItem<Locale>(
             value: locale,
-            child: Text(
-              _getLanguageName(locale, l10n),
-              style: Theme.of(context).textTheme.bodyMedium,
+            child: Row(
+              spacing: 12,
+              children: [
+                CountryFlag.fromLanguageCode(
+                  locale.languageCode,
+                  theme: const ImageTheme(
+                    width: 25,
+                    height: 25,
+                    shape: RoundedRectangle(4),
+                  ),
+                ),
+                Text(
+                  _getLanguageName(locale, l10n),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
             ),
           );
         },

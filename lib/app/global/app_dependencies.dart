@@ -10,6 +10,7 @@ void setupServiceLocator() {
     ..registerLazySingleton<LocalStorageService>(LocalStorageService.new)
     ..registerLazySingleton<RemoteStorageService>(RemoteStorageService.new)
     ..registerLazySingleton<RemoteConfigService>(RemoteConfigService.new)
+    ..registerLazySingleton<PerformanceService>(PerformanceService.new)
     ..registerLazySingleton<AiService>(
       () => AiService(
         remoteConfig: getIt<RemoteConfigService>(),

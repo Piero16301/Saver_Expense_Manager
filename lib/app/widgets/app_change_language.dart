@@ -1,3 +1,4 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -21,9 +22,13 @@ class AppChangeLanguage extends StatelessWidget {
         padding: padding ?? EdgeInsets.zero,
         child: PopupMenuButton<Locale>(
           initialValue: state.language,
-          icon: Text(
-            _getFlag(state.language.languageCode, l10n),
-            style: const TextStyle(fontSize: 22),
+          icon: CountryFlag.fromLanguageCode(
+            state.language.languageCode,
+            theme: const ImageTheme(
+              width: 35,
+              height: 25,
+              shape: RoundedRectangle(4),
+            ),
           ),
           tooltip: l10n.selectLanguage,
           constraints: const BoxConstraints(minWidth: 60, maxWidth: 60),
@@ -35,9 +40,13 @@ class AppChangeLanguage extends StatelessWidget {
                 value: value,
                 padding: EdgeInsets.zero,
                 child: Center(
-                  child: Text(
-                    _getFlag(value.languageCode, l10n),
-                    style: const TextStyle(fontSize: 22),
+                  child: CountryFlag.fromLanguageCode(
+                    value.languageCode,
+                    theme: const ImageTheme(
+                      width: 35,
+                      height: 25,
+                      shape: RoundedRectangle(4),
+                    ),
                   ),
                 ),
               );
@@ -46,18 +55,5 @@ class AppChangeLanguage extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _getFlag(String languageCode, AppLocalizations l10n) {
-    switch (languageCode) {
-      case 'en':
-        return l10n.englishFlag;
-      case 'es':
-        return l10n.spanishFlag;
-      case 'it':
-        return l10n.italianFlag;
-      default:
-        return l10n.englishFlag;
-    }
   }
 }
