@@ -71,7 +71,7 @@ void main() {
       await tester.tap(localeDropdown);
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('🇪🇸 Spanish').last);
+      await tester.tap(find.text('Spanish').last);
       await tester.pumpAndSettle();
 
       verify(() => appCubit.changeLanguage(language: const Locale('es', 'ES')))

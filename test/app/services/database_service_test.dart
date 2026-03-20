@@ -1,15 +1,39 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
+
+class MockPerformanceService extends Mock implements PerformanceService {}
+
+class MockTrace extends Mock implements Trace {}
 
 void main() {
   late DatabaseService databaseService;
   late FakeFirebaseFirestore fakeFirestore;
+  late MockPerformanceService mockPerformanceService;
+  late MockTrace mockTrace;
+
+  setUpAll(() {
+    registerFallbackValue(MockTrace());
+  });
 
   setUp(() {
     fakeFirestore = FakeFirebaseFirestore();
+    mockPerformanceService = MockPerformanceService();
+    mockTrace = MockTrace();
+
+    getIt.registerSingleton<PerformanceService>(mockPerformanceService);
+
+    when(() => mockPerformanceService.startTrace(any()))
+        .thenAnswer((_) async => mockTrace);
+    when(() => mockPerformanceService.stopTrace(any()))
+        .thenAnswer((_) async {});
+
     databaseService = DatabaseService(firestore: fakeFirestore);
   });
+
+  tearDown(getIt.reset);
 
   group('DatabaseService', () {
     test('getCategoriesStream returns a stream of categories', () async {

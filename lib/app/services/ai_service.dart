@@ -7,16 +7,14 @@ import 'package:saver_expense_manager/app/app.dart';
 
 class AiService {
   AiService({
-    required RemoteConfigService remoteConfig,
-    required AuthenticationService authentication,
     FirebaseAI? remoteModel,
     GeminiNanoAndroid? localModel,
   }) {
-    _remoteConfig = remoteConfig;
+    _remoteConfig = getIt<RemoteConfigService>();
     _remoteModel = remoteModel ??
         FirebaseAI.googleAI(
           appCheck: FirebaseAppCheck.instance,
-          auth: authentication.auth,
+          auth: getIt<AuthenticationService>().auth,
         );
     _localModel = localModel ?? GeminiNanoAndroid();
   }

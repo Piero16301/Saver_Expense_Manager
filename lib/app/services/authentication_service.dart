@@ -54,6 +54,7 @@ class AuthenticationService {
 
   Future<UserCredential?> linkWithGoogle() async {
     try {
+      await _googleSignIn.signOut();
       final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
 
@@ -79,6 +80,7 @@ class AuthenticationService {
     final performance = getIt<PerformanceService>();
     final trace = await performance.startTrace('auth_sign_in_google');
     try {
+      await _googleSignIn.signOut();
       final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
 

@@ -12,9 +12,6 @@ void setupServiceLocator() {
     ..registerLazySingleton<RemoteConfigService>(RemoteConfigService.new)
     ..registerLazySingleton<PerformanceService>(PerformanceService.new)
     ..registerLazySingleton<AiService>(
-      () => AiService(
-        remoteConfig: getIt<RemoteConfigService>(),
-        authentication: getIt<AuthenticationService>(),
-      ),
+      AiService.new,
     );
 }

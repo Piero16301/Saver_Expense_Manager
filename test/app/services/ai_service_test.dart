@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:mocktail/mocktail.dart';
@@ -12,32 +13,45 @@ class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid {}
 
 class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockPerformanceService extends Mock implements PerformanceService {}
+
+class MockTrace extends Mock implements Trace {}
 
 void main() {
   late AiService aiService;
   late MockFirebaseAI mockFirebaseAI;
   late MockGeminiNanoAndroid mockGeminiNanoAndroid;
   late MockRemoteConfigService mockRemoteConfigService;
-  late MockAuthenticationService mockAuthenticationService;
+  late MockPerformanceService mockPerformanceService;
+  late MockTrace mockTrace;
 
   setUp(() {
     mockFirebaseAI = MockFirebaseAI();
     mockGeminiNanoAndroid = MockGeminiNanoAndroid();
     mockRemoteConfigService = MockRemoteConfigService();
-    mockAuthenticationService = MockAuthenticationService();
+    mockPerformanceService = MockPerformanceService();
+    mockTrace = MockTrace();
+
+    getIt
+      ..registerSingleton<PerformanceService>(mockPerformanceService)
+      ..registerSingleton<RemoteConfigService>(mockRemoteConfigService);
 
     when(() => mockRemoteConfigService.geminiModelId).thenReturn('gemini-1');
+    when(() => mockPerformanceService.startTrace(any()))
+        .thenAnswer((_) async => mockTrace);
+    when(() => mockPerformanceService.stopTrace(any()))
+        .thenAnswer((_) async {});
 
     aiService = AiService(
-      remoteConfig: mockRemoteConfigService,
-      authentication: mockAuthenticationService,
       remoteModel: mockFirebaseAI,
       localModel: mockGeminiNanoAndroid,
     );
   });
 
+  tearDown(getIt.reset);
+
   setUpAll(() {
+    registerFallbackValue(MockTrace());
     registerFallbackValue(GenerationConfig());
     registerFallbackValue(
       SafetySetting(
@@ -66,6 +80,23 @@ void main() {
       test('returns null when prompt is empty', () async {
         final result = await aiService.generateContentRemote(prompt: []);
         expect(result, isNull);
+      });
+
+      test('generateContentRemote throws exception from firebaseAI', () async {
+        when(
+          () => mockFirebaseAI.generativeModel(
+            model: any(named: 'model'),
+            safetySettings: any(named: 'safetySettings'),
+            generationConfig: any(named: 'generationConfig'),
+          ),
+        ).thenThrow(Exception('test exception'));
+
+        expect(
+          () => aiService.generateContentRemote(
+            prompt: [const PromptPart(type: PromptPartType.text, text: 'Hi')],
+          ),
+          throwsA(isA<Exception>()),
+        );
       });
     });
 
