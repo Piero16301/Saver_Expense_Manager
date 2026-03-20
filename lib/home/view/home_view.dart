@@ -286,6 +286,8 @@ class AddMovementBottomSheet extends StatelessWidget {
       final path = '${const Uuid().v4()}.$ext';
       final bytes = await file.xFile.readAsBytes();
 
+      final performance = getIt<PerformanceService>();
+      final trace = await performance.startTrace('receipt_processing_file');
       // Upload file to Firebase Storage and build movement from file in
       // parallel
       final uploadTask = getIt<RemoteStorageService>().uploadFile(
@@ -302,6 +304,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       );
 
       final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
+      await performance.stopTrace(trace);
       final uploadName = results[0] as String?;
       final movement = results[1] as Movement;
 
@@ -381,6 +384,8 @@ class AddMovementBottomSheet extends StatelessWidget {
       final path = '${const Uuid().v4()}.$ext';
       final bytes = await File(files.first).readAsBytes();
 
+      final performance = getIt<PerformanceService>();
+      final trace = await performance.startTrace('receipt_processing_scan');
       // Upload file to Firebase Storage and build movement from file in
       // parallel
       final uploadTask = getIt<RemoteStorageService>().uploadFile(
@@ -397,6 +402,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       );
 
       final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
+      await performance.stopTrace(trace);
       final uploadName = results[0] as String?;
       final movement = results[1] as Movement;
 

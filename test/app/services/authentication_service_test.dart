@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
@@ -18,18 +19,32 @@ class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
 class MockGoogleSignInAuthentication extends Mock
     implements GoogleSignInAuthentication {}
 
+class MockPerformanceService extends Mock implements PerformanceService {}
+
+class MockTrace extends Mock implements Trace {}
+
 void main() {
   late AuthenticationService authenticationService;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockGoogleSignIn mockGoogleSignIn;
   late MockUser mockUser;
+  late MockPerformanceService mockPerformanceService;
+  late MockTrace mockTrace;
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
     mockGoogleSignIn = MockGoogleSignIn();
     mockUser = MockUser();
+    mockPerformanceService = MockPerformanceService();
+    mockTrace = MockTrace();
+
+    getIt.registerSingleton<PerformanceService>(mockPerformanceService);
 
     when(() => mockFirebaseAuth.currentUser).thenReturn(mockUser);
+    when(() => mockPerformanceService.startTrace(any()))
+        .thenAnswer((_) async => mockTrace);
+    when(() => mockPerformanceService.stopTrace(any()))
+        .thenAnswer((_) async {});
 
     authenticationService = AuthenticationService(
       firebaseAuth: mockFirebaseAuth,
@@ -37,7 +52,10 @@ void main() {
     );
   });
 
+  tearDown(getIt.reset);
+
   setUpAll(() {
+    registerFallbackValue(MockTrace());
     registerFallbackValue(
       const AuthCredential(
         providerId: 'google.com',
@@ -75,6 +93,16 @@ void main() {
       await authenticationService.updateDisplayName('New Name');
 
       verify(() => mockUser.updateDisplayName('New Name')).called(1);
+      verify(() => mockUser.reload()).called(1);
+    });
+
+    test('updateUserName calls updateDisplayName and reload on user', () async {
+      when(() => mockUser.updateDisplayName(any())).thenAnswer((_) async {});
+      when(() => mockUser.reload()).thenAnswer((_) async {});
+
+      await authenticationService.updateUserName('New User Name');
+
+      verify(() => mockUser.updateDisplayName('New User Name')).called(1);
       verify(() => mockUser.reload()).called(1);
     });
 
@@ -234,6 +262,7 @@ void main() {
       final mockGoogleAuth = MockGoogleSignInAuthentication();
       final mockUserCredential = MockUserCredential();
 
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
       when(() => mockGoogleSignIn.authenticate())
           .thenAnswer((_) async => mockGoogleUser);
       when(() => mockGoogleUser.authentication).thenReturn(mockGoogleAuth);
@@ -245,11 +274,13 @@ void main() {
       final result = await authenticationService.linkWithGoogle();
 
       expect(result, mockUserCredential);
+      verify(() => mockGoogleSignIn.signOut()).called(1);
       verify(() => mockGoogleSignIn.authenticate()).called(1);
       verify(() => mockUser.linkWithCredential(any())).called(1);
     });
 
     test('linkWithGoogle rethrows on error', () async {
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
       when(() => mockGoogleSignIn.authenticate())
           .thenThrow(Exception('Google Sign In Failed'));
 
@@ -265,6 +296,7 @@ void main() {
       final mockGoogleAuth = MockGoogleSignInAuthentication();
       final mockUserCredential = MockUserCredential();
 
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
       when(() => mockGoogleSignIn.authenticate())
           .thenAnswer((_) async => mockGoogleUser);
       when(() => mockGoogleUser.authentication).thenReturn(mockGoogleAuth);
@@ -275,11 +307,13 @@ void main() {
       final result = await authenticationService.signInWithGoogle();
 
       expect(result, mockUserCredential);
+      verify(() => mockGoogleSignIn.signOut()).called(1);
       verify(() => mockGoogleSignIn.authenticate()).called(1);
       verify(() => mockFirebaseAuth.signInWithCredential(any())).called(1);
     });
 
     test('signInWithGoogle rethrows on error', () async {
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
       when(() => mockGoogleSignIn.authenticate())
           .thenThrow(Exception('Google Sign In Failed'));
 
