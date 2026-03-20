@@ -32,9 +32,11 @@ Future<void> main() async {
               debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'],
             )
           : const AndroidPlayIntegrityProvider(),
-      providerApple: AppleDebugProvider(
-        debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'],
-      ),
+      providerApple: kDebugMode
+          ? AppleDebugProvider(
+              debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'],
+            )
+          : const AppleDeviceCheckProvider(),
     ),
     getIt<AuthenticationService>().initialize(),
     getIt<LocalStorageService>().initialize(),
