@@ -119,6 +119,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> logout(AppLocalizations l10n) async {
     try {
       await _authService.signOut();
+      getIt<AnalyticsService>().logEvent(name: 'logout');
     } on Exception catch (_) {
       emit(
         state.copyWith(

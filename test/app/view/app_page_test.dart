@@ -9,9 +9,12 @@ class MockAuthenticationService extends Mock implements AuthenticationService {}
 
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
 void main() {
   late AuthenticationService authenticationService;
   late LocalStorageService localStorageService;
+  late MockAnalyticsService mockAnalyticsService;
 
   setUpAll(() {
     registerFallbackValue(const Locale('en', 'US'));
@@ -23,6 +26,13 @@ void main() {
   setUp(() async {
     authenticationService = MockAuthenticationService();
     localStorageService = MockLocalStorageService();
+    mockAnalyticsService = MockAnalyticsService();
+
+    when(() => mockAnalyticsService.getRouteObserver())
+        .thenReturn(NavigatorObserver());
+
+    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
+        .thenAnswer((_) {});
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AuthenticationService>()) {
@@ -31,16 +41,23 @@ void main() {
     if (getIt.isRegistered<LocalStorageService>()) {
       await getIt.unregister<LocalStorageService>();
     }
+    if (getIt.isRegistered<AnalyticsService>()) {
+      await getIt.unregister<AnalyticsService>();
+    }
 
     getIt
       ..registerLazySingleton<AuthenticationService>(
         () => authenticationService,
       )
-      ..registerLazySingleton<LocalStorageService>(() => localStorageService);
+      ..registerLazySingleton<LocalStorageService>(() => localStorageService)
+      ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService);
 
     when(() => authenticationService.userChanges)
         .thenAnswer((_) => const Stream.empty());
+    when(() => authenticationService.authStateChanges)
+        .thenAnswer((_) => const Stream.empty());
     when(() => authenticationService.isLoggedIn).thenReturn(false);
+    when(() => authenticationService.currentUser).thenReturn(null);
 
     when(() => localStorageService.getLanguage())
         .thenReturn(const Locale('en', 'US'));

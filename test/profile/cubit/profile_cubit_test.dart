@@ -13,16 +13,32 @@ class MockAppLocalizations extends Mock implements AppLocalizations {}
 
 class MockAppUser extends Mock implements AppUser {}
 
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
 void main() {
   late MockAuthenticationService mockAuthenticationService;
   late MockAppLocalizations mockAppLocalizations;
   late StreamController<AppUser?> userChangesController;
   late ProfileCubit profileCubit;
+  late MockAnalyticsService mockAnalyticsService;
 
-  setUp(() {
+  setUp(() async {
     mockAuthenticationService = MockAuthenticationService();
     mockAppLocalizations = MockAppLocalizations();
     userChangesController = StreamController<AppUser?>();
+    mockAnalyticsService = MockAnalyticsService();
+
+    if (getIt.isRegistered<AnalyticsService>()) {
+      await getIt.unregister<AnalyticsService>();
+    }
+    getIt.registerSingleton<AnalyticsService>(mockAnalyticsService);
+
+    when(
+      () => mockAnalyticsService.logEvent(
+        name: any(named: 'name'),
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
 
     when(() => mockAppLocalizations.genericError).thenReturn('Error');
     when(() => mockAuthenticationService.userChanges)

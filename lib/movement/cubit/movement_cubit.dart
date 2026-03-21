@@ -126,6 +126,14 @@ class MovementCubit extends Cubit<MovementState> {
               ).toJson(),
             ),
       );
+      getIt<AnalyticsService>().logEvent(
+        name: state.id.isEmpty ? 'add_movement' : 'edit_movement',
+        parameters: {
+          'category': state.category!.name,
+          'type': state.category!.type.value,
+          'amount': state.price,
+        },
+      );
     } on Exception catch (_) {
       return false;
     }
@@ -150,6 +158,14 @@ class MovementCubit extends Cubit<MovementState> {
     for (final attachment in state.attachments) {
       unawaited(getIt<RemoteStorageService>().deleteFile(attachment));
     }
+
+    getIt<AnalyticsService>().logEvent(
+      name: 'delete_movement',
+      parameters: {
+        'category': state.category!.name,
+        'type': state.category!.type.value,
+      },
+    );
 
     return true;
   }

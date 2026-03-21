@@ -6,6 +6,8 @@ import 'package:saver_expense_manager/app/app.dart';
 
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   AppVariables.useTestFonts = true;
@@ -48,11 +50,22 @@ void main() {
 
   group('AppCubit', () {
     late MockLocalStorageService localStorage;
+    late MockAnalyticsService analyticsService;
 
     setUp(() {
       localStorage = MockLocalStorageService();
+      analyticsService = MockAnalyticsService();
       TestWidgetsFlutterBinding.ensureInitialized();
-      getIt.registerSingleton<LocalStorageService>(localStorage);
+      getIt
+        ..registerSingleton<LocalStorageService>(localStorage)
+        ..registerSingleton<AnalyticsService>(analyticsService);
+
+      when(
+        () => analyticsService.logEvent(
+          name: any(named: 'name'),
+          parameters: any(named: 'parameters'),
+        ),
+      ).thenAnswer((_) {});
     });
 
     tearDown(getIt.reset);

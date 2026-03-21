@@ -84,6 +84,14 @@ class RegisterCubit extends Cubit<RegisterState> {
         state.email,
         state.password,
       );
+      getIt<AnalyticsService>().logEvent(
+        name: 'sign_up',
+        parameters: {'method': 'email'},
+      );
+      final user = _authService.currentUser;
+      if (user != null) {
+        getIt<AnalyticsService>().setUserId(id: user.uid);
+      }
       emit(state.copyWith(status: RegisterStatus.success));
       await _authService.updateUserName(state.name);
     } on Exception catch (_) {

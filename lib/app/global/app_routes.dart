@@ -16,6 +16,9 @@ GoRouter goRouter() {
 
   return GoRouter(
     refreshListenable: GoRouterRefreshStream(authService.userChanges),
+    observers: [
+      getIt<AnalyticsService>().getRouteObserver(),
+    ],
     redirect: handleRedirect,
     initialLocation:
         authService.isLoggedIn ? HomePage.pagePath : LoginPage.pagePath,

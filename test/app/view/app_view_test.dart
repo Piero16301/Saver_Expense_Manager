@@ -12,9 +12,15 @@ class MockLocalStorageService extends Mock implements LocalStorageService {}
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
+class MockUser extends Mock implements AppUser {}
+
 void main() {
   late AuthenticationService authenticationService;
   late LocalStorageService localStorageService;
+  late MockAnalyticsService mockAnalyticsService;
+  late MockUser mockUser;
 
   setUpAll(() {
     registerFallbackValue(const Locale('en', 'US'));
@@ -26,24 +32,41 @@ void main() {
   setUp(() async {
     authenticationService = MockAuthenticationService();
     localStorageService = MockLocalStorageService();
+    mockAnalyticsService = MockAnalyticsService();
+    mockUser = MockUser();
+
+    when(() => mockUser.uid).thenReturn('test_uid');
+
+    when(() => mockAnalyticsService.getRouteObserver())
+        .thenReturn(NavigatorObserver());
+
+    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
+        .thenAnswer((_) {});
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AuthenticationService>()) {
       await getIt.unregister<AuthenticationService>();
     }
     if (getIt.isRegistered<LocalStorageService>()) {
-      getIt.unregister<LocalStorageService>();
+      await getIt.unregister<LocalStorageService>();
+    }
+    if (getIt.isRegistered<AnalyticsService>()) {
+      await getIt.unregister<AnalyticsService>();
     }
 
     getIt
       ..registerLazySingleton<AuthenticationService>(
         () => authenticationService,
       )
-      ..registerLazySingleton<LocalStorageService>(() => localStorageService);
+      ..registerLazySingleton<LocalStorageService>(() => localStorageService)
+      ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService);
 
     when(() => authenticationService.userChanges)
         .thenAnswer((_) => const Stream.empty());
+    when(() => authenticationService.authStateChanges)
+        .thenAnswer((_) => const Stream.empty());
     when(() => authenticationService.isLoggedIn).thenReturn(false);
+    when(() => authenticationService.currentUser).thenReturn(null);
 
     when(() => localStorageService.getLanguage())
         .thenReturn(const Locale('en', 'US'));

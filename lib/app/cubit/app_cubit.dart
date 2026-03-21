@@ -59,21 +59,41 @@ class AppCubit extends Cubit<AppState> {
 
   void changeLanguage({required Locale language}) {
     localStorage.saveLanguage(language: language);
+    getIt<AnalyticsService>().logEvent(
+      name: 'change_language',
+      parameters: {'language': language.languageCode},
+    );
     emit(state.copyWith(language: language));
   }
 
   void changeTheme({required ThemeMode theme}) {
     localStorage.saveTheme(theme: theme);
+    getIt<AnalyticsService>().logEvent(
+      name: 'change_theme',
+      parameters: {'theme': theme.name.toUpperCase()},
+    );
     emit(state.copyWith(theme: theme));
   }
 
   void changeBaseColor({required Color baseColor}) {
     localStorage.saveBaseColor(baseColor: baseColor);
+    getIt<AnalyticsService>().logEvent(
+      name: 'change_base_color',
+      parameters: {
+        'color': ColorHelper.colorMap.containsValue(baseColor)
+            ? ColorHelper.getColorName(baseColor)
+            : baseColor.toARGB32().toRadixString(16),
+      },
+    );
     emit(state.copyWith(baseColor: baseColor));
   }
 
   void changeFontFamily({required String fontFamily}) {
     localStorage.saveFontFamily(fontFamily: fontFamily);
+    getIt<AnalyticsService>().logEvent(
+      name: 'change_font_family',
+      parameters: {'font': fontFamily},
+    );
     emit(state.copyWith(fontFamily: fontFamily));
   }
 }

@@ -15,16 +15,25 @@ class MockAiService extends Mock implements AiService {}
 
 class MockGoRouterState extends Mock implements GoRouterState {}
 
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
 void main() {
   late MockAuthenticationService mockAuthService;
   late MockAiService mockAiService;
+  late MockAnalyticsService mockAnalyticsService;
 
   setUp(() {
     mockAuthService = MockAuthenticationService();
     mockAiService = MockAiService();
+    mockAnalyticsService = MockAnalyticsService();
+
+    when(() => mockAnalyticsService.getRouteObserver())
+        .thenReturn(NavigatorObserver());
+
     unawaited(getIt.reset());
     getIt
       ..registerFactory<AuthenticationService>(() => mockAuthService)
+      ..registerFactory<AnalyticsService>(() => mockAnalyticsService)
       ..registerFactory<AiService>(() => mockAiService);
   });
 

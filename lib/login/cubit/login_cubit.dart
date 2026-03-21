@@ -52,6 +52,14 @@ class LoginCubit extends Cubit<LoginState> {
         state.email,
         state.password,
       );
+      getIt<AnalyticsService>().logEvent(
+        name: 'login',
+        parameters: {'method': 'email'},
+      );
+      final user = _authService.currentUser;
+      if (user != null) {
+        getIt<AnalyticsService>().setUserId(id: user.uid);
+      }
       emit(state.copyWith(status: LoginStatus.success));
     } on Exception catch (_) {
       emit(
@@ -68,6 +76,14 @@ class LoginCubit extends Cubit<LoginState> {
     try {
       final userCredential = await _authService.signInWithGoogle();
       if (userCredential != null) {
+        getIt<AnalyticsService>().logEvent(
+          name: 'login',
+          parameters: {'method': 'google'},
+        );
+        final user = _authService.currentUser;
+        if (user != null) {
+          getIt<AnalyticsService>().setUserId(id: user.uid);
+        }
         emit(state.copyWith(status: LoginStatus.success));
       } else {
         emit(

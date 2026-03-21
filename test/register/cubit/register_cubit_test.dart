@@ -14,16 +14,36 @@ class MockAppLocalizations extends Mock implements AppLocalizations {}
 
 class FakeUserCredential extends Fake implements UserCredential {}
 
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
 void main() {
   late MockAuthenticationService mockAuthenticationService;
   late MockAppLocalizations mockAppLocalizations;
   late RegisterCubit registerCubit;
+  late MockAnalyticsService mockAnalyticsService;
 
-  setUp(() {
+  setUp(() async {
     mockAuthenticationService = MockAuthenticationService();
     mockAppLocalizations = MockAppLocalizations();
+    mockAnalyticsService = MockAnalyticsService();
+
+    if (getIt.isRegistered<AnalyticsService>()) {
+      await getIt.unregister<AnalyticsService>();
+    }
+    getIt.registerSingleton<AnalyticsService>(mockAnalyticsService);
+
+    when(
+      () => mockAnalyticsService.logEvent(
+        name: any(named: 'name'),
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
 
     when(() => mockAppLocalizations.genericError).thenReturn('Error');
+    when(() => mockAuthenticationService.currentUser).thenReturn(null);
+
+    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
+        .thenAnswer((_) {});
 
     registerCubit = RegisterCubit(authService: mockAuthenticationService);
   });

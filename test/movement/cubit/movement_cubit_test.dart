@@ -30,6 +30,8 @@ class MockPathProviderPlatform extends Mock
     with MockPlatformInterfaceMixin
     implements PathProviderPlatform {}
 
+class MockAnalyticsService extends Mock implements AnalyticsService {}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -40,6 +42,7 @@ void main() {
     late DatabaseService databaseService;
     late FakeFirebaseFirestore fakeFirestore;
     late MockPathProviderPlatform mockPathProviderPlatform;
+    late MockAnalyticsService mockAnalyticsService;
 
     final date = DateTime(2023);
     const category = Category(
@@ -73,6 +76,7 @@ void main() {
       databaseService = DatabaseService(firestore: fakeFirestore);
       mockRemoteStorageService = MockRemoteStorageService();
       mockL10n = MockAppLocalizations();
+      mockAnalyticsService = MockAnalyticsService();
 
       if (getIt.isRegistered<DatabaseService>()) {
         await getIt.unregister<DatabaseService>();
@@ -80,10 +84,21 @@ void main() {
       if (getIt.isRegistered<RemoteStorageService>()) {
         getIt.unregister<RemoteStorageService>();
       }
+      if (getIt.isRegistered<AnalyticsService>()) {
+        getIt.unregister<AnalyticsService>();
+      }
 
       getIt
         ..registerSingleton<DatabaseService>(databaseService)
-        ..registerSingleton<RemoteStorageService>(mockRemoteStorageService);
+        ..registerSingleton<RemoteStorageService>(mockRemoteStorageService)
+        ..registerSingleton<AnalyticsService>(mockAnalyticsService);
+
+      when(
+        () => mockAnalyticsService.logEvent(
+          name: any(named: 'name'),
+          parameters: any(named: 'parameters'),
+        ),
+      ).thenAnswer((_) {});
 
       when(() => mockPathProviderPlatform.getApplicationCachePath())
           .thenAnswer((_) async => '.');
