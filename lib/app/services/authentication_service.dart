@@ -20,7 +20,12 @@ class AuthenticationService {
       await _googleSignIn.initialize(
         serverClientId: DefaultFirebaseOptions.googleClientId,
       );
-    } on Exception catch (_) {
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AuthenticationService initialize error',
+      );
       rethrow;
     }
   }
@@ -62,7 +67,12 @@ class AuthenticationService {
         idToken: googleAuth.idToken,
       );
       return await _auth.currentUser?.linkWithCredential(credential);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AuthenticationService linkWithGoogle error',
+      );
       rethrow;
     }
   }
@@ -88,7 +98,12 @@ class AuthenticationService {
         idToken: googleAuth.idToken,
       );
       return await _auth.signInWithCredential(credential);
-    } catch (e) {
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AuthenticationService signInWithGoogle error',
+      );
       rethrow;
     } finally {
       await performance.stopTrace(trace);
@@ -106,6 +121,13 @@ class AuthenticationService {
         email: email,
         password: password,
       );
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AuthenticationService signInWithEmailAndPassword error',
+      );
+      rethrow;
     } finally {
       await performance.stopTrace(trace);
     }
@@ -122,6 +144,13 @@ class AuthenticationService {
         email: email,
         password: password,
       );
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AuthenticationService signUpWithEmailAndPassword error',
+      );
+      rethrow;
     } finally {
       await performance.stopTrace(trace);
     }

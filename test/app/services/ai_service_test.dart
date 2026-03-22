@@ -17,6 +17,8 @@ class MockPerformanceService extends Mock implements PerformanceService {}
 
 class MockTrace extends Mock implements Trace {}
 
+class MockCrashService extends Mock implements CrashService {}
+
 void main() {
   late AiService aiService;
   late MockFirebaseAI mockFirebaseAI;
@@ -24,6 +26,7 @@ void main() {
   late MockRemoteConfigService mockRemoteConfigService;
   late MockPerformanceService mockPerformanceService;
   late MockTrace mockTrace;
+  late MockCrashService mockCrashService;
 
   setUp(() {
     mockFirebaseAI = MockFirebaseAI();
@@ -31,16 +34,25 @@ void main() {
     mockRemoteConfigService = MockRemoteConfigService();
     mockPerformanceService = MockPerformanceService();
     mockTrace = MockTrace();
+    mockCrashService = MockCrashService();
 
     getIt
       ..registerSingleton<PerformanceService>(mockPerformanceService)
-      ..registerSingleton<RemoteConfigService>(mockRemoteConfigService);
+      ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
+      ..registerSingleton<CrashService>(mockCrashService);
 
     when(() => mockRemoteConfigService.geminiModelId).thenReturn('gemini-1');
     when(() => mockPerformanceService.startTrace(any()))
         .thenAnswer((_) async => mockTrace);
     when(() => mockPerformanceService.stopTrace(any()))
         .thenAnswer((_) async {});
+    when(
+      () => mockCrashService.recordError(
+        any<dynamic>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) async {});
 
     aiService = AiService(
       remoteModel: mockFirebaseAI,

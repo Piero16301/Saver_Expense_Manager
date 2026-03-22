@@ -254,6 +254,13 @@ class DatabaseService {
 
       final snapshot = await query.get();
       return snapshot.docs.map((doc) => Movement.fromJson(doc.data())).toList();
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'DatabaseService getMovements error',
+      );
+      rethrow;
     } finally {
       await performance.stopTrace(trace);
     }

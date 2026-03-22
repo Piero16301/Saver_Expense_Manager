@@ -12,6 +12,7 @@ void setupServiceLocator() {
     ..registerLazySingleton<RemoteStorageService>(RemoteStorageService.new)
     ..registerLazySingleton<RemoteConfigService>(RemoteConfigService.new)
     ..registerLazySingleton<PerformanceService>(PerformanceService.new)
+    ..registerLazySingleton<CrashService>(CrashService.new)
     ..registerLazySingleton<AiService>(
       AiService.new,
     );

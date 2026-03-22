@@ -13,7 +13,16 @@ class RemoteStorageService {
   FirebaseStorage get storage => _storage;
 
   Future<void> deleteFile(String path) async {
-    await _storage.ref().child(path).delete();
+    try {
+      await _storage.ref().child(path).delete();
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'RemoteStorageService deleteFile error',
+      );
+      rethrow;
+    }
   }
 
   Future<String?> uploadFile(File file, String path) async {
@@ -25,12 +34,26 @@ class RemoteStorageService {
       final ref = _storage.ref().child(path);
       await ref.putFile(file);
       return ref.name;
-    } on Exception catch (_) {
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'RemoteStorageService uploadFile error',
+      );
       return null;
     }
   }
 
   Future<Uint8List?> getData(String path) async {
-    return _storage.ref().child(path).getData();
+    try {
+      return await _storage.ref().child(path).getData();
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'RemoteStorageService getData error',
+      );
+      return null;
+    }
   }
 }

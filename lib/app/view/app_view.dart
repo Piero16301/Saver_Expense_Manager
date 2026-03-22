@@ -24,6 +24,7 @@ class _AppViewState extends State<AppView> {
     final authService = getIt<AuthenticationService>();
     _authSubscription = authService.authStateChanges.listen((user) {
       getIt<AnalyticsService>().setUserId(id: user?.uid ?? '');
+      getIt<CrashService>().setUserIdentifier(user?.uid ?? '');
     });
   }
 
