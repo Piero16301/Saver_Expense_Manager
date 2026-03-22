@@ -274,6 +274,9 @@ class AddMovementBottomSheet extends StatelessWidget {
       ),
     );
 
+    getIt<CrashService>().setCustomKey('file_pick_model_type', modelType.name);
+    getIt<CrashService>().setCustomKey('movement_type', movementType.name);
+
     try {
       if (modelType.isLocal &&
           !AppVariables.imageExtensions
@@ -324,7 +327,12 @@ class AddMovementBottomSheet extends StatelessWidget {
           ),
         ),
       );
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AddMovementBottomSheet handleFilePick error',
+      );
       if (loader.isLoading) {
         loader.hideLoading();
       }
@@ -374,6 +382,10 @@ class AddMovementBottomSheet extends StatelessWidget {
       ),
     );
 
+    getIt<CrashService>()
+        .setCustomKey('document_scan_model_type', modelType.name);
+    getIt<CrashService>().setCustomKey('movement_type', movementType.name);
+
     try {
       if (modelType.isLocal &&
           !AppVariables.imageExtensions.contains(files.first.split('.').last)) {
@@ -420,7 +432,12 @@ class AddMovementBottomSheet extends StatelessWidget {
           attachments: uploadName != null ? [uploadName] : [],
         ),
       );
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AddMovementBottomSheet handleDocumentScan error',
+      );
       if (loader.isLoading) {
         loader.hideLoading();
       }

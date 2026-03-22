@@ -70,6 +70,13 @@ class AiService {
       final response = await remoteModel.generateContent(contentPrompt);
 
       return response.text;
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AiService generateContentRemote error',
+      );
+      rethrow;
     } finally {
       await performance.stopTrace(trace);
     }
@@ -106,6 +113,13 @@ class AiService {
       );
 
       return response.first.isEmpty ? null : response.first;
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AiService generateContentLocal error',
+      );
+      rethrow;
     } finally {
       await performance.stopTrace(trace);
     }

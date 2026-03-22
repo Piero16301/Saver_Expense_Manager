@@ -59,6 +59,7 @@ class LoginCubit extends Cubit<LoginState> {
       final user = _authService.currentUser;
       if (user != null) {
         getIt<AnalyticsService>().setUserId(id: user.uid);
+        getIt<CrashService>().setUserIdentifier(user.uid);
       }
       emit(state.copyWith(status: LoginStatus.success));
     } on Exception catch (_) {
@@ -83,6 +84,7 @@ class LoginCubit extends Cubit<LoginState> {
         final user = _authService.currentUser;
         if (user != null) {
           getIt<AnalyticsService>().setUserId(id: user.uid);
+          getIt<CrashService>().setUserIdentifier(user.uid);
         }
         emit(state.copyWith(status: LoginStatus.success));
       } else {

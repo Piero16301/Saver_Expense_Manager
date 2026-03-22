@@ -11,6 +11,8 @@ class MockFirebaseStorage extends Mock implements FirebaseStorage {}
 
 class MockReference extends Mock implements Reference {}
 
+class MockCrashService extends Mock implements CrashService {}
+
 class FakeTaskSnapshot extends Fake implements TaskSnapshot {}
 
 class FakeUploadTask extends Fake implements UploadTask {
@@ -28,17 +30,30 @@ void main() {
   late MockFirebaseStorage mockFirebaseStorage;
   late MockReference mockReference;
   late MockReference mockChildReference;
+  late MockCrashService mockCrashService;
 
   setUp(() {
     mockFirebaseStorage = MockFirebaseStorage();
     mockReference = MockReference();
     mockChildReference = MockReference();
+    mockCrashService = MockCrashService();
+
+    getIt.registerSingleton<CrashService>(mockCrashService);
+    when(
+      () => mockCrashService.recordError(
+        any<dynamic>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) async {});
 
     when(() => mockFirebaseStorage.ref()).thenReturn(mockReference);
     when(() => mockReference.child(any())).thenReturn(mockChildReference);
 
     remoteStorageService = RemoteStorageService(storage: mockFirebaseStorage);
   });
+
+  tearDown(getIt.reset);
 
   setUpAll(() {
     registerFallbackValue(File('dummy.png'));

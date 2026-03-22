@@ -91,6 +91,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       final user = _authService.currentUser;
       if (user != null) {
         getIt<AnalyticsService>().setUserId(id: user.uid);
+        getIt<CrashService>().setUserIdentifier(user.uid);
       }
       emit(state.copyWith(status: RegisterStatus.success));
       await _authService.updateUserName(state.name);

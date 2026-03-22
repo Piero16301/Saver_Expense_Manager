@@ -23,6 +23,8 @@ class MockPerformanceService extends Mock implements PerformanceService {}
 
 class MockTrace extends Mock implements Trace {}
 
+class MockCrashService extends Mock implements CrashService {}
+
 void main() {
   late AuthenticationService authenticationService;
   late MockFirebaseAuth mockFirebaseAuth;
@@ -30,6 +32,7 @@ void main() {
   late MockUser mockUser;
   late MockPerformanceService mockPerformanceService;
   late MockTrace mockTrace;
+  late MockCrashService mockCrashService;
 
   setUp(() {
     mockFirebaseAuth = MockFirebaseAuth();
@@ -37,8 +40,19 @@ void main() {
     mockUser = MockUser();
     mockPerformanceService = MockPerformanceService();
     mockTrace = MockTrace();
+    mockCrashService = MockCrashService();
 
-    getIt.registerSingleton<PerformanceService>(mockPerformanceService);
+    getIt
+      ..registerSingleton<PerformanceService>(mockPerformanceService)
+      ..registerSingleton<CrashService>(mockCrashService);
+
+    when(
+      () => mockCrashService.recordError(
+        any<dynamic>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) async {});
 
     when(() => mockFirebaseAuth.currentUser).thenReturn(mockUser);
     when(() => mockPerformanceService.startTrace(any()))

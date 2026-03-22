@@ -71,7 +71,13 @@ class MovementCubit extends Cubit<MovementState> {
     // Remove the file from Firebase Storage
     try {
       await getIt<RemoteStorageService>().deleteFile(value);
-    } on Exception catch (_) {}
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'MovementCubit attachRemove error',
+      );
+    }
   }
 
   Future<void> attachOpen(String value) async {
@@ -84,7 +90,10 @@ class MovementCubit extends Cubit<MovementState> {
           await getIt<RemoteStorageService>().getData(value) ?? Uint8List(0);
       await file.writeAsBytes(data.toList());
       await OpenFile.open(filePath);
-    } on Exception catch (_) {}
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>()
+          .recordError(e, stackTrace, reason: 'MovementCubit attachOpen error');
+    }
   }
 
   bool? saveMovement(String userId, AppLocalizations l10n) {
@@ -134,7 +143,16 @@ class MovementCubit extends Cubit<MovementState> {
           'amount': state.price,
         },
       );
-    } on Exception catch (_) {
+      getIt<CrashService>().log(
+        'Saved movement: title=${state.title}, price=${state.price}, '
+        'category=${state.category?.name}',
+      );
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'MovementCubit saveMovement error',
+      );
       return false;
     }
     return true;
@@ -144,6 +162,8 @@ class MovementCubit extends Cubit<MovementState> {
     if (state.id.isEmpty) {
       return false;
     }
+
+    getIt<CrashService>().log('Removing movement: id=${state.id}');
 
     // Remove movement from Firebase Firestore
     unawaited(

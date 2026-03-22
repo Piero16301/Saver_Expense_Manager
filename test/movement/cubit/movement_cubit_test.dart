@@ -13,6 +13,8 @@ import 'package:saver_expense_manager/movement/cubit/movement_cubit.dart';
 
 class MockRemoteStorageService extends Mock implements RemoteStorageService {}
 
+class MockCrashService extends Mock implements CrashService {}
+
 class MockAppLocalizations extends Mock implements AppLocalizations {}
 
 class MockFormState extends Mock implements FormState {
@@ -42,6 +44,7 @@ void main() {
     late DatabaseService databaseService;
     late FakeFirebaseFirestore fakeFirestore;
     late MockPathProviderPlatform mockPathProviderPlatform;
+    late MockCrashService mockCrashService;
     late MockAnalyticsService mockAnalyticsService;
 
     final date = DateTime(2023);
@@ -75,6 +78,7 @@ void main() {
       fakeFirestore = FakeFirebaseFirestore();
       databaseService = DatabaseService(firestore: fakeFirestore);
       mockRemoteStorageService = MockRemoteStorageService();
+      mockCrashService = MockCrashService();
       mockL10n = MockAppLocalizations();
       mockAnalyticsService = MockAnalyticsService();
 
@@ -84,6 +88,9 @@ void main() {
       if (getIt.isRegistered<RemoteStorageService>()) {
         getIt.unregister<RemoteStorageService>();
       }
+      if (getIt.isRegistered<CrashService>()) {
+        getIt.unregister<CrashService>();
+      }
       if (getIt.isRegistered<AnalyticsService>()) {
         getIt.unregister<AnalyticsService>();
       }
@@ -91,6 +98,7 @@ void main() {
       getIt
         ..registerSingleton<DatabaseService>(databaseService)
         ..registerSingleton<RemoteStorageService>(mockRemoteStorageService)
+        ..registerSingleton<CrashService>(mockCrashService)
         ..registerSingleton<AnalyticsService>(mockAnalyticsService);
 
       when(
@@ -99,6 +107,17 @@ void main() {
           parameters: any(named: 'parameters'),
         ),
       ).thenAnswer((_) {});
+
+      when(() => mockCrashService.log(any<String>())).thenAnswer((_) async {});
+      when(
+        () => mockCrashService.recordError(
+          any<dynamic>(),
+          any<StackTrace?>(),
+          reason: any<dynamic>(named: 'reason'),
+          fatal: any<bool?>(named: 'fatal'),
+          information: any<Iterable<Object>>(named: 'information'),
+        ),
+      ).thenAnswer((_) async {});
 
       when(() => mockPathProviderPlatform.getApplicationCachePath())
           .thenAnswer((_) async => '.');

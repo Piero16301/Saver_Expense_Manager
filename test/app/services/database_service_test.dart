@@ -8,11 +8,14 @@ class MockPerformanceService extends Mock implements PerformanceService {}
 
 class MockTrace extends Mock implements Trace {}
 
+class MockCrashService extends Mock implements CrashService {}
+
 void main() {
   late DatabaseService databaseService;
   late FakeFirebaseFirestore fakeFirestore;
   late MockPerformanceService mockPerformanceService;
   late MockTrace mockTrace;
+  late MockCrashService mockCrashService;
 
   setUpAll(() {
     registerFallbackValue(MockTrace());
@@ -22,8 +25,19 @@ void main() {
     fakeFirestore = FakeFirebaseFirestore();
     mockPerformanceService = MockPerformanceService();
     mockTrace = MockTrace();
+    mockCrashService = MockCrashService();
 
-    getIt.registerSingleton<PerformanceService>(mockPerformanceService);
+    getIt
+      ..registerSingleton<PerformanceService>(mockPerformanceService)
+      ..registerSingleton<CrashService>(mockCrashService);
+
+    when(
+      () => mockCrashService.recordError(
+        any<dynamic>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) async {});
 
     when(() => mockPerformanceService.startTrace(any()))
         .thenAnswer((_) async => mockTrace);
