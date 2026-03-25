@@ -19,12 +19,13 @@ class ProfileView extends StatelessWidget {
       listenWhen: (previous, current) =>
           previous.status != current.status || previous.user != current.user,
       listener: (context, state) {
-        if (state.status == ProfileStatus.failure) {
+        if (state.status.isFailure) {
           AppFunctions.showSnackBar(
             context,
             message: state.errorMessage,
             type: SnackBarType.error,
           );
+          context.read<ProfileCubit>().reset();
         }
       },
       child: Scaffold(

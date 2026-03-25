@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,18 +19,12 @@ class MockDatabaseService extends Mock implements DatabaseService {}
 
 class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
-
-class MockFirebaseAuth extends Mock implements firebase_auth.FirebaseAuth {}
-
-class MockUser extends Mock implements firebase_auth.User {}
+class MockAuthService extends Mock implements AuthService {}
 
 void main() {
   late MockDatabaseService mockDatabaseService;
   late MockRemoteConfigService mockRemoteConfigService;
-  late MockAuthenticationService mockAuthenticationService;
-  late MockFirebaseAuth mockFirebaseAuth;
-  late MockUser mockUser;
+  late MockAuthService mockAuthService;
   late MockAppCubit mockAppCubit;
   late MockSummaryHomeCubit mockSummaryHomeCubit;
 
@@ -60,15 +53,12 @@ void main() {
   setUp(() async {
     mockDatabaseService = MockDatabaseService();
     mockRemoteConfigService = MockRemoteConfigService();
-    mockAuthenticationService = MockAuthenticationService();
-    mockFirebaseAuth = MockFirebaseAuth();
-    mockUser = MockUser();
+    when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
+    mockAuthService = MockAuthService();
     mockAppCubit = MockAppCubit();
     mockSummaryHomeCubit = MockSummaryHomeCubit();
-
-    when(() => mockUser.uid).thenReturn('user123');
-    when(() => mockFirebaseAuth.currentUser).thenReturn(mockUser);
-    when(() => mockAuthenticationService.auth).thenReturn(mockFirebaseAuth);
+    when(() => mockAuthService.currentUser)
+        .thenReturn(const AppUser(uid: 'user123'));
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
 
@@ -78,14 +68,14 @@ void main() {
     if (getIt.isRegistered<RemoteConfigService>()) {
       getIt.unregister<RemoteConfigService>();
     }
-    if (getIt.isRegistered<AuthenticationService>()) {
-      getIt.unregister<AuthenticationService>();
+    if (getIt.isRegistered<AuthService>()) {
+      getIt.unregister<AuthService>();
     }
 
     getIt
       ..registerSingleton<DatabaseService>(mockDatabaseService)
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
-      ..registerSingleton<AuthenticationService>(mockAuthenticationService);
+      ..registerSingleton<AuthService>(mockAuthService);
   });
 
   group('SummaryHomePage', () {
@@ -137,12 +127,16 @@ void main() {
       when(() => mockDatabaseService.getCategoriesStream())
           .thenAnswer((_) => Stream.value(testCategories));
       when(
-        () => mockDatabaseService.getUserMovementsRangeStream(
+        () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
-      ).thenAnswer((_) => Stream.value(<Movement>[]));
+      ).thenAnswer((_) => Stream.value([]));
 
       await tester.pumpWidget(buildPage());
       await tester.pumpAndSettle();
@@ -184,10 +178,14 @@ void main() {
     testWidgets('renders CircularProgressIndicator when loading movements',
         (tester) async {
       when(
-        () => mockDatabaseService.getUserMovementsRangeStream(
+        () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => const Stream.empty());
 
@@ -199,12 +197,16 @@ void main() {
     testWidgets('renders no movements message when list is empty',
         (tester) async {
       when(
-        () => mockDatabaseService.getUserMovementsRangeStream(
+        () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
-      ).thenAnswer((_) => Stream.value(<Movement>[]));
+      ).thenAnswer((_) => Stream.value([]));
 
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
@@ -227,10 +229,14 @@ void main() {
       ];
 
       when(
-        () => mockDatabaseService.getUserMovementsRangeStream(
+        () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value(movements));
 
@@ -258,10 +264,14 @@ void main() {
       ];
 
       when(
-        () => mockDatabaseService.getUserMovementsRangeStream(
+        () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value(movements));
 
@@ -288,10 +298,14 @@ void main() {
       ];
 
       when(
-        () => mockDatabaseService.getUserMovementsRangeStream(
+        () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value(movements));
 
@@ -323,10 +337,14 @@ void main() {
       ];
 
       when(
-        () => mockDatabaseService.getUserMovementsRangeStream(
+        () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value(movements));
 
@@ -370,10 +388,14 @@ void main() {
       ];
 
       when(
-        () => mockDatabaseService.getUserMovementsRangeStream(
+        () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value(movements));
 

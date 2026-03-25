@@ -12,7 +12,7 @@ import 'package:saver_expense_manager/movement/movement.dart';
 
 class MockDatabaseService extends Mock implements DatabaseService {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockAppUser extends Mock implements AppUser {}
 
@@ -23,7 +23,7 @@ void main() {
 
   group('MovementPage', () {
     late DatabaseService databaseService;
-    late AuthenticationService authenticationService;
+    late AuthService authenticationService;
     late AppUser user;
     late AppCubit appCubit;
 
@@ -54,7 +54,7 @@ void main() {
 
     setUp(() async {
       databaseService = MockDatabaseService();
-      authenticationService = MockAuthenticationService();
+      authenticationService = MockAuthService();
       user = MockAppUser();
       appCubit = MockAppCubit();
 
@@ -63,10 +63,10 @@ void main() {
       }
       getIt.registerSingleton<DatabaseService>(databaseService);
 
-      if (getIt.isRegistered<AuthenticationService>()) {
-        getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        getIt.unregister<AuthService>();
       }
-      getIt.registerSingleton<AuthenticationService>(authenticationService);
+      getIt.registerSingleton<AuthService>(authenticationService);
 
       when(() => user.uid).thenReturn('uid');
       when(() => authenticationService.currentUser).thenReturn(user);

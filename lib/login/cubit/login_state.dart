@@ -53,7 +53,7 @@ class LoginState extends Equatable {
       isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible,
       isEmailValid: isEmailValid ?? this.isEmailValid,
       isPasswordValid: isPasswordValid ?? this.isPasswordValid,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 

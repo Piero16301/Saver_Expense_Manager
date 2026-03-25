@@ -8,16 +8,19 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockDatabaseService extends Mock implements DatabaseService {}
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
+class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+
 void main() {
   group('MovementsListChart', () {
-    late AuthenticationService mockAuth;
+    late AuthService mockAuth;
     late DatabaseService mockDatabase;
+    late MockRemoteConfigService mockRemoteConfig;
     late AppCubit appCubit;
     late FakeFirebaseFirestore fakeFirestore;
     late Query<Map<String, dynamic>> query;
@@ -28,8 +31,9 @@ void main() {
     });
 
     setUp(() async {
-      mockAuth = MockAuthenticationService();
+      mockAuth = MockAuthService();
       mockDatabase = MockDatabaseService();
+      mockRemoteConfig = MockRemoteConfigService();
       appCubit = MockAppCubit();
 
       when(() => appCubit.state).thenReturn(const AppState());
@@ -39,25 +43,41 @@ void main() {
           .collection('movements')
           .where('user', isEqualTo: 'user1');
 
-      if (getIt.isRegistered<AuthenticationService>()) {
-        await getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        await getIt.unregister<AuthService>();
       }
       if (getIt.isRegistered<DatabaseService>()) {
-        getIt.unregister<DatabaseService>();
+        await getIt.unregister<DatabaseService>();
+      }
+      if (getIt.isRegistered<RemoteConfigService>()) {
+        await getIt.unregister<RemoteConfigService>();
       }
 
       getIt
-        ..registerSingleton<AuthenticationService>(mockAuth)
-        ..registerSingleton<DatabaseService>(mockDatabase);
+        ..registerSingleton<AuthService>(mockAuth)
+        ..registerSingleton<DatabaseService>(mockDatabase)
+        ..registerSingleton<RemoteConfigService>(mockRemoteConfig);
+
+      when(() => mockRemoteConfig.paginationLimit).thenReturn(10);
 
       when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user1'));
       when(
-        () => mockDatabase.getExpenseTypeMovementsQuery(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          expenseType: any(named: 'expenseType'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
-      ).thenReturn(query);
+      ).thenAnswer(
+        (_) => query.snapshots().map(
+              (snapshot) => snapshot.docs
+                  .map((doc) => Movement.fromJson(doc.data()))
+                  .toList(),
+            ),
+      );
     });
 
     testWidgets('renders empty state when no data', (tester) async {
@@ -82,7 +102,7 @@ void main() {
       );
 
       await tester.pump();
-      expect(find.text('No movements registered'), findsOneWidget);
+      expect(find.text('No elements registered'), findsOneWidget);
     });
 
     testWidgets('renders movement items when data is present', (tester) async {
@@ -156,10 +176,14 @@ void main() {
       );
 
       verify(
-        () => mockDatabase.getExpenseTypeMovementsQuery(
-          userId: 'user1',
-          monthSelected: month,
-          expenseType: CategoryType.expense,
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).called(1);
     });

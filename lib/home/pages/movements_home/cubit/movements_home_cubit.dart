@@ -69,7 +69,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
     );
 
     try {
-      final auth = getIt<AuthenticationService>().auth;
+      final auth = getIt<AuthService>();
       final language = getIt<LocalStorageService>().getLanguage() ??
           AppVariables.supportedLocales.first;
       final recommendations = await AppFunctions.getAntRecommendations(

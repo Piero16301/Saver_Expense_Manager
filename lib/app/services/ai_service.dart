@@ -1,127 +1,32 @@
-import 'dart:typed_data';
-
-import 'package:firebase_ai/firebase_ai.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class AiService {
-  AiService({
-    FirebaseAI? remoteModel,
-    GeminiNanoAndroid? localModel,
-  }) {
-    _remoteConfig = getIt<RemoteConfigService>();
-    _remoteModel = remoteModel ??
-        FirebaseAI.googleAI(
-          appCheck: FirebaseAppCheck.instance,
-          auth: getIt<AuthenticationService>().auth,
-        );
-    _localModel = localModel ?? GeminiNanoAndroid();
-  }
+  AiService({required AiRepository aiRepository})
+      : _aiRepository = aiRepository;
 
-  bool get isLocalModelAvailable => _isLocalModelAvailable;
+  final AiRepository _aiRepository;
 
   Future<void> initialize() async {
-    _isLocalModelAvailable = await _localModel.isAvailable();
+    await _aiRepository.initialize();
   }
 
-  late final RemoteConfigService _remoteConfig;
-  late final FirebaseAI _remoteModel;
-  late final GeminiNanoAndroid _localModel;
-  bool _isLocalModelAvailable = false;
+  bool get isLocalModelAvailable => _aiRepository.isLocalModelAvailable;
 
   Future<String?> generateContentRemote({
     required List<PromptPart> prompt,
     String responseMimeType = 'text/plain',
-  }) async {
-    if (prompt.isEmpty) {
-      return null;
-    }
-
-    final performance = getIt<PerformanceService>();
-    final trace = await performance.startTrace('gemini_generate_remote');
-    try {
-      final remoteModel = _remoteModel.generativeModel(
-        model: _remoteConfig.geminiModelId,
-        safetySettings: [
-          SafetySetting(
-            HarmCategory.dangerousContent,
-            HarmBlockThreshold.none,
-            null,
-          ),
-        ],
-        generationConfig: GenerationConfig(
-          responseMimeType: responseMimeType,
-        ),
+  }) =>
+      _aiRepository.generateContentRemote(
+        prompt: prompt,
+        responseMimeType: responseMimeType,
       );
-
-      final contentPrompt = prompt.map((p) {
-        switch (p.type) {
-          case PromptPartType.text:
-            return Content.text(p.text ?? '');
-          case PromptPartType.file:
-            return Content.inlineData(
-              p.mimeType ?? '',
-              p.bytes ?? Uint8List(0),
-            );
-        }
-      });
-
-      final response = await remoteModel.generateContent(contentPrompt);
-
-      return response.text;
-    } catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AiService generateContentRemote error',
-      );
-      rethrow;
-    } finally {
-      await performance.stopTrace(trace);
-    }
-  }
 
   Future<String?> generateContentLocal({
     required PromptPart textPrompt,
     PromptPart? imagePrompt,
-  }) async {
-    if (!(await _localModel.isAvailable())) {
-      return null;
-    }
-
-    if (!textPrompt.type.isText) {
-      return null;
-    }
-
-    if (imagePrompt != null && !imagePrompt.type.isFile) {
-      return null;
-    }
-
-    final performance = getIt<PerformanceService>();
-    final trace = await performance.startTrace('gemini_generate_local');
-    try {
-      if (imagePrompt != null &&
-          imagePrompt.mimeType != 'image/jpeg' &&
-          imagePrompt.mimeType != 'image/png') {
-        return null;
-      }
-
-      final response = await _localModel.generate(
-        prompt: textPrompt.text ?? '',
-        image: imagePrompt?.bytes,
+  }) =>
+      _aiRepository.generateContentLocal(
+        textPrompt: textPrompt,
+        imagePrompt: imagePrompt,
       );
-
-      return response.first.isEmpty ? null : response.first;
-    } catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AiService generateContentLocal error',
-      );
-      rethrow;
-    } finally {
-      await performance.stopTrace(trace);
-    }
-  }
 }

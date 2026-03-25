@@ -7,7 +7,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/profile/cubit/profile_cubit.dart';
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockAppLocalizations extends Mock implements AppLocalizations {}
 
@@ -16,14 +16,14 @@ class MockAppUser extends Mock implements AppUser {}
 class MockAnalyticsService extends Mock implements AnalyticsService {}
 
 void main() {
-  late MockAuthenticationService mockAuthenticationService;
+  late MockAuthService mockAuthService;
   late MockAppLocalizations mockAppLocalizations;
   late StreamController<AppUser?> userChangesController;
   late ProfileCubit profileCubit;
   late MockAnalyticsService mockAnalyticsService;
 
   setUp(() async {
-    mockAuthenticationService = MockAuthenticationService();
+    mockAuthService = MockAuthService();
     mockAppLocalizations = MockAppLocalizations();
     userChangesController = StreamController<AppUser?>();
     mockAnalyticsService = MockAnalyticsService();
@@ -41,10 +41,10 @@ void main() {
     ).thenAnswer((_) {});
 
     when(() => mockAppLocalizations.genericError).thenReturn('Error');
-    when(() => mockAuthenticationService.userChanges)
+    when(() => mockAuthService.userChanges)
         .thenAnswer((_) => userChangesController.stream);
 
-    profileCubit = ProfileCubit(authService: mockAuthenticationService);
+    profileCubit = ProfileCubit(authService: mockAuthService);
   });
 
   tearDown(() {
@@ -57,14 +57,14 @@ void main() {
       expect(profileCubit.state, const ProfileState());
     });
 
-    test('uses default AuthenticationService if none provided', () async {
-      final mockAuth = MockAuthenticationService();
+    test('uses default AuthService if none provided', () async {
+      final mockAuth = MockAuthService();
       when(() => mockAuth.userChanges).thenAnswer((_) => const Stream.empty());
 
-      if (getIt.isRegistered<AuthenticationService>()) {
-        await getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        await getIt.unregister<AuthService>();
       }
-      getIt.registerSingleton<AuthenticationService>(mockAuth);
+      getIt.registerSingleton<AuthService>(mockAuth);
 
       final cubit = ProfileCubit();
       expect(cubit.state, const ProfileState());
@@ -111,8 +111,8 @@ void main() {
       build: () => profileCubit,
       seed: () => const ProfileState(userName: 'New Name'),
       setUp: () {
-        when(() => mockAuthenticationService.updateDisplayName(any()))
-            .thenAnswer((_) async {});
+        when(() => mockAuthService.updateDisplayName(any()))
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.saveName(mockAppLocalizations),
       expect: () => const [
@@ -129,8 +129,8 @@ void main() {
       build: () => profileCubit,
       seed: () => const ProfileState(userName: 'New Name'),
       setUp: () {
-        when(() => mockAuthenticationService.updateDisplayName(any()))
-            .thenThrow(Exception());
+        when(() => mockAuthService.updateDisplayName(any()))
+            .thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.saveName(mockAppLocalizations),
       expect: () => const [
@@ -147,8 +147,8 @@ void main() {
       'linkGoogle works correctly',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthenticationService.linkWithGoogle())
-            .thenAnswer((_) async => null);
+        when(() => mockAuthService.linkWithGoogle())
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.linkGoogle(mockAppLocalizations),
       expect: () => const [
@@ -161,7 +161,7 @@ void main() {
       'logout handles failure',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthenticationService.signOut()).thenThrow(Exception());
+        when(() => mockAuthService.signOut()).thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.logout(mockAppLocalizations),
       expect: () => const [
@@ -173,8 +173,7 @@ void main() {
       'logout signs out',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthenticationService.signOut())
-            .thenAnswer((_) async {});
+        when(() => mockAuthService.signOut()).thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.logout(mockAppLocalizations),
       expect: () => const <ProfileState>[],
@@ -185,11 +184,11 @@ void main() {
       build: () => profileCubit,
       setUp: () {
         when(
-          () => mockAuthenticationService.linkWithEmailPassword(
+          () => mockAuthService.linkWithEmailPassword(
             email: any(named: 'email'),
             password: any(named: 'password'),
           ),
-        ).thenAnswer((_) async => null);
+        ).thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.linkEmail(
         mockAppLocalizations,
@@ -207,11 +206,11 @@ void main() {
       build: () => profileCubit,
       setUp: () {
         when(
-          () => mockAuthenticationService.linkWithEmailPassword(
+          () => mockAuthService.linkWithEmailPassword(
             email: any(named: 'email'),
             password: any(named: 'password'),
           ),
-        ).thenThrow(Exception());
+        ).thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.linkEmail(
         mockAppLocalizations,
@@ -221,6 +220,7 @@ void main() {
       expect: () => const [
         ProfileState(status: ProfileStatus.loading),
         ProfileState(status: ProfileStatus.failure, errorMessage: 'Error'),
+        ProfileState(errorMessage: 'Error'),
       ],
     );
 
@@ -228,8 +228,8 @@ void main() {
       'unlinkProvider works correctly',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthenticationService.unlinkProvider(any()))
-            .thenAnswer((_) async {});
+        when(() => mockAuthService.unlinkProvider(any()))
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.unlinkProvider(mockAppLocalizations, 'providerId'),
       expect: () => const [
@@ -242,13 +242,14 @@ void main() {
       'unlinkProvider handles failure',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthenticationService.unlinkProvider(any()))
-            .thenThrow(Exception());
+        when(() => mockAuthService.unlinkProvider(any()))
+            .thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.unlinkProvider(mockAppLocalizations, 'providerId'),
       expect: () => const [
         ProfileState(status: ProfileStatus.loading),
         ProfileState(status: ProfileStatus.failure, errorMessage: 'Error'),
+        ProfileState(errorMessage: 'Error'),
       ],
     );
 
@@ -256,13 +257,14 @@ void main() {
       'linkGoogle handles failure',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthenticationService.linkWithGoogle())
-            .thenThrow(Exception());
+        when(() => mockAuthService.linkWithGoogle())
+            .thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.linkGoogle(mockAppLocalizations),
       expect: () => const [
         ProfileState(status: ProfileStatus.loading),
         ProfileState(status: ProfileStatus.failure, errorMessage: 'Error'),
+        ProfileState(errorMessage: 'Error'),
       ],
     );
 
@@ -273,7 +275,7 @@ void main() {
       act: (cubit) => cubit.saveName(mockAppLocalizations),
       expect: () => const <ProfileState>[],
       verify: (_) {
-        verifyNever(() => mockAuthenticationService.updateDisplayName(any()));
+        verifyNever(() => mockAuthService.updateDisplayName(any()));
       },
     );
 

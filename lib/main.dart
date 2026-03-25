@@ -15,8 +15,10 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  const currentEnv = Environment.prod;
+
   // Setup service locator
-  setupServiceLocator();
+  setupServiceLocator(currentEnv);
 
   if (kDebugMode) {
     await dotenv.load();
@@ -24,7 +26,7 @@ Future<void> main() async {
 
   // Initialize services and plugins in parallel
   final performance = getIt<PerformanceService>();
-  final trace = await performance.startTrace('app_initialization');
+  final trace = performance.startTrace('app_initialization');
   await Future.wait([
     FirebaseAppCheck.instance.activate(
       providerAndroid: kDebugMode
@@ -38,12 +40,12 @@ Future<void> main() async {
             )
           : const AppleDeviceCheckProvider(),
     ),
-    getIt<AuthenticationService>().initialize(),
+    getIt<AuthService>().initialize(),
     getIt<LocalStorageService>().initialize(),
     getIt<RemoteConfigService>().initialize(),
     getIt<AiService>().initialize(),
   ]);
-  await performance.stopTrace(trace);
+  performance.stopTrace(trace);
 
   // Bootstrap the app
   await bootstrap(() => const AppPage());

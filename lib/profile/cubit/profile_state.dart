@@ -39,7 +39,7 @@ class ProfileState extends Equatable {
       user: user ?? this.user,
       userName: userName ?? this.userName,
       isEditingName: isEditingName ?? this.isEditingName,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 

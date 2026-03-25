@@ -39,6 +39,29 @@ void main() {
       );
     });
 
+    test('props returns correct values', () {
+      const userInfo = AppUserInfo(
+        uid: uid,
+        providerId: providerId,
+        email: email,
+        displayName: displayName,
+        photoURL: photoURL,
+        phoneNumber: phoneNumber,
+      );
+
+      expect(
+        userInfo.props,
+        containsAll([
+          uid,
+          providerId,
+          email,
+          displayName,
+          photoURL,
+          phoneNumber,
+        ]),
+      );
+    });
+
     test('fromFirebaseUserInfo creates correct instance', () {
       final mockInfo = MockFirebaseUserInfo();
       when(() => mockInfo.uid).thenReturn(uid);

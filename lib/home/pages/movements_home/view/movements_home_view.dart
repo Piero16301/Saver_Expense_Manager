@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_pagination/firebase_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -20,7 +19,7 @@ class MovementsHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final authentication = getIt<AuthenticationService>();
+    final auth = getIt<AuthService>();
     final database = getIt<DatabaseService>();
 
     return BlocConsumer<MovementsHomeCubit, MovementsHomeState>(
@@ -39,7 +38,7 @@ class MovementsHomeView extends StatelessWidget {
         children: [
           StreamBuilder<List<Movement>>(
             stream: database.getMovementsStream(
-              userId: authentication.auth.currentUser!.uid,
+              userId: auth.currentUser!.uid,
               limit: 1,
             ),
             builder: (context, snapshot) {
@@ -409,31 +408,22 @@ class ListMovementsHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final auth = getIt<AuthenticationService>().auth;
+    final auth = getIt<AuthService>();
     final database = getIt<DatabaseService>();
 
     return Expanded(
-      child: FirestorePagination(
+      child: AppStreamPaginated<Movement>(
         key: ValueKey('$filterType-$filterCategory'),
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        query: database.getUserMovementsQuery(
+        stream: (limit) => database.getMovementsStream(
           userId: auth.currentUser!.uid,
           type: filterType,
-          category: filterCategory,
-        ),
-        isLive: true,
-        onEmpty: Center(
-          child: Text(
-            l10n.movementsNoData,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          categoryId: filterCategory?.id,
+          limit: limit,
+          orderByDate: true,
         ),
         itemBuilder: (context, docs, index) {
-          final movement = Movement.fromJson(
-            docs[index].data()! as Map<String, dynamic>,
-          );
+          final movement = docs[index];
+
           return ListMovementsItemHome(movement: movement);
         },
       ),

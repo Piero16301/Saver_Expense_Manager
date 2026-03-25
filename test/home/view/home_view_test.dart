@@ -9,11 +9,10 @@ import 'package:network_image_mock/network_image_mock.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:saver_expense_manager/movement/movement.dart';
 
 import '../../helpers/helpers.dart';
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
@@ -28,7 +27,7 @@ class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
 void main() {
-  late MockAuthenticationService mockAuthService;
+  late MockAuthService mockAuthService;
   late MockAppCubit mockAppCubit;
   late MockHomeCubit mockHomeCubit;
   late MockAppUser mockAppUser;
@@ -44,7 +43,7 @@ void main() {
   });
 
   setUp(() {
-    mockAuthService = MockAuthenticationService();
+    mockAuthService = MockAuthService();
     mockAppCubit = MockAppCubit();
     mockHomeCubit = MockHomeCubit();
     mockAppUser = MockAppUser();
@@ -53,7 +52,7 @@ void main() {
     mockLocalStorageService = MockLocalStorageService();
 
     getIt
-      ..registerSingleton<AuthenticationService>(mockAuthService)
+      ..registerSingleton<AuthService>(mockAuthService)
       ..registerSingleton<DatabaseService>(mockDatabaseService)
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
       ..registerSingleton<LocalStorageService>(mockLocalStorageService);
@@ -71,23 +70,36 @@ void main() {
     when(() => mockDatabaseService.getCategoriesStream())
         .thenAnswer((_) => Stream.value([]));
     when(
-      () => mockDatabaseService.getMonthMovementsStream(
+      () => mockDatabaseService.getMovementsStream(
         userId: any(named: 'userId'),
-        monthSelected: any(named: 'monthSelected'),
-        type: any(named: 'type'),
-      ),
-    ).thenAnswer((_) => Stream.value([]));
-    when(
-      () => mockDatabaseService.getUserMovementsRangeStream(
-        userId: any(named: 'userId'),
-        startMonth: any(named: 'startMonth'),
-        endMonth: any(named: 'endMonth'),
+        startDate: any<DateTime?>(named: 'startDate'),
+        endDate: any<DateTime?>(named: 'endDate'),
+        type: any<CategoryType?>(named: 'type'),
+        categoryId: any<String?>(named: 'categoryId'),
+        limit: any<int>(named: 'limit'),
+        orderByDate: any<bool>(named: 'orderByDate'),
       ),
     ).thenAnswer((_) => Stream.value([]));
     when(
       () => mockDatabaseService.getMovementsStream(
         userId: any(named: 'userId'),
-        limit: any(named: 'limit'),
+        startDate: any<DateTime?>(named: 'startDate'),
+        endDate: any<DateTime?>(named: 'endDate'),
+        type: any<CategoryType?>(named: 'type'),
+        categoryId: any<String?>(named: 'categoryId'),
+        limit: any<int>(named: 'limit'),
+        orderByDate: any<bool>(named: 'orderByDate'),
+      ),
+    ).thenAnswer((_) => Stream.value([]));
+    when(
+      () => mockDatabaseService.getMovementsStream(
+        userId: any(named: 'userId'),
+        startDate: any<DateTime?>(named: 'startDate'),
+        endDate: any<DateTime?>(named: 'endDate'),
+        type: any<CategoryType?>(named: 'type'),
+        categoryId: any<String?>(named: 'categoryId'),
+        limit: any<int>(named: 'limit'),
+        orderByDate: any<bool>(named: 'orderByDate'),
       ),
     ).thenAnswer((_) => Stream.value([]));
   });
@@ -322,7 +334,7 @@ void main() {
           ),
           GoRoute(
             path: '/movement/:type/:screenType',
-            name: MovementPage.pageName,
+            name: AppRoute.movement.name,
             builder: (context, state) =>
                 const Scaffold(body: Text('Movement Page')),
           ),

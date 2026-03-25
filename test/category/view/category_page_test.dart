@@ -9,7 +9,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockDatabaseService extends Mock implements DatabaseService {}
 
@@ -20,7 +20,7 @@ void main() {
 
   group('CategoryPage', () {
     late AppCubit mockAppCubit;
-    late AuthenticationService mockAuth;
+    late AuthService mockAuth;
     late DatabaseService mockDatabase;
 
     const category = Category(
@@ -33,29 +33,32 @@ void main() {
 
     setUp(() async {
       mockAppCubit = MockAppCubit();
-      mockAuth = MockAuthenticationService();
+      mockAuth = MockAuthService();
       mockDatabase = MockDatabaseService();
 
       when(() => mockAppCubit.state).thenReturn(const AppState());
       when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user1'));
       when(
-        () => mockDatabase.getTrendChartStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
-          category: category,
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
-      if (getIt.isRegistered<AuthenticationService>()) {
-        await getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        await getIt.unregister<AuthService>();
       }
       if (getIt.isRegistered<DatabaseService>()) {
         getIt.unregister<DatabaseService>();
       }
 
       getIt
-        ..registerSingleton<AuthenticationService>(mockAuth)
+        ..registerSingleton<AuthService>(mockAuth)
         ..registerSingleton<DatabaseService>(mockDatabase);
     });
 

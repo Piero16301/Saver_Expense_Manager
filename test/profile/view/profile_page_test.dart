@@ -8,26 +8,26 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/profile/profile.dart';
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('ProfilePage', () {
-    late MockAuthenticationService authService;
+    late MockAuthService authService;
     late StreamController<AppUser?> userChangesController;
 
     setUp(() async {
-      authService = MockAuthenticationService();
+      authService = MockAuthService();
       userChangesController = StreamController<AppUser?>();
 
       when(() => authService.userChanges)
           .thenAnswer((_) => userChangesController.stream);
 
-      if (getIt.isRegistered<AuthenticationService>()) {
-        await getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        await getIt.unregister<AuthService>();
       }
-      getIt.registerSingleton<AuthenticationService>(authService);
+      getIt.registerSingleton<AuthService>(authService);
     });
 
     tearDown(() {

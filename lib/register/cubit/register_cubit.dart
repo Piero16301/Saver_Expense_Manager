@@ -6,11 +6,11 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit({AuthenticationService? authService})
-      : _authService = authService ?? getIt<AuthenticationService>(),
+  RegisterCubit({AuthService? authService})
+      : _authService = authService ?? getIt<AuthService>(),
         super(const RegisterState());
 
-  final AuthenticationService _authService;
+  final AuthService _authService;
 
   void nameChanged(String value) {
     emit(
@@ -76,14 +76,23 @@ class RegisterCubit extends Cubit<RegisterState> {
     );
   }
 
+  void reset() {
+    emit(
+      state.copyWith(
+        status: RegisterStatus.initial,
+      ),
+    );
+  }
+
   Future<void> register(AppLocalizations l10n) async {
     if (!state.isFormValid) return;
+
     emit(state.copyWith(status: RegisterStatus.loading));
-    try {
-      await _authService.signUpWithEmailAndPassword(
-        state.email,
-        state.password,
-      );
+    final success = await _authService.signUpWithEmailAndPassword(
+      state.email,
+      state.password,
+    );
+    if (success) {
       getIt<AnalyticsService>().logEvent(
         name: 'sign_up',
         parameters: {'method': 'email'},
@@ -95,7 +104,7 @@ class RegisterCubit extends Cubit<RegisterState> {
       }
       emit(state.copyWith(status: RegisterStatus.success));
       await _authService.updateUserName(state.name);
-    } on Exception catch (_) {
+    } else {
       emit(
         state.copyWith(
           status: RegisterStatus.failure,

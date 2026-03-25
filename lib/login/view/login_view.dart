@@ -5,7 +5,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/login/login.dart';
-import 'package:saver_expense_manager/register/register.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -23,6 +22,7 @@ class LoginView extends StatelessWidget {
             message: state.errorMessage,
             type: SnackBarType.error,
           );
+          context.read<LoginCubit>().reset();
         }
         if (state.status.isSuccess) {
           AppFunctions.showSnackBar(
@@ -74,6 +74,7 @@ class LoginView extends StatelessWidget {
 
                             // Email Field
                             AppTextField(
+                              enabled: !state.status.isLoading,
                               label: l10n.emailLabel,
                               hintText: l10n.emailHint,
                               keyboardType: TextInputType.emailAddress,
@@ -92,6 +93,7 @@ class LoginView extends StatelessWidget {
 
                             // Password Field
                             AppTextField(
+                              enabled: !state.status.isLoading,
                               label: l10n.passwordLabel,
                               hintText: l10n.passwordHint,
                               obscureText: !state.isPasswordVisible,
@@ -99,9 +101,11 @@ class LoginView extends StatelessWidget {
                                 icon: HugeIcons.strokeRoundedLockPassword,
                               ),
                               suffix: IconButton(
-                                onPressed: () => context
-                                    .read<LoginCubit>()
-                                    .togglePasswordVisibility(),
+                                onPressed: state.status.isLoading
+                                    ? null
+                                    : () => context
+                                        .read<LoginCubit>()
+                                        .togglePasswordVisibility(),
                                 icon: Icon(
                                   state.isPasswordVisible
                                       ? Icons.visibility
@@ -159,7 +163,7 @@ class LoginView extends StatelessWidget {
                                   onPressed: state.status.isLoading
                                       ? null
                                       : () =>
-                                          context.push(RegisterPage.pagePath),
+                                          context.push(AppRoute.register.path),
                                   child: Text(
                                     l10n.registerButton,
                                     style: const TextStyle(

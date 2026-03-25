@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,17 +14,19 @@ class MockExpensesHomeCubit extends MockCubit<ExpensesHomeState>
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockDatabaseService extends Mock implements DatabaseService {}
+
+class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
 void main() {
   group('ExpensesHomeView', () {
     late MockExpensesHomeCubit mockCubit;
     late MockAppCubit mockAppCubit;
-    late MockAuthenticationService mockAuth;
+    late MockAuthService mockAuth;
     late MockDatabaseService mockDatabase;
-    late FakeFirebaseFirestore fakeFirestore;
+    late MockRemoteConfigService mockRemoteConfigService;
 
     setUpAll(() {
       registerFallbackValue(DateTime.now());
@@ -35,9 +36,10 @@ void main() {
     setUp(() async {
       mockCubit = MockExpensesHomeCubit();
       mockAppCubit = MockAppCubit();
-      mockAuth = MockAuthenticationService();
+      mockAuth = MockAuthService();
       mockDatabase = MockDatabaseService();
-      fakeFirestore = FakeFirebaseFirestore();
+      mockRemoteConfigService = MockRemoteConfigService();
+      when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
 
       when(() => mockAppCubit.state).thenReturn(const AppState());
 
@@ -48,31 +50,40 @@ void main() {
           .thenReturn(const AppUser(uid: 'user123'));
 
       when(
-        () => mockDatabase.getMonthMovementsStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          type: any(named: 'type'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
       when(
-        () => mockDatabase.getExpenseTypeMovementsQuery(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          expenseType: any(named: 'expenseType'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
-      ).thenReturn(fakeFirestore.collection('movements'));
+      ).thenAnswer((_) => Stream.value([]));
 
-      if (getIt.isRegistered<AuthenticationService>()) {
-        await getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        await getIt.unregister<AuthService>();
       }
       if (getIt.isRegistered<DatabaseService>()) {
         getIt.unregister<DatabaseService>();
       }
 
       getIt
-        ..registerSingleton<AuthenticationService>(mockAuth)
-        ..registerSingleton<DatabaseService>(mockDatabase);
+        ..registerSingleton<AuthService>(mockAuth)
+        ..registerSingleton<DatabaseService>(mockDatabase)
+        ..registerSingleton<RemoteConfigService>(mockRemoteConfigService);
     });
 
     tearDown(getIt.reset);
@@ -103,10 +114,14 @@ void main() {
         (tester) async {
       final controller = StreamController<List<Movement>>();
       when(
-        () => mockDatabase.getMonthMovementsStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          type: any(named: 'type'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => controller.stream);
 
@@ -121,10 +136,14 @@ void main() {
 
     testWidgets('shows empty state message when no movements', (tester) async {
       when(
-        () => mockDatabase.getMonthMovementsStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          type: any(named: 'type'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
@@ -155,10 +174,14 @@ void main() {
       );
 
       when(
-        () => mockDatabase.getMonthMovementsStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          type: any(named: 'type'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([movement]));
 
@@ -190,10 +213,14 @@ void main() {
       );
 
       when(
-        () => mockDatabase.getMonthMovementsStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          type: any(named: 'type'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([movement]));
 
@@ -210,10 +237,14 @@ void main() {
     testWidgets('tapping back on MonthSelector calls previousMonth',
         (tester) async {
       when(
-        () => mockDatabase.getMonthMovementsStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          type: any(named: 'type'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
@@ -229,10 +260,14 @@ void main() {
     testWidgets('tapping forward on MonthSelector calls nextMonth',
         (tester) async {
       when(
-        () => mockDatabase.getMonthMovementsStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          type: any(named: 'type'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 

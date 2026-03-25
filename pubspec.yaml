@@ -20,7 +20,6 @@ dependencies:
   firebase_auth: ^6.2.0
   firebase_core: ^4.5.0
   firebase_crashlytics: ^5.0.8
-  firebase_pagination: ^4.2.0
   firebase_performance: ^0.11.1+5
   firebase_remote_config: ^6.2.0
   firebase_storage: ^13.1.0

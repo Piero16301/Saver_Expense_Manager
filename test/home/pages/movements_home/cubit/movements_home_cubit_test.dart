@@ -8,7 +8,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
@@ -23,7 +23,7 @@ DateTime get _todayDate {
 
 void main() {
   late MockLocalStorageService mockLocalStorage;
-  late MockAuthenticationService mockAuth;
+  late MockAuthService mockAuth;
   late MockFirebaseAuth mockFirebaseAuth;
   late MockFirebaseUser mockFirebaseUser;
 
@@ -36,13 +36,13 @@ void main() {
 
   setUp(() async {
     mockLocalStorage = MockLocalStorageService();
-    mockAuth = MockAuthenticationService();
+    mockAuth = MockAuthService();
     mockFirebaseAuth = MockFirebaseAuth();
     mockFirebaseUser = MockFirebaseUser();
 
     when(() => mockFirebaseUser.uid).thenReturn('user123');
     when(() => mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser);
-    when(() => mockAuth.auth).thenReturn(mockFirebaseAuth);
+
     when(() => mockLocalStorage.getLanguage()).thenReturn(null);
     when(() => mockLocalStorage.getRecommendationsDate())
         .thenReturn(_todayDate);
@@ -51,13 +51,13 @@ void main() {
     if (getIt.isRegistered<LocalStorageService>()) {
       getIt.unregister<LocalStorageService>();
     }
-    if (getIt.isRegistered<AuthenticationService>()) {
-      await getIt.unregister<AuthenticationService>();
+    if (getIt.isRegistered<AuthService>()) {
+      await getIt.unregister<AuthService>();
     }
 
     getIt
       ..registerSingleton<LocalStorageService>(mockLocalStorage)
-      ..registerSingleton<AuthenticationService>(mockAuth);
+      ..registerSingleton<AuthService>(mockAuth);
   });
 
   tearDown(getIt.reset);
@@ -202,7 +202,12 @@ void main() {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          limit: any(named: 'limit'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
@@ -212,9 +217,13 @@ void main() {
       getIt.registerSingleton<DatabaseService>(mockDatabase);
     });
 
-    test('getCategoriesStream is called on build', () async {
+    test('getCategoriesStream returns a stream of categories', () async {
       final fakeFirestore = FakeFirebaseFirestore();
-      final db = DatabaseService(firestore: fakeFirestore);
+      final db = DatabaseService(
+        databaseRepository: FirestoreDatabaseRepository(
+          firestore: fakeFirestore,
+        ),
+      );
       expect(db.getCategoriesStream(), isA<Stream<List<Category>>>());
     });
   });

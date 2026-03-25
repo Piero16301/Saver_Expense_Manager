@@ -11,7 +11,7 @@ import '../../helpers/helpers.dart';
 
 class MockDatabaseService extends Mock implements DatabaseService {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
@@ -21,7 +21,7 @@ class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
 void main() {
   late MockDatabaseService mockDatabaseService;
-  late MockAuthenticationService mockAuthService;
+  late MockAuthService mockAuthService;
   late MockRemoteConfigService mockRemoteConfigService;
   late MockAppUser mockAppUser;
   late MockAppCubit mockAppCubit;
@@ -33,14 +33,15 @@ void main() {
 
   setUp(() {
     mockDatabaseService = MockDatabaseService();
-    mockAuthService = MockAuthenticationService();
+    mockAuthService = MockAuthService();
     mockRemoteConfigService = MockRemoteConfigService();
+    when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
     mockAppUser = MockAppUser();
     mockAppCubit = MockAppCubit();
 
     getIt
       ..registerSingleton<DatabaseService>(mockDatabaseService)
-      ..registerSingleton<AuthenticationService>(mockAuthService)
+      ..registerSingleton<AuthService>(mockAuthService)
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService);
 
     when(() => mockAuthService.authStateChanges)
@@ -52,10 +53,14 @@ void main() {
     when(() => mockAppCubit.state).thenReturn(const AppState());
 
     when(
-      () => mockDatabaseService.getMonthMovementsStream(
+      () => mockDatabaseService.getMovementsStream(
         userId: any(named: 'userId'),
-        monthSelected: any(named: 'monthSelected'),
-        type: any(named: 'type'),
+        startDate: any<DateTime?>(named: 'startDate'),
+        endDate: any<DateTime?>(named: 'endDate'),
+        type: any<CategoryType?>(named: 'type'),
+        categoryId: any<String?>(named: 'categoryId'),
+        limit: any<int>(named: 'limit'),
+        orderByDate: any<bool>(named: 'orderByDate'),
       ),
     ).thenAnswer((_) => Stream.value([]));
   });

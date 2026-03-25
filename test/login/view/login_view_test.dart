@@ -9,7 +9,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/login/login.dart';
-import 'package:saver_expense_manager/register/register.dart';
 
 class MockLoginCubit extends MockCubit<LoginState> implements LoginCubit {}
 
@@ -60,7 +59,7 @@ void main() {
           ),
         ),
         GoRoute(
-          path: RegisterPage.pagePath,
+          path: AppRoute.register.path,
           builder: (context, state) =>
               const Scaffold(body: Text('Register Page')),
         ),

@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:saver_expense_manager/login/login.dart';
 import 'package:saver_expense_manager/register/register.dart';
 
 class RegisterView extends StatelessWidget {
@@ -23,6 +22,7 @@ class RegisterView extends StatelessWidget {
             message: state.errorMessage,
             type: SnackBarType.error,
           );
+          context.read<RegisterCubit>().reset();
         }
         if (state.status.isSuccess) {
           AppFunctions.showSnackBar(
@@ -74,6 +74,7 @@ class RegisterView extends StatelessWidget {
 
                             // Name Field
                             AppTextField(
+                              enabled: !state.status.isLoading,
                               label: l10n.nameLabel,
                               hintText: l10n.nameHint,
                               keyboardType: TextInputType.name,
@@ -92,6 +93,7 @@ class RegisterView extends StatelessWidget {
 
                             // Email Field
                             AppTextField(
+                              enabled: !state.status.isLoading,
                               label: l10n.emailLabel,
                               hintText: l10n.emailHint,
                               keyboardType: TextInputType.emailAddress,
@@ -110,6 +112,7 @@ class RegisterView extends StatelessWidget {
 
                             // Password Field
                             AppTextField(
+                              enabled: !state.status.isLoading,
                               label: l10n.passwordLabel,
                               hintText: l10n.passwordHint,
                               obscureText: !state.isPasswordVisible,
@@ -117,9 +120,11 @@ class RegisterView extends StatelessWidget {
                                 icon: HugeIcons.strokeRoundedLockPassword,
                               ),
                               suffix: IconButton(
-                                onPressed: () => context
-                                    .read<RegisterCubit>()
-                                    .togglePasswordVisibility(),
+                                onPressed: state.status.isLoading
+                                    ? null
+                                    : () => context
+                                        .read<RegisterCubit>()
+                                        .togglePasswordVisibility(),
                                 icon: Icon(
                                   state.isPasswordVisible
                                       ? Icons.visibility
@@ -138,6 +143,7 @@ class RegisterView extends StatelessWidget {
 
                             // Confirm Password Field
                             AppTextField(
+                              enabled: !state.status.isLoading,
                               label: l10n.confirmPasswordLabel,
                               hintText: l10n.passwordHint,
                               obscureText: !state.isConfirmPasswordVisible,
@@ -145,9 +151,11 @@ class RegisterView extends StatelessWidget {
                                 icon: HugeIcons.strokeRoundedLockPassword,
                               ),
                               suffix: IconButton(
-                                onPressed: () => context
-                                    .read<RegisterCubit>()
-                                    .toggleConfirmPasswordVisibility(),
+                                onPressed: state.status.isLoading
+                                    ? null
+                                    : () => context
+                                        .read<RegisterCubit>()
+                                        .toggleConfirmPasswordVisibility(),
                                 icon: Icon(
                                   state.isConfirmPasswordVisible
                                       ? Icons.visibility
@@ -192,7 +200,7 @@ class RegisterView extends StatelessWidget {
                                   onPressed: state.status.isLoading
                                       ? null
                                       : () =>
-                                          context.goNamed(LoginPage.pageName),
+                                          context.goNamed(AppRoute.login.name),
                                   child: Text(
                                     l10n.loginButton,
                                     style: const TextStyle(

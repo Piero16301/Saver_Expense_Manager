@@ -1,7 +1,5 @@
-import 'package:firebase_pagination/firebase_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MovementsListChart extends StatelessWidget {
   const MovementsListChart({
@@ -15,31 +13,23 @@ class MovementsListChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final auth = getIt<AuthenticationService>();
+    final auth = getIt<AuthService>();
     final database = getIt<DatabaseService>();
 
     return Expanded(
-      child: FirestorePagination(
+      child: AppStreamPaginated<Movement>(
         key: ValueKey('$expenseType-$monthSelected'),
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        query: database.getExpenseTypeMovementsQuery(
+        stream: (limit) => database.getMovementsStream(
           userId: auth.currentUser!.uid,
-          monthSelected: monthSelected,
-          expenseType: expenseType,
-        ),
-        isLive: true,
-        onEmpty: Center(
-          child: Text(
-            l10n.movementsNoData,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          startDate: DateTime(monthSelected.year, monthSelected.month),
+          endDate: DateTime(monthSelected.year, monthSelected.month + 1),
+          type: expenseType,
+          limit: limit,
+          orderByDate: true,
         ),
         itemBuilder: (context, docs, index) {
-          final movement = Movement.fromJson(
-            docs[index].data()! as Map<String, dynamic>,
-          );
+          final movement = docs[index];
+
           return ListMovementsItemHome(movement: movement);
         },
       ),

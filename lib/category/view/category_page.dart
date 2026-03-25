@@ -9,9 +9,6 @@ class CategoryPage extends StatelessWidget {
     super.key,
   });
 
-  static const String pageName = 'category';
-  static const String pagePath = '/category';
-
   final Category category;
 
   @override

@@ -1,28 +1,17 @@
 import 'package:firebase_performance/firebase_performance.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 class PerformanceService {
-  PerformanceService({FirebasePerformance? performance})
-      : _performance = performance ?? FirebasePerformance.instance;
+  PerformanceService({required PerformanceRepository performanceRepository})
+      : _performanceRepository = performanceRepository;
 
-  final FirebasePerformance _performance;
+  final PerformanceRepository _performanceRepository;
 
-  Future<Trace> startTrace(String name) async {
-    final trace = _performance.newTrace(name);
-    await trace.start();
-    return trace;
+  Trace startTrace(String name) {
+    return _performanceRepository.startTrace(name);
   }
 
-  Future<void> stopTrace(Trace trace) async {
-    await trace.stop();
-  }
-
-  Future<HttpMetric> startHttpMetric(String url, HttpMethod httpMethod) async {
-    final metric = _performance.newHttpMetric(url, httpMethod);
-    await metric.start();
-    return metric;
-  }
-
-  Future<void> stopHttpMetric(HttpMetric metric) async {
-    await metric.stop();
+  void stopTrace(Trace trace) {
+    _performanceRepository.stopTrace(trace);
   }
 }
