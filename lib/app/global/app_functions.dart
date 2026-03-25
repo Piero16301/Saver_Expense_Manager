@@ -25,7 +25,13 @@ class AppFunctions {
     }
   }
 
+  @visibleForTesting
+  static bool? internetConnectionTestValue;
+
   static Future<bool> hasInternetConnection() async {
+    if (internetConnectionTestValue != null) {
+      return internetConnectionTestValue!;
+    }
     try {
       final result = await InternetAddress.lookup('google.com')
           .timeout(AppVariables.timeoutDuration);

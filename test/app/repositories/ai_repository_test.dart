@@ -70,6 +70,13 @@ void main() {
       expect(
         await mock.generateContentLocal(
           textPrompt: const PromptPart(text: 't', type: PromptPartType.text),
+          imagePrompt: const PromptPart(type: PromptPartType.file),
+        ),
+        isNull,
+      );
+      expect(
+        await mock.generateContentRemote(
+          prompt: [const PromptPart(text: 't', type: PromptPartType.text)],
         ),
         isNull,
       );
@@ -96,7 +103,7 @@ void main() {
             safetySettings: any<List<SafetySetting>?>(named: 'safetySettings'),
             generationConfig: any<GenerationConfig?>(named: 'generationConfig'),
           ),
-        ).thenThrow(Exception('Remote Fail'));
+        ).thenThrow(Exception('Remote Fail during generativeModel'));
 
         expect(
           () => repository.generateContentRemote(
@@ -110,7 +117,7 @@ void main() {
           () => mockCrashService.recordError(
             any<Object>(),
             any<StackTrace?>(),
-            reason: any<dynamic>(named: 'reason'),
+            reason: 'AiService generateContentRemote error',
           ),
         ).called(1);
       });
@@ -168,6 +175,64 @@ void main() {
         );
 
         expect(result, equals('Local Result'));
+      });
+
+      test('calls generate with imagePrompt and returns result', () async {
+        when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
+        when(
+          () => mockLocalModel.generate(
+            prompt: any<String>(named: 'prompt'),
+            image: any<Uint8List?>(named: 'image'),
+          ),
+        ).thenAnswer((_) async => ['Image Result']);
+
+        final result = await repository.generateContentLocal(
+          textPrompt: const PromptPart(text: 'p', type: PromptPartType.text),
+          imagePrompt: PromptPart.file(
+            mimeType: 'image/jpeg',
+            bytes: Uint8List(5),
+          ),
+        );
+
+        expect(result, equals('Image Result'));
+        verify(
+          () => mockLocalModel.generate(
+            prompt: 'p',
+            image: any<Uint8List?>(named: 'image'),
+          ),
+        ).called(1);
+      });
+
+      test('returns null if generate response is empty list', () async {
+        when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
+        when(
+          () => mockLocalModel.generate(
+            prompt: any<String>(named: 'prompt'),
+            image: any<Uint8List?>(named: 'image'),
+          ),
+        ).thenAnswer((_) async => []);
+
+        final result = await repository.generateContentLocal(
+          textPrompt: const PromptPart(text: 'p', type: PromptPartType.text),
+        );
+
+        expect(result, isNull);
+      });
+
+      test('returns null if first element of response is empty', () async {
+        when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
+        when(
+          () => mockLocalModel.generate(
+            prompt: any<String>(named: 'prompt'),
+            image: any<Uint8List?>(named: 'image'),
+          ),
+        ).thenAnswer((_) async => ['']);
+
+        final result = await repository.generateContentLocal(
+          textPrompt: const PromptPart(text: 'p', type: PromptPartType.text),
+        );
+
+        expect(result, isNull);
       });
 
       test('records error and rethrows on local failure', () async {

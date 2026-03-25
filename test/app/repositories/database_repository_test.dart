@@ -110,7 +110,6 @@ void main() {
           .doc(movement.id)
           .set(movement.toJson());
 
-      // Test with multiple filters to hit branches
       final stream = repository.getMovementsStream(
         userId: 'user_1',
         startDate: DateTime(2023, 10),

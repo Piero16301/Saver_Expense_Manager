@@ -138,16 +138,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(streamCalls, [5]);
 
-      // Scroll to bottom
-      // Total height = 5 * 100 = 500. Container height = 200.
       await tester.drag(find.byType(ListView), const Offset(0, -400));
       await tester.pumpAndSettle();
 
-      // Should have triggered second stream call with limit 10
       expect(streamCalls.length, 2);
       expect(streamCalls[1], 10);
 
-      // Scroll further to see new items
       await tester.drag(find.byType(ListView), const Offset(0, -600));
       await tester.pumpAndSettle();
 

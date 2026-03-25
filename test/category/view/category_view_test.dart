@@ -223,7 +223,45 @@ void main() {
       await tester.pump(const Duration(seconds: 3));
     });
 
-    testWidgets('TabMovementsCategory handles month navigation',
+    testWidgets('TabTrendCategory handles date range changes', (tester) async {
+      final streamController = StreamController<List<Movement>>();
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => streamController.stream);
+
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pump();
+
+      final monthRangeSelector = tester.widget<MonthRangeSelector>(
+        find.byType(MonthRangeSelector),
+      );
+
+      monthRangeSelector.onChangeStartMonth(DateTime(2023, 5));
+      await tester.pump();
+
+      final r2 =
+          tester.widget<MonthRangeSelector>(find.byType(MonthRangeSelector));
+      r2.onChangeEndMonth(DateTime(2023, 6));
+      await tester.pump();
+
+      final r3 =
+          tester.widget<MonthRangeSelector>(find.byType(MonthRangeSelector));
+      r3.onChangeStartMonth(null);
+      r3.onChangeEndMonth(null);
+      await tester.pump();
+
+      await streamController.close();
+    });
+
+    testWidgets('TabMovementsCategory handles month navigation edge cases',
         (tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pump();
@@ -233,11 +271,36 @@ void main() {
 
       expect(find.byType(MonthSelector), findsOneWidget);
 
-      await tester.tap(
-        find.byType(IconButton).at(1),
+      final monthSelector = tester.widget<MonthSelector>(
+        find.byType(MonthSelector),
       );
+
+      monthSelector.onBack();
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+
+      final m2 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m2.onForward();
+      await tester.pump();
+
+      final m3 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m3.onChangeMonth(DateTime(2023));
+      await tester.pump();
+
+      final m4 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m4.onBack();
+      await tester.pump();
+
+      final m5 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m5.onChangeMonth(DateTime(2023, 12));
+      await tester.pump();
+
+      final m6 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m6.onForward();
+      await tester.pump();
+
+      final m7 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m7.onChangeMonth(null);
+      await tester.pump();
     });
   });
 }

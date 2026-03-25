@@ -20,7 +20,6 @@ void main() {
       expect(getIt.isRegistered<RemoteStorageService>(), isTrue);
       expect(getIt.isRegistered<AiService>(), isTrue);
 
-      // Trigger activation of factories for mock environment to hit coverage
       expect(getIt<CrashService>(), isA<CrashService>());
       expect(getIt<PerformanceService>(), isA<PerformanceService>());
       expect(getIt<AnalyticsService>(), isA<AnalyticsService>());

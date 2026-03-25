@@ -21,6 +21,11 @@ class MockAuthCredential extends Mock implements AuthCredential {}
 
 class MockUserCredential extends Mock implements UserCredential {}
 
+class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
+
+class MockGoogleSignInAuthentication extends Mock
+    implements GoogleSignInAuthentication {}
+
 void main() {
   late MockFirebaseAuth mockAuth;
   late MockGoogleSignIn mockGoogleSignIn;
@@ -178,7 +183,6 @@ void main() {
       when(() => mockAuth.currentUser).thenReturn(null);
       expect(repository.isLoggedIn, isFalse);
       when(() => mockAuth.currentUser).thenReturn(mockUser);
-      // Mock properties of mockUser for conversion
       when(() => mockUser.uid).thenReturn('uid');
       when(() => mockUser.email).thenReturn('e');
       when(() => mockUser.displayName).thenReturn('d');
@@ -202,6 +206,143 @@ void main() {
       expect(result, isTrue);
       verify(() => mockUser.linkWithCredential(any<AuthCredential>()))
           .called(1);
+    });
+
+    test('initialize records error and rethrows on exception', () async {
+      when(
+        () => mockGoogleSignIn.initialize(
+          serverClientId: any<String?>(named: 'serverClientId'),
+        ),
+      ).thenThrow(Exception('Init Fail'));
+
+      expect(() => repository.initialize(), throwsException);
+
+      await Future<void>.delayed(Duration.zero);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'AuthService initialize error',
+        ),
+      ).called(1);
+    });
+
+    test('userChanges returns mapped stream', () async {
+      when(() => mockAuth.userChanges()).thenAnswer(
+        (_) => Stream.fromIterable([null, mockUser]),
+      );
+      when(() => mockUser.uid).thenReturn('uid');
+      when(() => mockUser.email).thenReturn('e');
+      when(() => mockUser.displayName).thenReturn('d');
+      when(() => mockUser.photoURL).thenReturn('p');
+      when(() => mockUser.phoneNumber).thenReturn('n');
+      when(() => mockUser.providerData).thenReturn([]);
+
+      final result = await repository.userChanges.take(2).toList();
+
+      expect(result.first, isNull);
+      expect(result.last?.uid, equals('uid'));
+    });
+
+    test('authStateChanges returns mapped stream', () async {
+      when(() => mockAuth.authStateChanges()).thenAnswer(
+        (_) => Stream.fromIterable([null, mockUser]),
+      );
+      when(() => mockUser.uid).thenReturn('uid');
+      when(() => mockUser.email).thenReturn('e');
+      when(() => mockUser.displayName).thenReturn('d');
+      when(() => mockUser.photoURL).thenReturn('p');
+      when(() => mockUser.phoneNumber).thenReturn('n');
+      when(() => mockUser.providerData).thenReturn([]);
+
+      final result = await repository.authStateChanges.take(2).toList();
+
+      expect(result.first, isNull);
+      expect(result.last?.uid, equals('uid'));
+    });
+
+    test('unlinkProvider calls currentUser.unlink and reload', () async {
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockUser.unlink(any<String>()))
+          .thenAnswer((_) async => mockUser);
+      when(() => mockUser.reload()).thenAnswer((_) async {});
+
+      final result = await repository.unlinkProvider('google.com');
+
+      expect(result, isTrue);
+      verify(() => mockUser.unlink('google.com')).called(1);
+      verify(() => mockUser.reload()).called(1);
+    });
+
+    test(
+        'linkWithGoogle calls googleSignIn, authenticate, and '
+        'linkWithCredential', () async {
+      final mockGoogleAccount = MockGoogleSignInAccount();
+      final mockGoogleAuth = MockGoogleSignInAuthentication();
+
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
+      when(() => mockGoogleSignIn.authenticate())
+          .thenAnswer((_) async => mockGoogleAccount);
+      when(() => mockGoogleAccount.authentication).thenReturn(mockGoogleAuth);
+      when(() => mockGoogleAuth.idToken).thenReturn('token');
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockUser.linkWithCredential(any<AuthCredential>()))
+          .thenAnswer((_) async => MockUserCredential());
+
+      final result = await repository.linkWithGoogle();
+
+      expect(result, isTrue);
+      verify(() => mockGoogleSignIn.signOut()).called(1);
+      verify(() => mockGoogleSignIn.authenticate()).called(1);
+      verify(() => mockUser.linkWithCredential(any<AuthCredential>()))
+          .called(1);
+    });
+
+    test(
+        'signInWithGoogle calls googleSignIn, authenticate, and '
+        'signInWithCredential', () async {
+      final mockGoogleAccount = MockGoogleSignInAccount();
+      final mockGoogleAuth = MockGoogleSignInAuthentication();
+
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
+      when(() => mockGoogleSignIn.authenticate())
+          .thenAnswer((_) async => mockGoogleAccount);
+      when(() => mockGoogleAccount.authentication).thenReturn(mockGoogleAuth);
+      when(() => mockGoogleAuth.idToken).thenReturn('token');
+      when(() => mockAuth.signInWithCredential(any<AuthCredential>()))
+          .thenAnswer((_) async => MockUserCredential());
+
+      final result = await repository.signInWithGoogle();
+
+      expect(result, isTrue);
+      verify(() => mockGoogleSignIn.signOut()).called(1);
+      verify(() => mockGoogleSignIn.authenticate()).called(1);
+      verify(() => mockAuth.signInWithCredential(any<AuthCredential>()))
+          .called(1);
+    });
+
+    test('all auth methods record errors on exception', () async {
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockUser.reload()).thenThrow(Exception('Fail'));
+      when(() => mockAuth.signOut()).thenThrow(Exception('Fail'));
+      when(
+        () => mockAuth.signInWithEmailAndPassword(
+          email: any<String>(named: 'email'),
+          password: any<String>(named: 'password'),
+        ),
+      ).thenThrow(Exception('Fail'));
+
+      expect(await repository.reloadUser(), isFalse);
+      expect(await repository.signOut(), isFalse);
+      expect(await repository.signInWithEmailAndPassword('e', 'p'), isFalse);
+
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: any<dynamic>(named: 'reason'),
+        ),
+      ).called(3);
     });
   });
 }

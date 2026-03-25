@@ -145,7 +145,7 @@ class FirebaseAiRepository implements AiRepository {
         image: imagePrompt?.bytes,
       );
 
-      return response.first.isEmpty ? null : response.first;
+      return response.isEmpty || response.first.isEmpty ? null : response.first;
     } catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,

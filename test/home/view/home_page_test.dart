@@ -116,5 +116,15 @@ void main() {
         expect(find.byType(HomeView), findsOneWidget);
       });
     });
+    testWidgets('renders CircularProgressIndicator when snapshot emits error',
+        (tester) async {
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.error(Exception('Error')));
+
+      await tester.pumpApp(buildSubject(const HomePage()));
+      await tester.pump();
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    });
   });
 }

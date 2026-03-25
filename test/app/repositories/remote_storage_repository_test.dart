@@ -102,5 +102,40 @@ void main() {
       expect(result, equals('uploaded_file'));
       verify(() => mockReference.putFile(any<File>())).called(1);
     });
+
+    test('uploadFile records error and returns null on exception', () async {
+      when(() => mockReference.putFile(any<File>()))
+          .thenThrow(Exception('Upload Fail'));
+
+      final result =
+          await repository.uploadFile(File('dummy_path'), 'remote_path');
+
+      expect(result, isNull);
+      await Future<void>.delayed(Duration.zero);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'RemoteStorageService uploadFile error',
+        ),
+      ).called(1);
+    });
+
+    test('getData records error and returns null on exception', () async {
+      when(() => mockReference.getData(any<int>()))
+          .thenThrow(Exception('Get Data Fail'));
+
+      final result = await repository.getData('path/to/file');
+
+      expect(result, isNull);
+      await Future<void>.delayed(Duration.zero);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'RemoteStorageService getData error',
+        ),
+      ).called(1);
+    });
   });
 }

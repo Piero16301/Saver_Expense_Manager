@@ -284,7 +284,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       final file = result.files.single;
       final ext = file.path!.split('.').last;
       final path = '${const Uuid().v4()}.$ext';
-      final bytes = await file.xFile.readAsBytes();
+      final bytes = file.bytes ?? await File(file.path!).readAsBytes();
 
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_file');
@@ -419,14 +419,16 @@ class AddMovementBottomSheet extends StatelessWidget {
         loader.hideLoading();
       }
       Navigator.of(context).pop();
-      await context.pushNamed(
-        AppRoute.movement.name,
-        pathParameters: {
-          'type': movementType.value,
-          'screenType': MovementScreenType.add.name.toUpperCase(),
-        },
-        extra: movement.copyWith(
-          attachments: uploadName != null ? [uploadName] : [],
+      unawaited(
+        context.pushNamed(
+          AppRoute.movement.name,
+          pathParameters: {
+            'type': movementType.value,
+            'screenType': MovementScreenType.add.name.toUpperCase(),
+          },
+          extra: movement.copyWith(
+            attachments: uploadName != null ? [uploadName] : [],
+          ),
         ),
       );
     } on Exception catch (e, stackTrace) {
