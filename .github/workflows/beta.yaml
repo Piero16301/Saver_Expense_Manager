@@ -34,6 +34,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: 📚 Git Checkout
         uses: actions/checkout@v6
@@ -113,6 +115,7 @@ jobs:
       APP_PACKAGE_NAME: com.pmorales.saver.expense.manager
       AAB_PATH: build/app/outputs/bundle/productionRelease/app-production-release.aab
       SERVICE_ACCOUNT_PATH: service-account.json
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: 📚 Checkout repo
         uses: actions/checkout@v6
@@ -136,4 +139,9 @@ jobs:
           releaseFiles: ${{ env.AAB_PATH }}
           track: beta
           whatsNewDirectory: whatsnew
+      - name: 🗑️ Delete Artifact
+        uses: geekyeggo/delete-artifact@v6
+        with:
+          name: aab-stores
+          failOnError: false
  
