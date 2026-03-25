@@ -17,8 +17,10 @@ class FakeFile extends Fake implements File {}
 
 class FakeUploadTask extends Fake implements UploadTask {
   @override
-  Future<T> then<T>(FutureOr<T> Function(TaskSnapshot) onValue,
-          {Function? onError,}) =>
+  Future<T> then<T>(
+    FutureOr<T> Function(TaskSnapshot) onValue, {
+    Function? onError,
+  }) =>
       Future.value(onValue(MockTaskSnapshot()));
 }
 
@@ -70,9 +72,13 @@ void main() {
       final result = await repository.deleteFile('path/to/file');
       expect(result, isFalse);
       await Future<void>.delayed(Duration.zero);
-      verify(() => mockCrashService.recordError(
-          any<Object>(), any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),),).called(1);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: any<dynamic>(named: 'reason'),
+        ),
+      ).called(1);
     });
 
     test('getData calls storage.getData', () async {

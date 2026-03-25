@@ -39,10 +39,12 @@ void main() {
       when(() => mockPrefs.setString(any(), any()))
           .thenAnswer((_) async => true);
       repository.saveLanguage(language: const Locale('en', 'US'));
-      verify(() => mockPrefs.setString(
-            LocalStorageRepository.kUserLanguage,
-            'en_US',
-          ),).called(1);
+      verify(
+        () => mockPrefs.setString(
+          LocalStorageRepository.kUserLanguage,
+          'en_US',
+        ),
+      ).called(1);
     });
 
     test('getLanguage returns parsed Locale', () {
@@ -63,10 +65,12 @@ void main() {
       when(() => mockPrefs.setString(any(), any()))
           .thenAnswer((_) async => true);
       repository.saveTheme(theme: ThemeMode.dark);
-      verify(() => mockPrefs.setString(
-            LocalStorageRepository.kUserTheme,
-            ThemeHelper.getThemeName(ThemeMode.dark),
-          ),).called(1);
+      verify(
+        () => mockPrefs.setString(
+          LocalStorageRepository.kUserTheme,
+          ThemeHelper.getThemeName(ThemeMode.dark),
+        ),
+      ).called(1);
     });
 
     test('getTheme returns correctly parsed ThemeMode', () {
@@ -80,10 +84,12 @@ void main() {
       when(() => mockPrefs.setString(any(), any()))
           .thenAnswer((_) async => true);
       repository.saveBaseColor(baseColor: Colors.blue);
-      verify(() => mockPrefs.setString(
-            LocalStorageRepository.kUserBaseColor,
-            ColorHelper.getColorName(Colors.blue),
-          ),).called(1);
+      verify(
+        () => mockPrefs.setString(
+          LocalStorageRepository.kUserBaseColor,
+          ColorHelper.getColorName(Colors.blue),
+        ),
+      ).called(1);
     });
 
     test('getBaseColor returns correctly parsed Color', () {
@@ -97,10 +103,12 @@ void main() {
       when(() => mockPrefs.setString(any(), any()))
           .thenAnswer((_) async => true);
       repository.saveFontFamily(fontFamily: 'Roboto');
-      verify(() => mockPrefs.setString(
-            LocalStorageRepository.kUserFontFamily,
-            'Roboto',
-          ),).called(1);
+      verify(
+        () => mockPrefs.setString(
+          LocalStorageRepository.kUserFontFamily,
+          'Roboto',
+        ),
+      ).called(1);
     });
 
     test('getFontFamily returns string', () {
@@ -114,17 +122,21 @@ void main() {
           .thenAnswer((_) async => true);
       final date = DateTime(2026);
       repository.saveRecommendationsDate(date: date);
-      verify(() => mockPrefs.setString(
-            LocalStorageRepository.kUserRecommendationsDate,
-            AppVariables.formatDate.format(date),
-          ),).called(1);
+      verify(
+        () => mockPrefs.setString(
+          LocalStorageRepository.kUserRecommendationsDate,
+          AppVariables.formatDate.format(date),
+        ),
+      ).called(1);
     });
 
     test('getRecommendationsDate returns parsed DateTime', () {
       final date = DateTime(2026);
-      when(() => mockPrefs.getString(
-            LocalStorageRepository.kUserRecommendationsDate,
-          ),).thenReturn(AppVariables.formatDate.format(date));
+      when(
+        () => mockPrefs.getString(
+          LocalStorageRepository.kUserRecommendationsDate,
+        ),
+      ).thenReturn(AppVariables.formatDate.format(date));
       expect(repository.getRecommendationsDate(), equals(date));
     });
 
@@ -132,16 +144,20 @@ void main() {
       when(() => mockPrefs.setStringList(any(), any()))
           .thenAnswer((_) async => true);
       repository.saveRecommendations(recommendations: ['r1', 'r2']);
-      verify(() => mockPrefs.setStringList(
-            LocalStorageRepository.kUserRecommendations,
-            ['r1', 'r2'],
-          ),).called(1);
+      verify(
+        () => mockPrefs.setStringList(
+          LocalStorageRepository.kUserRecommendations,
+          ['r1', 'r2'],
+        ),
+      ).called(1);
     });
 
     test('getRecommendations returns list', () {
-      when(() => mockPrefs.getStringList(
-            LocalStorageRepository.kUserRecommendations,
-          ),).thenReturn(['r1', 'r2']);
+      when(
+        () => mockPrefs.getStringList(
+          LocalStorageRepository.kUserRecommendations,
+        ),
+      ).thenReturn(['r1', 'r2']);
       expect(repository.getRecommendations(), equals(['r1', 'r2']));
     });
   });

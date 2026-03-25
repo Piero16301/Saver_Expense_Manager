@@ -47,9 +47,9 @@ void main() {
         () async {
       when(() => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()))
           .thenAnswer((_) async {});
-      when(() =>
-              mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),)
-          .thenAnswer((_) async {});
+      when(
+        () => mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),
+      ).thenAnswer((_) async {});
       when(() => mockRemoteConfig.fetchAndActivate())
           .thenAnswer((_) async => true);
 
@@ -57,25 +57,29 @@ void main() {
 
       verify(() => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()))
           .called(1);
-      verify(() =>
-              mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),)
-          .called(1);
+      verify(
+        () => mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),
+      ).called(1);
       verify(() => mockRemoteConfig.fetchAndActivate()).called(1);
     });
 
     test('initialize records error on failure but does not rethrow', () async {
       when(() => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()))
           .thenAnswer((_) async {});
-      when(() =>
-              mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),)
-          .thenThrow(Exception('Config Fail'));
+      when(
+        () => mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),
+      ).thenThrow(Exception('Config Fail'));
 
       await repository.initialize();
 
       await Future<void>.delayed(Duration.zero);
-      verify(() => mockCrashService.recordError(
-          any<Object>(), any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),),).called(1);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: any<dynamic>(named: 'reason'),
+        ),
+      ).called(1);
     });
 
     test('getters return correct values from remote config', () {

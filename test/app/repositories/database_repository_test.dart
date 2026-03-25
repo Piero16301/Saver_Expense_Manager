@@ -35,8 +35,13 @@ void main() {
       ..registerSingleton<PerformanceService>(mockPerformanceService)
       ..registerSingleton<CrashService>(mockCrashService);
 
-    when(() => mockCrashService.recordError(any<Object>(), any<StackTrace?>(),
-        reason: any<dynamic>(named: 'reason'),),).thenAnswer((_) async {});
+    when(
+      () => mockCrashService.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) async {});
 
     when(() => mockPerformanceService.startTrace(any<String>()))
         .thenReturn(mockTrace);
@@ -153,9 +158,13 @@ void main() {
           await repo.saveMovement(movement: Movement.empty.copyWith(id: '1'));
 
       expect(result, isFalse);
-      verify(() => mockCrashService.recordError(
-          any<Object>(), any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),),).called(1);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: any<dynamic>(named: 'reason'),
+        ),
+      ).called(1);
     });
 
     test('deleteMovement removes movement correctly', () async {

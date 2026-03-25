@@ -90,13 +90,13 @@ void main() {
       });
 
       test('records error and rethrows if generativeModel fails', () async {
-        when(() => mockRemoteModel.generativeModel(
-              model: any<String>(named: 'model'),
-              safetySettings:
-                  any<List<SafetySetting>?>(named: 'safetySettings'),
-              generationConfig:
-                  any<GenerationConfig?>(named: 'generationConfig'),
-            ),).thenThrow(Exception('Remote Fail'));
+        when(
+          () => mockRemoteModel.generativeModel(
+            model: any<String>(named: 'model'),
+            safetySettings: any<List<SafetySetting>?>(named: 'safetySettings'),
+            generationConfig: any<GenerationConfig?>(named: 'generationConfig'),
+          ),
+        ).thenThrow(Exception('Remote Fail'));
 
         expect(
           () => repository.generateContentRemote(
@@ -106,9 +106,13 @@ void main() {
         );
 
         await Future<void>.delayed(Duration.zero);
-        verify(() => mockCrashService.recordError(
-            any<Object>(), any<StackTrace?>(),
-            reason: any<dynamic>(named: 'reason'),),).called(1);
+        verify(
+          () => mockCrashService.recordError(
+            any<Object>(),
+            any<StackTrace?>(),
+            reason: any<dynamic>(named: 'reason'),
+          ),
+        ).called(1);
       });
     });
 
@@ -152,10 +156,12 @@ void main() {
 
       test('calls generate and returns first result', () async {
         when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
-        when(() => mockLocalModel.generate(
-              prompt: any<String>(named: 'prompt'),
-              image: any<Uint8List?>(named: 'image'),
-            ),).thenAnswer((_) async => ['Local Result']);
+        when(
+          () => mockLocalModel.generate(
+            prompt: any<String>(named: 'prompt'),
+            image: any<Uint8List?>(named: 'image'),
+          ),
+        ).thenAnswer((_) async => ['Local Result']);
 
         final result = await repository.generateContentLocal(
           textPrompt: const PromptPart(text: 'p', type: PromptPartType.text),
@@ -166,10 +172,12 @@ void main() {
 
       test('records error and rethrows on local failure', () async {
         when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
-        when(() => mockLocalModel.generate(
-              prompt: any<String>(named: 'prompt'),
-              image: any<Uint8List?>(named: 'image'),
-            ),).thenThrow(Exception('Local Fail'));
+        when(
+          () => mockLocalModel.generate(
+            prompt: any<String>(named: 'prompt'),
+            image: any<Uint8List?>(named: 'image'),
+          ),
+        ).thenThrow(Exception('Local Fail'));
 
         expect(
           () => repository.generateContentLocal(
@@ -179,9 +187,13 @@ void main() {
         );
 
         await Future<void>.delayed(Duration.zero);
-        verify(() => mockCrashService.recordError(
-            any<Object>(), any<StackTrace?>(),
-            reason: any<dynamic>(named: 'reason'),),).called(1);
+        verify(
+          () => mockCrashService.recordError(
+            any<Object>(),
+            any<StackTrace?>(),
+            reason: any<dynamic>(named: 'reason'),
+          ),
+        ).called(1);
       });
     });
   });

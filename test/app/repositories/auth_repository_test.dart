@@ -68,7 +68,9 @@ void main() {
       expect(await mock.reloadUser(), isTrue);
       expect(await mock.linkWithGoogle(), isTrue);
       expect(
-          await mock.linkWithEmailPassword(email: 'e', password: 'p'), isTrue,);
+        await mock.linkWithEmailPassword(email: 'e', password: 'p'),
+        isTrue,
+      );
       expect(await mock.signInWithGoogle(), isTrue);
       expect(await mock.signInWithEmailAndPassword('e', 'p'), isTrue);
       expect(await mock.signUpWithEmailAndPassword('e', 'p'), isTrue);
@@ -78,12 +80,17 @@ void main() {
 
   group('FirebaseAuthRepository', () {
     test('initialize calls googleSignIn.initialize', () async {
-      when(() => mockGoogleSignIn.initialize(
-              serverClientId: any<String?>(named: 'serverClientId'),),)
-          .thenAnswer((_) async {});
+      when(
+        () => mockGoogleSignIn.initialize(
+          serverClientId: any<String?>(named: 'serverClientId'),
+        ),
+      ).thenAnswer((_) async {});
       await repository.initialize();
-      verify(() => mockGoogleSignIn.initialize(
-          serverClientId: any<String?>(named: 'serverClientId'),),).called(1);
+      verify(
+        () => mockGoogleSignIn.initialize(
+          serverClientId: any<String?>(named: 'serverClientId'),
+        ),
+      ).called(1);
     });
 
     test('updateDisplayName calls currentUser.updateDisplayName and reload',
@@ -117,32 +124,44 @@ void main() {
 
     test('signInWithEmailAndPassword calls auth.signInWithEmailAndPassword',
         () async {
-      when(() => mockAuth.signInWithEmailAndPassword(
-              email: any<String>(named: 'email'),
-              password: any<String>(named: 'password'),),)
-          .thenAnswer((_) async => MockUserCredential());
+      when(
+        () => mockAuth.signInWithEmailAndPassword(
+          email: any<String>(named: 'email'),
+          password: any<String>(named: 'password'),
+        ),
+      ).thenAnswer((_) async => MockUserCredential());
 
       final result =
           await repository.signInWithEmailAndPassword('test@test.com', 'p123');
 
       expect(result, isTrue);
-      verify(() => mockAuth.signInWithEmailAndPassword(
-          email: 'test@test.com', password: 'p123',),).called(1);
+      verify(
+        () => mockAuth.signInWithEmailAndPassword(
+          email: 'test@test.com',
+          password: 'p123',
+        ),
+      ).called(1);
     });
 
     test('signUpWithEmailAndPassword calls auth.createUserWithEmailAndPassword',
         () async {
-      when(() => mockAuth.createUserWithEmailAndPassword(
-              email: any<String>(named: 'email'),
-              password: any<String>(named: 'password'),),)
-          .thenAnswer((_) async => MockUserCredential());
+      when(
+        () => mockAuth.createUserWithEmailAndPassword(
+          email: any<String>(named: 'email'),
+          password: any<String>(named: 'password'),
+        ),
+      ).thenAnswer((_) async => MockUserCredential());
 
       final result =
           await repository.signUpWithEmailAndPassword('new@test.com', 'p123');
 
       expect(result, isTrue);
-      verify(() => mockAuth.createUserWithEmailAndPassword(
-          email: 'new@test.com', password: 'p123',),).called(1);
+      verify(
+        () => mockAuth.createUserWithEmailAndPassword(
+          email: 'new@test.com',
+          password: 'p123',
+        ),
+      ).called(1);
     });
 
     test('updateUserName calls currentUser.updateDisplayName', () async {
@@ -176,7 +195,9 @@ void main() {
           .thenAnswer((_) async => MockUserCredential());
 
       final result = await repository.linkWithEmailPassword(
-          email: 'e@t.com', password: 'p',);
+        email: 'e@t.com',
+        password: 'p',
+      );
 
       expect(result, isTrue);
       verify(() => mockUser.linkWithCredential(any<AuthCredential>()))
