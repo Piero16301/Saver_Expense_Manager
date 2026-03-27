@@ -9,22 +9,22 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/register/register.dart';
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
 void main() {
-  late AuthenticationService mockAuthService;
+  late AuthService mockAuthService;
   late MockAppCubit mockAppCubit;
 
   setUp(() async {
-    mockAuthService = MockAuthenticationService();
+    mockAuthService = MockAuthService();
     mockAppCubit = MockAppCubit();
 
-    if (getIt.isRegistered<AuthenticationService>()) {
-      await getIt.unregister<AuthenticationService>();
+    if (getIt.isRegistered<AuthService>()) {
+      await getIt.unregister<AuthService>();
     }
-    getIt.registerSingleton<AuthenticationService>(mockAuthService);
+    getIt.registerSingleton<AuthService>(mockAuthService);
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockAppCubit.stream).thenAnswer((_) => const Stream.empty());

@@ -8,13 +8,13 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit({AuthenticationService? authService})
-      : _authService = authService ?? getIt<AuthenticationService>(),
+  ProfileCubit({AuthService? authService})
+      : _authService = authService ?? getIt<AuthService>(),
         super(const ProfileState()) {
     _init();
   }
 
-  final AuthenticationService _authService;
+  final AuthService _authService;
   StreamSubscription<AppUser?>? _userSubscription;
 
   void _init() {
@@ -35,16 +35,16 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<void> saveName(AppLocalizations l10n) async {
     if (state.userName.trim().isEmpty) return;
-    try {
-      emit(state.copyWith(status: ProfileStatus.loading));
-      await _authService.updateDisplayName(state.userName.trim());
+    emit(state.copyWith(status: ProfileStatus.loading));
+    final success = await _authService.updateDisplayName(state.userName.trim());
+    if (success) {
       emit(
         state.copyWith(
           status: ProfileStatus.success,
           isEditingName: false,
         ),
       );
-    } on Exception catch (_) {
+    } else {
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
@@ -64,18 +64,23 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
+  void reset() {
+    emit(state.copyWith(status: ProfileStatus.initial));
+  }
+
   Future<void> linkGoogle(AppLocalizations l10n) async {
-    try {
-      emit(state.copyWith(status: ProfileStatus.loading));
-      await _authService.linkWithGoogle();
+    emit(state.copyWith(status: ProfileStatus.loading));
+    final success = await _authService.linkWithGoogle();
+    if (success) {
       emit(state.copyWith(status: ProfileStatus.success));
-    } on Exception catch (_) {
+    } else {
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
           errorMessage: l10n.genericError,
         ),
       );
+      emit(state.copyWith(status: ProfileStatus.initial));
     }
   }
 
@@ -84,43 +89,45 @@ class ProfileCubit extends Cubit<ProfileState> {
     required String email,
     required String password,
   }) async {
-    try {
-      emit(state.copyWith(status: ProfileStatus.loading));
-      await _authService.linkWithEmailPassword(
-        email: email,
-        password: password,
-      );
+    emit(state.copyWith(status: ProfileStatus.loading));
+    final success = await _authService.linkWithEmailPassword(
+      email: email,
+      password: password,
+    );
+    if (success) {
       emit(state.copyWith(status: ProfileStatus.success));
-    } on Exception catch (_) {
+    } else {
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
           errorMessage: l10n.genericError,
         ),
       );
+      emit(state.copyWith(status: ProfileStatus.initial));
     }
   }
 
   Future<void> unlinkProvider(AppLocalizations l10n, String providerId) async {
-    try {
-      emit(state.copyWith(status: ProfileStatus.loading));
-      await _authService.unlinkProvider(providerId);
+    emit(state.copyWith(status: ProfileStatus.loading));
+    final success = await _authService.unlinkProvider(providerId);
+    if (success) {
       emit(state.copyWith(status: ProfileStatus.success));
-    } on Exception catch (_) {
+    } else {
       emit(
         state.copyWith(
           status: ProfileStatus.failure,
           errorMessage: l10n.genericError,
         ),
       );
+      emit(state.copyWith(status: ProfileStatus.initial));
     }
   }
 
   Future<void> logout(AppLocalizations l10n) async {
-    try {
-      await _authService.signOut();
+    final success = await _authService.signOut();
+    if (success) {
       getIt<AnalyticsService>().logEvent(name: 'logout');
-    } on Exception catch (_) {
+    } else {
       emit(
         state.copyWith(
           status: ProfileStatus.failure,

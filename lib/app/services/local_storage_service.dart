@@ -1,94 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
-  LocalStorageService() : _prefs = null;
+  LocalStorageService({required LocalStorageRepository localStorageRepository})
+      : _localStorageRepository = localStorageRepository;
 
-  SharedPreferences? _prefs;
-
-  /// Keys to save user preferences
-  static const kUserLanguage = '__user_language__';
-  static const kUserTheme = '__user_theme__';
-  static const kUserBaseColor = '__user_base_color__';
-  static const kUserFontFamily = '__user_font_family__';
-  static const kUserRecommendationsDate = '__user_recommendations_date__';
-  static const kUserRecommendations = '__user_recommendations__';
+  final LocalStorageRepository _localStorageRepository;
 
   Future<void> initialize() async {
-    _prefs = await SharedPreferences.getInstance();
+    await _localStorageRepository.initialize();
   }
 
   void saveLanguage({required Locale language}) {
-    final languageString = '${language.languageCode}_${language.countryCode}';
-    _prefs?.setString(kUserLanguage, languageString).ignore();
+    _localStorageRepository.saveLanguage(language: language);
   }
 
   Locale? getLanguage() {
-    final languageString = _prefs?.getString(kUserLanguage);
-    if (languageString == null) {
-      return null;
-    }
-    final languageParts = languageString.split('_');
-    return Locale(languageParts.first, languageParts.last);
+    return _localStorageRepository.getLanguage();
   }
 
   void saveTheme({required ThemeMode theme}) {
-    _prefs?.setString(kUserTheme, ThemeHelper.getThemeName(theme)).ignore();
+    _localStorageRepository.saveTheme(theme: theme);
   }
 
   ThemeMode? getTheme() {
-    final themeString = _prefs?.getString(kUserTheme);
-    if (themeString == null) {
-      return null;
-    }
-    return ThemeHelper.getThemeByName(themeString);
+    return _localStorageRepository.getTheme();
   }
 
   void saveBaseColor({required Color baseColor}) {
-    _prefs
-        ?.setString(kUserBaseColor, ColorHelper.getColorName(baseColor))
-        .ignore();
+    _localStorageRepository.saveBaseColor(baseColor: baseColor);
   }
 
   Color? getBaseColor() {
-    final baseColorString = _prefs?.getString(kUserBaseColor);
-    if (baseColorString == null) {
-      return null;
-    }
-    return ColorHelper.getColorByName(baseColorString);
+    return _localStorageRepository.getBaseColor();
   }
 
   void saveFontFamily({required String fontFamily}) {
-    _prefs?.setString(kUserFontFamily, fontFamily).ignore();
+    _localStorageRepository.saveFontFamily(fontFamily: fontFamily);
   }
 
   String? getFontFamily() {
-    return _prefs?.getString(kUserFontFamily);
+    return _localStorageRepository.getFontFamily();
   }
 
   void saveRecommendationsDate({required DateTime date}) {
-    _prefs
-        ?.setString(
-          kUserRecommendationsDate,
-          AppVariables.formatDate.format(date),
-        )
-        .ignore();
+    _localStorageRepository.saveRecommendationsDate(date: date);
   }
 
   DateTime? getRecommendationsDate() {
-    final dateString = _prefs?.getString(kUserRecommendationsDate);
-    if (dateString == null) {
-      return null;
-    }
-    return AppVariables.formatDate.parse(dateString);
+    return _localStorageRepository.getRecommendationsDate();
   }
 
   void saveRecommendations({required List<String> recommendations}) {
-    _prefs?.setStringList(kUserRecommendations, recommendations).ignore();
+    _localStorageRepository.saveRecommendations(
+      recommendations: recommendations,
+    );
   }
 
   List<String>? getRecommendations() {
-    return _prefs?.getStringList(kUserRecommendations);
+    return _localStorageRepository.getRecommendations();
   }
 }

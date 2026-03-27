@@ -1,205 +1,63 @@
-import 'dart:typed_data';
-
-import 'package:firebase_ai/firebase_ai.dart';
-import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseAI extends Mock implements FirebaseAI {}
-
-class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid {}
-
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
-
-class MockPerformanceService extends Mock implements PerformanceService {}
-
-class MockTrace extends Mock implements Trace {}
-
-class MockCrashService extends Mock implements CrashService {}
+class MockAiRepository extends Mock implements AiRepository {}
 
 void main() {
-  late AiService aiService;
-  late MockFirebaseAI mockFirebaseAI;
-  late MockGeminiNanoAndroid mockGeminiNanoAndroid;
-  late MockRemoteConfigService mockRemoteConfigService;
-  late MockPerformanceService mockPerformanceService;
-  late MockTrace mockTrace;
-  late MockCrashService mockCrashService;
+  late AiService service;
+  late MockAiRepository mockRepository;
 
   setUp(() {
-    mockFirebaseAI = MockFirebaseAI();
-    mockGeminiNanoAndroid = MockGeminiNanoAndroid();
-    mockRemoteConfigService = MockRemoteConfigService();
-    mockPerformanceService = MockPerformanceService();
-    mockTrace = MockTrace();
-    mockCrashService = MockCrashService();
-
-    getIt
-      ..registerSingleton<PerformanceService>(mockPerformanceService)
-      ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
-      ..registerSingleton<CrashService>(mockCrashService);
-
-    when(() => mockRemoteConfigService.geminiModelId).thenReturn('gemini-1');
-    when(() => mockPerformanceService.startTrace(any()))
-        .thenAnswer((_) async => mockTrace);
-    when(() => mockPerformanceService.stopTrace(any()))
-        .thenAnswer((_) async {});
-    when(
-      () => mockCrashService.recordError(
-        any<dynamic>(),
-        any<StackTrace?>(),
-        reason: any<dynamic>(named: 'reason'),
-      ),
-    ).thenAnswer((_) async {});
-
-    aiService = AiService(
-      remoteModel: mockFirebaseAI,
-      localModel: mockGeminiNanoAndroid,
-    );
-  });
-
-  tearDown(getIt.reset);
-
-  setUpAll(() {
-    registerFallbackValue(MockTrace());
-    registerFallbackValue(GenerationConfig());
-    registerFallbackValue(
-      SafetySetting(
-        HarmCategory.dangerousContent,
-        HarmBlockThreshold.none,
-        null,
-      ),
-    );
-    registerFallbackValue(Content.text(''));
+    mockRepository = MockAiRepository();
+    service = AiService(aiRepository: mockRepository);
   });
 
   group('AiService', () {
-    test('isLocalModelAvailable returns false initially', () {
-      expect(aiService.isLocalModelAvailable, isFalse);
+    test('can be instantiated', () {
+      expect(service, isNotNull);
+    });
+    test('initialize calls repository initialize', () async {
+      when(() => mockRepository.initialize()).thenAnswer((_) async {});
+      await service.initialize();
+      verify(() => mockRepository.initialize()).called(1);
     });
 
-    test('initialize updates isLocalModelAvailable based on native call',
-        () async {
-      when(() => mockGeminiNanoAndroid.isAvailable())
-          .thenAnswer((_) async => true);
-      await aiService.initialize();
-      expect(aiService.isLocalModelAvailable, isTrue);
+    test('isLocalModelAvailable returns value from repository', () {
+      when(() => mockRepository.isLocalModelAvailable).thenReturn(true);
+      expect(service.isLocalModelAvailable, isTrue);
     });
 
-    group('generateContentRemote', () {
-      test('returns null when prompt is empty', () async {
-        final result = await aiService.generateContentRemote(prompt: []);
-        expect(result, isNull);
-      });
-
-      test('generateContentRemote throws exception from firebaseAI', () async {
-        when(
-          () => mockFirebaseAI.generativeModel(
-            model: any(named: 'model'),
-            safetySettings: any(named: 'safetySettings'),
-            generationConfig: any(named: 'generationConfig'),
-          ),
-        ).thenThrow(Exception('test exception'));
-
-        expect(
-          () => aiService.generateContentRemote(
-            prompt: [const PromptPart(type: PromptPartType.text, text: 'Hi')],
-          ),
-          throwsA(isA<Exception>()),
-        );
-      });
+    test('generateContentRemote calls repository and returns result', () async {
+      const prompt = <PromptPart>[];
+      when(
+        () => mockRepository.generateContentRemote(
+          prompt: prompt,
+        ),
+      ).thenAnswer((_) async => 'result');
+      final result = await service.generateContentRemote(prompt: prompt);
+      expect(result, equals('result'));
+      verify(
+        () => mockRepository.generateContentRemote(
+          prompt: prompt,
+        ),
+      ).called(1);
     });
 
-    group('generateContentLocal', () {
-      setUp(() {
-        when(() => mockGeminiNanoAndroid.isAvailable())
-            .thenAnswer((_) async => true);
-      });
-
-      test('generateContentLocal returns null if localModel not available',
-          () async {
-        when(() => mockGeminiNanoAndroid.isAvailable())
-            .thenAnswer((_) async => false);
-
-        final result = await aiService.generateContentLocal(
-          textPrompt: const PromptPart(
-            type: PromptPartType.text,
-            text: 'Hello',
-          ),
-        );
-
-        expect(result, isNull);
-      });
-
-      test('returns null if textPrompt is not text', () async {
-        final result = await aiService.generateContentLocal(
-          textPrompt: const PromptPart(
-            type: PromptPartType.file,
-          ),
-        );
-        expect(result, isNull);
-      });
-
-      test('returns null if imagePrompt is not a file type', () async {
-        final result = await aiService.generateContentLocal(
-          textPrompt: const PromptPart(type: PromptPartType.text, text: 'Hi'),
-          imagePrompt:
-              const PromptPart(type: PromptPartType.text, text: 'Oops'),
-        );
-        expect(result, isNull);
-      });
-
-      test('returns null if imagePrompt mimeType is not jpeg or png', () async {
-        final result = await aiService.generateContentLocal(
-          textPrompt: const PromptPart(type: PromptPartType.text, text: 'Hi'),
-          imagePrompt: const PromptPart(
-            type: PromptPartType.file,
-            mimeType: 'image/gif',
-          ),
-        );
-        expect(result, isNull);
-      });
-
-      test('returns null if generated response is empty', () async {
-        when(
-          () => mockGeminiNanoAndroid.generate(
-            prompt: any(named: 'prompt'),
-            image: any(named: 'image'),
-          ),
-        ).thenAnswer((_) async => ['']);
-
-        final result = await aiService.generateContentLocal(
-          textPrompt: const PromptPart(type: PromptPartType.text, text: 'Hi'),
-        );
-        expect(result, isNull);
-      });
-
-      test(
-          'generateContentLocal returns result if localModel available with'
-          ' image', () async {
-        when(
-          () => mockGeminiNanoAndroid.generate(
-            prompt: 'Hello',
-            image: any(named: 'image'),
-          ),
-        ).thenAnswer((_) async => ['Generated Response']);
-
-        final result = await aiService.generateContentLocal(
-          textPrompt: const PromptPart(
-            type: PromptPartType.text,
-            text: 'Hello',
-          ),
-          imagePrompt: PromptPart(
-            type: PromptPartType.file,
-            mimeType: 'image/jpeg',
-            bytes: Uint8List.fromList([1, 2, 3]),
-          ),
-        );
-
-        expect(result, 'Generated Response');
-      });
+    test('generateContentLocal calls repository and returns result', () async {
+      final textPrompt = PromptPart.text(text: 'text');
+      when(
+        () => mockRepository.generateContentLocal(
+          textPrompt: textPrompt,
+        ),
+      ).thenAnswer((_) async => 'result');
+      final result = await service.generateContentLocal(textPrompt: textPrompt);
+      expect(result, equals('result'));
+      verify(
+        () => mockRepository.generateContentLocal(
+          textPrompt: textPrompt,
+        ),
+      ).called(1);
     });
   });
 }

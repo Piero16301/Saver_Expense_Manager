@@ -19,6 +19,7 @@ class AppTextField extends StatelessWidget {
     this.maxLength,
     this.obscureText = false,
     this.validator,
+    this.enabled = true,
     super.key,
   });
 
@@ -38,10 +39,12 @@ class AppTextField extends StatelessWidget {
   final int? maxLength;
   final bool obscureText;
   final String? Function(String?)? validator;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: enabled,
       controller: controller,
       onChanged: onChanged,
       autovalidateMode: AutovalidateMode.onUserInteraction,

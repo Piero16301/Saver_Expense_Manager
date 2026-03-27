@@ -7,9 +7,6 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  static const String pageName = 'home';
-  static const String pagePath = '/';
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);

@@ -9,7 +9,7 @@ class ExpensesHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = getIt<AuthenticationService>();
+    final auth = getIt<AuthService>();
     final user = auth.currentUser;
     final l10n = AppLocalizations.of(context);
     final database = getIt<DatabaseService>();
@@ -32,10 +32,18 @@ class ExpensesHomeView extends StatelessWidget {
             ),
           ),
           StreamBuilder<List<Movement>>(
-            stream: database.getMonthMovementsStream(
+            stream: database.getMovementsStream(
               userId: user!.uid,
-              monthSelected: state.monthSelected!,
+              startDate: DateTime(
+                state.monthSelected!.year,
+                state.monthSelected!.month,
+              ),
+              endDate: DateTime(
+                state.monthSelected!.year,
+                state.monthSelected!.month + 1,
+              ),
               type: CategoryType.expense,
+              orderByDate: true,
             ),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {

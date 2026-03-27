@@ -1,340 +1,127 @@
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockPerformanceService extends Mock implements PerformanceService {}
-
-class MockTrace extends Mock implements Trace {}
-
-class MockCrashService extends Mock implements CrashService {}
+class MockDatabaseRepository extends Mock implements DatabaseRepository {}
 
 void main() {
   late DatabaseService databaseService;
-  late FakeFirebaseFirestore fakeFirestore;
-  late MockPerformanceService mockPerformanceService;
-  late MockTrace mockTrace;
-  late MockCrashService mockCrashService;
+  late MockDatabaseRepository mockDatabaseRepository;
 
   setUpAll(() {
-    registerFallbackValue(MockTrace());
+    registerFallbackValue(
+      Movement(
+        id: '1',
+        title: 'test',
+        description: '',
+        date: DateTime.now(),
+        category: Category.empty,
+        price: 0,
+        user: '1',
+      ),
+    );
   });
 
   setUp(() {
-    fakeFirestore = FakeFirebaseFirestore();
-    mockPerformanceService = MockPerformanceService();
-    mockTrace = MockTrace();
-    mockCrashService = MockCrashService();
-
-    getIt
-      ..registerSingleton<PerformanceService>(mockPerformanceService)
-      ..registerSingleton<CrashService>(mockCrashService);
-
-    when(
-      () => mockCrashService.recordError(
-        any<dynamic>(),
-        any<StackTrace?>(),
-        reason: any<dynamic>(named: 'reason'),
-      ),
-    ).thenAnswer((_) async {});
-
-    when(() => mockPerformanceService.startTrace(any()))
-        .thenAnswer((_) async => mockTrace);
-    when(() => mockPerformanceService.stopTrace(any()))
-        .thenAnswer((_) async {});
-
-    databaseService = DatabaseService(firestore: fakeFirestore);
+    mockDatabaseRepository = MockDatabaseRepository();
+    databaseService =
+        DatabaseService(databaseRepository: mockDatabaseRepository);
   });
 
-  tearDown(getIt.reset);
+  group('DatabaseService Delegation', () {
+    test('newId delegates to repository', () {
+      when(() => mockDatabaseRepository.newId).thenReturn('test_id');
 
-  group('DatabaseService', () {
-    test('getCategoriesStream returns a stream of categories', () async {
-      const category = Category(
-        id: 'cat_1',
-        name: 'Food',
-        icon: 'pizza',
-        color: 'red',
-        type: CategoryType.expense,
+      final result = databaseService.newId;
+
+      expect(result, 'test_id');
+      verify(() => mockDatabaseRepository.newId).called(1);
+    });
+
+    test('saveMovement delegates to repository', () async {
+      final movement = Movement(
+        id: '1',
+        title: 'test',
+        description: '',
+        date: DateTime.now(),
+        category: Category.empty,
+        price: 0,
+        user: '1',
       );
 
-      await fakeFirestore
-          .collection(AppVariables.categoriesCollection)
-          .doc(category.id)
-          .set(category.toJson());
+      when(() => mockDatabaseRepository.saveMovement(movement: movement))
+          .thenAnswer((_) async => true);
+
+      final result = await databaseService.saveMovement(movement: movement);
+
+      expect(result, isTrue);
+      verify(() => mockDatabaseRepository.saveMovement(movement: movement))
+          .called(1);
+    });
+
+    test('getCategoriesStream delegates to repository', () {
+      when(() => mockDatabaseRepository.getCategoriesStream())
+          .thenAnswer((_) => Stream.value([]));
 
       final stream = databaseService.getCategoriesStream();
-      final docs = await stream.first;
 
-      expect(docs, isNotEmpty);
-      expect(docs.first.id, category.id);
-      expect(docs.first.name, category.name);
+      expect(stream, isNotNull);
+      verify(() => mockDatabaseRepository.getCategoriesStream()).called(1);
     });
 
-    test('getMonthMovementsStream returns correct movements', () async {
-      final date = DateTime(2023, 10, 15);
-      final movement = Movement(
-        id: 'mov_1',
-        title: 'Lunch',
-        description: 'Pizza',
-        date: date,
-        category: const Category(
-          id: 'cat_1',
-          name: 'Food',
-          icon: 'pizza',
-          color: 'red',
-          type: CategoryType.expense,
+    test('getMovementsStream delegates to repository', () {
+      when(
+        () => mockDatabaseRepository.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
-        price: 15,
-        user: 'user_1',
-      );
+      ).thenAnswer((_) => Stream.value([]));
 
-      await fakeFirestore
-          .collection(AppVariables.movementsCollection)
-          .doc(movement.id)
-          .set(movement.toJson());
-
-      final movement2 = movement.copyWith(id: 'mov_2', user: 'user_2');
-      await fakeFirestore
-          .collection(AppVariables.movementsCollection)
-          .doc(movement2.id)
-          .set(movement2.toJson());
-
-      final stream = databaseService.getMonthMovementsStream(
-        userId: 'user_1',
-        monthSelected: date,
-        type: CategoryType.expense,
-      );
-      final docs = await stream.first;
-
-      expect(docs.length, 1);
-      expect(docs.first.id, movement.id);
-    });
-
-    test('getUserMovementsRangeStream returns correct movements', () async {
-      final date = DateTime(2023, 10, 15);
-      final movement = Movement(
-        id: 'mov_1',
-        title: 'Lunch',
-        description: '',
-        date: date,
-        category: Category.empty,
-        price: 15,
-        user: 'user_1',
-      );
-
-      await fakeFirestore
-          .collection(AppVariables.movementsCollection)
-          .doc(movement.id)
-          .set(movement.toJson());
-
-      final stream = databaseService.getUserMovementsRangeStream(
-        userId: 'user_1',
-        startMonth: DateTime(2023, 10),
-        endMonth: DateTime(2023, 10, 31),
-      );
-      final docs = await stream.first;
-
-      expect(docs.length, 1);
-      expect(docs.first.id, movement.id);
-    });
-
-    test('getCategoryMovementsQuery filters correctly', () async {
-      const category = Category(
-        id: 'cat_1',
-        name: 'Food',
-        icon: '',
-        color: '',
-        type: CategoryType.expense,
-      );
-      final query = databaseService.getCategoryMovementsQuery(
-        userId: 'user_1',
-        monthSelected: DateTime(2023, 10, 15),
-        category: category,
-      );
-
-      final snapshot = await query.get();
-      expect(snapshot.docs, isEmpty);
-    });
-
-    test('getExpenseTypeMovementsQuery filters correctly', () async {
-      final query = databaseService.getExpenseTypeMovementsQuery(
-        userId: 'user_1',
-        monthSelected: DateTime(2023, 10, 15),
-        expenseType: CategoryType.income,
-      );
-
-      final snapshot = await query.get();
-      expect(snapshot.docs, isEmpty);
-    });
-
-    test('getUserMovementsQuery filters correctly', () async {
-      const category = Category(
-        id: 'cat_1',
-        name: 'Food',
-        icon: '',
-        color: '',
-        type: CategoryType.expense,
-      );
-      final query = databaseService.getUserMovementsQuery(
-        userId: 'user_1',
-        type: CategoryType.expense,
-        category: category,
-      );
-
-      final snapshot = await query.get();
-      expect(snapshot.docs, isEmpty);
-    });
-
-    test('getTrendChartStream filters correctly', () async {
-      const category = Category(
-        id: 'cat_1',
-        name: 'Food',
-        icon: '',
-        color: '',
-        type: CategoryType.expense,
-      );
-
-      final stream = databaseService.getTrendChartStream(
-        userId: 'user_1',
-        startMonth: DateTime(2023, 8),
-        endMonth: DateTime(2023, 10),
-        category: category,
-      );
-
-      final snapshot = await stream.first;
-      expect(snapshot, isEmpty);
-    });
-
-    test('getMovementsStream filters correctly', () async {
       final stream = databaseService.getMovementsStream(
         userId: 'user_1',
-        from: DateTime(2023, 8),
-        to: DateTime(2023, 10),
-        limit: 5,
+        limit: 10,
       );
 
-      final snapshot = await stream.first;
-      expect(snapshot, isEmpty);
-    });
-
-    test('getMovements returns correct results passed filters', () async {
-      final result = await databaseService.getMovements(
-        userId: 'user_1',
-        from: DateTime(2023, 8),
-        to: DateTime(2023, 10),
-      );
-
-      expect(result, isEmpty);
-    });
-    test('getMonthMovementsStream handles December dates', () async {
-      final date = DateTime(2023, 12, 15);
-      final stream = databaseService.getMonthMovementsStream(
-        userId: 'user_1',
-        monthSelected: date,
-        type: CategoryType.income,
-      );
-      final docs = await stream.first;
-      expect(docs, isEmpty);
-    });
-
-    test('getUserMovementsRangeStream handles December dates', () async {
-      final stream = databaseService.getUserMovementsRangeStream(
-        userId: 'user_1',
-        startMonth: DateTime(2023, 10),
-        endMonth: DateTime(2023, 12, 31),
-      );
-      final docs = await stream.first;
-
-      expect(docs, isEmpty);
-    });
-
-    test('getCategoryMovementsQuery handles December dates', () async {
-      const category = Category(
-        id: 'cat_1',
-        name: 'Food',
-        icon: '',
-        color: '',
-        type: CategoryType.expense,
-      );
-      final query = databaseService.getCategoryMovementsQuery(
-        userId: 'user_1',
-        monthSelected: DateTime(2023, 12, 15),
-        category: category,
-      );
-
-      final snapshot = await query.get();
-      expect(snapshot.docs, isEmpty);
-    });
-
-    test('getExpenseTypeMovementsQuery handles December dates', () async {
-      final query = databaseService.getExpenseTypeMovementsQuery(
-        userId: 'user_1',
-        monthSelected: DateTime(2023, 12, 15),
-        expenseType: CategoryType.income,
-      );
-
-      final snapshot = await query.get();
-      expect(snapshot.docs, isEmpty);
-    });
-
-    test('getUserMovementsQuery handles null type and category', () async {
-      final query = databaseService.getUserMovementsQuery(
-        userId: 'user_1',
-        type: null,
-        category: null,
-      );
-
-      final snapshot = await query.get();
-      expect(snapshot.docs, isEmpty);
-    });
-
-    test('getUserMovementsQuery handles income type', () async {
-      final query = databaseService.getUserMovementsQuery(
-        userId: 'user_1',
-        type: CategoryType.income,
-        category: const Category(
-          id: 'cat_1',
-          name: 'Food',
-          icon: '',
-          color: '',
-          type: CategoryType.income,
+      expect(stream, isNotNull);
+      verify(
+        () => mockDatabaseRepository.getMovementsStream(
+          userId: 'user_1',
+          limit: 10,
+          orderByDate: any(named: 'orderByDate'),
         ),
-      );
-
-      final snapshot = await query.get();
-      expect(snapshot.docs, isEmpty);
+      ).called(1);
     });
 
-    test('getTrendChartStream handles December dates', () async {
-      const category = Category(
-        id: 'cat_1',
-        name: 'Food',
-        icon: '',
-        color: '',
-        type: CategoryType.expense,
-      );
-      final stream = databaseService.getTrendChartStream(
-        userId: 'user_1',
-        startMonth: DateTime(2023, 8),
-        endMonth: DateTime(2023, 12),
-        category: category,
-      );
+    test('getMovements delegates to repository', () async {
+      when(
+        () => mockDatabaseRepository.getMovements(
+          userId: any(named: 'userId'),
+          from: any(named: 'from'),
+          to: any(named: 'to'),
+        ),
+      ).thenAnswer((_) async => []);
 
-      final snapshot = await stream.first;
-      expect(snapshot, isEmpty);
+      final movements = await databaseService.getMovements(userId: 'user_1');
+
+      expect(movements, isEmpty);
+      verify(() => mockDatabaseRepository.getMovements(userId: 'user_1'))
+          .called(1);
     });
 
-    test('getMovementsStream handles null from, to, and limit', () async {
-      final stream = databaseService.getMovementsStream(userId: 'user_1');
-      final snapshot = await stream.first;
-      expect(snapshot, isEmpty);
-    });
+    test('deleteMovement delegates to repository', () async {
+      when(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
+          .thenAnswer((_) async => true);
 
-    test('getMovements handles null from, to', () async {
-      final result = await databaseService.getMovements(userId: 'user_1');
-      expect(result, isEmpty);
+      final result = await databaseService.deleteMovement(movementId: 'mov_1');
+
+      expect(result, isTrue);
+      verify(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
+          .called(1);
     });
   });
 }

@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/movement/movement.dart';
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
@@ -62,7 +61,7 @@ void main() {
             ),
           ),
           GoRoute(
-            name: MovementPage.pageName,
+            name: AppRoute.movement.name,
             path: '/movement/:type/:screenType',
             builder: (context, state) =>
                 const Scaffold(body: Text('Movement Page')),

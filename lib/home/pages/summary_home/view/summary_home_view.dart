@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/category/category.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
@@ -18,17 +17,18 @@ class SummaryHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final auth = getIt<AuthenticationService>().auth;
+    final auth = getIt<AuthService>();
     final database = getIt<DatabaseService>();
     final isLandscape =
         MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
       builder: (context, state) => StreamBuilder<List<Movement>>(
-        stream: database.getUserMovementsRangeStream(
+        stream: database.getMovementsStream(
           userId: auth.currentUser!.uid,
-          startMonth: state.startMonth!,
-          endMonth: state.endMonth!,
+          startDate: state.startMonth,
+          endDate: state.endMonth,
+          orderByDate: true,
         ),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -474,7 +474,7 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
         return InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () => context.pushNamed(
-            CategoryPage.pageName,
+            AppRoute.category.name,
             extra: categoryData.category,
           ),
           child: CategoryExpenseCard(

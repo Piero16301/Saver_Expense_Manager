@@ -1,10 +1,7 @@
-import 'package:firebase_pagination/firebase_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:saver_expense_manager/movement/movement.dart';
 
 class MovementsList extends StatelessWidget {
   const MovementsList({
@@ -18,37 +15,29 @@ class MovementsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final language = context.select<AppCubit, Locale>(
       (cubit) => cubit.state.language,
     );
-    final auth = getIt<AuthenticationService>();
+    final auth = getIt<AuthService>();
     final database = getIt<DatabaseService>();
 
     return Expanded(
-      child: FirestorePagination(
+      child: AppStreamPaginated<Movement>(
         key: ValueKey('$filterCategory-$monthSelected'),
-        shrinkWrap: true,
-        physics: const BouncingScrollPhysics(),
-        query: database.getCategoryMovementsQuery(
+        stream: (limit) => database.getMovementsStream(
           userId: auth.currentUser!.uid,
-          monthSelected: monthSelected,
-          category: filterCategory,
-        ),
-        isLive: true,
-        onEmpty: Center(
-          child: Text(
-            l10n.movementsNoData,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          startDate: DateTime(monthSelected.year, monthSelected.month),
+          endDate: DateTime(monthSelected.year, monthSelected.month + 1),
+          categoryId: filterCategory.id,
+          limit: limit,
+          orderByDate: true,
         ),
         itemBuilder: (context, docs, index) {
-          final movement = Movement.fromJson(
-            docs[index].data()! as Map<String, dynamic>,
-          );
+          final movement = docs[index];
+
           return ListTile(
             onTap: () => context.pushNamed(
-              MovementPage.pageName,
+              AppRoute.movement.name,
               pathParameters: {
                 'type': movement.category.type == CategoryType.income
                     ? CategoryType.income.value

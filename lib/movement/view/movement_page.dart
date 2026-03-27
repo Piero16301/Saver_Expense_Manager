@@ -12,9 +12,6 @@ class MovementPage extends StatelessWidget {
     super.key,
   });
 
-  static const String pageName = 'movement';
-  static const String pagePath = '/movement/:type/:screenType';
-
   final Movement movement;
   final CategoryType type;
   final MovementScreenType screenType;

@@ -186,7 +186,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
     final language = context.select<AppCubit, Locale>(
       (cubit) => cubit.state.language,
     );
-    final auth = getIt<AuthenticationService>();
+    final auth = getIt<AuthService>();
     final user = auth.currentUser;
     final l10n = AppLocalizations.of(context);
     final database = getIt<DatabaseService>();
@@ -219,11 +219,12 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
         ),
         const SizedBox(height: 20),
         StreamBuilder<List<Movement>>(
-          stream: database.getTrendChartStream(
+          stream: database.getMovementsStream(
             userId: user!.uid,
-            startMonth: startMonth,
-            endMonth: endMonth,
-            category: category,
+            startDate: startMonth,
+            endDate: endMonth,
+            categoryId: category.id,
+            orderByDate: true,
           ),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {

@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,15 +14,13 @@ class MockMovementsHomeCubit extends MockCubit<MovementsHomeState>
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockDatabaseService extends Mock implements DatabaseService {}
 
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
-
-class MockFirebaseUser extends Mock implements User {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
 const _testCategories = [
   Category(
@@ -48,12 +44,10 @@ List<Category> get mutableTestCategories => List.of(_testCategories);
 void main() {
   late MockMovementsHomeCubit mockCubit;
   late MockAppCubit mockAppCubit;
-  late MockAuthenticationService mockAuth;
+  late MockAuthService mockAuth;
   late MockDatabaseService mockDatabase;
   late MockLocalStorageService mockLocalStorage;
-  late MockFirebaseAuth mockFirebaseAuth;
-  late MockFirebaseUser mockFirebaseUser;
-  late FakeFirebaseFirestore fakeFirestore;
+  late MockRemoteConfigService mockRemoteConfig;
 
   setUpAll(() {
     registerFallbackValue(DateTime.now());
@@ -64,16 +58,14 @@ void main() {
   setUp(() async {
     mockCubit = MockMovementsHomeCubit();
     mockAppCubit = MockAppCubit();
-    mockAuth = MockAuthenticationService();
+    mockAuth = MockAuthService();
     mockDatabase = MockDatabaseService();
     mockLocalStorage = MockLocalStorageService();
-    mockFirebaseAuth = MockFirebaseAuth();
-    mockFirebaseUser = MockFirebaseUser();
-    fakeFirestore = FakeFirebaseFirestore();
+    mockRemoteConfig = MockRemoteConfigService();
 
-    when(() => mockFirebaseUser.uid).thenReturn('user123');
-    when(() => mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser);
-    when(() => mockAuth.auth).thenReturn(mockFirebaseAuth);
+    when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user123'));
+    when(() => mockRemoteConfig.paginationLimit).thenReturn(10);
+
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockCubit.state).thenReturn(const MovementsHomeState());
     when(() => mockLocalStorage.getLanguage()).thenReturn(null);
@@ -87,19 +79,17 @@ void main() {
     when(
       () => mockDatabase.getMovementsStream(
         userId: any(named: 'userId'),
+        startDate: any(named: 'startDate'),
+        endDate: any(named: 'endDate'),
+        type: any(named: 'type'),
+        categoryId: any(named: 'categoryId'),
         limit: any(named: 'limit'),
+        orderByDate: any(named: 'orderByDate'),
       ),
     ).thenAnswer((_) => Stream.value([]));
-    when(
-      () => mockDatabase.getUserMovementsQuery(
-        userId: any(named: 'userId'),
-        type: any(named: 'type'),
-        category: any(named: 'category'),
-      ),
-    ).thenReturn(fakeFirestore.collection('movements'));
 
-    if (getIt.isRegistered<AuthenticationService>()) {
-      await getIt.unregister<AuthenticationService>();
+    if (getIt.isRegistered<AuthService>()) {
+      await getIt.unregister<AuthService>();
     }
     if (getIt.isRegistered<DatabaseService>()) {
       getIt.unregister<DatabaseService>();
@@ -107,10 +97,14 @@ void main() {
     if (getIt.isRegistered<LocalStorageService>()) {
       getIt.unregister<LocalStorageService>();
     }
+    if (getIt.isRegistered<RemoteConfigService>()) {
+      getIt.unregister<RemoteConfigService>();
+    }
     getIt
-      ..registerSingleton<AuthenticationService>(mockAuth)
+      ..registerSingleton<AuthService>(mockAuth)
       ..registerSingleton<DatabaseService>(mockDatabase)
-      ..registerSingleton<LocalStorageService>(mockLocalStorage);
+      ..registerSingleton<LocalStorageService>(mockLocalStorage)
+      ..registerSingleton<RemoteConfigService>(mockRemoteConfig);
   });
 
   tearDown(getIt.reset);
@@ -204,7 +198,12 @@ void main() {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
           limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
@@ -229,7 +228,12 @@ void main() {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
           limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([movement]));
 
@@ -255,7 +259,12 @@ void main() {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
           limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([movement]));
 
@@ -285,7 +294,12 @@ void main() {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
           limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([movement]));
 
@@ -314,7 +328,12 @@ void main() {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
           limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([movement]));
 
@@ -339,7 +358,12 @@ void main() {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
           limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
@@ -362,7 +386,12 @@ void main() {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
           limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer(
         (_) => Stream.value([

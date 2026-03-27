@@ -19,9 +19,9 @@ class _AppViewState extends State<AppView> {
   @override
   void initState() {
     super.initState();
-    _router = goRouter();
+    _router = AppRoutes.getRouter();
 
-    final authService = getIt<AuthenticationService>();
+    final authService = getIt<AuthService>();
     _authSubscription = authService.authStateChanges.listen((user) {
       getIt<AnalyticsService>().setUserId(id: user?.uid ?? '');
       getIt<CrashService>().setUserIdentifier(user?.uid ?? '');

@@ -13,9 +13,6 @@ import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:saver_expense_manager/movement/movement.dart';
-import 'package:saver_expense_manager/profile/profile.dart';
-import 'package:saver_expense_manager/settings/settings.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeView extends StatelessWidget {
@@ -28,7 +25,7 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = getIt<AuthenticationService>();
+    final auth = getIt<AuthService>();
     final darkTheme = Theme.of(context).brightness == Brightness.dark;
 
     return StreamBuilder<AppUser?>(
@@ -56,7 +53,7 @@ class HomeView extends StatelessWidget {
                   icon: HugeIcons.strokeRoundedSettings02,
                   strokeWidth: 2,
                 ),
-                onPressed: () => context.pushNamed(SettingsPage.pageName),
+                onPressed: () => context.pushNamed(AppRoute.settings.name),
               ),
               actions: [
                 IconButton(
@@ -100,7 +97,7 @@ class HomeView extends StatelessWidget {
                             ),
                           ),
                         ),
-                  onPressed: () => context.pushNamed(ProfilePage.pageName),
+                  onPressed: () => context.pushNamed(AppRoute.profile.name),
                 ),
               ],
               actionsPadding: const EdgeInsets.only(right: 8),
@@ -287,10 +284,10 @@ class AddMovementBottomSheet extends StatelessWidget {
       final file = result.files.single;
       final ext = file.path!.split('.').last;
       final path = '${const Uuid().v4()}.$ext';
-      final bytes = await file.xFile.readAsBytes();
+      final bytes = file.bytes ?? await File(file.path!).readAsBytes();
 
       final performance = getIt<PerformanceService>();
-      final trace = await performance.startTrace('receipt_processing_file');
+      final trace = performance.startTrace('receipt_processing_file');
       // Upload file to Firebase Storage and build movement from file in
       // parallel
       final uploadTask = getIt<RemoteStorageService>().uploadFile(
@@ -307,7 +304,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       );
 
       final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
-      await performance.stopTrace(trace);
+      performance.stopTrace(trace);
       final uploadName = results[0] as String?;
       final movement = results[1] as Movement;
 
@@ -317,7 +314,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       Navigator.of(context).pop();
       unawaited(
         context.pushNamed(
-          MovementPage.pageName,
+          AppRoute.movement.name,
           pathParameters: {
             'type': movementType.value,
             'screenType': MovementScreenType.add.name.toUpperCase(),
@@ -397,7 +394,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       final bytes = await File(files.first).readAsBytes();
 
       final performance = getIt<PerformanceService>();
-      final trace = await performance.startTrace('receipt_processing_scan');
+      final trace = performance.startTrace('receipt_processing_scan');
       // Upload file to Firebase Storage and build movement from file in
       // parallel
       final uploadTask = getIt<RemoteStorageService>().uploadFile(
@@ -414,7 +411,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       );
 
       final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
-      await performance.stopTrace(trace);
+      performance.stopTrace(trace);
       final uploadName = results[0] as String?;
       final movement = results[1] as Movement;
 
@@ -422,14 +419,16 @@ class AddMovementBottomSheet extends StatelessWidget {
         loader.hideLoading();
       }
       Navigator.of(context).pop();
-      await context.pushNamed(
-        MovementPage.pageName,
-        pathParameters: {
-          'type': movementType.value,
-          'screenType': MovementScreenType.add.name.toUpperCase(),
-        },
-        extra: movement.copyWith(
-          attachments: uploadName != null ? [uploadName] : [],
+      unawaited(
+        context.pushNamed(
+          AppRoute.movement.name,
+          pathParameters: {
+            'type': movementType.value,
+            'screenType': MovementScreenType.add.name.toUpperCase(),
+          },
+          extra: movement.copyWith(
+            attachments: uploadName != null ? [uploadName] : [],
+          ),
         ),
       );
     } on Exception catch (e, stackTrace) {
@@ -513,7 +512,7 @@ class AddMovementBottomSheet extends StatelessWidget {
                   Navigator.of(context).pop();
                   unawaited(
                     context.pushNamed(
-                      MovementPage.pageName,
+                      AppRoute.movement.name,
                       pathParameters: {
                         'type': movementType.value,
                         'screenType': MovementScreenType.add.name.toUpperCase(),

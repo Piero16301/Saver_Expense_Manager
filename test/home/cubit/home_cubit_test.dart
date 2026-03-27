@@ -11,6 +11,7 @@ void main() {
 
   setUp(() {
     mockRemoteConfigService = MockRemoteConfigService();
+    when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
     when(() => mockRemoteConfigService.homeInitialTab).thenReturn('summary');
     getIt.registerSingleton<RemoteConfigService>(mockRemoteConfigService);
   });

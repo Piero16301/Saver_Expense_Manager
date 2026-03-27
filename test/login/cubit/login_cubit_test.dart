@@ -1,26 +1,23 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/login/cubit/login_cubit.dart';
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockAppLocalizations extends Mock implements AppLocalizations {}
-
-class MockUserCredential extends Mock implements UserCredential {}
 
 class MockAnalyticsService extends Mock implements AnalyticsService {}
 
 void main() {
-  late MockAuthenticationService mockAuthService;
+  late MockAuthService mockAuthService;
   late MockAppLocalizations mockL10n;
   late MockAnalyticsService mockAnalyticsService;
 
   setUp(() async {
-    mockAuthService = MockAuthenticationService();
+    mockAuthService = MockAuthService();
     mockL10n = MockAppLocalizations();
     mockAnalyticsService = MockAnalyticsService();
 
@@ -151,7 +148,7 @@ void main() {
               'test@test.com',
               'Pass123!',
             ),
-          ).thenAnswer((_) async => MockUserCredential());
+          ).thenAnswer((_) async => true);
           return LoginCubit(authService: mockAuthService);
         },
         seed: () => const LoginState(
@@ -181,7 +178,7 @@ void main() {
               'test@test.com',
               'Pass123!',
             ),
-          ).thenThrow(Exception('auth error'));
+          ).thenAnswer((_) async => false);
           return LoginCubit(authService: mockAuthService);
         },
         seed: () => const LoginState(
@@ -210,7 +207,7 @@ void main() {
         'emits loading and success when authentication succeeds',
         build: () {
           when(() => mockAuthService.signInWithGoogle())
-              .thenAnswer((_) async => MockUserCredential());
+              .thenAnswer((_) async => true);
           return LoginCubit(authService: mockAuthService);
         },
         act: (cubit) => cubit.loginWithGoogle(mockL10n),
@@ -221,24 +218,10 @@ void main() {
       );
 
       blocTest<LoginCubit, LoginState>(
-        'emits initial when userCredential is null',
-        build: () {
-          when(() => mockAuthService.signInWithGoogle())
-              .thenAnswer((_) async => null);
-          return LoginCubit(authService: mockAuthService);
-        },
-        act: (cubit) => cubit.loginWithGoogle(mockL10n),
-        expect: () => [
-          const LoginState(status: LoginStatus.loading),
-          const LoginState(),
-        ],
-      );
-
-      blocTest<LoginCubit, LoginState>(
         'emits failure when authentication throws',
         build: () {
           when(() => mockAuthService.signInWithGoogle())
-              .thenThrow(Exception('auth error'));
+              .thenAnswer((_) async => false);
           return LoginCubit(authService: mockAuthService);
         },
         act: (cubit) => cubit.loginWithGoogle(mockL10n),

@@ -1,51 +1,71 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/register/cubit/register_cubit.dart';
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockAppLocalizations extends Mock implements AppLocalizations {}
 
-class FakeUserCredential extends Fake implements UserCredential {}
-
 class MockAnalyticsService extends Mock implements AnalyticsService {}
 
+class MockCrashService extends Mock implements CrashService {}
+
 void main() {
-  late MockAuthenticationService mockAuthenticationService;
+  late MockAuthService mockAuthService;
   late MockAppLocalizations mockAppLocalizations;
   late RegisterCubit registerCubit;
   late MockAnalyticsService mockAnalyticsService;
+  late MockCrashService mockCrashService;
 
   setUp(() async {
-    mockAuthenticationService = MockAuthenticationService();
+    mockAuthService = MockAuthService();
     mockAppLocalizations = MockAppLocalizations();
     mockAnalyticsService = MockAnalyticsService();
+    mockCrashService = MockCrashService();
 
     if (getIt.isRegistered<AnalyticsService>()) {
       await getIt.unregister<AnalyticsService>();
     }
     getIt.registerSingleton<AnalyticsService>(mockAnalyticsService);
 
+    if (getIt.isRegistered<CrashService>()) {
+      await getIt.unregister<CrashService>();
+    }
+    getIt.registerSingleton<CrashService>(mockCrashService);
+
+    when(
+      () => mockCrashService.recordError(
+        any<dynamic>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) async {});
+
+    when(
+      () => mockCrashService.setUserIdentifier(
+        any<String>(),
+      ),
+    ).thenAnswer((_) async {});
+
     when(
       () => mockAnalyticsService.logEvent(
-        name: any(named: 'name'),
-        parameters: any(named: 'parameters'),
+        name: any<String>(named: 'name'),
+        parameters: any<Map<String, Object>?>(named: 'parameters'),
       ),
     ).thenAnswer((_) {});
 
     when(() => mockAppLocalizations.genericError).thenReturn('Error');
-    when(() => mockAuthenticationService.currentUser).thenReturn(null);
+    when(() => mockAuthService.currentUser).thenReturn(null);
 
-    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
+    when(() => mockAnalyticsService.setUserId(id: any<String>(named: 'id')))
         .thenAnswer((_) {});
 
-    registerCubit = RegisterCubit(authService: mockAuthenticationService);
+    registerCubit = RegisterCubit(authService: mockAuthService);
   });
 
   tearDown(() {
@@ -143,13 +163,13 @@ void main() {
       ),
       setUp: () {
         when(
-          () => mockAuthenticationService.signUpWithEmailAndPassword(
-            any(),
-            any(),
+          () => mockAuthService.signUpWithEmailAndPassword(
+            any<String>(),
+            any<String>(),
           ),
-        ).thenAnswer((_) async => FakeUserCredential());
-        when(() => mockAuthenticationService.updateUserName(any()))
-            .thenAnswer((_) async => Future<void>.value());
+        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.updateUserName(any<String>()))
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [
@@ -166,45 +186,6 @@ void main() {
           password: 'Password123!',
           confirmPassword: 'Password123!',
           status: RegisterStatus.success,
-        ),
-      ],
-    );
-
-    blocTest<RegisterCubit, RegisterState>(
-      'register emits [loading, failure] on auth exception',
-      build: () => registerCubit,
-      seed: () => const RegisterState(
-        name: 'Piero',
-        email: 'test@test.com',
-        password: 'Password123!',
-        confirmPassword: 'Password123!',
-      ),
-      setUp: () {
-        when(
-          () => mockAuthenticationService.signUpWithEmailAndPassword(
-            any(),
-            any(),
-          ),
-        ).thenThrow(Exception('Error'));
-        when(() => mockAuthenticationService.updateUserName(any()))
-            .thenAnswer((_) async => Future<void>.value());
-      },
-      act: (cubit) => cubit.register(mockAppLocalizations),
-      expect: () => const [
-        RegisterState(
-          name: 'Piero',
-          email: 'test@test.com',
-          password: 'Password123!',
-          confirmPassword: 'Password123!',
-          status: RegisterStatus.loading,
-        ),
-        RegisterState(
-          name: 'Piero',
-          email: 'test@test.com',
-          password: 'Password123!',
-          confirmPassword: 'Password123!',
-          status: RegisterStatus.failure,
-          errorMessage: 'Error',
         ),
       ],
     );

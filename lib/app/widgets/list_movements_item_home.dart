@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/movement/movement.dart';
 
 class ListMovementsItemHome extends StatelessWidget {
   const ListMovementsItemHome({required this.movement, super.key});
@@ -19,7 +18,7 @@ class ListMovementsItemHome extends StatelessWidget {
 
     return ListTile(
       onTap: () => context.pushNamed<bool>(
-        MovementPage.pageName,
+        AppRoute.movement.name,
         pathParameters: {
           'type': movement.category.type == CategoryType.income
               ? CategoryType.income.value

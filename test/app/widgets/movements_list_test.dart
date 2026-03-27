@@ -9,19 +9,21 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:saver_expense_manager/movement/movement.dart';
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockDatabaseService extends Mock implements DatabaseService {}
+
+class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
 void main() {
   group('MovementsList', () {
     late AppCubit appCubit;
-    late AuthenticationService mockAuth;
+    late AuthService mockAuth;
     late DatabaseService mockDatabase;
+    late MockRemoteConfigService mockRemoteConfig;
     late FakeFirebaseFirestore fakeFirestore;
     late Query<Map<String, dynamic>> query;
 
@@ -40,8 +42,9 @@ void main() {
 
     setUp(() async {
       appCubit = MockAppCubit();
-      mockAuth = MockAuthenticationService();
+      mockAuth = MockAuthService();
       mockDatabase = MockDatabaseService();
+      mockRemoteConfig = MockRemoteConfigService();
       fakeFirestore = FakeFirebaseFirestore();
 
       query = fakeFirestore
@@ -51,25 +54,41 @@ void main() {
       when(() => appCubit.state).thenReturn(const AppState());
 
       final getIt = GetIt.instance;
-      if (getIt.isRegistered<AuthenticationService>()) {
-        await getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        await getIt.unregister<AuthService>();
       }
       if (getIt.isRegistered<DatabaseService>()) {
         await getIt.unregister<DatabaseService>();
       }
 
+      if (getIt.isRegistered<RemoteConfigService>()) {
+        await getIt.unregister<RemoteConfigService>();
+      }
       getIt
-        ..registerSingleton<AuthenticationService>(mockAuth)
-        ..registerSingleton<DatabaseService>(mockDatabase);
+        ..registerSingleton<AuthService>(mockAuth)
+        ..registerSingleton<DatabaseService>(mockDatabase)
+        ..registerSingleton<RemoteConfigService>(mockRemoteConfig);
+
+      when(() => mockRemoteConfig.paginationLimit).thenReturn(10);
 
       when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user1'));
       when(
-        () => mockDatabase.getCategoryMovementsQuery(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          monthSelected: any(named: 'monthSelected'),
-          category: any(named: 'category'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
-      ).thenReturn(query);
+      ).thenAnswer(
+        (_) => query.snapshots().map(
+              (snapshot) => snapshot.docs
+                  .map((doc) => Movement.fromJson(doc.data()))
+                  .toList(),
+            ),
+      );
     });
 
     Widget createWidgetUnderTest({DateTime? monthSelected}) {
@@ -92,7 +111,7 @@ void main() {
             ),
           ),
           GoRoute(
-            name: MovementPage.pageName,
+            name: AppRoute.movement.name,
             path: '/movement/:type/:screenType',
             builder: (context, state) =>
                 const Scaffold(body: Text('Movement Page')),
@@ -112,7 +131,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(MovementsList), findsOneWidget);
-      expect(find.text('No movements registered'), findsOneWidget);
+      expect(find.text('No elements registered'), findsOneWidget);
     });
 
     testWidgets('renders list items and triggers navigation', (tester) async {

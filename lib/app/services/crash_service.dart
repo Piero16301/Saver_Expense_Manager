@@ -1,12 +1,10 @@
-import 'dart:async';
-
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:saver_expense_manager/app/app.dart';
 
 class CrashService {
-  CrashService({FirebaseCrashlytics? crashlytics})
-      : _crashlytics = crashlytics ?? FirebaseCrashlytics.instance;
+  CrashService({required CrashRepository crashRepository})
+      : _crashRepository = crashRepository;
 
-  final FirebaseCrashlytics _crashlytics;
+  final CrashRepository _crashRepository;
 
   void recordError(
     dynamic exception,
@@ -15,26 +13,24 @@ class CrashService {
     Iterable<Object> information = const [],
     bool? fatal,
   }) {
-    unawaited(
-      _crashlytics.recordError(
-        exception,
-        stack,
-        reason: reason,
-        information: information,
-        fatal: fatal ?? false,
-      ),
+    _crashRepository.recordError(
+      exception,
+      stack,
+      reason: reason,
+      information: information,
+      fatal: fatal ?? false,
     );
   }
 
   void log(String message) {
-    unawaited(_crashlytics.log(message));
+    _crashRepository.log(message);
   }
 
   void setCustomKey(String key, Object value) {
-    unawaited(_crashlytics.setCustomKey(key, value));
+    _crashRepository.setCustomKey(key, value);
   }
 
   void setUserIdentifier(String identifier) {
-    unawaited(_crashlytics.setUserIdentifier(identifier));
+    _crashRepository.setUserIdentifier(identifier);
   }
 }

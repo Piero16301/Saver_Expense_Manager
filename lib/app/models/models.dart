@@ -1,3 +1,4 @@
+export 'app_route_observer.dart';
 export 'app_user.dart';
 export 'category.dart';
 export 'category_data.dart';

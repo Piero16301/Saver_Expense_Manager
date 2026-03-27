@@ -1,69 +1,131 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+class MockLocalStorageRepository extends Mock
+    implements LocalStorageRepository {}
 
 void main() {
-  late LocalStorageService localStorageService;
+  late LocalStorageService service;
+  late MockLocalStorageRepository mockRepository;
 
-  setUp(() async {
-    SharedPreferences.setMockInitialValues({});
-    localStorageService = LocalStorageService();
-    await localStorageService.initialize();
+  setUpAll(() {
+    registerFallbackValue(const Locale('en'));
+    registerFallbackValue(ThemeMode.system);
+    registerFallbackValue(Colors.black);
+  });
+
+  setUp(() {
+    mockRepository = MockLocalStorageRepository();
+    service = LocalStorageService(localStorageRepository: mockRepository);
   });
 
   group('LocalStorageService', () {
-    test('saveLanguage and getLanguage work correctly', () {
-      expect(localStorageService.getLanguage(), isNull);
-
-      localStorageService.saveLanguage(language: const Locale('es', 'ES'));
-
-      final language = localStorageService.getLanguage();
-      expect(language?.languageCode, 'es');
-      expect(language?.countryCode, 'ES');
+    test('can be instantiated', () {
+      expect(service, isNotNull);
     });
 
-    test('saveTheme and getTheme work correctly', () {
-      expect(localStorageService.getTheme(), isNull);
-
-      localStorageService.saveTheme(theme: ThemeMode.dark);
-
-      expect(localStorageService.getTheme(), ThemeMode.dark);
+    test('initialize calls repository initialize', () async {
+      when(() => mockRepository.initialize()).thenAnswer((_) async {});
+      await service.initialize();
+      verify(() => mockRepository.initialize()).called(1);
     });
 
-    test('saveBaseColor and getBaseColor work correctly', () {
-      expect(localStorageService.getBaseColor(), isNull);
-
-      localStorageService.saveBaseColor(baseColor: Colors.blue);
-
-      expect(localStorageService.getBaseColor(), Colors.blue);
+    test('saveLanguage calls repository', () {
+      when(
+        () => mockRepository.saveLanguage(
+          language: any<Locale>(named: 'language'),
+        ),
+      ).thenReturn(null);
+      service.saveLanguage(language: const Locale('en'));
+      verify(() => mockRepository.saveLanguage(language: const Locale('en')))
+          .called(1);
     });
 
-    test('saveFontFamily and getFontFamily work correctly', () {
-      expect(localStorageService.getFontFamily(), isNull);
-
-      localStorageService.saveFontFamily(fontFamily: 'Roboto');
-
-      expect(localStorageService.getFontFamily(), 'Roboto');
+    test('getLanguage returns from repository', () {
+      when(() => mockRepository.getLanguage()).thenReturn(const Locale('es'));
+      expect(service.getLanguage(), equals(const Locale('es')));
     });
 
-    test('saveRecommendationsDate and getRecommendationsDate work correctly',
-        () {
-      expect(localStorageService.getRecommendationsDate(), isNull);
-
-      final date = DateTime(2023, 10, 5);
-      localStorageService.saveRecommendationsDate(date: date);
-
-      expect(localStorageService.getRecommendationsDate(), date);
+    test('saveTheme calls repository', () {
+      when(
+        () => mockRepository.saveTheme(theme: any<ThemeMode>(named: 'theme')),
+      ).thenReturn(null);
+      service.saveTheme(theme: ThemeMode.dark);
+      verify(() => mockRepository.saveTheme(theme: ThemeMode.dark)).called(1);
     });
 
-    test('saveRecommendations and getRecommendations work correctly', () {
-      expect(localStorageService.getRecommendations(), isNull);
+    test('getTheme returns from repository', () {
+      when(() => mockRepository.getTheme()).thenReturn(ThemeMode.light);
+      expect(service.getTheme(), equals(ThemeMode.light));
+    });
 
-      final recommendations = ['Rec 1', 'Rec 2'];
-      localStorageService.saveRecommendations(recommendations: recommendations);
+    test('saveBaseColor calls repository', () {
+      when(
+        () => mockRepository.saveBaseColor(
+          baseColor: any<Color>(named: 'baseColor'),
+        ),
+      ).thenReturn(null);
+      service.saveBaseColor(baseColor: Colors.red);
+      verify(() => mockRepository.saveBaseColor(baseColor: Colors.red))
+          .called(1);
+    });
 
-      expect(localStorageService.getRecommendations(), recommendations);
+    test('getBaseColor returns from repository', () {
+      when(() => mockRepository.getBaseColor()).thenReturn(Colors.blue);
+      expect(service.getBaseColor(), equals(Colors.blue));
+    });
+
+    test('saveFontFamily calls repository', () {
+      when(
+        () => mockRepository.saveFontFamily(
+          fontFamily: any<String>(named: 'fontFamily'),
+        ),
+      ).thenReturn(null);
+      service.saveFontFamily(fontFamily: 'Roboto');
+      verify(() => mockRepository.saveFontFamily(fontFamily: 'Roboto'))
+          .called(1);
+    });
+
+    test('getFontFamily returns from repository', () {
+      when(() => mockRepository.getFontFamily()).thenReturn('Arial');
+      expect(service.getFontFamily(), equals('Arial'));
+    });
+
+    test('saveRecommendationsDate calls repository', () {
+      final date = DateTime(2023);
+      when(
+        () => mockRepository.saveRecommendationsDate(
+          date: any<DateTime>(named: 'date'),
+        ),
+      ).thenReturn(null);
+      service.saveRecommendationsDate(date: date);
+      verify(() => mockRepository.saveRecommendationsDate(date: date))
+          .called(1);
+    });
+
+    test('getRecommendationsDate returns from repository', () {
+      final date = DateTime(2023);
+      when(() => mockRepository.getRecommendationsDate()).thenReturn(date);
+      expect(service.getRecommendationsDate(), equals(date));
+    });
+
+    test('saveRecommendations calls repository', () {
+      when(
+        () => mockRepository.saveRecommendations(
+          recommendations: any<List<String>>(named: 'recommendations'),
+        ),
+      ).thenReturn(null);
+      service.saveRecommendations(recommendations: ['a', 'b']);
+      verify(
+        () => mockRepository.saveRecommendations(recommendations: ['a', 'b']),
+      ).called(1);
+    });
+
+    test('getRecommendations returns from repository', () {
+      when(() => mockRepository.getRecommendations()).thenReturn(['x']);
+      expect(service.getRecommendations(), equals(['x']));
     });
   });
 }

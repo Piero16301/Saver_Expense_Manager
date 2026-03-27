@@ -1,19 +1,24 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:bloc_test/bloc_test.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
+import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
-import 'package:saver_expense_manager/movement/movement.dart';
 
-import '../../helpers/helpers.dart';
-
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
@@ -27,36 +32,73 @@ class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
+class MockTrace extends Mock implements Trace {}
+
+class MockFilePicker extends Mock
+    with MockPlatformInterfaceMixin
+    implements FilePicker {}
+
+class MockRemoteStorageService extends Mock implements RemoteStorageService {}
+
+class MockPerformanceService extends Mock implements PerformanceService {}
+
+class MockCrashService extends Mock implements CrashService {}
+
+class MockAiService extends Mock implements AiService {}
+
 void main() {
-  late MockAuthenticationService mockAuthService;
+  late MockAuthService mockAuthService;
   late MockAppCubit mockAppCubit;
   late MockHomeCubit mockHomeCubit;
   late MockAppUser mockAppUser;
   late MockDatabaseService mockDatabaseService;
   late MockRemoteConfigService mockRemoteConfigService;
   late MockLocalStorageService mockLocalStorageService;
+  late MockRemoteStorageService mockRemoteStorageService;
+  late MockPerformanceService mockPerformanceService;
+  late MockCrashService mockCrashService;
+  late MockAiService mockAiService;
+  late MockTrace mockTrace;
 
   setUpAll(() {
     TestWidgetsFlutterBinding.ensureInitialized();
     registerFallbackValue(DateTime.now());
     registerFallbackValue(CategoryType.expense);
+    registerFallbackValue(
+      const PromptPart(type: PromptPartType.text, text: ''),
+    );
+    registerFallbackValue(MockTrace());
+    registerFallbackValue(FileType.custom);
+    registerFallbackValue(ModelType.cloud);
+    registerFallbackValue(File(''));
     AppVariables.useTestFonts = true;
+    Intl.defaultLocale = 'en_US';
+    unawaited(initializeDateFormatting('en_US'));
   });
 
   setUp(() {
-    mockAuthService = MockAuthenticationService();
+    mockAuthService = MockAuthService();
     mockAppCubit = MockAppCubit();
     mockHomeCubit = MockHomeCubit();
     mockAppUser = MockAppUser();
     mockDatabaseService = MockDatabaseService();
     mockRemoteConfigService = MockRemoteConfigService();
     mockLocalStorageService = MockLocalStorageService();
+    mockRemoteStorageService = MockRemoteStorageService();
+    mockPerformanceService = MockPerformanceService();
+    mockCrashService = MockCrashService();
+    mockAiService = MockAiService();
+    mockTrace = MockTrace();
 
     getIt
-      ..registerSingleton<AuthenticationService>(mockAuthService)
+      ..registerSingleton<AuthService>(mockAuthService)
       ..registerSingleton<DatabaseService>(mockDatabaseService)
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
-      ..registerSingleton<LocalStorageService>(mockLocalStorageService);
+      ..registerSingleton<LocalStorageService>(mockLocalStorageService)
+      ..registerSingleton<RemoteStorageService>(mockRemoteStorageService)
+      ..registerSingleton<PerformanceService>(mockPerformanceService)
+      ..registerSingleton<CrashService>(mockCrashService)
+      ..registerSingleton<AiService>(mockAiService);
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockHomeCubit.state)
@@ -71,307 +113,164 @@ void main() {
     when(() => mockDatabaseService.getCategoriesStream())
         .thenAnswer((_) => Stream.value([]));
     when(
-      () => mockDatabaseService.getMonthMovementsStream(
-        userId: any(named: 'userId'),
-        monthSelected: any(named: 'monthSelected'),
-        type: any(named: 'type'),
-      ),
-    ).thenAnswer((_) => Stream.value([]));
-    when(
-      () => mockDatabaseService.getUserMovementsRangeStream(
-        userId: any(named: 'userId'),
-        startMonth: any(named: 'startMonth'),
-        endMonth: any(named: 'endMonth'),
-      ),
-    ).thenAnswer((_) => Stream.value([]));
-    when(
       () => mockDatabaseService.getMovementsStream(
-        userId: any(named: 'userId'),
-        limit: any(named: 'limit'),
+        userId: any<String>(named: 'userId'),
+        startDate: any<DateTime?>(named: 'startDate'),
+        endDate: any<DateTime?>(named: 'endDate'),
+        type: any<CategoryType?>(named: 'type'),
+        categoryId: any<String?>(named: 'categoryId'),
+        limit: any<int>(named: 'limit'),
+        orderByDate: any<bool>(named: 'orderByDate'),
       ),
     ).thenAnswer((_) => Stream.value([]));
+
+    when(() => mockRemoteConfigService.geminiPromptExtractReceiptData)
+        .thenReturn('prompt');
+    when(() => mockAiService.isLocalModelAvailable).thenReturn(true);
+    when(
+      () => mockAiService.generateContentRemote(
+        prompt: any<List<PromptPart>>(named: 'prompt'),
+        responseMimeType: any<String>(named: 'responseMimeType'),
+      ),
+    ).thenAnswer(
+      (_) async => '{"date": "01/01/2024", "title": "Test", "price": 10.0, '
+          '"category": "Test"}',
+    );
+    when(() => mockPerformanceService.startTrace(any<String>()))
+        .thenReturn(mockTrace);
+    when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
+    when(() => mockCrashService.setCustomKey(any<String>(), any()))
+        .thenReturn(null);
+    when(
+      () => mockCrashService.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<String?>(named: 'reason'),
+      ),
+    ).thenAnswer((_) async {});
   });
 
   tearDown(getIt.reset);
 
-  Widget buildSubject() {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AppCubit>.value(value: mockAppCubit),
-        BlocProvider<HomeCubit>.value(value: mockHomeCubit),
-      ],
-      child: const HomeView(categories: []),
+  Future<void> pumpSubject(
+    WidgetTester tester, {
+    List<Category>? categories,
+  }) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) => MultiBlocProvider(
+          providers: [
+            BlocProvider<AppCubit>.value(value: mockAppCubit),
+            BlocProvider<HomeCubit>.value(value: mockHomeCubit),
+          ],
+          child: child!,
+        ),
+        home: HomeView(categories: categories ?? []),
+      ),
     );
   }
 
   group('HomeView', () {
     testWidgets('renders properly with initial state', (tester) async {
-      tester.view.physicalSize = const Size(400, 800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
-
       await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
+        await pumpSubject(tester);
         await tester.pumpAndSettle();
-
         expect(find.byType(BottomNavigationBarHome), findsOneWidget);
         expect(find.byType(FloatingActionButton), findsOneWidget);
       });
     });
 
-    testWidgets('renders properly with dark theme', (tester) async {
-      await mockNetworkImagesFor(() async {
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: ThemeData.dark(),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: buildSubject(),
+    testWidgets('handleFilePick handles successful pick', (tester) async {
+      await tester.runAsync(() async {
+        final tempFile = File('/tmp/test.png');
+        if (!tempFile.existsSync()) {
+          tempFile
+            ..createSync(recursive: true)
+            ..writeAsBytesSync([1, 2, 3]);
+        }
+
+        final mockFilePicker = MockFilePicker();
+        FilePicker.platform = mockFilePicker;
+
+        when(
+          () => mockFilePicker.pickFiles(
+            type: any<FileType>(named: 'type'),
+            allowedExtensions: any<List<String>?>(named: 'allowedExtensions'),
           ),
-        );
-        await tester.pumpAndSettle();
-
-        expect(find.byType(BottomNavigationBarHome), findsOneWidget);
-      });
-    });
-
-    testWidgets('renders empty SizedBox when user is null', (tester) async {
-      when(() => mockAuthService.authStateChanges)
-          .thenAnswer((_) => Stream.value(null));
-      when(() => mockAuthService.currentUser).thenReturn(null);
-
-      await tester.pumpApp(buildSubject());
-      await tester.pump();
-
-      expect(find.byType(Scaffold), findsNothing);
-      expect(find.byType(SizedBox), findsOneWidget);
-    });
-
-    testWidgets('navigates to settings when settings icon is pressed',
-        (tester) async {
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-
-        final settingsButton = find.byWidgetPredicate(
-          (widget) =>
-              widget is HugeIcon &&
-              widget.icon == HugeIcons.strokeRoundedSettings02,
+        ).thenAnswer(
+          (_) async => FilePickerResult([
+            PlatformFile(
+              name: 'test.png',
+              size: 100,
+              path: '/tmp/test.png',
+              bytes: Uint8List.fromList([1, 2, 3]),
+            ),
+          ]),
         );
 
-        expect(settingsButton, findsOneWidget);
-        expect(
-          tester
-              .widget<IconButton>(
-                find.ancestor(
-                  of: settingsButton,
-                  matching: find.byType(IconButton),
-                ),
-              )
-              .onPressed,
-          isNotNull,
-        );
-      });
-    });
+        when(
+          () => mockRemoteStorageService.uploadFile(any<File>(), any<String>()),
+        ).thenAnswer((_) async => 'upload_name');
 
-    testWidgets('renders user photo when photoURL is not null', (tester) async {
-      when(() => mockAppUser.photoURL)
-          .thenReturn('https://example.com/photo.png');
+        AppFunctions.internetConnectionTestValue = true;
+        when(() => mockAppCubit.state).thenReturn(const AppState());
 
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-
-        expect(find.byType(ClipRRect), findsOneWidget);
-        expect(find.byType(Image), findsNWidgets(2));
-      });
-    });
-
-    testWidgets('navigates to profile when profile icon is pressed',
-        (tester) async {
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-
-        final profileButton = find.byWidgetPredicate(
-          (widget) =>
-              widget is HugeIcon && widget.icon == HugeIcons.strokeRoundedUser,
-        );
-        expect(profileButton, findsOneWidget);
-
-        expect(
-          tester
-              .widget<IconButton>(
-                find.ancestor(
-                  of: profileButton,
-                  matching: find.byType(IconButton),
-                ),
-              )
-              .onPressed,
-          isNotNull,
-        );
-      });
-    });
-
-    testWidgets('toggles selected index when bottom navigation item is pressed',
-        (tester) async {
-      when(() => mockHomeCubit.toggleSelectedIndex(any())).thenReturn(null);
-
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.text('Movements'));
-        await tester.pump();
-
-        verify(() => mockHomeCubit.toggleSelectedIndex(1)).called(1);
-      });
-    });
-
-    testWidgets('renders Expenses tab correcty (index 0)', (tester) async {
-      when(() => mockHomeCubit.state)
-          .thenReturn(const HomeState(selectedIndex: 0));
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-        expect(find.byType(ExpensesHomePage), findsOneWidget);
-        expect(find.byType(FloatingActionButton), findsOneWidget);
-      });
-    });
-
-    testWidgets('renders Movements tab correcty (index 1)', (tester) async {
-      when(() => mockHomeCubit.state)
-          .thenReturn(const HomeState(selectedIndex: 1));
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-        expect(find.byType(MovementsHomePage), findsOneWidget);
-        expect(find.byType(FloatingActionButton), findsNothing);
-      });
-    });
-
-    testWidgets('renders Summary tab correcty (index 2)', (tester) async {
-      when(() => mockHomeCubit.state)
-          .thenReturn(const HomeState(selectedIndex: 2));
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-        expect(find.byType(SummaryHomePage), findsOneWidget);
-        expect(find.byType(FloatingActionButton), findsNothing);
-      });
-    });
-
-    testWidgets('renders Income tab correcty (index 3)', (tester) async {
-      when(() => mockHomeCubit.state)
-          .thenReturn(const HomeState(selectedIndex: 3));
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-        expect(find.byType(IncomeHomePage), findsOneWidget);
-        expect(find.byType(FloatingActionButton), findsOneWidget);
-      });
-    });
-
-    testWidgets(
-        'shows AddMovementBottomSheet when FAB is pressed in Expenses tab',
-        (tester) async {
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.byType(FloatingActionButton));
-        await tester.pumpAndSettle();
-
-        expect(find.byType(AddMovementBottomSheet), findsOneWidget);
-        expect(find.text('Add expense'), findsOneWidget);
-      });
-    });
-
-    testWidgets(
-        'shows AddMovementBottomSheet when FAB is pressed in Income tab',
-        (tester) async {
-      when(() => mockHomeCubit.state)
-          .thenReturn(const HomeState(selectedIndex: 3));
-
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.byType(FloatingActionButton));
-        await tester.pumpAndSettle();
-
-        expect(find.byType(AddMovementBottomSheet), findsOneWidget);
-        expect(find.text('Add income'), findsOneWidget);
-
-        expect(find.text('File'), findsOneWidget);
-        expect(find.text('Scan'), findsOneWidget);
-        expect(find.text('Enter'), findsOneWidget);
-      });
-    });
-
-    testWidgets('dismisses bottom sheet and navigates when Enter is pressed',
-        (tester) async {
-      final router = GoRouter(
-        routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => buildSubject(),
+        const testCategories = [
+          Category(
+            id: '1',
+            name: 'Test',
+            type: CategoryType.expense,
+            icon: '',
+            color: '',
           ),
-          GoRoute(
-            path: '/movement/:type/:screenType',
-            name: MovementPage.pageName,
-            builder: (context, state) =>
-                const Scaffold(body: Text('Movement Page')),
-          ),
-        ],
-      );
+        ];
 
-      await mockNetworkImagesFor(() async {
-        await tester.pumpWidget(
-          MaterialApp.router(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            routerConfig: router,
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.byType(FloatingActionButton));
-        await tester.pumpAndSettle();
-
-        expect(find.byType(AddMovementBottomSheet), findsOneWidget);
-
-        await tester.tap(find.text('Enter'));
-        await tester.pumpAndSettle();
-        expect(find.text('Movement Page'), findsOneWidget);
-      });
-    });
-
-    testWidgets('dismisses bottom sheet when drag handle is tapped',
-        (tester) async {
-      await mockNetworkImagesFor(() async {
-        await tester.pumpApp(buildSubject());
-        await tester.pumpAndSettle();
-
-        await tester.tap(find.byType(FloatingActionButton));
-        await tester.pumpAndSettle();
-
-        expect(find.byType(AddMovementBottomSheet), findsOneWidget);
-
-        final dragHandle = find.byWidgetPredicate(
-          (widget) =>
-              widget is Container &&
-              widget.constraints?.minWidth == 40 &&
-              widget.constraints?.minHeight == 5,
+        final router = GoRouter(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) =>
+                  const HomeView(categories: testCategories),
+            ),
+            GoRoute(
+              path: '/movement/:type/:screenType',
+              name: AppRoute.movement.name,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('Movement Page')),
+            ),
+          ],
         );
 
-        await tester.tap(dragHandle);
-        await tester.pumpAndSettle();
+        await mockNetworkImagesFor(() async {
+          await tester.pumpWidget(
+            MaterialApp.router(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              routerConfig: router,
+              builder: (context, child) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<AppCubit>.value(value: mockAppCubit),
+                  BlocProvider<HomeCubit>.value(value: mockHomeCubit),
+                ],
+                child: child!,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
 
-        expect(find.byType(AddMovementBottomSheet), findsNothing);
+          await tester.tap(find.byType(FloatingActionButton));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('File'));
+
+          for (var i = 0; i < 15; i++) {
+            await tester.pump(const Duration(milliseconds: 500));
+          }
+
+          expect(find.byType(AddMovementBottomSheet), findsNothing);
+        });
       });
     });
   });

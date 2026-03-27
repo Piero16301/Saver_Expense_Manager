@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,9 +14,11 @@ class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 class MockCategoryCubit extends MockCubit<CategoryState>
     implements CategoryCubit {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockDatabaseService extends Mock implements DatabaseService {}
+
+class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
 void main() {
   setUpAll(() {
@@ -28,8 +29,9 @@ void main() {
   group('CategoryView', () {
     late AppCubit appCubit;
     late CategoryCubit categoryCubit;
-    late AuthenticationService mockAuth;
+    late AuthService mockAuth;
     late DatabaseService mockDatabase;
+    late MockRemoteConfigService mockRemoteConfig;
 
     const category = Category(
       id: '1',
@@ -42,42 +44,42 @@ void main() {
     setUp(() async {
       appCubit = MockAppCubit();
       categoryCubit = MockCategoryCubit();
-      mockAuth = MockAuthenticationService();
+      mockAuth = MockAuthService();
       mockDatabase = MockDatabaseService();
+      mockRemoteConfig = MockRemoteConfigService();
 
       when(() => appCubit.state).thenReturn(const AppState());
       when(() => categoryCubit.state)
           .thenReturn(const CategoryState(category: category));
       when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user1'));
       when(
-        () => mockDatabase.getTrendChartStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
-          category: category,
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
-      final instance = FakeFirebaseFirestore();
-      final query = instance.collection('movements');
-      when(
-        () => mockDatabase.getCategoryMovementsQuery(
-          userId: any(named: 'userId'),
-          category: category,
-          monthSelected: any(named: 'monthSelected'),
-        ),
-      ).thenReturn(query);
-
-      if (getIt.isRegistered<AuthenticationService>()) {
-        await getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        await getIt.unregister<AuthService>();
       }
       if (getIt.isRegistered<DatabaseService>()) {
-        getIt.unregister<DatabaseService>();
+        await getIt.unregister<DatabaseService>();
+      }
+      if (getIt.isRegistered<RemoteConfigService>()) {
+        await getIt.unregister<RemoteConfigService>();
       }
 
       getIt
-        ..registerSingleton<AuthenticationService>(mockAuth)
-        ..registerSingleton<DatabaseService>(mockDatabase);
+        ..registerSingleton<AuthService>(mockAuth)
+        ..registerSingleton<DatabaseService>(mockDatabase)
+        ..registerSingleton<RemoteConfigService>(mockRemoteConfig);
+
+      when(() => mockRemoteConfig.paginationLimit).thenReturn(10);
     });
 
     Widget createWidgetUnderTest({
@@ -133,11 +135,14 @@ void main() {
 
     testWidgets('CategoryTabBar switches tabs', (tester) async {
       when(
-        () => mockDatabase.getTrendChartStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
-          category: any(named: 'category'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value([]));
 
@@ -157,11 +162,14 @@ void main() {
         (tester) async {
       final streamController = StreamController<List<Movement>>();
       when(
-        () => mockDatabase.getTrendChartStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
-          category: any(named: 'category'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => streamController.stream);
 
@@ -195,11 +203,14 @@ void main() {
       ];
 
       when(
-        () => mockDatabase.getTrendChartStream(
+        () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
-          startMonth: any(named: 'startMonth'),
-          endMonth: any(named: 'endMonth'),
-          category: any(named: 'category'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
         ),
       ).thenAnswer((_) => Stream.value(movements));
 
@@ -212,7 +223,45 @@ void main() {
       await tester.pump(const Duration(seconds: 3));
     });
 
-    testWidgets('TabMovementsCategory handles month navigation',
+    testWidgets('TabTrendCategory handles date range changes', (tester) async {
+      final streamController = StreamController<List<Movement>>();
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => streamController.stream);
+
+      await tester.pumpWidget(createWidgetUnderTest());
+      await tester.pump();
+
+      final monthRangeSelector = tester.widget<MonthRangeSelector>(
+        find.byType(MonthRangeSelector),
+      );
+
+      monthRangeSelector.onChangeStartMonth(DateTime(2023, 5));
+      await tester.pump();
+
+      final r2 =
+          tester.widget<MonthRangeSelector>(find.byType(MonthRangeSelector));
+      r2.onChangeEndMonth(DateTime(2023, 6));
+      await tester.pump();
+
+      final r3 =
+          tester.widget<MonthRangeSelector>(find.byType(MonthRangeSelector));
+      r3.onChangeStartMonth(null);
+      r3.onChangeEndMonth(null);
+      await tester.pump();
+
+      await streamController.close();
+    });
+
+    testWidgets('TabMovementsCategory handles month navigation edge cases',
         (tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pump();
@@ -222,11 +271,36 @@ void main() {
 
       expect(find.byType(MonthSelector), findsOneWidget);
 
-      await tester.tap(
-        find.byType(IconButton).at(1),
+      final monthSelector = tester.widget<MonthSelector>(
+        find.byType(MonthSelector),
       );
+
+      monthSelector.onBack();
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+
+      final m2 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m2.onForward();
+      await tester.pump();
+
+      final m3 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m3.onChangeMonth(DateTime(2023));
+      await tester.pump();
+
+      final m4 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m4.onBack();
+      await tester.pump();
+
+      final m5 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m5.onChangeMonth(DateTime(2023, 12));
+      await tester.pump();
+
+      final m6 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m6.onForward();
+      await tester.pump();
+
+      final m7 = tester.widget<MonthSelector>(find.byType(MonthSelector));
+      m7.onChangeMonth(null);
+      await tester.pump();
     });
   });
 }

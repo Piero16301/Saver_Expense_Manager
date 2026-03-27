@@ -12,7 +12,7 @@ import 'package:saver_expense_manager/movement/movement.dart';
 class MockMovementCubit extends MockCubit<MovementState>
     implements MovementCubit {}
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockAppUser extends Mock implements AppUser {}
 
@@ -25,7 +25,7 @@ void main() {
 
   group('MovementView', () {
     late MovementCubit movementCubit;
-    late AuthenticationService authenticationService;
+    late AuthService authenticationService;
     late AppUser user;
     late AppCubit appCubit;
 
@@ -57,7 +57,7 @@ void main() {
 
     setUp(() async {
       movementCubit = MockMovementCubit();
-      authenticationService = MockAuthenticationService();
+      authenticationService = MockAuthService();
       user = MockAppUser();
       appCubit = MockAppCubit();
 
@@ -65,10 +65,10 @@ void main() {
       when(() => authenticationService.currentUser).thenReturn(user);
       when(() => appCubit.state).thenReturn(const AppState());
 
-      if (getIt.isRegistered<AuthenticationService>()) {
-        await getIt.unregister<AuthenticationService>();
+      if (getIt.isRegistered<AuthService>()) {
+        await getIt.unregister<AuthService>();
       }
-      getIt.registerSingleton<AuthenticationService>(authenticationService);
+      getIt.registerSingleton<AuthService>(authenticationService);
 
       when(() => movementCubit.state).thenReturn(initialState);
     });
@@ -134,7 +134,8 @@ void main() {
     });
 
     testWidgets('calls saveMovement when FAB is pressed', (tester) async {
-      when(() => movementCubit.saveMovement(any(), any())).thenReturn(true);
+      when(() => movementCubit.saveMovement(any(), any()))
+          .thenAnswer((_) async => true);
 
       await pumpMovementView(tester);
       await tester.tap(find.byType(FloatingActionButton));
@@ -147,7 +148,7 @@ void main() {
     testWidgets(
         'shows delete dialog and calls removeMovement when delete button '
         'is pressed', (tester) async {
-      when(() => movementCubit.removeMovement()).thenReturn(true);
+      when(() => movementCubit.removeMovement()).thenAnswer((_) async => true);
 
       await pumpMovementView(tester, screenType: MovementScreenType.edit);
 

@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockAuthenticationService extends Mock implements AuthenticationService {}
+class MockAuthService extends Mock implements AuthService {}
 
 class MockLocalStorageService extends Mock implements LocalStorageService {}
 
@@ -17,7 +17,7 @@ class MockAnalyticsService extends Mock implements AnalyticsService {}
 class MockUser extends Mock implements AppUser {}
 
 void main() {
-  late AuthenticationService authenticationService;
+  late AuthService authenticationService;
   late LocalStorageService localStorageService;
   late MockAnalyticsService mockAnalyticsService;
   late MockUser mockUser;
@@ -30,22 +30,19 @@ void main() {
   });
 
   setUp(() async {
-    authenticationService = MockAuthenticationService();
+    authenticationService = MockAuthService();
     localStorageService = MockLocalStorageService();
     mockAnalyticsService = MockAnalyticsService();
     mockUser = MockUser();
 
     when(() => mockUser.uid).thenReturn('test_uid');
 
-    when(() => mockAnalyticsService.getRouteObserver())
-        .thenReturn(NavigatorObserver());
-
     when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
         .thenAnswer((_) {});
 
     final getIt = GetIt.instance;
-    if (getIt.isRegistered<AuthenticationService>()) {
-      await getIt.unregister<AuthenticationService>();
+    if (getIt.isRegistered<AuthService>()) {
+      await getIt.unregister<AuthService>();
     }
     if (getIt.isRegistered<LocalStorageService>()) {
       await getIt.unregister<LocalStorageService>();
@@ -55,7 +52,7 @@ void main() {
     }
 
     getIt
-      ..registerLazySingleton<AuthenticationService>(
+      ..registerLazySingleton<AuthService>(
         () => authenticationService,
       )
       ..registerLazySingleton<LocalStorageService>(() => localStorageService)

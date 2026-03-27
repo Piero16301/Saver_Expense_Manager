@@ -1,9 +1,8 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseCrashlytics extends Mock implements FirebaseCrashlytics {}
+class MockFirebaseCrashlytics extends Mock implements CrashRepository {}
 
 void main() {
   group('CrashService', () {
@@ -12,7 +11,7 @@ void main() {
 
     setUp(() {
       mockCrashlytics = MockFirebaseCrashlytics();
-      crashService = CrashService(crashlytics: mockCrashlytics);
+      crashService = CrashService(crashRepository: mockCrashlytics);
     });
 
     test('recordError calls FirebaseCrashlytics.recordError', () {

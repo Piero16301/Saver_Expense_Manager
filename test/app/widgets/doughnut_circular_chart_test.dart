@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/category/category.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -72,7 +71,7 @@ void main() {
             ),
           ),
           GoRoute(
-            name: CategoryPage.pageName,
+            name: AppRoute.category.name,
             path: '/category',
             builder: (context, state) =>
                 const Scaffold(body: Text('Category Detail Page')),

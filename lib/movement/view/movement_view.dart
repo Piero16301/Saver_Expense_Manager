@@ -18,7 +18,7 @@ class MovementView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = getIt<AuthenticationService>();
+    final auth = getIt<AuthService>();
     final user = auth.currentUser!;
     final l10n = AppLocalizations.of(context);
 
@@ -183,12 +183,12 @@ class MovementView extends StatelessWidget {
     );
   }
 
-  void _onSaveButtonPressed(
+  Future<void> _onSaveButtonPressed(
     BuildContext context,
     DateTime selectedDate,
     String uid,
     AppLocalizations l10n,
-  ) {
+  ) async {
     if (selectedDate.isBefore(
       DateTime.now().subtract(
         const Duration(days: AppVariables.maxDaysWarning),
@@ -210,9 +210,35 @@ class MovementView extends StatelessWidget {
         ),
       );
     } else {
-      final result = context.read<MovementCubit>().saveMovement(uid, l10n);
+      final result =
+          await context.read<MovementCubit>().saveMovement(uid, l10n);
       if (result == null) return;
 
+      if (context.mounted) {
+        if (result) {
+          context.pop<bool>(true);
+        } else {
+          AppFunctions.showSnackBar(
+            context,
+            message: l10n.movementSaveError,
+            type: SnackBarType.error,
+          );
+        }
+      }
+    }
+  }
+
+  Future<void> _onConfirmDialog(
+    BuildContext context,
+    String uid,
+    AppLocalizations l10n,
+  ) async {
+    context.pop();
+
+    final result = await context.read<MovementCubit>().saveMovement(uid, l10n);
+    if (result == null) return;
+
+    if (context.mounted) {
       if (result) {
         context.pop<bool>(true);
       } else {
@@ -222,27 +248,6 @@ class MovementView extends StatelessWidget {
           type: SnackBarType.error,
         );
       }
-    }
-  }
-
-  void _onConfirmDialog(
-    BuildContext context,
-    String uid,
-    AppLocalizations l10n,
-  ) {
-    context.pop();
-
-    final result = context.read<MovementCubit>().saveMovement(uid, l10n);
-    if (result == null) return;
-
-    if (result) {
-      context.pop<bool>(true);
-    } else {
-      AppFunctions.showSnackBar(
-        context,
-        message: l10n.movementSaveError,
-        type: SnackBarType.error,
-      );
     }
   }
 
@@ -282,21 +287,25 @@ class MovementView extends StatelessWidget {
           content: l10n.confirmDeleteMovementMessage,
           confirmLabel: l10n.deleteMovementConfirm,
           cancelLabel: l10n.deleteMovementCancel,
-          onConfirm: () {
+          onConfirm: () async {
             Navigator.of(dialogContext).pop();
-            if (context.read<MovementCubit>().removeMovement()) {
-              AppFunctions.showSnackBar(
-                context,
-                message: l10n.movementDeleteSuccess,
-                type: SnackBarType.success,
-              );
-              context.pop<bool>(true);
-            } else {
-              AppFunctions.showSnackBar(
-                context,
-                message: l10n.movementDeleteError,
-                type: SnackBarType.error,
-              );
+            final success =
+                await context.read<MovementCubit>().removeMovement();
+            if (context.mounted) {
+              if (success) {
+                AppFunctions.showSnackBar(
+                  context,
+                  message: l10n.movementDeleteSuccess,
+                  type: SnackBarType.success,
+                );
+                context.pop<bool>(true);
+              } else {
+                AppFunctions.showSnackBar(
+                  context,
+                  message: l10n.movementDeleteError,
+                  type: SnackBarType.error,
+                );
+              }
             }
           },
           onCancel: () => Navigator.of(dialogContext).pop(),

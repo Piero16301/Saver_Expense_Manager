@@ -1,113 +1,57 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseStorage extends Mock implements FirebaseStorage {}
+class FakeFile extends Fake implements File {}
 
-class MockReference extends Mock implements Reference {}
-
-class MockCrashService extends Mock implements CrashService {}
-
-class FakeTaskSnapshot extends Fake implements TaskSnapshot {}
-
-class FakeUploadTask extends Fake implements UploadTask {
-  @override
-  Future<S> then<S>(
-    FutureOr<S> Function(TaskSnapshot) onValue, {
-    Function? onError,
-  }) {
-    return Future.value(FakeTaskSnapshot()).then(onValue, onError: onError);
-  }
-}
+class MockRemoteStorageRepository extends Mock
+    implements RemoteStorageRepository {}
 
 void main() {
-  late RemoteStorageService remoteStorageService;
-  late MockFirebaseStorage mockFirebaseStorage;
-  late MockReference mockReference;
-  late MockReference mockChildReference;
-  late MockCrashService mockCrashService;
-
-  setUp(() {
-    mockFirebaseStorage = MockFirebaseStorage();
-    mockReference = MockReference();
-    mockChildReference = MockReference();
-    mockCrashService = MockCrashService();
-
-    getIt.registerSingleton<CrashService>(mockCrashService);
-    when(
-      () => mockCrashService.recordError(
-        any<dynamic>(),
-        any<StackTrace?>(),
-        reason: any<dynamic>(named: 'reason'),
-      ),
-    ).thenAnswer((_) async {});
-
-    when(() => mockFirebaseStorage.ref()).thenReturn(mockReference);
-    when(() => mockReference.child(any())).thenReturn(mockChildReference);
-
-    remoteStorageService = RemoteStorageService(storage: mockFirebaseStorage);
-  });
-
-  tearDown(getIt.reset);
+  late RemoteStorageService service;
+  late MockRemoteStorageRepository mockRepository;
 
   setUpAll(() {
-    registerFallbackValue(File('dummy.png'));
+    registerFallbackValue(FakeFile());
+  });
+
+  setUp(() {
+    mockRepository = MockRemoteStorageRepository();
+    service = RemoteStorageService(remoteStorageRepository: mockRepository);
   });
 
   group('RemoteStorageService', () {
-    test('deleteFile calls delete on reference', () async {
-      when(() => mockChildReference.delete()).thenAnswer((_) async {});
-
-      await remoteStorageService.deleteFile('path/to/file.png');
-
-      verify(() => mockReference.child('path/to/file.png')).called(1);
-      verify(() => mockChildReference.delete()).called(1);
+    test('can be instantiated', () {
+      expect(service, isNotNull);
     });
 
-    test('uploadFile returns ref.name on success', () async {
-      final fakeUploadTask = FakeUploadTask();
-      when(() => mockChildReference.putFile(any()))
-          .thenAnswer((_) => fakeUploadTask);
-      when(() => mockChildReference.name).thenReturn('file.png');
-
-      final result = await remoteStorageService.uploadFile(
-        File('dummy.png'),
-        'path/to/file.png',
-      );
-
-      if (result != null) {
-        expect(result, 'file.png');
-        verify(() => mockReference.child('path/to/file.png')).called(1);
-        verify(() => mockChildReference.putFile(any())).called(1);
-      }
+    test('deleteFile calls repository', () async {
+      when(() => mockRepository.deleteFile(any<String>()))
+          .thenAnswer((_) async => true);
+      final result = await service.deleteFile('path');
+      expect(result, isTrue);
+      verify(() => mockRepository.deleteFile('path')).called(1);
     });
 
-    test('uploadFile returns null on Exception', () async {
-      when(() => mockChildReference.putFile(any()))
-          .thenThrow(Exception('Upload failed'));
-
-      final result = await remoteStorageService.uploadFile(
-        File('dummy.png'),
-        'path/to/file.png',
-      );
-
-      expect(result, isNull);
+    test('uploadFile calls repository', () async {
+      final file = FakeFile();
+      when(() => mockRepository.uploadFile(any<File>(), any<String>()))
+          .thenAnswer((_) async => 'url');
+      final result = await service.uploadFile(file, 'path');
+      expect(result, equals('url'));
+      verify(() => mockRepository.uploadFile(file, 'path')).called(1);
     });
 
-    test('getData calls getData on reference', () async {
-      final data = Uint8List.fromList([1, 2, 3]);
-      when(() => mockChildReference.getData()).thenAnswer((_) async => data);
-
-      final result = await remoteStorageService.getData('path/to/file.png');
-
-      expect(result, data);
-      verify(() => mockReference.child('path/to/file.png')).called(1);
-      verify(() => mockChildReference.getData()).called(1);
+    test('getData calls repository', () async {
+      final data = Uint8List(0);
+      when(() => mockRepository.getData(any<String>()))
+          .thenAnswer((_) async => data);
+      final result = await service.getData('path');
+      expect(result, equals(data));
+      verify(() => mockRepository.getData('path')).called(1);
     });
   });
 }
