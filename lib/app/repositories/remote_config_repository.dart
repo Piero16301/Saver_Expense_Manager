@@ -15,6 +15,7 @@ abstract class RemoteConfigRepository {
   static const String configGeminiAntLookbackDays =
       'config_gemini_ant_lookback_days';
   static const String configPaginationLimit = 'config_pagination_limit';
+  static const String configSummaryLastMonths = 'config_summary_last_months';
 
   Future<void> initialize();
   String get homeInitialTab;
@@ -23,6 +24,7 @@ abstract class RemoteConfigRepository {
   String get geminiPromptDetectAntExpense;
   int get geminiAntLookbackDays;
   int get paginationLimit;
+  int get summaryLastMonths;
 }
 
 class MockRemoteConfigRepository implements RemoteConfigRepository {
@@ -48,6 +50,9 @@ class MockRemoteConfigRepository implements RemoteConfigRepository {
 
   @override
   int get paginationLimit => 10;
+
+  @override
+  int get summaryLastMonths => 4;
 }
 
 class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
@@ -67,6 +72,7 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
           'config_gemini_prompt_detect_ant_expense',
       RemoteConfigRepository.configGeminiAntLookbackDays: 30,
       RemoteConfigRepository.configPaginationLimit: 10,
+      RemoteConfigRepository.configSummaryLastMonths: 4,
     });
 
     try {
@@ -111,4 +117,8 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
   @override
   int get paginationLimit =>
       _remoteConfig.getInt(RemoteConfigRepository.configPaginationLimit);
+
+  @override
+  int get summaryLastMonths =>
+      _remoteConfig.getInt(RemoteConfigRepository.configSummaryLastMonths);
 }

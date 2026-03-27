@@ -46,7 +46,6 @@ class HomeView extends StatelessWidget {
                 height: 35,
               ),
               centerTitle: true,
-              notificationPredicate: (notification) => false,
               leading: IconButton(
                 padding: EdgeInsets.zero,
                 icon: const HugeIcon(
@@ -246,35 +245,36 @@ class AddMovementBottomSheet extends StatelessWidget {
         categories.where((c) => c.type == movementType).toList();
     final loader = AppLoader(context);
 
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: AppVariables.allowedExtensions,
-    );
-
-    if (result == null) {
-      return;
-    }
-
-    unawaited(loader.showLoading(message: l10n.checkInternetConnection));
-
-    final hasInternet = await AppFunctions.hasInternetConnection();
-    final modelType = hasInternet ? ModelType.cloud : ModelType.local;
-
-    if (loader.isLoading) {
-      loader.hideLoading();
-    }
-
-    unawaited(
-      loader.showLoading(
-        message:
-            modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
-      ),
-    );
-
-    getIt<CrashService>().setCustomKey('file_pick_model_type', modelType.name);
-    getIt<CrashService>().setCustomKey('movement_type', movementType.name);
-
     try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: AppVariables.allowedExtensions,
+      );
+
+      if (result == null) {
+        return;
+      }
+
+      unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+
+      final hasInternet = await AppFunctions.hasInternetConnection();
+      final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+
+      unawaited(
+        loader.showLoading(
+          message:
+              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+        ),
+      );
+
+      getIt<CrashService>()
+          .setCustomKey('file_pick_model_type', modelType.name);
+      getIt<CrashService>().setCustomKey('movement_type', movementType.name);
+
       if (modelType.isLocal &&
           !AppVariables.imageExtensions
               .contains(result.files.first.extension)) {
@@ -357,33 +357,34 @@ class AddMovementBottomSheet extends StatelessWidget {
         categories.where((c) => c.type == movementType).toList();
     final loader = AppLoader(context);
 
-    final files = await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
-
-    if (files.isEmpty) {
-      return;
-    }
-
-    unawaited(loader.showLoading(message: l10n.checkInternetConnection));
-
-    final hasInternet = await AppFunctions.hasInternetConnection();
-    final modelType = hasInternet ? ModelType.cloud : ModelType.local;
-
-    if (loader.isLoading) {
-      loader.hideLoading();
-    }
-
-    unawaited(
-      loader.showLoading(
-        message:
-            modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
-      ),
-    );
-
-    getIt<CrashService>()
-        .setCustomKey('document_scan_model_type', modelType.name);
-    getIt<CrashService>().setCustomKey('movement_type', movementType.name);
-
     try {
+      final files =
+          await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
+
+      if (files.isEmpty) {
+        return;
+      }
+
+      unawaited(loader.showLoading(message: l10n.checkInternetConnection));
+
+      final hasInternet = await AppFunctions.hasInternetConnection();
+      final modelType = hasInternet ? ModelType.cloud : ModelType.local;
+
+      if (loader.isLoading) {
+        loader.hideLoading();
+      }
+
+      unawaited(
+        loader.showLoading(
+          message:
+              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+        ),
+      );
+
+      getIt<CrashService>()
+          .setCustomKey('document_scan_model_type', modelType.name);
+      getIt<CrashService>().setCustomKey('movement_type', movementType.name);
+
       if (modelType.isLocal &&
           !AppVariables.imageExtensions.contains(files.first.split('.').last)) {
         throw Exception(AppVariables.unsupportedLocalModelFile);
