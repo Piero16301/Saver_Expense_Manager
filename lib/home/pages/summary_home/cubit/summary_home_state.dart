@@ -9,7 +9,9 @@ class SummaryHomeState extends Equatable {
 
   factory SummaryHomeState.initial() {
     return SummaryHomeState(
-      startMonth: AppFunctions.substracMonth(AppVariables.deafultMonthsResume),
+      startMonth: AppFunctions.substracMonth(
+        getIt<RemoteConfigService>().summaryLastMonths,
+      ),
       endMonth: DateTime.now(),
       selResumeItems: const <ResumeItemType, bool>{
         ResumeItemType.income: true,

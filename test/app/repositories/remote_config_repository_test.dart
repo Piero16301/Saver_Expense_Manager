@@ -38,6 +38,7 @@ void main() {
       expect(mock.geminiPromptDetectAntExpense, isNotEmpty);
       expect(mock.geminiAntLookbackDays, equals(30));
       expect(mock.paginationLimit, equals(10));
+      expect(mock.summaryLastMonths, equals(4));
     });
   });
 
@@ -92,9 +93,10 @@ void main() {
       expect(repository.geminiPromptDetectAntExpense, equals('value'));
       expect(repository.geminiAntLookbackDays, equals(123));
       expect(repository.paginationLimit, equals(123));
+      expect(repository.summaryLastMonths, equals(123));
 
       verify(() => mockRemoteConfig.getString(any<String>())).called(4);
-      verify(() => mockRemoteConfig.getInt(any<String>())).called(2);
+      verify(() => mockRemoteConfig.getInt(any<String>())).called(3);
     });
   });
 }

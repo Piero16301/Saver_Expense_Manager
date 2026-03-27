@@ -56,5 +56,10 @@ void main() {
       when(() => mockRepository.paginationLimit).thenReturn(20);
       expect(service.paginationLimit, equals(20));
     });
+
+    test('summaryLastMonths returns from repository', () {
+      when(() => mockRepository.summaryLastMonths).thenReturn(4);
+      expect(service.summaryLastMonths, equals(4));
+    });
   });
 }

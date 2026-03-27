@@ -54,6 +54,7 @@ void main() {
     mockDatabaseService = MockDatabaseService();
     mockRemoteConfigService = MockRemoteConfigService();
     when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
+    when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
     mockAuthService = MockAuthService();
     mockAppCubit = MockAppCubit();
     mockSummaryHomeCubit = MockSummaryHomeCubit();
@@ -77,6 +78,8 @@ void main() {
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
       ..registerSingleton<AuthService>(mockAuthService);
   });
+
+  tearDown(getIt.reset);
 
   group('SummaryHomePage', () {
     Widget buildPage() {
@@ -146,7 +149,11 @@ void main() {
   });
 
   group('SummaryHomeView', () {
-    final initialState = SummaryHomeState.initial();
+    late SummaryHomeState initialState;
+
+    setUp(() {
+      initialState = SummaryHomeState.initial();
+    });
 
     Widget buildView({
       List<Category>? categories,

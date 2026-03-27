@@ -40,18 +40,21 @@ flowchart TD
     direction TB
     UI[UI Layer / Views & Widgets]
     
-    subgraph "State Management"
+    subgraph "State Management (Bloc/Cubit)"
       AppCubit[AppCubit<br>Global State]
       FeatureCubits[Feature Cubits<br>Login, Home, Movement, Category]
     end
     
-    subgraph "Services Layer"
-      AuthSvc[Authentication Service]
-      DBSvc[Database Service]
-      AISvc[AI Service]
-      LocalSvc[Local Storage Service]
-      RemoteConfSvc[Remote Config Service]
-      StorageSvc[Remote Storage Service]
+    subgraph "Services Layer (Business Logic)"
+      AppServices[Auth, DB, AI, Storage, Config<br>Crash, Perf, Analytics]
+    end
+
+    subgraph "Repositories Layer (Data Access)"
+      AppRepos[AuthRepo, DBRepo, AIRepo, StorageRepo<br>ConfigRepo, TelemetryRepos]
+    end
+    
+    subgraph "Dependency Injection (GetIt)"
+      DI[ServiceLocator / ServiceFactory<br>Mock & Prod Environments]
     end
     
     subgraph "Local Data"
@@ -59,45 +62,37 @@ flowchart TD
     end
   end
 
-  %% Invisible link to force vertical ordering (Mobile App above Cloud Backend)
-  SharedPrefs ~~~ FirebaseAuth
-
+  %% Internal App Flow
+  UI <-->|Events & States| FeatureCubits
+  UI <-->|App Settings| AppCubit
+  
+  FeatureCubits --> AppServices
+  AppCubit --> AppServices
+  
+  AppServices --> AppRepos
+  DI -.->|Injects| AppServices
+  DI -.->|Injects| AppRepos
+  
+  AppRepos <-->|Read/Write Prefs| SharedPrefs
+  
   subgraph "Cloud Backend & AI"
     direction TB
     FirebaseAuth((Firebase Auth))
     Firestore((Cloud Firestore))
     FirebaseStorage((Firebase Storage))
     RemoteConfig((Remote Config))
+    FirebaseTelemetry((Crashlytics, Analytics, Perf))
     GeminiAI((Gemini AI))
   end
 
-  %% Internal App Flow
-  UI <-->|Events & States| FeatureCubits
-  UI <-->|App Settings| AppCubit
-  
-  FeatureCubits --> AuthSvc
-  FeatureCubits --> DBSvc
-  FeatureCubits --> AISvc
-  FeatureCubits --> StorageSvc
-  
-  AppCubit --> LocalSvc
-  AppCubit --> RemoteConfSvc
-  
-  LocalSvc <-->|Read/Write Prefs| SharedPrefs
-  
-  %% External Integrations
-  AuthSvc <-->|Sign in / Users| FirebaseAuth
-  DBSvc <-->|CRUD Movements/Categories| Firestore
-  StorageSvc <-->|Upload Receipts/Avatars| FirebaseStorage
-  RemoteConfSvc <-->|Fetch Config Strings| RemoteConfig
-  AISvc <-->|Receipt Parsing & Insights| GeminiAI
+  AppRepos <-->|Network & APIs| FirebaseAuth & Firestore & FirebaseStorage & RemoteConfig & FirebaseTelemetry & GeminiAI
 ```
 
 - **UI (Flutter Interface)**: Standardized presentation layer that sends events to the State and interacts with the Services.
 - **State (Bloc/Cubit)**: Manages the application logic, handles read/write operations with the Local DB, and interacts with external services.
 - **Store (Local DB - SharedPreferences)**: Handles local data persistence on the device for quick access and preferences.
-- **Services (Firebase & AI)**: Main communication gateway managing Authentication, Firestore, Remote Config, Storage, and AI features.
-- **Backend**: Firebase provides the core backend infrastructure (Auth, Firestore, Storage, Analytics), while Gemini AI adds smart capabilities to the app.
+- **Services & Repositories**: Follows a strict Repository Pattern. Repositories handle raw data access while Services manage business logic. Connected via Dependency Injection (`get_it`).
+- **Backend**: Firebase provides the core backend infrastructure (Auth, Firestore, Storage, Telemetry), while Gemini AI adds smart capabilities to the app.
 
 ---
 
@@ -131,16 +126,21 @@ flowchart TD
 
 ---
 
-### 4. Services
+### 4. Repositories & Services Layer
 
-| File                                            | Role                                                                                |
-|-------------------------------------------------|-------------------------------------------------------------------------------------|
-| **lib/app/services/authentication_service.dart**| Manages user authentication flows using Firebase Auth and Google Sign-In. |
-| **lib/app/services/database_service.dart**      | Handles CRUD operations for users, movements, and categories via Cloud Firestore. |
-| **lib/app/services/ai_service.dart**            | Integrates with Gemini AI for smart features and document scanning processing.      |
-| **lib/app/services/local_storage_service.dart** | Singleton managing local database persistence using `SharedPreferences`. |
-| **lib/app/services/remote_config_service.dart** | Manages dynamic application configurations via Firebase Remote Config. |
-| **lib/app/services/remote_storage_service.dart**| Handles file uploads and asset management via Firebase Storage. |
+The application implements a Repository Pattern connected via Dependency Injection (`get_it` & `ServiceFactory`). This separates data acquisition from business logic and heavily improves testability through mock environments.
+
+| Layer | Responsibility | Key Files |
+|-------|----------------|-----------|
+| **Repositories** (`lib/app/repositories/`) | Handles raw data access and external API communication. Built to support `Mock` and `Prod` implementations. | `auth_repository.dart`, `database_repository.dart`, `crash_repository.dart`, etc. |
+| **Services** (`lib/app/services/`) | Contains the core business logic, orchestrating internal repository calls and exposing clean APIs to the Cubits. | `auth_service.dart`, `database_service.dart`, `crash_service.dart`, etc. |
+
+**Key Capabilities:**
+- **Infrastructure & Telemetry**: `CrashService`, `PerformanceService`, `AnalyticsService` for robust Firebase App tracking and Crashlytics error logs.
+- **Config & Local Storage**: `LocalStorageService` (SharedPreferences) and `RemoteConfigService` (Firebase Remote Config).
+- **Authentication**: `AuthService` handling Google & Email Sign-In via `AuthRepository`.
+- **Data & Remote Storage**: `DatabaseService` (Firestore CRUD features) and `RemoteStorageService` (Firebase Storage uploads).
+- **Business / AI**: `AiService` interacting with Gemini AI for document scanning and parsing capabilities.
 
 ---
 
@@ -228,6 +228,7 @@ Handles user onboarding, authentication via email/password or Google, and accoun
 |------------------------------------|-------------------------------------------------------|
 | **lib/l10n/app_en.arb**            | English string dictionary values.                     |
 | **lib/l10n/app_es.arb**            | Spanish translation map values.                       |
+| **lib/l10n/app_it.arb**            | Italian translation map values.                       |
 | **lib/l10n/gen/***                 | Folder containing dynamically generated delegates.    |
 
 **Mechanism:** Utilizing Flutter standard `l10n` capabilities based on `.arb` file configurations generating standard translation accessors.
@@ -258,11 +259,20 @@ These classes interact seamlessly as the main underlying format populating the a
 
 ---
 
-## Configuration (`pubspec.yaml`)
+## Configuration & Testing
+
+### Configuration (`pubspec.yaml`)
 
 - Core dependencies defining internal toolings: `flutter_bloc` & `equatable` (handling deterministic state propagation), `firebase_core` framework suite (backend infrastructure), `go_router` (URI routing maps), and `syncfusion_flutter_charts` (data visualization).
 - Defines environment constraints formatting image assets and providing AI interaction via `firebase_ai` and `gemini_nano_android`.
-- Includes code quality lint rules extending `very_good_analysis` and incorporates solid testing with `bloc_test` and `mocktail`.
+- Analyzers: Built on robust CI pipelines ensuring code quality with `very_good_analysis` linter rules.
+
+### Testing Architecture
+
+The project has been refactored to support robust, isolated testing environments leveraging the DI container (`get_it`):
+- **Mock Environments**: Replaces production repositories by instantiating `Environment.mock` in `ServiceFactory`. Yields classes like `MockAuthRepository` or `MockDatabaseRepository` natively without relying on network requests.
+- **Service & Logic Verification**: Feature Cubit and Widget View tests heavily utilize `mocktail` to verify service interactions, proper state emissions, navigation flows, and bottom sheet logic reliably.
+- CI/CD ensures green status tests on pull requests over `beta.yaml`.
 
 ---
 

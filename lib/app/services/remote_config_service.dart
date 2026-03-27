@@ -19,4 +19,5 @@ class RemoteConfigService {
   int get geminiAntLookbackDays =>
       _remoteConfigRepository.geminiAntLookbackDays;
   int get paginationLimit => _remoteConfigRepository.paginationLimit;
+  int get summaryLastMonths => _remoteConfigRepository.summaryLastMonths;
 }

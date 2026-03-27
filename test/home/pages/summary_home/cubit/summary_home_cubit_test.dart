@@ -1,15 +1,25 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/pages/summary_home/cubit/summary_home_cubit.dart';
+
+class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 
 void main() {
   group('SummaryHomeCubit', () {
     late SummaryHomeCubit summaryHomeCubit;
+    late MockRemoteConfigService mockRemoteConfigService;
 
     setUp(() {
+      mockRemoteConfigService = MockRemoteConfigService();
+      when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
+      getIt.registerSingleton<RemoteConfigService>(mockRemoteConfigService);
+
       summaryHomeCubit = SummaryHomeCubit();
     });
+
+    tearDown(getIt.reset);
 
     test('initial state is correct', () {
       expect(summaryHomeCubit.state.endMonth, isNotNull);
