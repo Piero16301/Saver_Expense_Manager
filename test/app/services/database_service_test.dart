@@ -38,7 +38,7 @@ void main() {
       verify(() => mockDatabaseRepository.newId).called(1);
     });
 
-    test('saveMovement delegates to repository', () async {
+    test('saveMovement delegates to repository', () {
       final movement = Movement(
         id: '1',
         title: 'test',
@@ -50,11 +50,10 @@ void main() {
       );
 
       when(() => mockDatabaseRepository.saveMovement(movement: movement))
-          .thenAnswer((_) async => true);
+          .thenReturn(null);
 
-      final result = await databaseService.saveMovement(movement: movement);
+      databaseService.saveMovement(movement: movement);
 
-      expect(result, isTrue);
       verify(() => mockDatabaseRepository.saveMovement(movement: movement))
           .called(1);
     });
@@ -113,13 +112,12 @@ void main() {
           .called(1);
     });
 
-    test('deleteMovement delegates to repository', () async {
+    test('deleteMovement delegates to repository', () {
       when(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
-          .thenAnswer((_) async => true);
+          .thenReturn(null);
 
-      final result = await databaseService.deleteMovement(movementId: 'mov_1');
+      databaseService.deleteMovement(movementId: 'mov_1');
 
-      expect(result, isTrue);
       verify(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
           .called(1);
     });

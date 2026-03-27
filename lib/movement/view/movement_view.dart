@@ -210,20 +210,16 @@ class MovementView extends StatelessWidget {
         ),
       );
     } else {
-      final result =
-          await context.read<MovementCubit>().saveMovement(uid, l10n);
-      if (result == null) return;
+      context.read<MovementCubit>().saveMovement(uid, l10n);
 
       if (context.mounted) {
-        if (result) {
-          context.pop<bool>(true);
-        } else {
-          AppFunctions.showSnackBar(
-            context,
-            message: l10n.movementSaveError,
-            type: SnackBarType.error,
-          );
-        }
+        context.pop<bool>(true);
+      } else {
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.movementSaveError,
+          type: SnackBarType.error,
+        );
       }
     }
   }
@@ -235,19 +231,16 @@ class MovementView extends StatelessWidget {
   ) async {
     context.pop();
 
-    final result = await context.read<MovementCubit>().saveMovement(uid, l10n);
-    if (result == null) return;
+    context.read<MovementCubit>().saveMovement(uid, l10n);
 
     if (context.mounted) {
-      if (result) {
-        context.pop<bool>(true);
-      } else {
-        AppFunctions.showSnackBar(
-          context,
-          message: l10n.movementSaveError,
-          type: SnackBarType.error,
-        );
-      }
+      context.pop<bool>(true);
+    } else {
+      AppFunctions.showSnackBar(
+        context,
+        message: l10n.movementSaveError,
+        type: SnackBarType.error,
+      );
     }
   }
 
@@ -287,25 +280,22 @@ class MovementView extends StatelessWidget {
           content: l10n.confirmDeleteMovementMessage,
           confirmLabel: l10n.deleteMovementConfirm,
           cancelLabel: l10n.deleteMovementCancel,
-          onConfirm: () async {
+          onConfirm: () {
             Navigator.of(dialogContext).pop();
-            final success =
-                await context.read<MovementCubit>().removeMovement();
+            context.read<MovementCubit>().removeMovement();
             if (context.mounted) {
-              if (success) {
-                AppFunctions.showSnackBar(
-                  context,
-                  message: l10n.movementDeleteSuccess,
-                  type: SnackBarType.success,
-                );
-                context.pop<bool>(true);
-              } else {
-                AppFunctions.showSnackBar(
-                  context,
-                  message: l10n.movementDeleteError,
-                  type: SnackBarType.error,
-                );
-              }
+              AppFunctions.showSnackBar(
+                context,
+                message: l10n.movementDeleteSuccess,
+                type: SnackBarType.success,
+              );
+              context.pop<bool>(true);
+            } else {
+              AppFunctions.showSnackBar(
+                context,
+                message: l10n.movementDeleteError,
+                type: SnackBarType.error,
+              );
             }
           },
           onCancel: () => Navigator.of(dialogContext).pop(),
