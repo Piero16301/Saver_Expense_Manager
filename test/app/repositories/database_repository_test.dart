@@ -54,11 +54,11 @@ void main() {
     test('Mock tests for coverage', () async {
       final mock = MockDatabaseRepository();
       expect(mock.newId, isNotEmpty);
-      expect(await mock.saveMovement(movement: Movement.empty), isTrue);
+      mock.saveMovement(movement: Movement.empty);
       expect(await mock.getCategoriesStream().first, isNotEmpty);
       expect(await mock.getMovementsStream(userId: '1').first, isNotEmpty);
       expect(await mock.getMovements(userId: '1'), isNotEmpty);
-      expect(await mock.deleteMovement(movementId: '1'), isTrue);
+      mock.deleteMovement(movementId: '1');
     });
   });
 
@@ -136,8 +136,7 @@ void main() {
         user: 'user_1',
       );
 
-      final result = await repository.saveMovement(movement: movement);
-      expect(result, isTrue);
+      repository.saveMovement(movement: movement);
 
       final doc = await fakeFirestore
           .collection(AppVariables.movementsCollection)
@@ -146,17 +145,15 @@ void main() {
       expect(doc.exists, isTrue);
     });
 
-    test('saveMovement returns false and records error on exception', () async {
+    test('saveMovement records error on exception', () async {
       final mockFirestore = MockFirebaseFirestore();
       final repo = FirestoreDatabaseRepository(firestore: mockFirestore);
 
       when(() => mockFirestore.collection(any<String>()))
           .thenThrow(Exception('Firestore Fail'));
 
-      final result =
-          await repo.saveMovement(movement: Movement.empty.copyWith(id: '1'));
+      repo.saveMovement(movement: Movement.empty.copyWith(id: '1'));
 
-      expect(result, isFalse);
       verify(
         () => mockCrashService.recordError(
           any<Object>(),
@@ -173,8 +170,7 @@ void main() {
           .doc(movementId)
           .set({'title': 'test'});
 
-      final result = await repository.deleteMovement(movementId: movementId);
-      expect(result, isTrue);
+      repository.deleteMovement(movementId: movementId);
 
       final doc = await fakeFirestore
           .collection(AppVariables.movementsCollection)
@@ -183,17 +179,22 @@ void main() {
       expect(doc.exists, isFalse);
     });
 
-    test('deleteMovement returns false and records error on exception',
-        () async {
+    test('deleteMovement records error on exception', () async {
       final mockFirestore = MockFirebaseFirestore();
       final repo = FirestoreDatabaseRepository(firestore: mockFirestore);
 
       when(() => mockFirestore.collection(any<String>()))
           .thenThrow(Exception('Delete Fail'));
 
-      final result = await repo.deleteMovement(movementId: '1');
+      repo.deleteMovement(movementId: '1');
 
-      expect(result, isFalse);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: any<dynamic>(named: 'reason'),
+        ),
+      ).called(1);
     });
 
     test('getMovements returns full list', () async {

@@ -6,7 +6,7 @@ import 'package:saver_expense_manager/app/app.dart';
 abstract class DatabaseRepository {
   String get newId;
 
-  Future<bool> saveMovement({required Movement movement});
+  void saveMovement({required Movement movement});
   Stream<List<Category>> getCategoriesStream();
   Stream<List<Movement>> getMovementsStream({
     required String userId,
@@ -22,7 +22,7 @@ abstract class DatabaseRepository {
     DateTime? from,
     DateTime? to,
   });
-  Future<bool> deleteMovement({required String movementId});
+  void deleteMovement({required String movementId});
 }
 
 class MockDatabaseRepository implements DatabaseRepository {
@@ -68,9 +68,8 @@ class MockDatabaseRepository implements DatabaseRepository {
   String get newId => DateTime.now().millisecondsSinceEpoch.toString();
 
   @override
-  Future<bool> saveMovement({required Movement movement}) async {
+  void saveMovement({required Movement movement}) {
     _movements.add(movement);
-    return true;
   }
 
   @override
@@ -101,9 +100,8 @@ class MockDatabaseRepository implements DatabaseRepository {
   }
 
   @override
-  Future<bool> deleteMovement({required String movementId}) async {
+  void deleteMovement({required String movementId}) {
     _movements.removeWhere((movement) => movement.id == movementId);
-    return true;
   }
 }
 
@@ -118,20 +116,20 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
       _firestore.collection(AppVariables.movementsCollection).doc().id;
 
   @override
-  Future<bool> saveMovement({required Movement movement}) async {
+  void saveMovement({required Movement movement}) {
     try {
-      await _firestore
-          .collection(AppVariables.movementsCollection)
-          .doc(movement.id)
-          .set(movement.toJson());
-      return true;
+      unawaited(
+        _firestore
+            .collection(AppVariables.movementsCollection)
+            .doc(movement.id)
+            .set(movement.toJson()),
+      );
     } on Exception catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
         reason: 'DatabaseService saveMovement error',
       );
-      return false;
     }
   }
 
@@ -228,20 +226,20 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
   }
 
   @override
-  Future<bool> deleteMovement({required String movementId}) async {
+  void deleteMovement({required String movementId}) {
     try {
-      await _firestore
-          .collection(AppVariables.movementsCollection)
-          .doc(movementId)
-          .delete();
-      return true;
+      unawaited(
+        _firestore
+            .collection(AppVariables.movementsCollection)
+            .doc(movementId)
+            .delete(),
+      );
     } on Exception catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
         reason: 'DatabaseService deleteMovement error',
       );
-      return false;
     }
   }
 }

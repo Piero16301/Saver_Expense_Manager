@@ -45,7 +45,7 @@ class HomeView extends StatelessWidget {
                     : 'assets/images/logo-no-bg-light.png',
                 height: 35,
               ),
-              centerTitle: true,
+              notificationPredicate: (notification) => false,
               leading: IconButton(
                 padding: EdgeInsets.zero,
                 icon: const HugeIcon(

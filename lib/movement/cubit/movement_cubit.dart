@@ -88,16 +88,16 @@ class MovementCubit extends Cubit<MovementState> {
     }
   }
 
-  Future<bool?> saveMovement(String userId, AppLocalizations l10n) async {
+  void saveMovement(String userId, AppLocalizations l10n) {
     if (!(state.formKey?.currentState?.validate() ?? false)) {
-      return null;
+      return;
     }
 
     final nowDate = DateTime.now();
 
     // Save movement in Firebase Firestore
     final docId = state.id.isEmpty ? getIt<DatabaseService>().newId : state.id;
-    final success = await getIt<DatabaseService>().saveMovement(
+    getIt<DatabaseService>().saveMovement(
       movement: Movement(
         id: docId,
         title: state.title,
@@ -115,52 +115,41 @@ class MovementCubit extends Cubit<MovementState> {
       ),
     );
 
-    if (success) {
-      getIt<AnalyticsService>().logEvent(
-        name: state.id.isEmpty ? 'add_movement' : 'edit_movement',
-        parameters: {
-          'category': state.category!.name,
-          'type': state.category!.type.value,
-          'amount': state.price,
-        },
-      );
-      getIt<CrashService>().log(
-        'Saved movement: title=${state.title}, price=${state.price}, '
-        'category=${state.category?.name}',
-      );
-      return true;
-    } else {
-      return false;
-    }
+    getIt<AnalyticsService>().logEvent(
+      name: state.id.isEmpty ? 'add_movement' : 'edit_movement',
+      parameters: {
+        'category': state.category!.name,
+        'type': state.category!.type.value,
+        'amount': state.price,
+      },
+    );
+    getIt<CrashService>().log(
+      'Saved movement: title=${state.title}, price=${state.price}, '
+      'category=${state.category?.name}',
+    );
   }
 
-  Future<bool> removeMovement() async {
+  void removeMovement() {
     if (state.id.isEmpty) {
-      return false;
+      return;
     }
 
     getIt<CrashService>().log('Removing movement: id=${state.id}');
 
     // Remove movement from Firebase Firestore
-    final success =
-        await getIt<DatabaseService>().deleteMovement(movementId: state.id);
+    getIt<DatabaseService>().deleteMovement(movementId: state.id);
 
-    if (success) {
-      // Remove associated attachments from Firebase Storage
-      for (final attachment in state.attachments) {
-        await getIt<RemoteStorageService>().deleteFile(attachment);
-      }
-
-      getIt<AnalyticsService>().logEvent(
-        name: 'delete_movement',
-        parameters: {
-          'category': state.category!.name,
-          'type': state.category!.type.value,
-        },
-      );
-      return true;
+    // Remove associated attachments from Firebase Storage
+    for (final attachment in state.attachments) {
+      unawaited(getIt<RemoteStorageService>().deleteFile(attachment));
     }
 
-    return false;
+    getIt<AnalyticsService>().logEvent(
+      name: 'delete_movement',
+      parameters: {
+        'category': state.category!.name,
+        'type': state.category!.type.value,
+      },
+    );
   }
 }

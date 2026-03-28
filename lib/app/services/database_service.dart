@@ -10,8 +10,8 @@ class DatabaseService {
 
   String get newId => _databaseRepository.newId;
 
-  Future<bool> saveMovement({required Movement movement}) {
-    return _databaseRepository.saveMovement(movement: movement);
+  void saveMovement({required Movement movement}) {
+    _databaseRepository.saveMovement(movement: movement);
   }
 
   Stream<List<Category>> getCategoriesStream() {
@@ -50,7 +50,7 @@ class DatabaseService {
     );
   }
 
-  Future<bool> deleteMovement({required String movementId}) {
-    return _databaseRepository.deleteMovement(movementId: movementId);
+  void deleteMovement({required String movementId}) {
+    _databaseRepository.deleteMovement(movementId: movementId);
   }
 }

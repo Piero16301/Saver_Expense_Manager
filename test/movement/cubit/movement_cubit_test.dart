@@ -290,9 +290,14 @@ void main() {
     });
 
     group('saveMovement', () {
-      test('returns null if validation fails', () async {
-        final result = await movementCubit.saveMovement('userId', mockL10n);
-        expect(result, isNull);
+      test('does nothing if validation fails', () async {
+        movementCubit.saveMovement('userId', mockL10n);
+        verifyNever(
+          () => mockAnalyticsService.logEvent(
+            name: any(named: 'name'),
+            parameters: any(named: 'parameters'),
+          ),
+        );
       });
 
       test('saves movement and returns true', () async {
@@ -303,10 +308,8 @@ void main() {
 
         movementCubit
           ..init(movement, categories)
-          ..emit(movementCubit.state.copyWith(formKey: mockFormKey));
-
-        final result = await movementCubit.saveMovement('userId', mockL10n);
-        expect(result, isTrue);
+          ..emit(movementCubit.state.copyWith(formKey: mockFormKey))
+          ..saveMovement('userId', mockL10n);
 
         final doc = await fakeFirestore
             .collection(AppVariables.movementsCollection)
@@ -325,10 +328,8 @@ void main() {
 
         movementCubit
           ..init(movement.copyWith(id: ''), categories)
-          ..emit(movementCubit.state.copyWith(formKey: mockFormKey));
-
-        final result = await movementCubit.saveMovement('userId', mockL10n);
-        expect(result, isTrue);
+          ..emit(movementCubit.state.copyWith(formKey: mockFormKey))
+          ..saveMovement('userId', mockL10n);
 
         final collection = await fakeFirestore
             .collection(AppVariables.movementsCollection)
@@ -337,7 +338,8 @@ void main() {
         expect(collection.docs.first.data()['title'], 'Coffee');
       });
 
-      test('returns false if database service returns false', () async {
+      test('saves movement even if database service fails (fire and forget)',
+          () async {
         final mockDatabaseService = MockDatabaseService();
 
         await getIt.unregister<DatabaseService>();
@@ -347,7 +349,7 @@ void main() {
           () => mockDatabaseService.saveMovement(
             movement: any(named: 'movement'),
           ),
-        ).thenAnswer((_) async => false);
+        ).thenReturn(null);
 
         final mockFormState = MockFormState();
         final mockFormKey = MockGlobalKey();
@@ -356,17 +358,21 @@ void main() {
 
         movementCubit
           ..init(movement, categories)
-          ..emit(movementCubit.state.copyWith(formKey: mockFormKey));
+          ..emit(movementCubit.state.copyWith(formKey: mockFormKey))
+          ..saveMovement('userId', mockL10n);
 
-        final result = await movementCubit.saveMovement('userId', mockL10n);
-        expect(result, isFalse);
+        verify(
+          () => mockDatabaseService.saveMovement(
+            movement: any(named: 'movement'),
+          ),
+        ).called(1);
       });
     });
 
     group('removeMovement', () {
-      test('returns false if id is empty', () async {
-        final result = await movementCubit.removeMovement();
-        expect(result, isFalse);
+      test('does nothing if id is empty', () async {
+        movementCubit.removeMovement();
+        verifyNever(() => mockCrashService.log(any<String>()));
       });
 
       test('removes movement and associated attachments', () async {
@@ -378,10 +384,9 @@ void main() {
             .doc('m1')
             .set(movement.toJson());
 
-        movementCubit.init(movement, categories);
-
-        final result = await movementCubit.removeMovement();
-        expect(result, isTrue);
+        movementCubit
+          ..init(movement, categories)
+          ..removeMovement();
 
         final doc = await fakeFirestore
             .collection(AppVariables.movementsCollection)
