@@ -36,7 +36,7 @@ class ProfileView extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
           ),
-          centerTitle: true,
+          notificationPredicate: (notification) => false,
           leading: IconButton(
             onPressed: () => context.pop(),
             icon: const HugeIcon(

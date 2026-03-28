@@ -31,7 +31,6 @@ class MovementView extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
           ),
-          centerTitle: true,
           notificationPredicate: (notification) => false,
           actions: _appBarActions(context, l10n),
           leading: IconButton(

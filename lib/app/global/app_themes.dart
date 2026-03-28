@@ -15,6 +15,11 @@ class AppThemes {
       colorScheme: ColorScheme.fromSeed(
         seedColor: baseColor,
       ),
+      appBarTheme: const AppBarTheme(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+      ),
       snackBarTheme: SnackBarThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         behavior: SnackBarBehavior.floating,
@@ -52,6 +57,11 @@ class AppThemes {
       colorScheme: ColorScheme.fromSeed(
         seedColor: baseColor,
         brightness: Brightness.dark,
+      ),
+      appBarTheme: const AppBarTheme(
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
       ),
       snackBarTheme: SnackBarThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
