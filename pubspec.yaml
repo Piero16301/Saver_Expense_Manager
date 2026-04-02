@@ -33,11 +33,10 @@ dependencies:
   gemini_nano_android: ^1.1.2
   get_it: ^9.2.1
   go_router: ^17.1.0
-  google_fonts: ^8.0.2
   google_sign_in: ^7.2.0
   hugeicons: ^1.1.5
   intl: ^0.20.2
-  mat_month_picker_dialog: ^1.1.3
+  mat_month_picker_dialog: ^1.1.3     # Revisar para reemplazar
   mime: ^2.0.0
   open_file: ^3.5.11
   package_info_plus: ^9.0.0
@@ -82,4 +81,55 @@ flutter:
   assets:
     - assets/animations/
     - assets/images/
+    - assets/fonts/
     - .env
+
+  fonts:
+    - family: Merriweather
+      fonts:
+        - asset: assets/fonts/Merriweather-Regular.ttf
+        - asset: assets/fonts/Merriweather-Bold.ttf
+          weight: 700
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 700
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito-Bold.ttf
+          weight: 700
+    - family: Open Sans
+      fonts:
+        - asset: assets/fonts/OpenSans-Regular.ttf
+        - asset: assets/fonts/OpenSans-Bold.ttf
+          weight: 700
+    - family: Orbitron
+      fonts:
+        - asset: assets/fonts/Orbitron-Regular.ttf
+        - asset: assets/fonts/Orbitron-Bold.ttf
+          weight: 700
+    - family: Pacifico
+      fonts:
+        - asset: assets/fonts/Pacifico-Regular.ttf
+    - family: Playfair Display
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay-Regular.ttf
+        - asset: assets/fonts/PlayfairDisplay-Bold.ttf
+          weight: 700
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+    - family: Source Code Pro
+      fonts:
+        - asset: assets/fonts/SourceCodePro-Regular.ttf
+        - asset: assets/fonts/SourceCodePro-Bold.ttf
+          weight: 700
