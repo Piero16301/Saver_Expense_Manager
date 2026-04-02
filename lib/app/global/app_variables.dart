@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class AppVariables {
@@ -53,33 +52,17 @@ class AppVariables {
   static Map<String, String> availableFonts = getAvailableFonts();
 
   static Map<String, String> getAvailableFonts() {
-    if (useTestFonts) {
-      return {
-        'Merriweather': 'Merriweather',
-        'Montserrat': 'Montserrat',
-        'Nunito': 'Nunito',
-        'Open Sans': 'Open Sans',
-        'Orbitron': 'Orbitron',
-        'Pacifico': 'Pacifico',
-        'Playfair Display': 'Playfair Display',
-        'Poppins': 'Poppins',
-        'Roboto': 'Roboto',
-        'Source Code Pro': 'Source Code Pro',
-      };
-    }
     return {
-      'Merriweather': GoogleFonts.merriweather().fontFamily ?? 'Merriweather',
-      'Montserrat': GoogleFonts.montserrat().fontFamily ?? 'Montserrat',
-      'Nunito': GoogleFonts.nunito().fontFamily ?? 'Nunito',
-      'Open Sans': GoogleFonts.openSans().fontFamily ?? 'Open Sans',
-      'Orbitron': GoogleFonts.orbitron().fontFamily ?? 'Orbitron',
-      'Pacifico': GoogleFonts.pacifico().fontFamily ?? 'Pacifico',
-      'Playfair Display':
-          GoogleFonts.playfairDisplay().fontFamily ?? 'Playfair Display',
-      'Poppins': GoogleFonts.poppins().fontFamily ?? 'Poppins',
-      'Roboto': GoogleFonts.roboto().fontFamily ?? 'Roboto',
-      'Source Code Pro':
-          GoogleFonts.sourceCodePro().fontFamily ?? 'Source Code Pro',
+      'Merriweather': 'Merriweather',
+      'Montserrat': 'Montserrat',
+      'Nunito': 'Nunito',
+      'Open Sans': 'Open Sans',
+      'Orbitron': 'Orbitron',
+      'Pacifico': 'Pacifico',
+      'Playfair Display': 'Playfair Display',
+      'Poppins': 'Poppins',
+      'Roboto': 'Roboto',
+      'Source Code Pro': 'Source Code Pro',
     };
   }
 
