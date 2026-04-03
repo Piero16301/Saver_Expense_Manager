@@ -70,16 +70,21 @@ void main() {
       expect(find.byType(MonthPickerDialog), findsOneWidget);
 
       await tester.tap(
-        find.byWidgetPredicate(
-          (w) => w is Text && (w.data?.toUpperCase().contains('FEB') ?? false),
-        ).first,
+        find
+            .byWidgetPredicate(
+              (w) =>
+                  w is Text && (w.data?.toUpperCase().contains('FEB') ?? false),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
 
-      final okFinder = find.descendant(
-        of: find.byType(MonthPickerDialog),
-        matching: find.byType(TextButton),
-      ).last;
+      final okFinder = find
+          .descendant(
+            of: find.byType(MonthPickerDialog),
+            matching: find.byType(TextButton),
+          )
+          .last;
       await tester.tap(okFinder);
       await tester.pumpAndSettle();
 
@@ -113,16 +118,21 @@ void main() {
       expect(find.byType(MonthPickerDialog), findsOneWidget);
 
       await tester.tap(
-        find.byWidgetPredicate(
-          (w) => w is Text && (w.data?.toUpperCase().contains('APR') ?? false),
-        ).first,
+        find
+            .byWidgetPredicate(
+              (w) =>
+                  w is Text && (w.data?.toUpperCase().contains('APR') ?? false),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
 
-      final okFinder = find.descendant(
-        of: find.byType(MonthPickerDialog),
-        matching: find.byType(TextButton),
-      ).last;
+      final okFinder = find
+          .descendant(
+            of: find.byType(MonthPickerDialog),
+            matching: find.byType(TextButton),
+          )
+          .last;
       await tester.tap(okFinder);
       await tester.pumpAndSettle();
 
