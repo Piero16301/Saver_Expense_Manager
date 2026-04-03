@@ -99,7 +99,7 @@ class SummaryHomeView extends StatelessWidget {
           );
 
           return Column(
-            spacing: 16,
+            spacing: 12,
             children: [
               monthSelector,
               Expanded(
@@ -317,9 +317,7 @@ class ResumeItemCardMovements extends StatelessWidget {
                     ),
                     Text(
                       _title(context),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                 ),
@@ -624,9 +622,9 @@ class CategoryExpenseCard extends StatelessWidget {
   Color get _rankingColor {
     switch (ranking) {
       case 1:
-        return const Color(0xFFFFD700);
+        return const Color(0xFFC59B00);
       case 2:
-        return const Color(0xFFC0C0C0);
+        return const Color(0xFF757575);
       case 3:
         return const Color(0xFFCD7F32);
       default:
@@ -637,9 +635,9 @@ class CategoryExpenseCard extends StatelessWidget {
   Color get _rankingBackgroundColor {
     switch (ranking) {
       case 1:
-        return const Color(0xFFFFD700).withValues(alpha: 0.2);
+        return const Color(0xFFFFD700).withValues(alpha: 0.25);
       case 2:
-        return const Color(0xFFC0C0C0).withValues(alpha: 0.2);
+        return const Color(0xFF9E9E9E).withValues(alpha: 0.2);
       case 3:
         return const Color(0xFFCD7F32).withValues(alpha: 0.2);
       default:
@@ -664,7 +662,7 @@ class CategoryExpenseCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -681,6 +679,7 @@ class CategoryExpenseCard extends StatelessWidget {
                     child: HugeIcon(
                       icon: AppFunctions.getCategoryIcon(category.icon),
                       color: categoryColor,
+                      strokeWidth: 2,
                     ),
                   ),
                   Container(
@@ -704,18 +703,16 @@ class CategoryExpenseCard extends StatelessWidget {
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 8,
                 children: [
                   Text(
-                    AppFunctions.getCategoryName(category.name, l10n)
-                        .toUpperCase(),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
+                    AppFunctions.getCategoryName(category.name, l10n),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           letterSpacing: 0.5,
                         ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     AppExtensions.moneyFormat.format(amount),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -724,6 +721,7 @@ class CategoryExpenseCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 8),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
@@ -733,8 +731,9 @@ class CategoryExpenseCard extends StatelessWidget {
                       minHeight: 6,
                     ),
                   ),
+                  const SizedBox(height: 8),
                   Text(
-                    '${percentage.toInt()}% del total',
+                    l10n.summaryPercentageOfTotal(percentage.toInt()),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context)
                               .textTheme

@@ -136,9 +136,9 @@
     "@categoryOthersIncome": {},
     "antRecommendationsError": "An error occurred while loading the recommendations",
     "@antRecommendationsError": {},
-    "movementNewAppbarTitle": "New movement",
+    "movementNewAppbarTitle": "New",
     "@movementNewAppbarTitle": {},
-    "movementEditAppbarTitle": "Edit movement",
+    "movementEditAppbarTitle": "Edit",
     "@movementEditAppbarTitle": {},
     "movementTitle": "Title",
     "@movementTitle": {},
@@ -437,5 +437,17 @@
     "loginSuccess": "Login successful",
     "@loginSuccess": {},
     "registerSuccess": "Register successful",
-    "@registerSuccess": {}
+    "@registerSuccess": {},
+    "monthPickerSelectSingleMonth": "Select a month",
+    "@monthPickerSelectSingleMonth": {},
+    "monthPickerSelectMultipleMonths": "Select a range of months",
+    "@monthPickerSelectMultipleMonths": {},
+    "summaryPercentageOfTotal": "{percentage}% of the total",
+    "@summaryPercentageOfTotal": {
+        "placeholders": {
+            "percentage": {
+                "type": "int"
+            }
+        }
+    }
 }

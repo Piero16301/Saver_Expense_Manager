@@ -469,7 +469,10 @@ class AntRecommendationsWidget extends StatelessWidget {
                         final recommendation = state.recommendations![index];
                         return Card(
                           elevation: 2,
-                          margin: const EdgeInsets.symmetric(horizontal: 6),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 4,
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(12),
                             child: SingleChildScrollView(

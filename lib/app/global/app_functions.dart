@@ -243,7 +243,7 @@ class AppFunctions {
       );
       data.add(
         LinearChartData(
-          xValue: DateFormat('MMM', language).format(i),
+          xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
           yValue: total,
         ),
       );
@@ -290,19 +290,19 @@ class AppFunctions {
       final balance = totalIncome - totalExpense;
       incomeData.add(
         LinearChartData(
-          xValue: DateFormat('MMM', language).format(i),
+          xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
           yValue: totalIncome,
         ),
       );
       expenseData.add(
         LinearChartData(
-          xValue: DateFormat('MMM', language).format(i),
+          xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
           yValue: totalExpense,
         ),
       );
       balanceData.add(
         LinearChartData(
-          xValue: DateFormat('MMM', language).format(i),
+          xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
           yValue: balance,
         ),
       );
@@ -319,6 +319,11 @@ class AppFunctions {
     }
 
     return data;
+  }
+
+  static String _capitalizeFirst(String text) {
+    if (text.isEmpty) return text;
+    return '${text[0].toUpperCase()}${text.substring(1)}';
   }
 
   static Future<Movement> buildMovementFromFile({

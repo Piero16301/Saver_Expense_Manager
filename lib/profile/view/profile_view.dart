@@ -187,10 +187,7 @@ class ProfileView extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           l10n.linkedAccountsTitle,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -436,7 +433,9 @@ class _ProviderListTile extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: Theme.of(context).textTheme.titleMedium,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
       ),
       subtitle: isConnected && subtitle != null
           ? Text(

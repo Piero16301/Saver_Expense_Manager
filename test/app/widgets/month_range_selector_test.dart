@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
 
@@ -21,6 +22,8 @@ void main() {
     testWidgets('renders normally', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: BlocProvider.value(
             value: appCubit,
             child: Scaffold(
@@ -35,8 +38,9 @@ void main() {
         ),
       );
 
-      expect(find.textContaining('JAN 2024'), findsOneWidget);
-      expect(find.textContaining('MAR 2024'), findsOneWidget);
+      expect(find.textContaining('Jan 2024'), findsOneWidget);
+      expect(find.textContaining('Mar 2024'), findsOneWidget);
+      expect(find.byType(IconButton), findsOneWidget);
     });
 
     testWidgets('triggers onChangeStartMonth when tapping start month',
@@ -44,6 +48,8 @@ void main() {
       DateTime? changedDate;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: BlocProvider.value(
             value: appCubit,
             child: Scaffold(
@@ -58,20 +64,23 @@ void main() {
         ),
       );
 
-      await tester.tap(find.textContaining('JAN 2024'));
+      await tester.tap(find.byType(IconButton));
       await tester.pumpAndSettle();
 
-      expect(find.text('OK'), findsOneWidget);
+      expect(find.byType(MonthPickerDialog), findsOneWidget);
 
       await tester.tap(
-        find
-            .byWidgetPredicate(
-              (w) =>
-                  w is Text && (w.data?.toUpperCase().contains('FEB') ?? false),
-            )
-            .first,
+        find.byWidgetPredicate(
+          (w) => w is Text && (w.data?.toUpperCase().contains('FEB') ?? false),
+        ).first,
       );
-      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      final okFinder = find.descendant(
+        of: find.byType(MonthPickerDialog),
+        matching: find.byType(TextButton),
+      ).last;
+      await tester.tap(okFinder);
       await tester.pumpAndSettle();
 
       expect(changedDate?.month, DateTime.february);
@@ -82,6 +91,8 @@ void main() {
       DateTime? changedDate;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: BlocProvider.value(
             value: appCubit,
             child: Scaffold(
@@ -96,20 +107,23 @@ void main() {
         ),
       );
 
-      await tester.tap(find.textContaining('MAR 2024'));
+      await tester.tap(find.byType(IconButton));
       await tester.pumpAndSettle();
 
-      expect(find.text('OK'), findsOneWidget);
+      expect(find.byType(MonthPickerDialog), findsOneWidget);
 
       await tester.tap(
-        find
-            .byWidgetPredicate(
-              (w) =>
-                  w is Text && (w.data?.toUpperCase().contains('APR') ?? false),
-            )
-            .first,
+        find.byWidgetPredicate(
+          (w) => w is Text && (w.data?.toUpperCase().contains('APR') ?? false),
+        ).first,
       );
-      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      final okFinder = find.descendant(
+        of: find.byType(MonthPickerDialog),
+        matching: find.byType(TextButton),
+      ).last;
+      await tester.tap(okFinder);
       await tester.pumpAndSettle();
 
       expect(changedDate?.month, DateTime.april);

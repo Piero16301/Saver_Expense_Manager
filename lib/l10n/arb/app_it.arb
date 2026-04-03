@@ -136,9 +136,9 @@
     "@categoryOthersIncome": {},
     "antRecommendationsError": "Si è verificato un errore durante il caricamento delle raccomandazioni",
     "@antRecommendationsError": {},
-    "movementNewAppbarTitle": "Nuovo movimento",
+    "movementNewAppbarTitle": "Nuovo",
     "@movementNewAppbarTitle": {},
-    "movementEditAppbarTitle": "Modifica movimento",
+    "movementEditAppbarTitle": "Modifica",
     "@movementEditAppbarTitle": {},
     "movementTitle": "Titolo",
     "@movementTitle": {},
@@ -437,5 +437,17 @@
     "loginSuccess": "Accesso riuscito",
     "@loginSuccess": {},
     "registerSuccess": "Registrazione riuscita",
-    "@registerSuccess": {}
+    "@registerSuccess": {},
+    "monthPickerSelectSingleMonth": "Seleziona un mese",
+    "@monthPickerSelectSingleMonth": {},
+    "monthPickerSelectMultipleMonths": "Seleziona un range di mesi",
+    "@monthPickerSelectMultipleMonths": {},
+    "summaryPercentageOfTotal": "{percentage}% del totale",
+    "@summaryPercentageOfTotal": {
+        "placeholders": {
+            "percentage": {
+                "type": "int"
+            }
+        }
+    }
 }

@@ -158,6 +158,8 @@ void main() {
       DateTime? changedDate;
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: BlocProvider.value(
             value: appCubit,
             child: Scaffold(
@@ -173,19 +175,22 @@ void main() {
       );
 
       await tester.tap(find.text('MARCH 2024'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('OK'), findsOneWidget);
+      await tester.pump(); // Start animation
+      await tester.pumpAndSettle(); // Finish animation
+      expect(find.byType(MonthPickerDialog), findsOneWidget);
 
       await tester.tap(
-        find
-            .byWidgetPredicate(
-              (w) =>
-                  w is Text && (w.data?.toUpperCase().contains('FEB') ?? false),
-            )
-            .first,
+        find.byWidgetPredicate(
+          (w) => w is Text && (w.data?.toUpperCase().contains('FEB') ?? false),
+        ).first,
       );
-      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      final okFinder = find.descendant(
+        of: find.byType(MonthPickerDialog),
+        matching: find.byType(TextButton),
+      ).last;
+      await tester.tap(okFinder);
       await tester.pumpAndSettle();
 
       expect(changedDate?.month, DateTime.february);

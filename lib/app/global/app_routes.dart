@@ -48,7 +48,11 @@ class AppRoutes {
               name: AppRoute.movement.name,
               path: AppRoute.movement.path,
               builder: (context, state) {
-                final movement = state.extra! as Movement;
+                final movement = _getExtra<Movement>(
+                  state,
+                  Movement.empty,
+                  Movement.fromJson,
+                );
                 final type =
                     state.pathParameters['type'] ?? CategoryType.expense.value;
                 final screenType = state.pathParameters['screenType'] ??
@@ -69,7 +73,11 @@ class AppRoutes {
               name: AppRoute.category.name,
               path: AppRoute.category.path,
               builder: (context, state) {
-                final category = state.extra! as Category;
+                final category = _getExtra<Category>(
+                  state,
+                  Category.empty,
+                  Category.fromJson,
+                );
                 return CategoryPage(category: category);
               },
             ),
@@ -83,6 +91,25 @@ class AppRoutes {
       ],
       debugLogDiagnostics: true,
     );
+  }
+
+  static T _getExtra<T>(
+    GoRouterState state,
+    T emptyValue,
+    T Function(Map<String, dynamic>) fromJson,
+  ) {
+    final extra = state.extra;
+    if (extra is T) {
+      return extra;
+    } else if (extra is Map<String, dynamic>) {
+      try {
+        return fromJson(extra);
+      } on Exception catch (_) {
+        return emptyValue;
+      }
+    } else {
+      return emptyValue;
+    }
   }
 
   static String? redirect(BuildContext context, GoRouterState state) {

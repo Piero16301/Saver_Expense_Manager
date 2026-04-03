@@ -37,7 +37,7 @@ class RegisterView extends StatelessWidget {
           child: Stack(
             children: [
               const Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   AppChangeTheme(
                     padding: EdgeInsets.only(top: 16, left: 16),
