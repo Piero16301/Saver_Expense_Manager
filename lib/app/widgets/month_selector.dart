@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
-import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MonthSelector extends StatelessWidget {
@@ -44,8 +43,9 @@ class MonthSelector extends StatelessWidget {
               ),
               Expanded(
                 child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
                   onTap: () async {
-                    await showMonthPicker(
+                    await MonthPicker.showSingleMonthPicker(
                       context: context,
                       initialDate: monthSelected,
                       firstDate: AppVariables.minDate,

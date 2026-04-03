@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
-import 'package:mat_month_picker_dialog/mat_month_picker_dialog.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MonthRangeSelector extends StatelessWidget {
@@ -28,71 +27,68 @@ class MonthRangeSelector extends StatelessWidget {
     );
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(
+        Container(
+          padding: const EdgeInsets.only(left: 10),
           height: 40,
-          width: 110,
-          child: Card(
-            margin: EdgeInsets.zero,
-            child: GestureDetector(
-              onTap: () async {
-                await showMonthPicker(
-                  context: context,
-                  initialDate: startMonth,
-                  firstDate: AppVariables.minDate,
-                  lastDate: endMonth.copyWith(
-                    month: endMonth.month - rangeMonths,
-                  ),
-                ).then(onChangeStartMonth);
-              },
-              child: Center(
-                child: Text(
-                  DateFormat(
-                    'MMM yyyy',
-                    language.toString(),
-                  ).format(startMonth).toUpperCase(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
+          width: 100,
+          child: Align(
+            alignment: AlignmentGeometry.centerLeft,
+            child: Text(
+              _capitalizeFirst(
+                DateFormat(
+                  'MMM yyyy',
+                  language.toString(),
+                ).format(startMonth),
               ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
         ),
-        const Expanded(
-          child: HugeIcon(icon: HugeIcons.strokeRoundedCalendar03),
+        IconButton(
+          onPressed: () async {
+            await MonthPicker.showRangeMonthPicker(
+              context: context,
+              initialStartDate: startMonth,
+              initialEndDate: endMonth,
+              firstDate: AppVariables.minDate,
+              lastDate: DateTime.now(),
+            ).then((value) {
+              if (value != null) {
+                onChangeStartMonth(value.start);
+                onChangeEndMonth(value.end);
+              }
+            });
+          },
+          icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedCalendar03,
+            size: 28,
+          ),
         ),
-        SizedBox(
+        Container(
+          padding: const EdgeInsets.only(right: 10),
           height: 40,
-          width: 110,
-          child: Card(
-            margin: EdgeInsets.zero,
-            child: GestureDetector(
-              onTap: () async {
-                await showMonthPicker(
-                  context: context,
-                  initialDate: endMonth,
-                  firstDate: startMonth.copyWith(
-                    month: startMonth.month + rangeMonths,
-                  ),
-                  lastDate: DateTime.now(),
-                ).then(onChangeEndMonth);
-              },
-              child: Center(
-                child: Text(
-                  DateFormat(
-                    'MMM yyyy',
-                    language.toString(),
-                  ).format(endMonth).toUpperCase(),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
+          width: 100,
+          child: Align(
+            alignment: AlignmentGeometry.centerRight,
+            child: Text(
+              _capitalizeFirst(
+                DateFormat(
+                  'MMM yyyy',
+                  language.toString(),
+                ).format(endMonth),
               ),
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
         ),
       ],
     );
+  }
+
+  String _capitalizeFirst(String text) {
+    if (text.isEmpty) return text;
+    return '${text[0].toUpperCase()}${text.substring(1)}';
   }
 }

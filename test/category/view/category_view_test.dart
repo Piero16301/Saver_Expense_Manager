@@ -109,10 +109,9 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pump();
 
-      expect(find.text('Category details'), findsOneWidget);
-      expect(find.byType(CategoryIconAndName), findsOneWidget);
+      expect(find.text('Feeding'), findsOneWidget);
+      expect(find.byType(CategoryIcon), findsOneWidget);
       expect(find.byType(CategoryTabBar), findsOneWidget);
-      expect(find.text('FEEDING'), findsOneWidget);
     });
 
     testWidgets('renders normally in landscape', (tester) async {
@@ -121,7 +120,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(CategoryIconAndName), findsOneWidget);
+      expect(find.byType(CategoryIcon), findsOneWidget);
       expect(find.byType(CategoryTabBar), findsOneWidget);
       expect(find.byType(Row), findsWidgets);
     });

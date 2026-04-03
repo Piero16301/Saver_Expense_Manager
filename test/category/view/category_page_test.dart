@@ -74,7 +74,7 @@ void main() {
         ),
       );
 
-      expect(find.text('FEEDING'), findsOneWidget);
+      expect(find.text('Feeding'), findsOneWidget);
       expect(find.byType(BlocProvider<CategoryCubit>), findsOneWidget);
     });
   });

@@ -19,7 +19,7 @@ class CategoryView extends StatelessWidget {
       builder: (context, state) => Scaffold(
         appBar: AppBar(
           title: Text(
-            l10n.categoryDetailsTitle,
+            AppFunctions.getCategoryName(state.category.name, l10n),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -46,7 +46,7 @@ class CategoryView extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: CategoryIconAndName(category: state.category),
+                      child: CategoryIcon(category: state.category),
                     ),
                     CategoryTabBar(category: state.category),
                   ],
@@ -54,7 +54,7 @@ class CategoryView extends StatelessWidget {
               : Column(
                   spacing: 10,
                   children: [
-                    CategoryIconAndName(category: state.category),
+                    CategoryIcon(category: state.category),
                     CategoryTabBar(category: state.category),
                   ],
                 ),
@@ -64,8 +64,8 @@ class CategoryView extends StatelessWidget {
   }
 }
 
-class CategoryIconAndName extends StatelessWidget {
-  const CategoryIconAndName({required this.category, super.key});
+class CategoryIcon extends StatelessWidget {
+  const CategoryIcon({required this.category, super.key});
 
   final Category category;
 
@@ -74,29 +74,16 @@ class CategoryIconAndName extends StatelessWidget {
     final category = context.select<CategoryCubit, Category>(
       (cubit) => cubit.state.category,
     );
-    final l10n = AppLocalizations.of(context);
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 10,
-      children: [
-        SizedBox.square(
-          dimension: 200,
-          child: AppFunctions.getCategoryAnimatedIcon(category, 90) ??
-              HugeIcon(
-                icon: AppFunctions.getCategoryIcon(category.icon),
-                size: 70,
-                color: HexColor.fromHex(category.color),
-                strokeWidth: 2,
-              ),
-        ),
-        Text(
-          AppFunctions.getCategoryName(category.name, l10n).toUpperCase(),
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ],
+    return SizedBox.square(
+      dimension: 200,
+      child: AppFunctions.getCategoryAnimatedIcon(category, 90) ??
+          HugeIcon(
+            icon: AppFunctions.getCategoryIcon(category.icon),
+            size: 70,
+            color: HexColor.fromHex(category.color),
+            strokeWidth: 2,
+          ),
     );
   }
 }
@@ -192,7 +179,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
 
     return Column(
       children: [
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         ConstrainedBox(
           constraints: const BoxConstraints(
             maxWidth: AppVariables.tabletMaxWidth,
@@ -216,7 +203,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
             },
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         StreamBuilder<List<Movement>>(
           stream: database.getMovementsStream(
             userId: user!.uid,
@@ -319,7 +306,7 @@ class _TabMovementsCategoryState extends State<TabMovementsCategory> {
             }),
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         MovementsList(filterCategory: category, monthSelected: monthSelected),
       ],
     );

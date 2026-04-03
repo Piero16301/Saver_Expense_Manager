@@ -49,7 +49,7 @@ class MovementsList extends StatelessWidget {
             contentPadding: const EdgeInsets.only(left: 8, right: 8),
             title: Text(
               movement.title,
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
               maxLines: 1,
@@ -59,6 +59,7 @@ class MovementsList extends StatelessWidget {
               movement.description,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             trailing: Container(
               width: 90,
@@ -79,15 +80,16 @@ class MovementsList extends StatelessWidget {
                 ),
               ),
             ),
-            leading: Text(
-              AppExtensions.largeDateFormat(language.toString())
-                  .format(movement.date)
-                  .replaceFirst(' ', '\n')
-                  .toUpperCase(),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            leading: SizedBox(
+              width: 40,
+              child: Text(
+                AppExtensions.largeDateFormat(language.toString())
+                    .format(movement.date)
+                    .replaceFirst(' ', '\n')
+                    .toUpperCase(),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ),
           );
         },

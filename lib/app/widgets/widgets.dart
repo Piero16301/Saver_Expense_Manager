@@ -13,6 +13,7 @@ export 'app_text_field.dart';
 export 'doughnut_circular_chart.dart';
 export 'linear_chart.dart';
 export 'list_movements_item_home.dart';
+export 'month_picker.dart';
 export 'month_range_selector.dart';
 export 'month_selector.dart';
 export 'movements_list.dart';

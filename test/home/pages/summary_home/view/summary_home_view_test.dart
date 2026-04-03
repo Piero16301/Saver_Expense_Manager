@@ -358,17 +358,17 @@ void main() {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
-      final startMonthCard = find
+      final calendarButton = find
           .descendant(
             of: find.byType(MonthRangeSelector),
-            matching: find.byType(Card),
+            matching: find.byType(IconButton),
           )
           .first;
 
-      await tester.tap(startMonthCard);
+      await tester.tap(calendarButton);
       await tester.pumpAndSettle();
 
-      expect(find.byType(Dialog), findsOneWidget);
+      expect(find.byType(MonthPickerDialog), findsOneWidget);
     });
 
     testWidgets('switches between Expense and Income in CategoriesResumeCards',
@@ -424,7 +424,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('SALARY'), findsOneWidget);
+      expect(find.text('Salary'), findsOneWidget);
     });
   });
 }
