@@ -32,9 +32,7 @@ class SettingsCardBlock<T> extends StatelessWidget {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 12),
             Container(

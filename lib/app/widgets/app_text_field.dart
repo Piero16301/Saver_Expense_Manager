@@ -44,6 +44,7 @@ class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      style: Theme.of(context).textTheme.bodyLarge,
       enabled: enabled,
       controller: controller,
       onChanged: onChanged,

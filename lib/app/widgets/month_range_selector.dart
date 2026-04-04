@@ -42,28 +42,34 @@ class MonthRangeSelector extends StatelessWidget {
                   language.toString(),
                 ).format(startMonth),
               ),
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
         ),
-        IconButton(
-          onPressed: () async {
-            await MonthPicker.showRangeMonthPicker(
-              context: context,
-              initialStartDate: startMonth,
-              initialEndDate: endMonth,
-              firstDate: AppVariables.minDate,
-              lastDate: DateTime.now(),
-            ).then((value) {
-              if (value != null) {
-                onChangeStartMonth(value.start);
-                onChangeEndMonth(value.end);
-              }
-            });
-          },
-          icon: const HugeIcon(
-            icon: HugeIcons.strokeRoundedCalendar03,
-            size: 28,
+        Card(
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            onPressed: () async {
+              await MonthPicker.showRangeMonthPicker(
+                context: context,
+                initialStartDate: startMonth,
+                initialEndDate: endMonth,
+                firstDate: AppVariables.minDate,
+                lastDate: DateTime.now(),
+              ).then((value) {
+                if (value != null) {
+                  onChangeStartMonth(value.start);
+                  onChangeEndMonth(value.end);
+                }
+              });
+            },
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCalendar03,
+            ),
           ),
         ),
         Container(
@@ -79,7 +85,7 @@ class MonthRangeSelector extends StatelessWidget {
                   language.toString(),
                 ).format(endMonth),
               ),
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
         ),
