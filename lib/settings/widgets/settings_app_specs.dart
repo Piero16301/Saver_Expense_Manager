@@ -32,13 +32,13 @@ class SettingsAppSpecs extends StatelessWidget {
                   children: [
                     Text(
                       l10n.settingsVersionTitle,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     Text(
                       '$version ($buildNumber)',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),
@@ -48,13 +48,13 @@ class SettingsAppSpecs extends StatelessWidget {
                   children: [
                     Text(
                       l10n.settingsUpdateDateTitle,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     Text(
                       DateFormat('dd/MM/yyyy').format(updateDate),
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),

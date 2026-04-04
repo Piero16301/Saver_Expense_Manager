@@ -29,10 +29,13 @@ class MonthSelector extends StatelessWidget {
       child: SizedBox(
         child: Card(
           margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
           child: Row(
             children: [
               SizedBox.square(
-                dimension: 40,
+                dimension: 50,
                 child: IconButton(
                   icon: const HugeIcon(
                     icon: HugeIcons.strokeRoundedArrowLeft01,
@@ -57,15 +60,13 @@ class MonthSelector extends StatelessWidget {
                       'MMMM yyyy',
                       language.toString(),
                     ).format(monthSelected).toUpperCase(),
-                    style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: Theme.of(context).textTheme.titleMedium,
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
               SizedBox.square(
-                dimension: 40,
+                dimension: 50,
                 child: IconButton(
                   icon: const HugeIcon(
                     icon: HugeIcons.strokeRoundedArrowRight01,

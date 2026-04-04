@@ -179,7 +179,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
 
     return Column(
       children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         ConstrainedBox(
           constraints: const BoxConstraints(
             maxWidth: AppVariables.tabletMaxWidth,
