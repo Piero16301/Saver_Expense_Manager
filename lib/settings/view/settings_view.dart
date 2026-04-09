@@ -21,7 +21,7 @@ class SettingsView extends StatelessWidget {
             title: Text(
               l10n.settingsAppBarTitle,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                   ),
             ),
             notificationPredicate: (notification) => false,

@@ -33,7 +33,7 @@ class ProfileView extends StatelessWidget {
           title: Text(
             l10n.profileTitle,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
           ),
           notificationPredicate: (notification) => false,
@@ -434,7 +434,7 @@ class _ProviderListTile extends StatelessWidget {
       title: Text(
         title,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
       ),
       subtitle: isConnected && subtitle != null

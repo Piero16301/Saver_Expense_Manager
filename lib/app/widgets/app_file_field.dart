@@ -81,7 +81,7 @@ class AppFileField extends StatelessWidget {
                       ),
                       label: Text(
                         labelAdd,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),

@@ -28,7 +28,7 @@ class MovementView extends StatelessWidget {
           title: Text(
             _appBarTitle(l10n),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
           ),
           notificationPredicate: (notification) => false,
@@ -325,7 +325,7 @@ class MovementMetadata extends StatelessWidget {
               text: 'ID: ',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                   ),
               children: [
                 TextSpan(

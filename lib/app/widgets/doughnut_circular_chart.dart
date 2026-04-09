@@ -39,7 +39,7 @@ class DoughnutCircularChart extends StatelessWidget {
               Text(
                 AppExtensions.moneyFormat.format(data[selectedIndex].value),
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
               ),
               Text(
