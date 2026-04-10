@@ -148,7 +148,7 @@ class AppFileField extends StatelessWidget {
 
   Future<void> _handleUpload(BuildContext context, AppLoader appLoader) async {
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: AppVariables.allowedExtensions,
       );

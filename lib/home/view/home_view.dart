@@ -246,7 +246,7 @@ class AddMovementBottomSheet extends StatelessWidget {
     final loader = AppLoader(context);
 
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: AppVariables.allowedExtensions,
       );
