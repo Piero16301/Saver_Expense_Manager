@@ -21,7 +21,7 @@ class CategoryView extends StatelessWidget {
           title: Text(
             AppFunctions.getCategoryName(state.category.name, l10n),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
           ),
           notificationPredicate: (notification) => false,

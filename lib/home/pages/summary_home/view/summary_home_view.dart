@@ -312,19 +312,21 @@ class ResumeItemCardMovements extends StatelessWidget {
                   children: [
                     HugeIcon(
                       icon: _icon,
-                      size: 20,
+                      size: 18,
                       color: color,
                     ),
                     Text(
                       _title(context),
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
                     ),
                   ],
                 ),
                 Text(
                   _valueFormatted(),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
                         color: color,
                       ),
                 ),
@@ -344,7 +346,7 @@ class ResumeItemCardMovements extends StatelessWidget {
                       '${difference.abs().toInt()}%',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: _differenceColor,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                           ),
                     ),
                   ],
@@ -695,7 +697,7 @@ class CategoryExpenseCard extends StatelessWidget {
                       _getRankingText(),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: _rankingColor,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w600,
                           ),
                     ),
                   ),
@@ -707,7 +709,7 @@ class CategoryExpenseCard extends StatelessWidget {
                   Text(
                     AppFunctions.getCategoryName(category.name, l10n),
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          letterSpacing: 0.5,
+                          fontWeight: FontWeight.w400,
                         ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -716,7 +718,7 @@ class CategoryExpenseCard extends StatelessWidget {
                   Text(
                     AppExtensions.moneyFormat.format(amount),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -740,6 +742,7 @@ class CategoryExpenseCard extends StatelessWidget {
                               .bodySmall
                               ?.color
                               ?.withValues(alpha: 0.6),
+                          fontWeight: FontWeight.w500,
                         ),
                   ),
                 ],

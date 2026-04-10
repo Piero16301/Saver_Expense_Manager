@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_picker/src/platform/file_picker_platform_interface.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,7 +38,7 @@ class MockTrace extends Mock implements Trace {}
 
 class MockFilePicker extends Mock
     with MockPlatformInterfaceMixin
-    implements FilePicker {}
+    implements FilePickerPlatform {}
 
 class MockRemoteStorageService extends Mock implements RemoteStorageService {}
 
@@ -353,7 +354,7 @@ void main() {
         }
 
         final mockFilePicker = MockFilePicker();
-        FilePicker.platform = mockFilePicker;
+        FilePickerPlatform.instance = mockFilePicker;
 
         when(
           () => mockFilePicker.pickFiles(
@@ -426,7 +427,7 @@ void main() {
 
     testWidgets('handleFilePick handles null result', (tester) async {
       final mockFilePicker = MockFilePicker();
-      FilePicker.platform = mockFilePicker;
+      FilePickerPlatform.instance = mockFilePicker;
 
       when(
         () => mockFilePicker.pickFiles(
@@ -451,7 +452,7 @@ void main() {
 
     testWidgets('handleFilePick handles generic exception', (tester) async {
       final mockFilePicker = MockFilePicker();
-      FilePicker.platform = mockFilePicker;
+      FilePickerPlatform.instance = mockFilePicker;
 
       when(
         () => mockFilePicker.pickFiles(
@@ -487,7 +488,7 @@ void main() {
     testWidgets('handleFilePick handles unsupported file exception',
         (tester) async {
       final mockFilePicker = MockFilePicker();
-      FilePicker.platform = mockFilePicker;
+      FilePickerPlatform.instance = mockFilePicker;
 
       when(
         () => mockFilePicker.pickFiles(

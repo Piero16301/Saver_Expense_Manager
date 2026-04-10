@@ -47,6 +47,7 @@ class LinearChart extends StatelessWidget {
         majorGridLines: const MajorGridLines(width: 0),
         labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
             ),
       ),
       primaryYAxis: NumericAxis(
@@ -59,6 +60,7 @@ class LinearChart extends StatelessWidget {
             : maximumRounded.toDouble(),
         labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
             ),
       ),
       trackballBehavior: TrackballBehavior(

@@ -32,7 +32,7 @@ class MonthRangeSelector extends StatelessWidget {
         Container(
           padding: const EdgeInsets.only(left: 10),
           height: 40,
-          width: 100,
+          width: 110,
           child: Align(
             alignment: AlignmentGeometry.centerLeft,
             child: Text(
@@ -42,7 +42,9 @@ class MonthRangeSelector extends StatelessWidget {
                   language.toString(),
                 ).format(startMonth),
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
           ),
         ),
@@ -75,7 +77,7 @@ class MonthRangeSelector extends StatelessWidget {
         Container(
           padding: const EdgeInsets.only(right: 10),
           height: 40,
-          width: 100,
+          width: 110,
           child: Align(
             alignment: AlignmentGeometry.centerRight,
             child: Text(
@@ -85,7 +87,9 @@ class MonthRangeSelector extends StatelessWidget {
                   language.toString(),
                 ).format(endMonth),
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
           ),
         ),

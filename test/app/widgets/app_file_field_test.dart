@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:file_picker/src/platform/file_picker_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -14,7 +15,7 @@ class MockRemoteStorageService extends Mock implements RemoteStorageService {}
 
 class MockFilePicker extends Mock
     with MockPlatformInterfaceMixin
-    implements FilePicker {}
+    implements FilePickerPlatform {}
 
 void main() {
   late RemoteStorageService remoteStorageService;
@@ -28,7 +29,7 @@ void main() {
   setUp(() async {
     remoteStorageService = MockRemoteStorageService();
     mockFilePicker = MockFilePicker();
-    FilePicker.platform = mockFilePicker;
+    FilePickerPlatform.instance = mockFilePicker;
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<RemoteStorageService>()) {

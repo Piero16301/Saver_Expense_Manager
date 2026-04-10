@@ -30,7 +30,7 @@ class AppOutlinedButton extends StatelessWidget {
         label ?? '',
         style: TextStyle(
           fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

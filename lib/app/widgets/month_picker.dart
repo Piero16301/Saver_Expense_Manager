@@ -230,7 +230,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                     ? colorScheme.onPrimary
                     : colorScheme.onSurface,
             fontWeight: isToday || isSelectedCircle
-                ? FontWeight.bold
+                ? FontWeight.w600
                 : FontWeight.normal,
           ),
         ),
@@ -379,7 +379,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                       '${_displayedYear.year}',
                       style: textTheme.titleMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
