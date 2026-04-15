@@ -9,20 +9,20 @@ environment:
 
 dependencies:
   bloc: ^9.2.0
-  cloud_firestore: ^6.2.0
+  cloud_firestore: ^6.3.0
   country_flags: ^4.1.2
   cunning_document_scanner: ^1.4.0
   equatable: ^2.0.8
   file_picker: ^11.0.2
-  firebase_ai: ^3.10.0
-  firebase_analytics: ^12.2.0
-  firebase_app_check: ^0.4.2
-  firebase_auth: ^6.3.0
-  firebase_core: ^4.6.0
-  firebase_crashlytics: ^5.1.0
-  firebase_performance: ^0.11.2
-  firebase_remote_config: ^6.3.0
-  firebase_storage: ^13.2.0
+  firebase_ai: ^3.11.0
+  firebase_analytics: ^12.3.0
+  firebase_app_check: ^0.4.3
+  firebase_auth: ^6.4.0
+  firebase_core: ^4.7.0
+  firebase_crashlytics: ^5.2.0
+  firebase_performance: ^0.11.3
+  firebase_remote_config: ^6.4.0
+  firebase_storage: ^13.3.0
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
@@ -32,7 +32,7 @@ dependencies:
   flutter_markdown_plus: ^1.0.7
   gemini_nano_android: ^1.1.2
   get_it: ^9.2.1
-  go_router: ^17.2.0
+  go_router: ^17.2.1
   google_sign_in: ^7.2.0
   hugeicons: ^1.1.6
   intl: ^0.20.2
@@ -41,8 +41,8 @@ dependencies:
   package_info_plus: ^9.0.1
   path_provider: ^2.1.5
   shared_preferences: ^2.5.5
-  syncfusion_flutter_charts: ^33.1.47
-  syncfusion_flutter_core: ^33.1.47
+  syncfusion_flutter_charts: ^33.1.49
+  syncfusion_flutter_core: ^33.1.49
   uuid: ^4.5.3
 
 dev_dependencies:
@@ -51,7 +51,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
-  mocktail: ^1.0.4
+  mocktail: ^1.0.5
   network_image_mock: ^2.1.1
   path_provider_platform_interface: ^2.1.2
   plugin_platform_interface: ^2.1.8
