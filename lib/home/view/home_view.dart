@@ -93,6 +93,12 @@ class HomeView extends StatelessWidget {
                                 url: snapshot.data!.photoURL,
                               ),
                               fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  HugeIcon(
+                                icon: HugeIcons.strokeRoundedUser,
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),
