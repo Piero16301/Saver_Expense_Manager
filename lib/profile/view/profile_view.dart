@@ -113,6 +113,17 @@ class ProfileView extends StatelessWidget {
                                       resolution: ImageResolutionType.high,
                                     ),
                                     fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Padding(
+                                      padding: const EdgeInsets.all(14),
+                                      child: HugeIcon(
+                                        icon: HugeIcons.strokeRoundedUser,
+                                        strokeWidth: 2,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
