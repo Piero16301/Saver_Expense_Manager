@@ -102,6 +102,7 @@ jobs:
         run: |
           RUN=${{ github.run_number }}
           MAJOR=${RUN:0:${#RUN}-2}
+          MAJOR="${MAJOR:-0}"
           MINOR=${RUN: -2:1}
           PATCH=${RUN: -1:1}
           echo "value=${MAJOR}.${MINOR}.${PATCH}" >> $GITHUB_OUTPUT
