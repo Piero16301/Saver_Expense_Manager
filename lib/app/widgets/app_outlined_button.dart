@@ -20,7 +20,7 @@ class AppOutlinedButton extends StatelessWidget {
     return OutlinedButton.icon(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        padding: innerPadding ?? const EdgeInsets.symmetric(vertical: 12),
+        padding: innerPadding ?? const EdgeInsets.all(12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

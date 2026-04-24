@@ -106,10 +106,10 @@ class LoginView extends StatelessWidget {
                                     : () => context
                                         .read<LoginCubit>()
                                         .togglePasswordVisibility(),
-                                icon: Icon(
-                                  state.isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
+                                icon: HugeIcon(
+                                  icon: state.isPasswordVisible
+                                      ? HugeIcons.strokeRoundedView
+                                      : HugeIcons.strokeRoundedViewOff,
                                 ),
                               ),
                               onChanged: (value) => context

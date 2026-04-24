@@ -45,12 +45,10 @@ class AppAlertDialog extends StatelessWidget {
         AppOutlinedButton(
           onPressed: onCancel,
           label: cancelLabel,
-          innerPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
         AppFilledButton(
           onPressed: onConfirm,
           label: confirmLabel,
-          innerPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ],
     );
