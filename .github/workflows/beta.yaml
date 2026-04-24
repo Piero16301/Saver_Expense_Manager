@@ -97,9 +97,18 @@ jobs:
         run: flutter pub get
       - name: 📄 Create dummy .env file
         run: touch .env
+      - name: 🔢 Compute build name
+        id: build_name
+        run: |
+          RUN=${{ github.run_number }}
+          MAJOR=${RUN:0:${#RUN}-2}
+          MINOR=${RUN: -2:1}
+          PATCH=${RUN: -1:1}
+          echo "value=${MAJOR}.${MINOR}.${PATCH}" >> $GITHUB_OUTPUT
+
       - name: 🛠️ Build the application (AAB)
         run: |
-          flutter build appbundle --flavor production -t lib/main.dart --build-name="2.7.${{ github.run_number }}" --build-number="${{ github.run_number }}"
+          flutter build appbundle --flavor production -t lib/main.dart --build-name="${{ steps.build_name.outputs.value }}" --build-number="${{ github.run_number }}"
 
       - name: ⬇️ Upload AAB to Artifacts
         uses: actions/upload-artifact@master
@@ -138,7 +147,7 @@ jobs:
           serviceAccountJson: ${{ env.SERVICE_ACCOUNT_PATH }}
           packageName: ${{ env.APP_PACKAGE_NAME }}
           releaseFiles: ${{ env.AAB_PATH }}
-          track: beta
+          tracks: beta
           whatsNewDirectory: whatsnew
 
       - name: 🗑️ Delete Artifact
