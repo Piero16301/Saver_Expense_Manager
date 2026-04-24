@@ -333,79 +333,112 @@ class ProfileView extends StatelessWidget {
     final passwordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
     final formKey = GlobalKey<FormState>();
+    var isPasswordVisible = false;
+    var isConfirmPasswordVisible = false;
 
     await showDialog<void>(
       context: context,
-      builder: (childContext) => AppAlertDialog(
-        isForm: true,
-        title: l10n.linkEmailTitle,
-        onCancel: () => Navigator.of(context).pop(),
-        onConfirm: () {
-          if (formKey.currentState?.validate() ?? false) {
-            unawaited(
-              context.read<ProfileCubit>().linkEmail(
-                    l10n,
-                    email: emailController.text,
-                    password: passwordController.text,
+      builder: (childContext) => StatefulBuilder(
+        builder: (stfulContext, setState) => AppAlertDialog(
+          isForm: true,
+          title: l10n.linkEmailTitle,
+          onCancel: () => Navigator.of(context).pop(),
+          onConfirm: () {
+            if (formKey.currentState?.validate() ?? false) {
+              unawaited(
+                context.read<ProfileCubit>().linkEmail(
+                      l10n,
+                      email: emailController.text,
+                      password: passwordController.text,
+                    ),
+              );
+              Navigator.of(context).pop();
+            }
+          },
+          confirmLabel: l10n.linkEmailButton,
+          cancelLabel: l10n.cancel,
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppTextField(
+                  controller: emailController,
+                  label: l10n.emailLabel,
+                  hintText: l10n.emailHint,
+                  keyboardType: TextInputType.emailAddress,
+                  prefix: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedMail01,
                   ),
-            );
-            Navigator.of(context).pop();
-          }
-        },
-        confirmLabel: l10n.linkEmailButton,
-        cancelLabel: l10n.cancel,
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppTextField(
-                controller: emailController,
-                label: l10n.emailLabel,
-                hintText: l10n.emailHint,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return l10n.emailRequired;
-                  }
-                  final emailRegex = RegExp(AppVariables.emailRegExp);
-                  if (!emailRegex.hasMatch(value)) {
-                    return l10n.invalidEmailFormat;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              AppTextField(
-                controller: passwordController,
-                label: l10n.passwordLabel,
-                hintText: l10n.passwordHint,
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return l10n.passwordRequired;
-                  }
-                  final passwordRegex = RegExp(AppVariables.passwordRegExp);
-                  if (!passwordRegex.hasMatch(value)) {
-                    return l10n.invalidPasswordFormat;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              AppTextField(
-                controller: confirmPasswordController,
-                label: l10n.confirmPasswordLabel,
-                hintText: l10n.passwordHint,
-                obscureText: true,
-                validator: (value) {
-                  if (value != passwordController.text) {
-                    return l10n.passwordMismatchError;
-                  }
-                  return null;
-                },
-              ),
-            ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return l10n.emailRequired;
+                    }
+                    final emailRegex = RegExp(AppVariables.emailRegExp);
+                    if (!emailRegex.hasMatch(value)) {
+                      return l10n.invalidEmailFormat;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                AppTextField(
+                  controller: passwordController,
+                  label: l10n.passwordLabel,
+                  hintText: l10n.passwordHint,
+                  obscureText: !isPasswordVisible,
+                  prefix: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedLockPassword,
+                  ),
+                  suffix: IconButton(
+                    onPressed: () => setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    }),
+                    icon: HugeIcon(
+                      icon: isPasswordVisible
+                          ? HugeIcons.strokeRoundedView
+                          : HugeIcons.strokeRoundedViewOff,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return l10n.passwordRequired;
+                    }
+                    final passwordRegex = RegExp(AppVariables.passwordRegExp);
+                    if (!passwordRegex.hasMatch(value)) {
+                      return l10n.invalidPasswordFormat;
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                AppTextField(
+                  controller: confirmPasswordController,
+                  label: l10n.confirmPasswordLabel,
+                  hintText: l10n.passwordHint,
+                  obscureText: !isConfirmPasswordVisible,
+                  prefix: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedLockPassword,
+                  ),
+                  suffix: IconButton(
+                    onPressed: () => setState(() {
+                      isConfirmPasswordVisible = !isConfirmPasswordVisible;
+                    }),
+                    icon: HugeIcon(
+                      icon: isConfirmPasswordVisible
+                          ? HugeIcons.strokeRoundedView
+                          : HugeIcons.strokeRoundedViewOff,
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value != passwordController.text) {
+                      return l10n.passwordMismatchError;
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -466,7 +499,6 @@ class _ProviderListTile extends StatelessWidget {
           : AppOutlinedButton(
               onPressed: onLink,
               label: l10n.connectButton,
-              innerPadding: const EdgeInsets.all(8),
             ),
     );
   }

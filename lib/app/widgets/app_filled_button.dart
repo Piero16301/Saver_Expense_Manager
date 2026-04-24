@@ -24,7 +24,7 @@ class AppFilledButton extends StatelessWidget {
       onPressed: onPressed,
       style: FilledButton.styleFrom(
         backgroundColor: color,
-        padding: innerPadding ?? const EdgeInsets.symmetric(vertical: 12),
+        padding: innerPadding ?? const EdgeInsets.all(12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

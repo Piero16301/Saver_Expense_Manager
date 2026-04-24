@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -112,7 +113,13 @@ void main() {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.visibility_off));
+      await tester.tap(
+        find.byWidgetPredicate(
+          (widget) =>
+              widget is HugeIcon &&
+              widget.icon == HugeIcons.strokeRoundedViewOff,
+        ),
+      );
       verify(() => mockLoginCubit.togglePasswordVisibility()).called(1);
     });
 

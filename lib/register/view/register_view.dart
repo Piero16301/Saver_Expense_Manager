@@ -125,10 +125,10 @@ class RegisterView extends StatelessWidget {
                                     : () => context
                                         .read<RegisterCubit>()
                                         .togglePasswordVisibility(),
-                                icon: Icon(
-                                  state.isPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
+                                icon: HugeIcon(
+                                  icon: state.isPasswordVisible
+                                      ? HugeIcons.strokeRoundedView
+                                      : HugeIcons.strokeRoundedViewOff,
                                 ),
                               ),
                               onChanged: (value) => context
@@ -156,10 +156,10 @@ class RegisterView extends StatelessWidget {
                                     : () => context
                                         .read<RegisterCubit>()
                                         .toggleConfirmPasswordVisibility(),
-                                icon: Icon(
-                                  state.isConfirmPasswordVisible
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
+                                icon: HugeIcon(
+                                  icon: state.isConfirmPasswordVisible
+                                      ? HugeIcons.strokeRoundedView
+                                      : HugeIcons.strokeRoundedViewOff,
                                 ),
                               ),
                               onChanged: (value) => context
