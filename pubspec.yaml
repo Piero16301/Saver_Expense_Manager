@@ -13,7 +13,7 @@ dependencies:
   country_flags: ^4.1.2
   cunning_document_scanner: ^1.4.0
   equatable: ^2.0.8
-  file_picker: ^11.0.2
+  file_picker: ^12.0.0-beta.2
   firebase_ai: ^3.11.0
   firebase_analytics: ^12.3.0
   firebase_app_check: ^0.4.3
@@ -38,7 +38,7 @@ dependencies:
   intl: ^0.20.2
   mime: ^2.0.0
   open_file: ^3.5.11
-  package_info_plus: ^9.0.1
+  package_info_plus: ^10.1.0
   path_provider: ^2.1.5
   shared_preferences: ^2.5.5
   syncfusion_flutter_charts: ^33.2.3
