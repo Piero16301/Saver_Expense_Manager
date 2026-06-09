@@ -38,9 +38,9 @@ class DoughnutCircularChart extends StatelessWidget {
               ),
               Text(
                 AppExtensions.moneyFormat.format(data[selectedIndex].value),
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
                 '${_percentage.toInt()}%',

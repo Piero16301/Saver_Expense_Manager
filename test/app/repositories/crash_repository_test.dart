@@ -57,16 +57,18 @@ void main() {
     });
 
     test('setCustomKey calls _crashlytics.setCustomKey', () async {
-      when(() => mockCrashlytics.setCustomKey(any<String>(), any<Object>()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockCrashlytics.setCustomKey(any<String>(), any<Object>()),
+      ).thenAnswer((_) async {});
       repository.setCustomKey('key', 'value');
       await Future<void>.delayed(Duration.zero);
       verify(() => mockCrashlytics.setCustomKey('key', 'value')).called(1);
     });
 
     test('setUserIdentifier calls _crashlytics.setUserIdentifier', () async {
-      when(() => mockCrashlytics.setUserIdentifier(any<String>()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockCrashlytics.setUserIdentifier(any<String>()),
+      ).thenAnswer((_) async {});
       repository.setUserIdentifier('user_123');
       await Future<void>.delayed(Duration.zero);
       verify(() => mockCrashlytics.setUserIdentifier('user_123')).called(1);

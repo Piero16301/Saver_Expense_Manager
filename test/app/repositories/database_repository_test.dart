@@ -43,8 +43,9 @@ void main() {
       ),
     ).thenAnswer((_) async {});
 
-    when(() => mockPerformanceService.startTrace(any<String>()))
-        .thenReturn(mockTrace);
+    when(
+      () => mockPerformanceService.startTrace(any<String>()),
+    ).thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any())).thenReturn(null);
 
     repository = FirestoreDatabaseRepository(firestore: fakeFirestore);
@@ -149,8 +150,9 @@ void main() {
       final mockFirestore = MockFirebaseFirestore();
       final repo = FirestoreDatabaseRepository(firestore: mockFirestore);
 
-      when(() => mockFirestore.collection(any<String>()))
-          .thenThrow(Exception('Firestore Fail'));
+      when(
+        () => mockFirestore.collection(any<String>()),
+      ).thenThrow(Exception('Firestore Fail'));
 
       repo.saveMovement(movement: Movement.empty.copyWith(id: '1'));
 
@@ -183,8 +185,9 @@ void main() {
       final mockFirestore = MockFirebaseFirestore();
       final repo = FirestoreDatabaseRepository(firestore: mockFirestore);
 
-      when(() => mockFirestore.collection(any<String>()))
-          .thenThrow(Exception('Delete Fail'));
+      when(
+        () => mockFirestore.collection(any<String>()),
+      ).thenThrow(Exception('Delete Fail'));
 
       repo.deleteMovement(movementId: '1');
 
@@ -199,8 +202,11 @@ void main() {
 
     test('getMovements returns full list', () async {
       final date = DateTime(2023, 10, 15);
-      final movement =
-          Movement.empty.copyWith(id: '1', user: 'user_1', date: date);
+      final movement = Movement.empty.copyWith(
+        id: '1',
+        user: 'user_1',
+        date: date,
+      );
 
       await fakeFirestore
           .collection(AppVariables.movementsCollection)

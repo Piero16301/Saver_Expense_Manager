@@ -36,16 +36,10 @@ class AuthService {
 
   Future<bool> signInWithGoogle() => _authRepository.signInWithGoogle();
 
-  Future<bool> signInWithEmailAndPassword(
-    String email,
-    String password,
-  ) =>
+  Future<bool> signInWithEmailAndPassword(String email, String password) =>
       _authRepository.signInWithEmailAndPassword(email, password);
 
-  Future<bool> signUpWithEmailAndPassword(
-    String email,
-    String password,
-  ) =>
+  Future<bool> signUpWithEmailAndPassword(String email, String password) =>
       _authRepository.signUpWithEmailAndPassword(email, password);
 
   Future<bool> updateUserName(String newName) =>

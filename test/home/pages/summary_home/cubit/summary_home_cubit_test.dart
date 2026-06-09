@@ -36,8 +36,11 @@ void main() {
       build: () => summaryHomeCubit,
       act: (cubit) => cubit.changeStartMonth(DateTime(2023)),
       expect: () => [
-        isA<SummaryHomeState>()
-            .having((s) => s.startMonth, 'startMonth', DateTime(2023)),
+        isA<SummaryHomeState>().having(
+          (s) => s.startMonth,
+          'startMonth',
+          DateTime(2023),
+        ),
       ],
     );
 
@@ -46,8 +49,11 @@ void main() {
       build: () => summaryHomeCubit,
       act: (cubit) => cubit.changeEndMonth(DateTime(2023, 12)),
       expect: () => [
-        isA<SummaryHomeState>()
-            .having((s) => s.endMonth, 'endMonth', DateTime(2023, 12)),
+        isA<SummaryHomeState>().having(
+          (s) => s.endMonth,
+          'endMonth',
+          DateTime(2023, 12),
+        ),
       ],
     );
 

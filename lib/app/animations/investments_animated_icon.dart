@@ -170,8 +170,10 @@ class _InvestmentsPainter extends CustomPainter {
     // calc angle
     const delta = 0.01;
     final nextPos = getBezierPoint(math.min(1, tArrow + delta));
-    final angle =
-        math.atan2(nextPos.dy - currentPos.dy, nextPos.dx - currentPos.dx);
+    final angle = math.atan2(
+      nextPos.dy - currentPos.dy,
+      nextPos.dx - currentPos.dx,
+    );
 
     var opacity = 1.0;
     if (arrowPhase < 0.1) {
@@ -202,13 +204,11 @@ class _InvestmentsPainter extends CustomPainter {
 
       canvas
         ..drawPath(arrPath, arrPaint)
-
         // Arrow trail (rocket tail)
         ..drawRect(
           Rect.fromLTWH(-w * 0.25, -w * 0.03, w * 0.17, w * 0.06),
           arrPaint,
         )
-
         // Inner clear to make it sleek
         ..drawLine(
           Offset(-w * 0.22, 0),

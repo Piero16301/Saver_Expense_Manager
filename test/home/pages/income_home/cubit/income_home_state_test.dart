@@ -5,20 +5,13 @@ import 'package:saver_expense_manager/home/pages/income_home/cubit/income_home_c
 void main() {
   group('IncomeHomeState', () {
     test('supports value equality', () {
-      expect(
-        const IncomeHomeState(),
-        equals(const IncomeHomeState()),
-      );
+      expect(const IncomeHomeState(), equals(const IncomeHomeState()));
     });
 
     test('props are correct', () {
       expect(
         const IncomeHomeState().props,
-        equals(<Object?>[
-          null,
-          0,
-          const <CategoryData>[],
-        ]),
+        equals(<Object?>[null, 0, const <CategoryData>[]]),
       );
     });
 
@@ -31,12 +24,7 @@ void main() {
           selectedIndex: 1,
           data: data,
         ),
-        equals(
-          IncomeHomeState(
-            monthSelected: date,
-            selectedIndex: 1,
-          ),
-        ),
+        equals(IncomeHomeState(monthSelected: date, selectedIndex: 1)),
       );
     });
 

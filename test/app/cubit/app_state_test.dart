@@ -5,10 +5,7 @@ import 'package:saver_expense_manager/app/app.dart';
 void main() {
   group('AppState', () {
     test('supports value equality', () {
-      expect(
-        const AppState(),
-        equals(const AppState()),
-      );
+      expect(const AppState(), equals(const AppState()));
     });
 
     test('props are correct', () {
@@ -43,10 +40,7 @@ void main() {
     });
 
     test('copyWith returns original object when properties are null', () {
-      expect(
-        const AppState().copyWith(),
-        equals(const AppState()),
-      );
+      expect(const AppState().copyWith(), equals(const AppState()));
     });
   });
 }

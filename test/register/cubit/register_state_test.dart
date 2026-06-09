@@ -4,10 +4,7 @@ import 'package:saver_expense_manager/register/cubit/register_cubit.dart';
 void main() {
   group('RegisterState', () {
     test('supports value equality', () {
-      expect(
-        const RegisterState(),
-        equals(const RegisterState()),
-      );
+      expect(const RegisterState(), equals(const RegisterState()));
     });
 
     test('props are correct', () {
@@ -63,10 +60,7 @@ void main() {
     });
 
     test('copyWith returns original object when properties are null', () {
-      expect(
-        const RegisterState().copyWith(),
-        equals(const RegisterState()),
-      );
+      expect(const RegisterState().copyWith(), equals(const RegisterState()));
     });
   });
 

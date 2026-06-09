@@ -4,10 +4,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/category/category.dart';
 
 class CategoryPage extends StatelessWidget {
-  const CategoryPage({
-    required this.category,
-    super.key,
-  });
+  const CategoryPage({required this.category, super.key});
 
   final Category category;
 

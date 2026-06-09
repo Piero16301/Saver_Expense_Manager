@@ -83,8 +83,9 @@ void main() {
 
     test('getData calls storage.getData', () async {
       final mockData = Uint8List(10);
-      when(() => mockReference.getData(any<int>()))
-          .thenAnswer((_) async => mockData);
+      when(
+        () => mockReference.getData(any<int>()),
+      ).thenAnswer((_) async => mockData);
       final result = await repository.getData('path/to/file');
       expect(result, equals(mockData));
       verify(() => mockReference.getData(any<int>())).called(1);
@@ -92,23 +93,29 @@ void main() {
 
     test('uploadFile calls ref.putFile and returns ref.name', () async {
       final fakeTask = FakeUploadTask();
-      when(() => mockReference.putFile(any<File>()))
-          .thenAnswer((_) => fakeTask);
+      when(
+        () => mockReference.putFile(any<File>()),
+      ).thenAnswer((_) => fakeTask);
       when(() => mockReference.name).thenReturn('uploaded_file');
 
-      final result =
-          await repository.uploadFile(File('dummy_path'), 'remote_path');
+      final result = await repository.uploadFile(
+        File('dummy_path'),
+        'remote_path',
+      );
 
       expect(result, equals('uploaded_file'));
       verify(() => mockReference.putFile(any<File>())).called(1);
     });
 
     test('uploadFile records error and returns null on exception', () async {
-      when(() => mockReference.putFile(any<File>()))
-          .thenThrow(Exception('Upload Fail'));
+      when(
+        () => mockReference.putFile(any<File>()),
+      ).thenThrow(Exception('Upload Fail'));
 
-      final result =
-          await repository.uploadFile(File('dummy_path'), 'remote_path');
+      final result = await repository.uploadFile(
+        File('dummy_path'),
+        'remote_path',
+      );
 
       expect(result, isNull);
       await Future<void>.delayed(Duration.zero);
@@ -122,8 +129,9 @@ void main() {
     });
 
     test('getData records error and returns null on exception', () async {
-      when(() => mockReference.getData(any<int>()))
-          .thenThrow(Exception('Get Data Fail'));
+      when(
+        () => mockReference.getData(any<int>()),
+      ).thenThrow(Exception('Get Data Fail'));
 
       final result = await repository.getData('path/to/file');
 

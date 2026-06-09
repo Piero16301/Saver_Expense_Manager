@@ -116,7 +116,6 @@ class _LoadingPainter extends CustomPainter {
         false,
         outerPaint,
       )
-
       // Inner arc
       ..drawArc(
         Rect.fromCircle(center: center, radius: innerRadius),

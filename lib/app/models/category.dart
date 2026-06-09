@@ -60,13 +60,7 @@ class Category extends Equatable {
   final CategoryType type;
 
   @override
-  List<Object> get props => [
-        id,
-        name,
-        icon,
-        color,
-        type,
-      ];
+  List<Object> get props => [id, name, icon, color, type];
 }
 
 /// An enum that represents the type of category

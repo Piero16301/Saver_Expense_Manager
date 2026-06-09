@@ -6,26 +6,21 @@ import 'package:saver_expense_manager/app/models/models.dart';
 /// {@endtemplate}
 class CategoryData extends Equatable {
   /// {@macro category_data}
-  const CategoryData({
-    required this.category,
-    required this.value,
-  });
+  const CategoryData({required this.category, required this.value});
 
   /// Creates an instance of [CategoryData] from a [Map]
   factory CategoryData.fromJson(Map<String, dynamic> json) {
     return CategoryData(
-      category:
-          Category.fromJson(json['category'] as Map<String, dynamic>? ?? {}),
+      category: Category.fromJson(
+        json['category'] as Map<String, dynamic>? ?? {},
+      ),
       value: (json['value'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
   /// Creates a [Map] from an instance of [CategoryData]
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'category': category.toJson(),
-      'value': value,
-    };
+    return <String, dynamic>{'category': category.toJson(), 'value': value};
   }
 
   /// Chart data category
@@ -35,8 +30,5 @@ class CategoryData extends Equatable {
   final double value;
 
   @override
-  List<Object> get props => [
-        category,
-        value,
-      ];
+  List<Object> get props => [category, value];
 }

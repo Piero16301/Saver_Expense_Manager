@@ -5,20 +5,13 @@ import 'package:saver_expense_manager/home/pages/expenses_home/cubit/expenses_ho
 void main() {
   group('ExpensesHomeState', () {
     test('supports value equality', () {
-      expect(
-        const ExpensesHomeState(),
-        equals(const ExpensesHomeState()),
-      );
+      expect(const ExpensesHomeState(), equals(const ExpensesHomeState()));
     });
 
     test('props are correct', () {
       expect(
         const ExpensesHomeState().props,
-        equals(<Object?>[
-          null,
-          0,
-          const <CategoryData>[],
-        ]),
+        equals(<Object?>[null, 0, const <CategoryData>[]]),
       );
     });
 
@@ -31,12 +24,7 @@ void main() {
           selectedIndex: 1,
           data: data,
         ),
-        equals(
-          ExpensesHomeState(
-            monthSelected: date,
-            selectedIndex: 1,
-          ),
-        ),
+        equals(ExpensesHomeState(monthSelected: date, selectedIndex: 1)),
       );
     });
 

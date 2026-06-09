@@ -40,8 +40,9 @@ void main() {
       when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
 
       when(() => mockAppCubit.state).thenReturn(const AppState());
-      when(() => mockAuth.currentUser)
-          .thenReturn(const AppUser(uid: 'user123'));
+      when(
+        () => mockAuth.currentUser,
+      ).thenReturn(const AppUser(uid: 'user123'));
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
@@ -79,8 +80,9 @@ void main() {
 
     tearDown(getIt.reset);
 
-    testWidgets('renders IncomeHomeView and provides IncomeHomeCubit',
-        (tester) async {
+    testWidgets('renders IncomeHomeView and provides IncomeHomeCubit', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -122,11 +124,12 @@ void main() {
       when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
 
       when(() => mockAppCubit.state).thenReturn(const AppState());
-      when(() => mockCubit.state).thenReturn(
-        IncomeHomeState(monthSelected: DateTime(2024, 3)),
-      );
-      when(() => mockAuth.currentUser)
-          .thenReturn(const AppUser(uid: 'user123'));
+      when(
+        () => mockCubit.state,
+      ).thenReturn(IncomeHomeState(monthSelected: DateTime(2024, 3)));
+      when(
+        () => mockAuth.currentUser,
+      ).thenReturn(const AppUser(uid: 'user123'));
 
       when(
         () => mockDatabase.getMovementsStream(
@@ -188,8 +191,9 @@ void main() {
       );
     }
 
-    testWidgets('renders MonthSelector and loading indicator initially',
-        (tester) async {
+    testWidgets('renders MonthSelector and loading indicator initially', (
+      tester,
+    ) async {
       final controller = StreamController<List<Movement>>();
       when(
         () => mockDatabase.getMovementsStream(
@@ -212,8 +216,9 @@ void main() {
       await controller.close();
     });
 
-    testWidgets('shows empty state message when no income movements',
-        (tester) async {
+    testWidgets('shows empty state message when no income movements', (
+      tester,
+    ) async {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
@@ -234,8 +239,9 @@ void main() {
       expect(find.textContaining('income'), findsWidgets);
     });
 
-    testWidgets('shows chart and list when income movements are present',
-        (tester) async {
+    testWidgets('shows chart and list when income movements are present', (
+      tester,
+    ) async {
       final movement = Movement(
         id: '1',
         title: 'Salary',
@@ -273,8 +279,9 @@ void main() {
       expect(find.byType(TotalSpentChart), findsOneWidget);
     });
 
-    testWidgets('shows landscape layout when in landscape orientation',
-        (tester) async {
+    testWidgets('shows landscape layout when in landscape orientation', (
+      tester,
+    ) async {
       final movement = Movement(
         id: '2',
         title: 'Freelance',
@@ -303,9 +310,7 @@ void main() {
         ),
       ).thenAnswer((_) => Stream.value([movement]));
 
-      await tester.pumpWidget(
-        buildSubject(orientation: Orientation.landscape),
-      );
+      await tester.pumpWidget(buildSubject(orientation: Orientation.landscape));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -313,8 +318,9 @@ void main() {
       expect(find.byType(MonthSelector), findsOneWidget);
     });
 
-    testWidgets('tapping back on MonthSelector calls previousMonth',
-        (tester) async {
+    testWidgets('tapping back on MonthSelector calls previousMonth', (
+      tester,
+    ) async {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
@@ -336,8 +342,9 @@ void main() {
       verify(() => mockCubit.previousMonth()).called(1);
     });
 
-    testWidgets('tapping forward on MonthSelector calls nextMonth',
-        (tester) async {
+    testWidgets('tapping forward on MonthSelector calls nextMonth', (
+      tester,
+    ) async {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),

@@ -115,9 +115,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
       return;
     }
     if (widget.lastDate != null &&
-        date.isAfter(
-          DateTime(widget.lastDate!.year, widget.lastDate!.month),
-        )) {
+        date.isAfter(DateTime(widget.lastDate!.year, widget.lastDate!.month))) {
       return;
     }
 
@@ -159,13 +157,15 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
       }
       final startStr = _capitalize(DateFormat('MMM', lang).format(_startDate!));
       if (_endDate == null) return '$startStr - ';
-      final endStr =
-          _capitalize(DateFormat('MMM yyyy', lang).format(_endDate!));
+      final endStr = _capitalize(
+        DateFormat('MMM yyyy', lang).format(_endDate!),
+      );
       if (_startDate!.year == _endDate!.year) {
         return '$startStr - $endStr';
       } else {
-        final startYrStr =
-            _capitalize(DateFormat('MMM yyyy', lang).format(_startDate!));
+        final startYrStr = _capitalize(
+          DateFormat('MMM yyyy', lang).format(_startDate!),
+        );
         return '$startYrStr - $endStr';
       }
     }
@@ -184,9 +184,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
       isDisabled = true;
     }
     if (widget.lastDate != null &&
-        date.isAfter(
-          DateTime(widget.lastDate!.year, widget.lastDate!.month),
-        )) {
+        date.isAfter(DateTime(widget.lastDate!.year, widget.lastDate!.month))) {
       isDisabled = true;
     }
 

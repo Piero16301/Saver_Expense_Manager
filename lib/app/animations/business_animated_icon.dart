@@ -110,7 +110,6 @@ class _BusinessPainter extends CustomPainter {
         RRect.fromRectAndRadius(docRect, Radius.circular(w * 0.02)),
         paintFill,
       )
-
       // Inner clear lines on document to look like text
       ..drawLine(
         Offset(docX + w * 0.06, docY + h * 0.06),
@@ -159,7 +158,6 @@ class _BusinessPainter extends CustomPainter {
         RRect.fromRectAndRadius(caseRect, Radius.circular(w * 0.04)),
         paintFill,
       )
-
       // Straps / vertical lines
       ..drawLine(
         Offset(cx - caseW * 0.25, caseCy - caseH / 2 + clearStroke.strokeWidth),
@@ -171,7 +169,6 @@ class _BusinessPainter extends CustomPainter {
         Offset(cx + caseW * 0.25, caseCy + caseH / 2 - clearStroke.strokeWidth),
         clearStroke,
       )
-
       // Center lock base
       ..drawRRect(
         RRect.fromRectAndRadius(
@@ -185,12 +182,7 @@ class _BusinessPainter extends CustomPainter {
         clearPaint,
       )
       // Center lock button
-      ..drawCircle(
-        Offset(cx, caseCy - caseH * 0.1),
-        w * 0.025,
-        paintFill,
-      )
-
+      ..drawCircle(Offset(cx, caseCy - caseH * 0.1), w * 0.025, paintFill)
       // Separation line for the top opening
       ..drawLine(
         Offset(cx - caseW / 2 + w * 0.02, caseCy - caseH * 0.3),

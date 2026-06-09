@@ -5,10 +5,7 @@ import 'package:saver_expense_manager/movement/cubit/movement_cubit.dart';
 void main() {
   group('MovementState', () {
     test('supports value equality', () {
-      expect(
-        const MovementState(),
-        equals(const MovementState()),
-      );
+      expect(const MovementState(), equals(const MovementState()));
     });
 
     test('props are correct', () {
@@ -67,10 +64,7 @@ void main() {
     });
 
     test('copyWith returns original object when properties are null', () {
-      expect(
-        const MovementState().copyWith(),
-        equals(const MovementState()),
-      );
+      expect(const MovementState().copyWith(), equals(const MovementState()));
     });
   });
 }

@@ -14,10 +14,7 @@ class AppLoader {
   bool _isLoading = false;
   int _loadingSessionId = 0;
 
-  Future<void> showLoading({
-    String? message,
-    double size = 120,
-  }) async {
+  Future<void> showLoading({String? message, double size = 120}) async {
     final l10n = AppLocalizations.of(context);
 
     _message = message ?? l10n.loading;

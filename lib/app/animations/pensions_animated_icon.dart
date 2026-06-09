@@ -169,7 +169,6 @@ class _PensionsPainter extends CustomPainter {
           ..strokeWidth = w * 0.025
           ..strokeCap = StrokeCap.round,
       )
-
       // Main Body
       ..drawCircle(pigCenter, pigRadius, paintFill);
 
@@ -207,7 +206,6 @@ class _PensionsPainter extends CustomPainter {
         w * 0.012,
         Paint()..blendMode = BlendMode.clear,
       )
-
       // Eye (clear)
       ..drawCircle(
         Offset(cx - pigRadius * 0.35, pigCenter.dy - h * 0.08),

@@ -26,8 +26,9 @@ void main() {
     });
     test('startTrace calls repository', () {
       final mockTrace = MockTrace();
-      when(() => mockRepository.startTrace(any<String>()))
-          .thenReturn(mockTrace);
+      when(
+        () => mockRepository.startTrace(any<String>()),
+      ).thenReturn(mockTrace);
       final result = service.startTrace('trace');
       expect(result, equals(mockTrace));
       verify(() => mockRepository.startTrace('trace')).called(1);

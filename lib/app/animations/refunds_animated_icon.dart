@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class RefundsAnimatedIcon extends StatefulWidget {
-  const RefundsAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const RefundsAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -172,13 +168,17 @@ class _RefundsPainter extends CustomPainter {
       ..moveTo(cx - bagW * 0.25, baseCy - bagH / 2) // top left neck
       ..lineTo(cx + bagW * 0.25, baseCy - bagH / 2) // top right neck
       ..quadraticBezierTo(
-        cx + bagW / 2, baseCy, // control right
-        cx + bagW * 0.4, baseCy + bagH / 2, // bottom right
+        cx + bagW / 2,
+        baseCy, // control right
+        cx + bagW * 0.4,
+        baseCy + bagH / 2, // bottom right
       )
       ..lineTo(cx - bagW * 0.4, baseCy + bagH / 2) // bottom left
       ..quadraticBezierTo(
-        cx - bagW / 2, baseCy, // control left
-        cx - bagW * 0.25, baseCy - bagH / 2, // top left neck
+        cx - bagW / 2,
+        baseCy, // control left
+        cx - bagW * 0.25,
+        baseCy - bagH / 2, // top left neck
       )
       ..close();
 

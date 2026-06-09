@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class SalaryAnimatedIcon extends StatefulWidget {
-  const SalaryAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const SalaryAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -152,7 +148,6 @@ class _SalaryPainter extends CustomPainter {
         RRect.fromRectAndRadius(envRect, Radius.circular(w * 0.03)),
         paintFill,
       )
-
       // Envelope flaps (clear lines)
       // Left flap
       ..drawLine(

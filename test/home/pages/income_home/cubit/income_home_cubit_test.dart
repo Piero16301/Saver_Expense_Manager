@@ -19,8 +19,11 @@ void main() {
       build: () => incomeHomeCubit,
       act: (cubit) => cubit.init(),
       expect: () => [
-        isA<IncomeHomeState>()
-            .having((s) => s.monthSelected, 'monthSelected', isNotNull),
+        isA<IncomeHomeState>().having(
+          (s) => s.monthSelected,
+          'monthSelected',
+          isNotNull,
+        ),
       ],
     );
 
@@ -29,9 +32,7 @@ void main() {
       build: () => incomeHomeCubit,
       seed: () => const IncomeHomeState(selectedIndex: 2),
       act: (cubit) => cubit.changeMonth(DateTime(2023, 5)),
-      expect: () => [
-        IncomeHomeState(monthSelected: DateTime(2023, 5)),
-      ],
+      expect: () => [IncomeHomeState(monthSelected: DateTime(2023, 5))],
     );
 
     blocTest<IncomeHomeCubit, IncomeHomeState>(
@@ -45,9 +46,7 @@ void main() {
       'changeExplodeIndex emits correct state',
       build: () => incomeHomeCubit,
       act: (cubit) => cubit.changeExplodeIndex(5),
-      expect: () => [
-        const IncomeHomeState(selectedIndex: 5),
-      ],
+      expect: () => [const IncomeHomeState(selectedIndex: 5)],
     );
 
     blocTest<IncomeHomeCubit, IncomeHomeState>(
@@ -55,9 +54,7 @@ void main() {
       build: () => incomeHomeCubit,
       seed: () => IncomeHomeState(monthSelected: DateTime(2023, 5)),
       act: (cubit) => cubit.nextMonth(),
-      expect: () => [
-        IncomeHomeState(monthSelected: DateTime(2023, 6)),
-      ],
+      expect: () => [IncomeHomeState(monthSelected: DateTime(2023, 6))],
     );
 
     blocTest<IncomeHomeCubit, IncomeHomeState>(
@@ -65,9 +62,7 @@ void main() {
       build: () => incomeHomeCubit,
       seed: () => IncomeHomeState(monthSelected: DateTime(2023, 12)),
       act: (cubit) => cubit.nextMonth(),
-      expect: () => [
-        IncomeHomeState(monthSelected: DateTime(2024)),
-      ],
+      expect: () => [IncomeHomeState(monthSelected: DateTime(2024))],
     );
 
     blocTest<IncomeHomeCubit, IncomeHomeState>(
@@ -75,9 +70,7 @@ void main() {
       build: () => incomeHomeCubit,
       seed: () => IncomeHomeState(monthSelected: DateTime(2023, 5)),
       act: (cubit) => cubit.previousMonth(),
-      expect: () => [
-        IncomeHomeState(monthSelected: DateTime(2023, 4)),
-      ],
+      expect: () => [IncomeHomeState(monthSelected: DateTime(2023, 4))],
     );
 
     blocTest<IncomeHomeCubit, IncomeHomeState>(
@@ -85,9 +78,7 @@ void main() {
       build: () => incomeHomeCubit,
       seed: () => IncomeHomeState(monthSelected: DateTime(2023)),
       act: (cubit) => cubit.previousMonth(),
-      expect: () => [
-        IncomeHomeState(monthSelected: DateTime(2022, 12)),
-      ],
+      expect: () => [IncomeHomeState(monthSelected: DateTime(2022, 12))],
     );
   });
 }

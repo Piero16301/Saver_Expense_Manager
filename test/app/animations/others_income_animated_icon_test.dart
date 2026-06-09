@@ -3,8 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/app/animations/others_income_animated_icon.dart';
 
 void main() {
-  testWidgets('OthersIncomeAnimatedIcon renders and animates without errors',
-      (tester) async {
+  testWidgets('OthersIncomeAnimatedIcon renders and animates without errors', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(

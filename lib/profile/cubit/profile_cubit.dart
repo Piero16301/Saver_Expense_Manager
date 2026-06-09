@@ -38,12 +38,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
     final success = await _authService.updateDisplayName(state.userName.trim());
     if (success) {
-      emit(
-        state.copyWith(
-          status: ProfileStatus.success,
-          isEditingName: false,
-        ),
-      );
+      emit(state.copyWith(status: ProfileStatus.success, isEditingName: false));
     } else {
       emit(
         state.copyWith(

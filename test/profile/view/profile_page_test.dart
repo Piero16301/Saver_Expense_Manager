@@ -21,8 +21,9 @@ void main() {
       authService = MockAuthService();
       userChangesController = StreamController<AppUser?>();
 
-      when(() => authService.userChanges)
-          .thenAnswer((_) => userChangesController.stream);
+      when(
+        () => authService.userChanges,
+      ).thenAnswer((_) => userChangesController.stream);
 
       if (getIt.isRegistered<AuthService>()) {
         await getIt.unregister<AuthService>();
@@ -61,8 +62,9 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('renders CircularProgressIndicator when user is null',
-        (tester) async {
+    testWidgets('renders CircularProgressIndicator when user is null', (
+      tester,
+    ) async {
       await pumpProfilePage(tester);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });

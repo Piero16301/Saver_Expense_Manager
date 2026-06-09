@@ -57,12 +57,7 @@ void main() {
       test('returns correct Category with default empty values', () {
         final json = <String, dynamic>{};
 
-        expect(
-          Category.fromJson(json),
-          equals(
-            Category.empty,
-          ),
-        );
+        expect(Category.fromJson(json), equals(Category.empty));
       });
     });
 
@@ -92,12 +87,7 @@ void main() {
     });
 
     test('empty category has correct empty values', () {
-      expect(
-        Category.empty,
-        equals(
-          Category.empty,
-        ),
-      );
+      expect(Category.empty, equals(Category.empty));
     });
   });
 

@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class SalesAnimatedIcon extends StatefulWidget {
-  const SalesAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const SalesAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -147,7 +143,6 @@ class _SalesPainter extends CustomPainter {
         false,
         clearPaintLine..strokeWidth = w * 0.015,
       )
-
       // Bag Body
       ..drawRRect(
         RRect.fromRectAndRadius(

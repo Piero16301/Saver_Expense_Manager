@@ -33,8 +33,9 @@ class AppFunctions {
       return internetConnectionTestValue!;
     }
     try {
-      final result = await InternetAddress.lookup('google.com')
-          .timeout(AppVariables.timeoutDuration);
+      final result = await InternetAddress.lookup(
+        'google.com',
+      ).timeout(AppVariables.timeoutDuration);
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
     } on SocketException catch (_) {
       return false;
@@ -83,11 +84,7 @@ class AppFunctions {
         content: Row(
           spacing: 12,
           children: [
-            HugeIcon(
-              icon: icon,
-              strokeWidth: 2,
-              color: Colors.white,
-            ),
+            HugeIcon(icon: icon, strokeWidth: 2, color: Colors.white),
             Expanded(
               child: Text(
                 message ?? '',
@@ -108,9 +105,7 @@ class AppFunctions {
                     ? Colors.orange
                     : Colors.blue,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
         duration: AppVariables.snackBarDuration,
       ),

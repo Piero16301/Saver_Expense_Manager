@@ -43,11 +43,7 @@ class DatabaseService {
     DateTime? from,
     DateTime? to,
   }) async {
-    return _databaseRepository.getMovements(
-      userId: userId,
-      from: from,
-      to: to,
-    );
+    return _databaseRepository.getMovements(userId: userId, from: from, to: to);
   }
 
   void deleteMovement({required String movementId}) {

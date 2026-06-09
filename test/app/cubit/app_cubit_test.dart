@@ -88,8 +88,9 @@ void main() {
               language: AppVariables.supportedLocales.first,
             ),
           ).thenAnswer((_) async {});
-          when(() => localStorage.saveTheme(theme: ThemeMode.system))
-              .thenAnswer((_) async {});
+          when(
+            () => localStorage.saveTheme(theme: ThemeMode.system),
+          ).thenAnswer((_) async {});
           when(
             () => localStorage.saveBaseColor(
               baseColor: AppVariables.defaultBaseColor,
@@ -111,8 +112,9 @@ void main() {
               language: AppVariables.supportedLocales.first,
             ),
           ).called(1);
-          verify(() => localStorage.saveTheme(theme: ThemeMode.system))
-              .called(1);
+          verify(
+            () => localStorage.saveTheme(theme: ThemeMode.system),
+          ).called(1);
           verify(
             () => localStorage.saveBaseColor(
               baseColor: AppVariables.defaultBaseColor,
@@ -164,9 +166,7 @@ void main() {
         },
         act: (cubit) =>
             cubit.changeLanguage(language: const Locale('es', 'ES')),
-        expect: () => [
-          const AppState(language: Locale('es', 'ES')),
-        ],
+        expect: () => [const AppState(language: Locale('es', 'ES'))],
         verify: (_) {
           verify(
             () => localStorage.saveLanguage(language: const Locale('es', 'ES')),
@@ -179,14 +179,13 @@ void main() {
       blocTest<AppCubit, AppState>(
         'emits correct state and calls localStorage',
         build: () {
-          when(() => localStorage.saveTheme(theme: ThemeMode.dark))
-              .thenAnswer((_) async {});
+          when(
+            () => localStorage.saveTheme(theme: ThemeMode.dark),
+          ).thenAnswer((_) async {});
           return AppCubit();
         },
         act: (cubit) => cubit.changeTheme(theme: ThemeMode.dark),
-        expect: () => [
-          const AppState(theme: ThemeMode.dark),
-        ],
+        expect: () => [const AppState(theme: ThemeMode.dark)],
         verify: (_) {
           verify(() => localStorage.saveTheme(theme: ThemeMode.dark)).called(1);
         },
@@ -197,17 +196,17 @@ void main() {
       blocTest<AppCubit, AppState>(
         'emits correct state and calls localStorage',
         build: () {
-          when(() => localStorage.saveBaseColor(baseColor: Colors.red))
-              .thenAnswer((_) async {});
+          when(
+            () => localStorage.saveBaseColor(baseColor: Colors.red),
+          ).thenAnswer((_) async {});
           return AppCubit();
         },
         act: (cubit) => cubit.changeBaseColor(baseColor: Colors.red),
-        expect: () => [
-          const AppState(baseColor: Colors.red),
-        ],
+        expect: () => [const AppState(baseColor: Colors.red)],
         verify: (_) {
-          verify(() => localStorage.saveBaseColor(baseColor: Colors.red))
-              .called(1);
+          verify(
+            () => localStorage.saveBaseColor(baseColor: Colors.red),
+          ).called(1);
         },
       );
     });
@@ -216,17 +215,17 @@ void main() {
       blocTest<AppCubit, AppState>(
         'emits correct state and calls localStorage',
         build: () {
-          when(() => localStorage.saveFontFamily(fontFamily: 'Merriweather'))
-              .thenAnswer((_) async {});
+          when(
+            () => localStorage.saveFontFamily(fontFamily: 'Merriweather'),
+          ).thenAnswer((_) async {});
           return AppCubit();
         },
         act: (cubit) => cubit.changeFontFamily(fontFamily: 'Merriweather'),
-        expect: () => [
-          const AppState(fontFamily: 'Merriweather'),
-        ],
+        expect: () => [const AppState(fontFamily: 'Merriweather')],
         verify: (_) {
-          verify(() => localStorage.saveFontFamily(fontFamily: 'Merriweather'))
-              .called(1);
+          verify(
+            () => localStorage.saveFontFamily(fontFamily: 'Merriweather'),
+          ).called(1);
         },
       );
     });

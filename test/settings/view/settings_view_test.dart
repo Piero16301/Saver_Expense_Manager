@@ -58,8 +58,9 @@ void main() {
       expect(find.byType(SettingsAppSpecs), findsOneWidget);
     });
 
-    testWidgets('changes language when LocaleSettingsCard is interacted',
-        (tester) async {
+    testWidgets('changes language when LocaleSettingsCard is interacted', (
+      tester,
+    ) async {
       await pumpSettingsView(tester);
 
       final localeDropdown = find.byType(DropdownButton<Locale>);
@@ -74,12 +75,14 @@ void main() {
       await tester.tap(find.text('Spanish').last);
       await tester.pumpAndSettle();
 
-      verify(() => appCubit.changeLanguage(language: const Locale('es', 'ES')))
-          .called(1);
+      verify(
+        () => appCubit.changeLanguage(language: const Locale('es', 'ES')),
+      ).called(1);
     });
 
-    testWidgets('changes theme when ThemeSettingsCard is interacted',
-        (tester) async {
+    testWidgets('changes theme when ThemeSettingsCard is interacted', (
+      tester,
+    ) async {
       await pumpSettingsView(tester);
 
       final themeDropdown = find.byType(DropdownButton<ThemeMode>);
@@ -97,8 +100,9 @@ void main() {
       verify(() => appCubit.changeTheme(theme: ThemeMode.dark)).called(1);
     });
 
-    testWidgets('changes color when ColorSettingsCard is interacted',
-        (tester) async {
+    testWidgets('changes color when ColorSettingsCard is interacted', (
+      tester,
+    ) async {
       when(() => appCubit.state).thenReturn(const AppState());
       await pumpSettingsView(tester);
 
@@ -117,8 +121,9 @@ void main() {
       verify(() => appCubit.changeBaseColor(baseColor: Colors.teal)).called(1);
     });
 
-    testWidgets('changes font when FontSettingsCard is interacted',
-        (tester) async {
+    testWidgets('changes font when FontSettingsCard is interacted', (
+      tester,
+    ) async {
       when(() => appCubit.state).thenReturn(const AppState());
       await pumpSettingsView(tester);
 
@@ -134,8 +139,9 @@ void main() {
       await tester.tap(find.text('Merriweather').last);
       await tester.pumpAndSettle();
 
-      verify(() => appCubit.changeFontFamily(fontFamily: 'Merriweather'))
-          .called(1);
+      verify(
+        () => appCubit.changeFontFamily(fontFamily: 'Merriweather'),
+      ).called(1);
     });
   });
 }

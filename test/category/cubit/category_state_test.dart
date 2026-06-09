@@ -5,19 +5,11 @@ import 'package:saver_expense_manager/category/category.dart';
 void main() {
   group('CategoryState', () {
     test('supports value equality', () {
-      expect(
-        const CategoryState(),
-        equals(const CategoryState()),
-      );
+      expect(const CategoryState(), equals(const CategoryState()));
     });
 
     test('props are correct', () {
-      expect(
-        const CategoryState().props,
-        equals(<Object?>[
-          Category.empty,
-        ]),
-      );
+      expect(const CategoryState().props, equals(<Object?>[Category.empty]));
     });
 
     test('copyWith returns object with updated properties', () {
@@ -35,10 +27,7 @@ void main() {
     });
 
     test('copyWith returns original object when properties are null', () {
-      expect(
-        const CategoryState().copyWith(),
-        equals(const CategoryState()),
-      );
+      expect(const CategoryState().copyWith(), equals(const CategoryState()));
     });
   });
 }

@@ -5,10 +5,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class AppChangeTheme extends StatelessWidget {
-  const AppChangeTheme({
-    this.padding,
-    super.key,
-  });
+  const AppChangeTheme({this.padding, super.key});
 
   final EdgeInsetsGeometry? padding;
 

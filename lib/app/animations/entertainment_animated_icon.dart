@@ -122,10 +122,7 @@ class _EntertainmentPainter extends CustomPainter {
         radius: Radius.circular(w * 0.05),
       )
       ..lineTo(w * 0.25, h * 0.85)
-      ..arcToPoint(
-        Offset(w * 0.2, h * 0.80),
-        radius: Radius.circular(w * 0.05),
-      )
+      ..arcToPoint(Offset(w * 0.2, h * 0.80), radius: Radius.circular(w * 0.05))
       ..close();
 
     canvas.drawPath(slate, paintFill);

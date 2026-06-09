@@ -5,10 +5,7 @@ import 'package:saver_expense_manager/home/pages/movements_home/cubit/movements_
 void main() {
   group('MovementsHomeState', () {
     test('supports value equality', () {
-      expect(
-        const MovementsHomeState(),
-        equals(const MovementsHomeState()),
-      );
+      expect(const MovementsHomeState(), equals(const MovementsHomeState()));
     });
 
     test('props are correct', () {

@@ -27,8 +27,9 @@ class Movement extends Equatable {
       title: json['title'] as String? ?? '',
       description: json['description'] as String? ?? '',
       date: (json['date'] as Timestamp? ?? Timestamp.now()).toDate().toLocal(),
-      category:
-          Category.fromJson(json['category'] as Map<String, dynamic>? ?? {}),
+      category: Category.fromJson(
+        json['category'] as Map<String, dynamic>? ?? {},
+      ),
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       company: json['company'] as String? ?? '',
       attachments: (json['attachments'] as List<dynamic>?)

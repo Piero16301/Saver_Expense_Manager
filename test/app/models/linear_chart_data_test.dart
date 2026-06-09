@@ -15,10 +15,7 @@ void main() {
 
     group('fromJson', () {
       test('returns correct instance from fully populated map', () {
-        final json = <String, dynamic>{
-          'xValue': xValue,
-          'yValue': yValue,
-        };
+        final json = <String, dynamic>{'xValue': xValue, 'yValue': yValue};
 
         expect(
           LinearChartData.fromJson(json),
@@ -37,13 +34,7 @@ void main() {
     group('toJson', () {
       test('returns correct map', () {
         const data = LinearChartData(xValue: xValue, yValue: yValue);
-        expect(
-          data.toJson(),
-          equals({
-            'xValue': xValue,
-            'yValue': yValue,
-          }),
-        );
+        expect(data.toJson(), equals({'xValue': xValue, 'yValue': yValue}));
       });
     });
   });

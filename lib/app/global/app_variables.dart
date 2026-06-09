@@ -99,11 +99,7 @@ enum MovementScreenType { add, edit }
 
 enum ImageResolutionType { low, medium, high }
 
-enum ResumeItemType {
-  income,
-  expense,
-  balance,
-}
+enum ResumeItemType { income, expense, balance }
 
 enum ModelType {
   cloud,

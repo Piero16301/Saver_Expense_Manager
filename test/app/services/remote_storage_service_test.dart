@@ -29,8 +29,9 @@ void main() {
     });
 
     test('deleteFile calls repository', () async {
-      when(() => mockRepository.deleteFile(any<String>()))
-          .thenAnswer((_) async => true);
+      when(
+        () => mockRepository.deleteFile(any<String>()),
+      ).thenAnswer((_) async => true);
       final result = await service.deleteFile('path');
       expect(result, isTrue);
       verify(() => mockRepository.deleteFile('path')).called(1);
@@ -38,8 +39,9 @@ void main() {
 
     test('uploadFile calls repository', () async {
       final file = FakeFile();
-      when(() => mockRepository.uploadFile(any<File>(), any<String>()))
-          .thenAnswer((_) async => 'url');
+      when(
+        () => mockRepository.uploadFile(any<File>(), any<String>()),
+      ).thenAnswer((_) async => 'url');
       final result = await service.uploadFile(file, 'path');
       expect(result, equals('url'));
       verify(() => mockRepository.uploadFile(file, 'path')).called(1);
@@ -47,8 +49,9 @@ void main() {
 
     test('getData calls repository', () async {
       final data = Uint8List(0);
-      when(() => mockRepository.getData(any<String>()))
-          .thenAnswer((_) async => data);
+      when(
+        () => mockRepository.getData(any<String>()),
+      ).thenAnswer((_) async => data);
       final result = await service.getData('path');
       expect(result, equals(data));
       verify(() => mockRepository.getData('path')).called(1);

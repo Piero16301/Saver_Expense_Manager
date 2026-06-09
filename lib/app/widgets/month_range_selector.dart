@@ -37,14 +37,11 @@ class MonthRangeSelector extends StatelessWidget {
             alignment: AlignmentGeometry.centerLeft,
             child: Text(
               _capitalizeFirst(
-                DateFormat(
-                  'MMM yyyy',
-                  language.toString(),
-                ).format(startMonth),
+                DateFormat('MMM yyyy', language.toString()).format(startMonth),
               ),
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
         ),
@@ -69,9 +66,7 @@ class MonthRangeSelector extends StatelessWidget {
                 }
               });
             },
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedCalendar03,
-            ),
+            icon: const HugeIcon(icon: HugeIcons.strokeRoundedCalendar03),
           ),
         ),
         Container(
@@ -82,14 +77,11 @@ class MonthRangeSelector extends StatelessWidget {
             alignment: AlignmentGeometry.centerRight,
             child: Text(
               _capitalizeFirst(
-                DateFormat(
-                  'MMM yyyy',
-                  language.toString(),
-                ).format(endMonth),
+                DateFormat('MMM yyyy', language.toString()).format(endMonth),
               ),
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
             ),
           ),
         ),

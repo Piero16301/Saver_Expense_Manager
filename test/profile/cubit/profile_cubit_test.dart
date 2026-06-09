@@ -41,8 +41,9 @@ void main() {
     ).thenAnswer((_) {});
 
     when(() => mockAppLocalizations.genericError).thenReturn('Error');
-    when(() => mockAuthService.userChanges)
-        .thenAnswer((_) => userChangesController.stream);
+    when(
+      () => mockAuthService.userChanges,
+    ).thenAnswer((_) => userChangesController.stream);
 
     profileCubit = ProfileCubit(authService: mockAuthService);
   });
@@ -92,18 +93,14 @@ void main() {
       'nameChanged updates state',
       build: () => profileCubit,
       act: (cubit) => cubit.nameChanged('New Name'),
-      expect: () => [
-        const ProfileState(userName: 'New Name'),
-      ],
+      expect: () => [const ProfileState(userName: 'New Name')],
     );
 
     blocTest<ProfileCubit, ProfileState>(
       'toggleEditingName toggles editing',
       build: () => profileCubit,
       act: (cubit) => cubit.toggleEditingName(),
-      expect: () => [
-        const ProfileState(isEditingName: true),
-      ],
+      expect: () => [const ProfileState(isEditingName: true)],
     );
 
     blocTest<ProfileCubit, ProfileState>(
@@ -111,16 +108,14 @@ void main() {
       build: () => profileCubit,
       seed: () => const ProfileState(userName: 'New Name'),
       setUp: () {
-        when(() => mockAuthService.updateDisplayName(any()))
-            .thenAnswer((_) async => true);
+        when(
+          () => mockAuthService.updateDisplayName(any()),
+        ).thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.saveName(mockAppLocalizations),
       expect: () => const [
         ProfileState(userName: 'New Name', status: ProfileStatus.loading),
-        ProfileState(
-          userName: 'New Name',
-          status: ProfileStatus.success,
-        ),
+        ProfileState(userName: 'New Name', status: ProfileStatus.success),
       ],
     );
 
@@ -129,8 +124,9 @@ void main() {
       build: () => profileCubit,
       seed: () => const ProfileState(userName: 'New Name'),
       setUp: () {
-        when(() => mockAuthService.updateDisplayName(any()))
-            .thenAnswer((_) async => false);
+        when(
+          () => mockAuthService.updateDisplayName(any()),
+        ).thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.saveName(mockAppLocalizations),
       expect: () => const [
@@ -147,8 +143,9 @@ void main() {
       'linkGoogle works correctly',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthService.linkWithGoogle())
-            .thenAnswer((_) async => true);
+        when(
+          () => mockAuthService.linkWithGoogle(),
+        ).thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.linkGoogle(mockAppLocalizations),
       expect: () => const [
@@ -228,8 +225,9 @@ void main() {
       'unlinkProvider works correctly',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthService.unlinkProvider(any()))
-            .thenAnswer((_) async => true);
+        when(
+          () => mockAuthService.unlinkProvider(any()),
+        ).thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.unlinkProvider(mockAppLocalizations, 'providerId'),
       expect: () => const [
@@ -242,8 +240,9 @@ void main() {
       'unlinkProvider handles failure',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthService.unlinkProvider(any()))
-            .thenAnswer((_) async => false);
+        when(
+          () => mockAuthService.unlinkProvider(any()),
+        ).thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.unlinkProvider(mockAppLocalizations, 'providerId'),
       expect: () => const [
@@ -257,8 +256,9 @@ void main() {
       'linkGoogle handles failure',
       build: () => profileCubit,
       setUp: () {
-        when(() => mockAuthService.linkWithGoogle())
-            .thenAnswer((_) async => false);
+        when(
+          () => mockAuthService.linkWithGoogle(),
+        ).thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.linkGoogle(mockAppLocalizations),
       expect: () => const [

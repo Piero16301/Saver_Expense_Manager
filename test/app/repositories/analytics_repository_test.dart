@@ -63,8 +63,9 @@ void main() {
     });
 
     test('setUserId calls analytics.setUserId', () async {
-      when(() => mockAnalytics.setUserId(id: any<String?>(named: 'id')))
-          .thenAnswer((_) async {});
+      when(
+        () => mockAnalytics.setUserId(id: any<String?>(named: 'id')),
+      ).thenAnswer((_) async {});
 
       repository.setUserId(id: 'user_123');
 

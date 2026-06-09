@@ -8,11 +8,7 @@ void main() {
     testWidgets('renders with label only', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppOutlinedButton(
-              label: 'Outlined',
-            ),
-          ),
+          home: Scaffold(body: AppOutlinedButton(label: 'Outlined')),
         ),
       );
 
@@ -24,10 +20,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: AppOutlinedButton(
-              label: 'Add',
-              icon: icon,
-            ),
+            body: AppOutlinedButton(label: 'Add', icon: icon),
           ),
         ),
       );

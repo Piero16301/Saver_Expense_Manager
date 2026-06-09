@@ -6,11 +6,7 @@ void main() {
   group('AppLogo', () {
     testWidgets('renders normally with default size', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppLogo(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppLogo())),
       );
 
       expect(find.byType(Image), findsOneWidget);
@@ -21,11 +17,7 @@ void main() {
 
     testWidgets('renders normally with custom size', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: AppLogo(width: 50, height: 50),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: AppLogo(width: 50, height: 50))),
       );
 
       final image = tester.widget<Image>(find.byType(Image));

@@ -42,8 +42,9 @@ void main() {
       ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService)
       ..registerLazySingleton<AiService>(() => mockAiService);
 
-    when(() => mockAuthService.userChanges)
-        .thenAnswer((_) => const Stream.empty());
+    when(
+      () => mockAuthService.userChanges,
+    ).thenAnswer((_) => const Stream.empty());
     when(() => mockAuthService.isLoggedIn).thenReturn(false);
   });
 
@@ -139,24 +140,26 @@ void main() {
       }
     });
 
-    test('GoRouterRefreshStream notifies listeners when stream emits',
-        () async {
-      final controller = StreamController<dynamic>();
-      final refreshStream = GoRouterRefreshStream(controller.stream);
+    test(
+      'GoRouterRefreshStream notifies listeners when stream emits',
+      () async {
+        final controller = StreamController<dynamic>();
+        final refreshStream = GoRouterRefreshStream(controller.stream);
 
-      var listenerCallCount = 0;
-      refreshStream.addListener(() {
-        listenerCallCount++;
-      });
+        var listenerCallCount = 0;
+        refreshStream.addListener(() {
+          listenerCallCount++;
+        });
 
-      controller.add('event');
+        controller.add('event');
 
-      await Future<void>.delayed(Duration.zero);
+        await Future<void>.delayed(Duration.zero);
 
-      expect(listenerCallCount, equals(1));
+        expect(listenerCallCount, equals(1));
 
-      refreshStream.dispose();
-      await controller.close();
-    });
+        refreshStream.dispose();
+        await controller.close();
+      },
+    );
   });
 }

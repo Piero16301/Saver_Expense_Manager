@@ -7,10 +7,7 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class SummaryHomeView extends StatelessWidget {
-  const SummaryHomeView({
-    required this.categories,
-    super.key,
-  });
+  const SummaryHomeView({required this.categories, super.key});
 
   final List<Category> categories;
 
@@ -87,10 +84,7 @@ class SummaryHomeView extends StatelessWidget {
                 )
               : Column(
                   spacing: 16,
-                  children: [
-                    resumeMovementsChart,
-                    incomesAndExpensesChart,
-                  ],
+                  children: [resumeMovementsChart, incomesAndExpensesChart],
                 );
 
           final categoriesCard = CategoriesResumeCards(
@@ -108,13 +102,8 @@ class SummaryHomeView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         spacing: 16,
                         children: [
-                          Expanded(
-                            child: charts,
-                          ),
-                          SizedBox(
-                            width: 200,
-                            child: categoriesCard,
-                          ),
+                          Expanded(child: charts),
+                          SizedBox(width: 200, child: categoriesCard),
                         ],
                       )
                     : Column(
@@ -215,10 +204,7 @@ class ResumeMovementsChart extends StatelessWidget {
             spacing: 8,
             children: children,
           )
-        : Row(
-            spacing: 8,
-            children: children,
-          );
+        : Row(spacing: 8, children: children);
   }
 }
 
@@ -310,11 +296,7 @@ class ResumeItemCardMovements extends StatelessWidget {
                 Row(
                   spacing: 8,
                   children: [
-                    HugeIcon(
-                      icon: _icon,
-                      size: 18,
-                      color: color,
-                    ),
+                    HugeIcon(icon: _icon, size: 18, color: color),
                     Text(
                       _title(context),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -443,9 +425,7 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
     );
 
     final sortedCategories = categoryExpenses.values.toList()
-      ..sort(
-        (a, b) => b.totalExpense.compareTo(a.totalExpense),
-      );
+      ..sort((a, b) => b.totalExpense.compareTo(a.totalExpense));
 
     final totalExpenses = sortedCategories.fold<double>(
       0,
@@ -460,10 +440,8 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
       scrollDirection: isLandscape ? Axis.vertical : Axis.horizontal,
       padding: EdgeInsets.zero,
       itemCount: sortedCategories.length,
-      separatorBuilder: (context, index) => SizedBox(
-        width: isLandscape ? 0 : 12,
-        height: isLandscape ? 12 : 0,
-      ),
+      separatorBuilder: (context, index) =>
+          SizedBox(width: isLandscape ? 0 : 12, height: isLandscape ? 12 : 0),
       itemBuilder: (context, index) {
         final categoryData = sortedCategories[index];
         final percentage = totalExpenses > 0
@@ -580,8 +558,9 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
                           visualDensity: VisualDensity.compact,
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(16)),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(16),
+                              ),
                             ),
                           ),
                         ),
@@ -660,9 +639,7 @@ class CategoryExpenseCard extends StatelessWidget {
       height: 180,
       child: Card(
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -737,11 +714,9 @@ class CategoryExpenseCard extends StatelessWidget {
                   Text(
                     l10n.summaryPercentageOfTotal(percentage.toInt()),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.color
-                              ?.withValues(alpha: 0.6),
+                          color: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                           fontWeight: FontWeight.w500,
                         ),
                   ),

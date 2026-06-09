@@ -60,8 +60,9 @@ void main() {
     when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user123'));
 
     when(() => mockLocalStorage.getLanguage()).thenReturn(null);
-    when(() => mockLocalStorage.getRecommendationsDate())
-        .thenReturn(_todayDate);
+    when(
+      () => mockLocalStorage.getRecommendationsDate(),
+    ).thenReturn(_todayDate);
     when(() => mockLocalStorage.getRecommendations()).thenReturn(['Tip A']);
     when(
       () => mockLocalStorage.saveRecommendations(
@@ -111,25 +112,29 @@ void main() {
   }
 
   group('MovementsHomeCubit', () {
-    test('updateFilterType sets type and clears category when type changes',
-        () async {
-      final cubit = await buildCubit();
-      cubit.updateFilterType(CategoryType.expense);
-      expect(cubit.state.filterType, CategoryType.expense);
-      expect(cubit.state.filterCategory, isNull);
-      await cubit.close();
-    });
+    test(
+      'updateFilterType sets type and clears category when type changes',
+      () async {
+        final cubit = await buildCubit();
+        cubit.updateFilterType(CategoryType.expense);
+        expect(cubit.state.filterType, CategoryType.expense);
+        expect(cubit.state.filterCategory, isNull);
+        await cubit.close();
+      },
+    );
 
-    test('updateFilterType with null clears both filterType and filterCategory',
-        () async {
-      final cubit = await buildCubit();
-      cubit
-        ..updateFilterType(CategoryType.expense)
-        ..updateFilterType(null);
-      expect(cubit.state.filterType, isNull);
-      expect(cubit.state.filterCategory, isNull);
-      await cubit.close();
-    });
+    test(
+      'updateFilterType with null clears both filterType and filterCategory',
+      () async {
+        final cubit = await buildCubit();
+        cubit
+          ..updateFilterType(CategoryType.expense)
+          ..updateFilterType(null);
+        expect(cubit.state.filterType, isNull);
+        expect(cubit.state.filterCategory, isNull);
+        await cubit.close();
+      },
+    );
 
     test('updateFilterType with same type preserves filterCategory', () async {
       final cubit = await buildCubit();
@@ -177,28 +182,33 @@ void main() {
     test('resetRecommendationsStatus resets to initial', () async {
       final cubit = await buildCubit();
       cubit.resetRecommendationsStatus();
-      expect(
-        cubit.state.recommendationsStatus,
-        RecommendationsStatus.initial,
-      );
+      expect(cubit.state.recommendationsStatus, RecommendationsStatus.initial);
       await cubit.close();
     });
 
-    test('constructor uses cached recommendations when date matches today',
-        () async {
-      when(() => mockLocalStorage.getRecommendations())
-          .thenReturn(['Tip 1', 'Tip 2']);
-      final cubit = await buildCubit();
-      expect(cubit.state.recommendationsStatus, RecommendationsStatus.success);
-      expect(cubit.state.recommendations, ['Tip 1', 'Tip 2']);
-      await cubit.close();
-    });
+    test(
+      'constructor uses cached recommendations when date matches today',
+      () async {
+        when(
+          () => mockLocalStorage.getRecommendations(),
+        ).thenReturn(['Tip 1', 'Tip 2']);
+        final cubit = await buildCubit();
+        expect(
+          cubit.state.recommendationsStatus,
+          RecommendationsStatus.success,
+        );
+        expect(cubit.state.recommendations, ['Tip 1', 'Tip 2']);
+        await cubit.close();
+      },
+    );
 
     test('getRecommendations fetches from remote if date is old', () async {
-      when(() => mockLocalStorage.getRecommendationsDate())
-          .thenReturn(DateTime(2020));
-      when(() => mockRemoteConfig.geminiPromptDetectAntExpense)
-          .thenReturn('prompt');
+      when(
+        () => mockLocalStorage.getRecommendationsDate(),
+      ).thenReturn(DateTime(2020));
+      when(
+        () => mockRemoteConfig.geminiPromptDetectAntExpense,
+      ).thenReturn('prompt');
       when(() => mockRemoteConfig.geminiAntLookbackDays).thenReturn(30);
       when(
         () => mockDatabase.getMovements(
@@ -223,17 +233,20 @@ void main() {
       expect(cubit.state.recommendationsStatus, RecommendationsStatus.success);
       expect(cubit.state.recommendations, ['Tip 3', 'Tip 4']);
       verify(
-        () => mockLocalStorage
-            .saveRecommendations(recommendations: ['Tip 3', 'Tip 4']),
+        () => mockLocalStorage.saveRecommendations(
+          recommendations: ['Tip 3', 'Tip 4'],
+        ),
       ).called(1);
       await cubit.close();
     });
 
     test('getRecommendations sets failure state on Exception', () async {
-      when(() => mockLocalStorage.getRecommendationsDate())
-          .thenReturn(DateTime(2020));
-      when(() => mockRemoteConfig.geminiPromptDetectAntExpense)
-          .thenThrow(Exception('Fail'));
+      when(
+        () => mockLocalStorage.getRecommendationsDate(),
+      ).thenReturn(DateTime(2020));
+      when(
+        () => mockRemoteConfig.geminiPromptDetectAntExpense,
+      ).thenThrow(Exception('Fail'));
 
       final cubit = await buildCubit();
 
@@ -285,8 +298,9 @@ void main() {
 
     setUp(() async {
       mockDatabase = MockDatabaseService();
-      when(() => mockDatabase.getCategoriesStream())
-          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => mockDatabase.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.value([]));
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),

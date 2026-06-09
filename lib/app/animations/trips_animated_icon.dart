@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class TripsAnimatedIcon extends StatefulWidget {
-  const TripsAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const TripsAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -93,8 +89,10 @@ class _TripsPainter extends CustomPainter {
     final planeInFront = math.sin(tOrbit) >= 0.0;
     final planePos = getOrbitPosition(tOrbit);
     final nextPos = getOrbitPosition(tOrbit - 0.01);
-    final planeAngle =
-        math.atan2(nextPos.dy - planePos.dy, nextPos.dx - planePos.dx);
+    final planeAngle = math.atan2(
+      nextPos.dy - planePos.dy,
+      nextPos.dx - planePos.dx,
+    );
 
     void drawTrail({required bool isFront, required bool clearMode}) {
       for (var i = 0; i < 20; i++) {

@@ -29,10 +29,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
 
   void updateFilterCategory(Category? category) {
     emit(
-      state.copyWith(
-        filterType: state.filterType,
-        filterCategory: category,
-      ),
+      state.copyWith(filterType: state.filterType, filterCategory: category),
     );
   }
 
@@ -62,11 +59,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        recommendationsStatus: RecommendationsStatus.loading,
-      ),
-    );
+    emit(state.copyWith(recommendationsStatus: RecommendationsStatus.loading));
 
     try {
       final auth = getIt<AuthService>();
@@ -94,9 +87,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
     } on Exception catch (_) {
       if (!isClosed) {
         emit(
-          state.copyWith(
-            recommendationsStatus: RecommendationsStatus.failure,
-          ),
+          state.copyWith(recommendationsStatus: RecommendationsStatus.failure),
         );
       }
     }

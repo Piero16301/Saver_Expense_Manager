@@ -26,10 +26,7 @@ void main() {
       ).thenReturn(null);
       service.logEvent(name: 'event', parameters: {'k': 'v'});
       verify(
-        () => mockRepository.logEvent(
-          name: 'event',
-          parameters: {'k': 'v'},
-        ),
+        () => mockRepository.logEvent(name: 'event', parameters: {'k': 'v'}),
       ).called(1);
     });
 
@@ -41,17 +38,13 @@ void main() {
       ).thenReturn(null);
       service.setCurrentScreen(screenName: 'screen');
       verify(
-        () => mockRepository.setCurrentScreen(
-          screenName: 'screen',
-        ),
+        () => mockRepository.setCurrentScreen(screenName: 'screen'),
       ).called(1);
     });
 
     test('setUserId calls repository setUserId', () {
       when(
-        () => mockRepository.setUserId(
-          id: any<String>(named: 'id'),
-        ),
+        () => mockRepository.setUserId(id: any<String>(named: 'id')),
       ).thenReturn(null);
       service.setUserId(id: '123');
       verify(() => mockRepository.setUserId(id: '123')).called(1);

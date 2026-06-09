@@ -134,8 +134,9 @@ void main() {
     });
 
     testWidgets('calls saveMovement when FAB is pressed', (tester) async {
-      when(() => movementCubit.saveMovement(any(), any()))
-          .thenAnswer((_) async => true);
+      when(
+        () => movementCubit.saveMovement(any(), any()),
+      ).thenAnswer((_) async => true);
 
       await pumpMovementView(tester);
       await tester.tap(find.byType(FloatingActionButton));
@@ -146,30 +147,34 @@ void main() {
     });
 
     testWidgets(
-        'shows delete dialog and calls removeMovement when delete button '
-        'is pressed', (tester) async {
-      when(() => movementCubit.removeMovement()).thenAnswer((_) async => true);
+      'shows delete dialog and calls removeMovement when delete button '
+      'is pressed',
+      (tester) async {
+        when(
+          () => movementCubit.removeMovement(),
+        ).thenAnswer((_) async => true);
 
-      await pumpMovementView(tester, screenType: MovementScreenType.edit);
+        await pumpMovementView(tester, screenType: MovementScreenType.edit);
 
-      final deleteButton = find.byWidgetPredicate(
-        (widget) =>
-            widget is HugeIcon &&
-            widget.icon == HugeIcons.strokeRoundedDelete02,
-      );
-      expect(deleteButton, findsOneWidget);
+        final deleteButton = find.byWidgetPredicate(
+          (widget) =>
+              widget is HugeIcon &&
+              widget.icon == HugeIcons.strokeRoundedDelete02,
+        );
+        expect(deleteButton, findsOneWidget);
 
-      await tester.tap(deleteButton);
-      await tester.pumpAndSettle();
+        await tester.tap(deleteButton);
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
+        expect(find.byType(AppAlertDialog), findsOneWidget);
 
-      await tester.tap(find.text('Delete'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Delete'));
+        await tester.pumpAndSettle();
 
-      verify(() => movementCubit.removeMovement()).called(1);
-      expect(find.text('Home'), findsOneWidget);
-    });
+        verify(() => movementCubit.removeMovement()).called(1);
+        expect(find.text('Home'), findsOneWidget);
+      },
+    );
 
     testWidgets('renders MovementMetadata in debug mode', (tester) async {
       await pumpMovementView(tester);

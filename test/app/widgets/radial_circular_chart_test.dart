@@ -49,11 +49,7 @@ void main() {
     testWidgets('renders normally with legend', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: RadialCircularChart(
-              data: data,
-            ),
-          ),
+          home: Scaffold(body: RadialCircularChart(data: data)),
         ),
       );
 
@@ -68,14 +64,16 @@ void main() {
       final mockResponse = MockHttpClientResponse();
       final mockHeaders = MockHttpHeaders();
 
-      when(() => mockHttpClient.getUrl(any()))
-          .thenAnswer((_) async => mockRequest);
+      when(
+        () => mockHttpClient.getUrl(any()),
+      ).thenAnswer((_) async => mockRequest);
       when(() => mockRequest.headers).thenReturn(mockHeaders);
       when(mockRequest.close).thenAnswer((_) async => mockResponse);
       when(() => mockResponse.statusCode).thenReturn(HttpStatus.ok);
       when(() => mockResponse.contentLength).thenReturn(0);
-      when(() => mockResponse.compressionState)
-          .thenReturn(HttpClientResponseCompressionState.notCompressed);
+      when(
+        () => mockResponse.compressionState,
+      ).thenReturn(HttpClientResponseCompressionState.notCompressed);
       when(
         () => mockResponse.listen(
           any(),

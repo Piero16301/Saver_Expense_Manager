@@ -54,14 +54,13 @@ void main() {
 
     group('toJson', () {
       test('returns correct map', () {
-        const data =
-            CategoryExpenseData(category: category, totalExpense: totalExpense);
+        const data = CategoryExpenseData(
+          category: category,
+          totalExpense: totalExpense,
+        );
         expect(
           data.toJson(),
-          equals({
-            'category': category.toJson(),
-            'totalExpense': totalExpense,
-          }),
+          equals({'category': category.toJson(), 'totalExpense': totalExpense}),
         );
       });
     });

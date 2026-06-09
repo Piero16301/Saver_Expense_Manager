@@ -39,9 +39,7 @@ class LoginView extends StatelessWidget {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppChangeTheme(
-                    padding: EdgeInsets.only(top: 16, left: 16),
-                  ),
+                  AppChangeTheme(padding: EdgeInsets.only(top: 16, left: 16)),
                   AppChangeLanguage(
                     padding: EdgeInsets.only(top: 16, right: 16),
                   ),
@@ -162,8 +160,9 @@ class LoginView extends StatelessWidget {
                                 TextButton(
                                   onPressed: state.status.isLoading
                                       ? null
-                                      : () =>
-                                          context.push(AppRoute.register.path),
+                                      : () => context.push(
+                                            AppRoute.register.path,
+                                          ),
                                   child: Text(
                                     l10n.registerButton,
                                     style: const TextStyle(

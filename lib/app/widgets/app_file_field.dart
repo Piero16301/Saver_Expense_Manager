@@ -47,9 +47,7 @@ class AppFileField extends StatelessWidget {
                     SizedBox(
                       child: GestureDetector(
                         onTap: () async {
-                          unawaited(
-                            appLoader.showLoading(),
-                          );
+                          unawaited(appLoader.showLoading());
                           await openFile(attachments[i]);
                           if (appLoader.isLoading) {
                             appLoader.hideLoading();

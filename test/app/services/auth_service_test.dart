@@ -47,8 +47,9 @@ void main() {
     });
 
     test('updateDisplayName calls repository', () async {
-      when(() => mockRepository.updateDisplayName(any<String>()))
-          .thenAnswer((_) async => true);
+      when(
+        () => mockRepository.updateDisplayName(any<String>()),
+      ).thenAnswer((_) async => true);
       final result = await service.updateDisplayName('name');
       expect(result, isTrue);
       verify(() => mockRepository.updateDisplayName('name')).called(1);
@@ -62,8 +63,9 @@ void main() {
     });
 
     test('unlinkProvider calls repository', () async {
-      when(() => mockRepository.unlinkProvider(any<String>()))
-          .thenAnswer((_) async => true);
+      when(
+        () => mockRepository.unlinkProvider(any<String>()),
+      ).thenAnswer((_) async => true);
       final result = await service.unlinkProvider('provider');
       expect(result, isTrue);
       verify(() => mockRepository.unlinkProvider('provider')).called(1);
@@ -90,8 +92,10 @@ void main() {
           password: any<String>(named: 'password'),
         ),
       ).thenAnswer((_) async => true);
-      final result =
-          await service.linkWithEmailPassword(email: 'e', password: 'p');
+      final result = await service.linkWithEmailPassword(
+        email: 'e',
+        password: 'p',
+      );
       expect(result, isTrue);
       verify(
         () => mockRepository.linkWithEmailPassword(email: 'e', password: 'p'),
@@ -99,8 +103,9 @@ void main() {
     });
 
     test('signInWithGoogle calls repository', () async {
-      when(() => mockRepository.signInWithGoogle())
-          .thenAnswer((_) async => true);
+      when(
+        () => mockRepository.signInWithGoogle(),
+      ).thenAnswer((_) async => true);
       final result = await service.signInWithGoogle();
       expect(result, isTrue);
       verify(() => mockRepository.signInWithGoogle()).called(1);
@@ -115,8 +120,9 @@ void main() {
       ).thenAnswer((_) async => true);
       final result = await service.signInWithEmailAndPassword('e', 'p');
       expect(result, isTrue);
-      verify(() => mockRepository.signInWithEmailAndPassword('e', 'p'))
-          .called(1);
+      verify(
+        () => mockRepository.signInWithEmailAndPassword('e', 'p'),
+      ).called(1);
     });
 
     test('signUpWithEmailAndPassword calls repository', () async {
@@ -128,13 +134,15 @@ void main() {
       ).thenAnswer((_) async => true);
       final result = await service.signUpWithEmailAndPassword('e', 'p');
       expect(result, isTrue);
-      verify(() => mockRepository.signUpWithEmailAndPassword('e', 'p'))
-          .called(1);
+      verify(
+        () => mockRepository.signUpWithEmailAndPassword('e', 'p'),
+      ).called(1);
     });
 
     test('updateUserName calls repository', () async {
-      when(() => mockRepository.updateUserName(any<String>()))
-          .thenAnswer((_) async => true);
+      when(
+        () => mockRepository.updateUserName(any<String>()),
+      ).thenAnswer((_) async => true);
       final result = await service.updateUserName('name');
       expect(result, isTrue);
       verify(() => mockRepository.updateUserName('name')).called(1);

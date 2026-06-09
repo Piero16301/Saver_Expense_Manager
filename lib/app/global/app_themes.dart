@@ -8,13 +8,9 @@ class AppThemes {
     final colorScheme = ColorScheme.fromSeed(seedColor: baseColor);
 
     return ThemeData(
-      textTheme: ThemeData.light().textTheme.apply(
-            fontFamily: fontFamily,
-          ),
+      textTheme: ThemeData.light().textTheme.apply(fontFamily: fontFamily),
       brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: baseColor,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: baseColor),
       appBarTheme: const AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
@@ -50,9 +46,7 @@ class AppThemes {
     );
 
     return ThemeData(
-      textTheme: ThemeData.dark().textTheme.apply(
-            fontFamily: fontFamily,
-          ),
+      textTheme: ThemeData.dark().textTheme.apply(fontFamily: fontFamily),
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
         seedColor: baseColor,

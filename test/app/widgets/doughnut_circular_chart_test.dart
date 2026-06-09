@@ -35,11 +35,7 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: DoughnutCircularChart(
-              data: data,
-            ),
-          ),
+          home: Scaffold(body: DoughnutCircularChart(data: data)),
         ),
       );
 
@@ -64,10 +60,7 @@ void main() {
           GoRoute(
             path: '/',
             builder: (context, state) => Scaffold(
-              body: DoughnutCircularChart(
-                data: data,
-                selectedIndex: 1,
-              ),
+              body: DoughnutCircularChart(data: data, selectedIndex: 1),
             ),
           ),
           GoRoute(
