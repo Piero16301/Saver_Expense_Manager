@@ -290,7 +290,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       final file = result.files.single;
       final ext = file.path!.split('.').last;
       final path = '${const Uuid().v4()}.$ext';
-      final bytes = file.bytes ?? await File(file.path!).readAsBytes();
+      final bytes = await file.readAsBytes();
 
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_file');
