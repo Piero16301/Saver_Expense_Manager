@@ -432,10 +432,18 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                     onPressed: () {
                       if (widget.mode == MonthPickerMode.range) {
                         if (_startDate != null) {
+                          final endMonthDate = _endDate ?? _startDate!;
                           Navigator.of(context).pop(
                             DateTimeRange(
                               start: _startDate!,
-                              end: _endDate ?? _startDate!,
+                              end: DateTime(
+                                endMonthDate.year,
+                                endMonthDate.month + 1,
+                                0,
+                                23,
+                                59,
+                                59,
+                              ),
                             ),
                           );
                         }
