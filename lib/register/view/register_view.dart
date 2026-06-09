@@ -39,9 +39,7 @@ class RegisterView extends StatelessWidget {
               const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  AppChangeTheme(
-                    padding: EdgeInsets.only(top: 16, left: 16),
-                  ),
+                  AppChangeTheme(padding: EdgeInsets.only(top: 16, left: 16)),
                   AppChangeLanguage(
                     padding: EdgeInsets.only(top: 16, right: 16),
                   ),
@@ -199,8 +197,9 @@ class RegisterView extends StatelessWidget {
                                 TextButton(
                                   onPressed: state.status.isLoading
                                       ? null
-                                      : () =>
-                                          context.goNamed(AppRoute.login.name),
+                                      : () => context.goNamed(
+                                            AppRoute.login.name,
+                                          ),
                                   child: Text(
                                     l10n.loginButton,
                                     style: const TextStyle(

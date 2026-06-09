@@ -179,8 +179,10 @@ class _FreelancePainter extends CustomPainter {
     final lapBaseW = w * 0.65;
     final lapBaseH = h * 0.06;
     final lapBaseRect = Rect.fromCenter(
-      center:
-          Offset(cx - w * 0.05, baseCy), // offset slightly left to balance cup
+      center: Offset(
+        cx - w * 0.05,
+        baseCy,
+      ), // offset slightly left to balance cup
       width: lapBaseW,
       height: lapBaseH,
     );

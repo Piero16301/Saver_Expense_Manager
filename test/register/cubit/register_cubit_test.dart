@@ -47,9 +47,7 @@ void main() {
     ).thenAnswer((_) async {});
 
     when(
-      () => mockCrashService.setUserIdentifier(
-        any<String>(),
-      ),
+      () => mockCrashService.setUserIdentifier(any<String>()),
     ).thenAnswer((_) async {});
 
     when(
@@ -62,8 +60,9 @@ void main() {
     when(() => mockAppLocalizations.genericError).thenReturn('Error');
     when(() => mockAuthService.currentUser).thenReturn(null);
 
-    when(() => mockAnalyticsService.setUserId(id: any<String>(named: 'id')))
-        .thenAnswer((_) {});
+    when(
+      () => mockAnalyticsService.setUserId(id: any<String>(named: 'id')),
+    ).thenAnswer((_) {});
 
     registerCubit = RegisterCubit(authService: mockAuthService);
   });
@@ -82,10 +81,7 @@ void main() {
       build: () => registerCubit,
       act: (cubit) => cubit.emailChanged('invalid'),
       expect: () => [
-        const RegisterState(
-          email: 'invalid',
-          isEmailValid: false,
-        ),
+        const RegisterState(email: 'invalid', isEmailValid: false),
       ],
     );
 
@@ -93,11 +89,7 @@ void main() {
       'emits correct state on emailChanged (valid)',
       build: () => registerCubit,
       act: (cubit) => cubit.emailChanged('test@test.com'),
-      expect: () => [
-        const RegisterState(
-          email: 'test@test.com',
-        ),
-      ],
+      expect: () => [const RegisterState(email: 'test@test.com')],
     );
 
     blocTest<RegisterCubit, RegisterState>(
@@ -119,10 +111,7 @@ void main() {
       seed: () => const RegisterState(password: 'Pass123!'),
       act: (cubit) => cubit.confirmPasswordChanged('Pass123!'),
       expect: () => [
-        const RegisterState(
-          password: 'Pass123!',
-          confirmPassword: 'Pass123!',
-        ),
+        const RegisterState(password: 'Pass123!', confirmPassword: 'Pass123!'),
       ],
     );
 
@@ -130,18 +119,14 @@ void main() {
       'emits correct state on togglePasswordVisibility',
       build: () => registerCubit,
       act: (cubit) => cubit.togglePasswordVisibility(),
-      expect: () => [
-        const RegisterState(isPasswordVisible: true),
-      ],
+      expect: () => [const RegisterState(isPasswordVisible: true)],
     );
 
     blocTest<RegisterCubit, RegisterState>(
       'emits correct state on toggleConfirmPasswordVisibility',
       build: () => registerCubit,
       act: (cubit) => cubit.toggleConfirmPasswordVisibility(),
-      expect: () => [
-        const RegisterState(isConfirmPasswordVisible: true),
-      ],
+      expect: () => [const RegisterState(isConfirmPasswordVisible: true)],
     );
 
     blocTest<RegisterCubit, RegisterState>(
@@ -168,8 +153,9 @@ void main() {
             any<String>(),
           ),
         ).thenAnswer((_) async => true);
-        when(() => mockAuthService.updateUserName(any<String>()))
-            .thenAnswer((_) async => true);
+        when(
+          () => mockAuthService.updateUserName(any<String>()),
+        ).thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [

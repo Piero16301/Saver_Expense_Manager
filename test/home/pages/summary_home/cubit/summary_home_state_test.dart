@@ -5,20 +5,13 @@ import 'package:saver_expense_manager/home/pages/summary_home/cubit/summary_home
 void main() {
   group('SummaryHomeState', () {
     test('supports value equality', () {
-      expect(
-        const SummaryHomeState(),
-        equals(const SummaryHomeState()),
-      );
+      expect(const SummaryHomeState(), equals(const SummaryHomeState()));
     });
 
     test('props are correct', () {
       expect(
         const SummaryHomeState().props,
-        equals(<Object?>[
-          null,
-          null,
-          const <ResumeItemType, bool>{},
-        ]),
+        equals(<Object?>[null, null, const <ResumeItemType, bool>{}]),
       );
     });
 

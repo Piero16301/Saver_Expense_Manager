@@ -74,8 +74,9 @@ void main() {
     );
     when(() => mockLocalStorage.getRecommendations()).thenReturn([]);
 
-    when(() => mockDatabase.getCategoriesStream())
-        .thenAnswer((_) => Stream.value([]));
+    when(
+      () => mockDatabase.getCategoriesStream(),
+    ).thenAnswer((_) => Stream.value([]));
     when(
       () => mockDatabase.getMovementsStream(
         userId: any(named: 'userId'),
@@ -121,11 +122,13 @@ void main() {
       );
     }
 
-    testWidgets('shows loading indicator while waiting for categories',
-        (tester) async {
+    testWidgets('shows loading indicator while waiting for categories', (
+      tester,
+    ) async {
       final controller = StreamController<List<Category>>();
-      when(() => mockDatabase.getCategoriesStream())
-          .thenAnswer((_) => controller.stream);
+      when(
+        () => mockDatabase.getCategoriesStream(),
+      ).thenAnswer((_) => controller.stream);
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -134,10 +137,12 @@ void main() {
       await controller.close();
     });
 
-    testWidgets('shows empty categories message when list is empty',
-        (tester) async {
-      when(() => mockDatabase.getCategoriesStream())
-          .thenAnswer((_) => Stream.value([]));
+    testWidgets('shows empty categories message when list is empty', (
+      tester,
+    ) async {
+      when(
+        () => mockDatabase.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.value([]));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -146,10 +151,12 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    testWidgets('shows MovementsHomeView when categories are present',
-        (tester) async {
-      when(() => mockDatabase.getCategoriesStream())
-          .thenAnswer((_) => Stream.value(_testCategories));
+    testWidgets('shows MovementsHomeView when categories are present', (
+      tester,
+    ) async {
+      when(
+        () => mockDatabase.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.value(_testCategories));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -159,8 +166,9 @@ void main() {
     });
 
     testWidgets('shows error message when stream has error', (tester) async {
-      when(() => mockDatabase.getCategoriesStream())
-          .thenAnswer((_) => Stream.error('error'));
+      when(
+        () => mockDatabase.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.error('error'));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -171,12 +179,10 @@ void main() {
   });
 
   group('MovementsHomeView', () {
-    Widget buildView({
-      MovementsHomeState? state,
-      List<Category>? categories,
-    }) {
-      when(() => mockCubit.state)
-          .thenReturn(state ?? const MovementsHomeState());
+    Widget buildView({MovementsHomeState? state, List<Category>? categories}) {
+      when(
+        () => mockCubit.state,
+      ).thenReturn(state ?? const MovementsHomeState());
       return MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -214,8 +220,9 @@ void main() {
       expect(find.byType(MovementsHomeView), findsOneWidget);
     });
 
-    testWidgets('renders FilterMovementsAntResumeHome when movements present',
-        (tester) async {
+    testWidgets('renders FilterMovementsAntResumeHome when movements present', (
+      tester,
+    ) async {
       final movement = Movement(
         id: '1',
         title: 'Lunch',
@@ -245,41 +252,42 @@ void main() {
     });
 
     testWidgets(
-        'renders with filterType set shows category chip in FilterMovements',
-        (tester) async {
-      final movement = Movement(
-        id: '1',
-        title: 'Lunch',
-        description: 'desc',
-        price: 10,
-        date: DateTime(2024, 3),
-        category: _testCategories.first,
-        user: 'user123',
-      );
-      when(
-        () => mockDatabase.getMovementsStream(
-          userId: any(named: 'userId'),
-          startDate: any(named: 'startDate'),
-          endDate: any(named: 'endDate'),
-          type: any(named: 'type'),
-          categoryId: any(named: 'categoryId'),
-          limit: any(named: 'limit'),
-          orderByDate: any(named: 'orderByDate'),
-        ),
-      ).thenAnswer((_) => Stream.value([movement]));
+      'renders with filterType set shows category chip in FilterMovements',
+      (tester) async {
+        final movement = Movement(
+          id: '1',
+          title: 'Lunch',
+          description: 'desc',
+          price: 10,
+          date: DateTime(2024, 3),
+          category: _testCategories.first,
+          user: 'user123',
+        );
+        when(
+          () => mockDatabase.getMovementsStream(
+            userId: any(named: 'userId'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            type: any(named: 'type'),
+            categoryId: any(named: 'categoryId'),
+            limit: any(named: 'limit'),
+            orderByDate: any(named: 'orderByDate'),
+          ),
+        ).thenAnswer((_) => Stream.value([movement]));
 
-      await tester.pumpWidget(
-        buildView(
-          state: const MovementsHomeState(filterType: CategoryType.expense),
-          categories: mutableTestCategories,
-        ),
-      );
-      await tester.pump();
-      await tester.pump();
+        await tester.pumpWidget(
+          buildView(
+            state: const MovementsHomeState(filterType: CategoryType.expense),
+            categories: mutableTestCategories,
+          ),
+        );
+        await tester.pump();
+        await tester.pump();
 
-      expect(find.byType(FilterMovementsAntResumeHome), findsOneWidget);
-      expect(find.byType(Chip), findsAtLeast(2));
-    });
+        expect(find.byType(FilterMovementsAntResumeHome), findsOneWidget);
+        expect(find.byType(Chip), findsAtLeast(2));
+      },
+    );
 
     testWidgets('tapping type chip opens filter bottom sheet', (tester) async {
       final movement = Movement(
@@ -316,75 +324,79 @@ void main() {
       while (tester.takeException() != null) {}
     });
 
-    testWidgets('shows AntRecommendationsWidget recommendations when available',
-        (tester) async {
-      final movement = Movement(
-        id: '1',
-        title: 'Rec Test',
-        description: 'desc',
-        price: 5,
-        date: DateTime(2024, 3),
-        category: _testCategories.first,
-        user: 'user123',
-      );
-      when(
-        () => mockDatabase.getMovementsStream(
-          userId: any(named: 'userId'),
-          startDate: any(named: 'startDate'),
-          endDate: any(named: 'endDate'),
-          type: any(named: 'type'),
-          categoryId: any(named: 'categoryId'),
-          limit: any(named: 'limit'),
-          orderByDate: any(named: 'orderByDate'),
-        ),
-      ).thenAnswer((_) => Stream.value([movement]));
-
-      await tester.pumpWidget(
-        buildView(
-          state: const MovementsHomeState(
-            recommendationsStatus: RecommendationsStatus.success,
-            recommendations: ['**Save more!**', '**Spend wisely.**'],
+    testWidgets(
+      'shows AntRecommendationsWidget recommendations when available',
+      (tester) async {
+        final movement = Movement(
+          id: '1',
+          title: 'Rec Test',
+          description: 'desc',
+          price: 5,
+          date: DateTime(2024, 3),
+          category: _testCategories.first,
+          user: 'user123',
+        );
+        when(
+          () => mockDatabase.getMovementsStream(
+            userId: any(named: 'userId'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            type: any(named: 'type'),
+            categoryId: any(named: 'categoryId'),
+            limit: any(named: 'limit'),
+            orderByDate: any(named: 'orderByDate'),
           ),
-          categories: mutableTestCategories,
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+        ).thenAnswer((_) => Stream.value([movement]));
 
-      expect(find.byType(PageView), findsOneWidget);
-    });
+        await tester.pumpWidget(
+          buildView(
+            state: const MovementsHomeState(
+              recommendationsStatus: RecommendationsStatus.success,
+              recommendations: ['**Save more!**', '**Spend wisely.**'],
+            ),
+            categories: mutableTestCategories,
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+
+        expect(find.byType(PageView), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'AntRecommendationsWidget shows nothing when recommendations hidden',
-        (tester) async {
-      when(
-        () => mockDatabase.getMovementsStream(
-          userId: any(named: 'userId'),
-          startDate: any(named: 'startDate'),
-          endDate: any(named: 'endDate'),
-          type: any(named: 'type'),
-          categoryId: any(named: 'categoryId'),
-          limit: any(named: 'limit'),
-          orderByDate: any(named: 'orderByDate'),
-        ),
-      ).thenAnswer((_) => Stream.value([]));
-
-      await tester.pumpWidget(
-        buildView(
-          state: const MovementsHomeState(
-            recommendationsStatus: RecommendationsStatus.success,
-            recommendations: ['**Save more!**'],
-            showRecommendations: false,
+      'AntRecommendationsWidget shows nothing when recommendations hidden',
+      (tester) async {
+        when(
+          () => mockDatabase.getMovementsStream(
+            userId: any(named: 'userId'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            type: any(named: 'type'),
+            categoryId: any(named: 'categoryId'),
+            limit: any(named: 'limit'),
+            orderByDate: any(named: 'orderByDate'),
           ),
-        ),
-      );
-      await tester.pump();
+        ).thenAnswer((_) => Stream.value([]));
 
-      expect(find.byType(PageView), findsNothing);
-    });
+        await tester.pumpWidget(
+          buildView(
+            state: const MovementsHomeState(
+              recommendationsStatus: RecommendationsStatus.success,
+              recommendations: ['**Save more!**'],
+              showRecommendations: false,
+            ),
+          ),
+        );
+        await tester.pump();
 
-    testWidgets('AI button is disabled when recommendations are loading',
-        (tester) async {
+        expect(find.byType(PageView), findsNothing);
+      },
+    );
+
+    testWidgets('AI button is disabled when recommendations are loading', (
+      tester,
+    ) async {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
@@ -428,17 +440,12 @@ void main() {
   });
 
   group('FilterMovementsAntResumeHome', () {
-    Widget buildFilter({
-      CategoryType? filterType,
-      Category? filterCategory,
-    }) {
+    Widget buildFilter({CategoryType? filterType, Category? filterCategory}) {
       return MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: MultiBlocProvider(
-          providers: [
-            BlocProvider<MovementsHomeCubit>.value(value: mockCubit),
-          ],
+          providers: [BlocProvider<MovementsHomeCubit>.value(value: mockCubit)],
           child: Scaffold(
             body: FilterMovementsAntResumeHome(
               categories: mutableTestCategories,
@@ -452,8 +459,9 @@ void main() {
       );
     }
 
-    testWidgets('renders without filter selected (no filterType)',
-        (tester) async {
+    testWidgets('renders without filter selected (no filterType)', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildFilter());
       await tester.pump();
 
@@ -461,16 +469,15 @@ void main() {
     });
 
     testWidgets('renders with filterType showing both chips', (tester) async {
-      await tester.pumpWidget(
-        buildFilter(filterType: CategoryType.expense),
-      );
+      await tester.pumpWidget(buildFilter(filterType: CategoryType.expense));
       await tester.pump();
 
       expect(find.byType(Chip), findsAtLeast(2));
     });
 
-    testWidgets('renders with filterCategory showing category name',
-        (tester) async {
+    testWidgets('renders with filterCategory showing category name', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildFilter(
           filterType: CategoryType.expense,
@@ -482,11 +489,10 @@ void main() {
       expect(find.byType(Chip), findsAtLeast(2));
     });
 
-    testWidgets('tapping category chip opens category filter bottom sheet',
-        (tester) async {
-      await tester.pumpWidget(
-        buildFilter(filterType: CategoryType.expense),
-      );
+    testWidgets('tapping category chip opens category filter bottom sheet', (
+      tester,
+    ) async {
+      await tester.pumpWidget(buildFilter(filterType: CategoryType.expense));
       await tester.pump();
 
       final chips = find.byType(Chip);

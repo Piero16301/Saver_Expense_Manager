@@ -30,9 +30,9 @@ class ListMovementsItemHome extends StatelessWidget {
       contentPadding: const EdgeInsets.only(left: 8, right: 8),
       title: Text(
         movement.title,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -55,9 +55,9 @@ class ListMovementsItemHome extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: Text(
             AppExtensions.moneyFormat.format(movement.price),
-            style: Theme.of(context).textTheme.labelLarge!.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
           ),
         ),

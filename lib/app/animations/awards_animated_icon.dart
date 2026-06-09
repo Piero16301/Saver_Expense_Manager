@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class AwardsAnimatedIcon extends StatefulWidget {
-  const AwardsAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const AwardsAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -142,25 +138,27 @@ class _AwardsPainter extends CustomPainter {
       ..moveTo(cx - bowlW / 2, bowlY - bowlH / 2) // top left
       ..lineTo(cx + bowlW / 2, bowlY - bowlH / 2) // top right
       ..quadraticBezierTo(
-        cx + bowlW / 2, bowlY + bowlH / 2, // control point right
-        cx, bowlY + bowlH / 2, // end point bottom center
+        cx + bowlW / 2,
+        bowlY + bowlH / 2, // control point right
+        cx,
+        bowlY + bowlH / 2, // end point bottom center
       )
       ..quadraticBezierTo(
-        cx - bowlW / 2, bowlY + bowlH / 2, // control point left
-        cx - bowlW / 2, bowlY - bowlH / 2, // end point top left
+        cx - bowlW / 2,
+        bowlY + bowlH / 2, // control point left
+        cx - bowlW / 2,
+        bowlY - bowlH / 2, // end point top left
       )
       ..close();
 
     canvas
       ..drawPath(bowlPath, paintFill)
-
       // Clear line to define rim
       ..drawLine(
         Offset(cx - bowlW / 2 + w * 0.02, bowlY - bowlH / 2 + h * 0.06),
         Offset(cx + bowlW / 2 - w * 0.02, bowlY - bowlH / 2 + h * 0.06),
         clearPaintList,
       )
-
       // Shine line on the bowl
       ..drawArc(
         Rect.fromCenter(
@@ -210,7 +208,6 @@ class _AwardsPainter extends CustomPainter {
           ..strokeWidth = w * 0.015
           ..strokeCap = StrokeCap.round,
       )
-
       // Right Handle
       ..drawArc(
         Rect.fromCenter(
@@ -284,8 +281,10 @@ class _AwardsPainter extends CustomPainter {
       for (var i = 0; i < points * 2; i++) {
         final radius = i.isEven ? outerRadius : innerRadius;
         final angle = i * math.pi / points - math.pi / 2;
-        final point =
-            Offset(math.cos(angle) * radius, math.sin(angle) * radius);
+        final point = Offset(
+          math.cos(angle) * radius,
+          math.sin(angle) * radius,
+        );
         if (i == 0) {
           starPath.moveTo(point.dx, point.dy);
         } else {
@@ -301,7 +300,6 @@ class _AwardsPainter extends CustomPainter {
             ..color = color.withValues(alpha: opacity.clamp(0.0, 1.0))
             ..style = PaintingStyle.fill,
         )
-
         // Inner clear circle to make star pop
         ..drawCircle(
           Offset.zero,

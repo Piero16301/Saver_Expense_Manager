@@ -162,8 +162,9 @@ class _DwellingPainter extends CustomPainter {
 
     // Glowing window pane
     // The window pulses light
-    final windowGlowPhase =
-        math.sin(animationValue * math.pi * 2 - math.pi / 2); // -1 to 1
+    final windowGlowPhase = math.sin(
+      animationValue * math.pi * 2 - math.pi / 2,
+    ); // -1 to 1
     final glowAlpha = (windowGlowPhase + 1) / 2 * 0.6 + 0.4; // 0.4 to 1.0
 
     canvas
@@ -173,7 +174,6 @@ class _DwellingPainter extends CustomPainter {
           ..color = color.withValues(alpha: glowAlpha.clamp(0.0, 1.0))
           ..style = PaintingStyle.fill,
       )
-
       // Window cross details
       ..drawLine(
         Offset(cx + w * 0.05, windowCenterY),

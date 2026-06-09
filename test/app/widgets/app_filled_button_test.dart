@@ -26,10 +26,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: AppFilledButton(
-              label: 'Home',
-              icon: Icon(Icons.home),
-            ),
+            body: AppFilledButton(label: 'Home', icon: Icon(Icons.home)),
           ),
         ),
       );
@@ -42,10 +39,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: AppFilledButton(
-              icon: Icon(Icons.add),
-              isOnlyIcon: true,
-            ),
+            body: AppFilledButton(icon: Icon(Icons.add), isOnlyIcon: true),
           ),
         ),
       );
@@ -56,20 +50,11 @@ void main() {
     testWidgets('renders icon as label if label is null', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppFilledButton(
-              icon: Icon(Icons.star),
-            ),
-          ),
+          home: Scaffold(body: AppFilledButton(icon: Icon(Icons.star))),
         ),
       );
 
-      expect(
-        find.byIcon(Icons.star),
-        findsNWidgets(
-          2,
-        ),
-      );
+      expect(find.byIcon(Icons.star), findsNWidgets(2));
     });
   });
 }

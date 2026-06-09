@@ -1,9 +1,7 @@
 part of 'home_cubit.dart';
 
 class HomeState extends Equatable {
-  const HomeState({
-    required this.selectedIndex,
-  });
+  const HomeState({required this.selectedIndex});
 
   factory HomeState.initial() {
     return HomeState(
@@ -15,16 +13,10 @@ class HomeState extends Equatable {
 
   final int selectedIndex;
 
-  HomeState copyWith({
-    int? selectedIndex,
-  }) {
-    return HomeState(
-      selectedIndex: selectedIndex ?? this.selectedIndex,
-    );
+  HomeState copyWith({int? selectedIndex}) {
+    return HomeState(selectedIndex: selectedIndex ?? this.selectedIndex);
   }
 
   @override
-  List<Object> get props => [
-        selectedIndex,
-      ];
+  List<Object> get props => [selectedIndex];
 }

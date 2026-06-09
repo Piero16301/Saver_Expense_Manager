@@ -115,9 +115,7 @@ class _TransportPainter extends CustomPainter {
 
     canvas
       ..drawPath(windowGroup, clearPaint)
-
       // 3. Draw wheel arches (Erase)
-
       ..drawCircle(Offset(w * 0.25, h * 0.65), w * 0.16, clearPaint)
       ..drawCircle(Offset(w * 0.80, h * 0.65), w * 0.16, clearPaint)
       ..restore(); // Wheels shouldn't bounce as much
@@ -170,8 +168,9 @@ class _TransportPainter extends CustomPainter {
       final renderX = x;
       // Fade near ends
       final opacity = (renderX + w * 0.5) / (w * 1.5);
-      linePaint.color =
-          color.withValues(alpha: math.sin(opacity * math.pi).clamp(0.0, 1.0));
+      linePaint.color = color.withValues(
+        alpha: math.sin(opacity * math.pi).clamp(0.0, 1.0),
+      );
 
       canvas.drawLine(
         Offset(renderX, y),

@@ -152,8 +152,9 @@ void main() {
       expect(find.textContaining('15.50'), findsOneWidget);
     });
 
-    testWidgets('calls DatabaseService with correct parameters',
-        (tester) async {
+    testWidgets('calls DatabaseService with correct parameters', (
+      tester,
+    ) async {
       final month = DateTime(2024, 3);
       await tester.pumpWidget(
         MaterialApp(

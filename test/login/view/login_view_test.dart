@@ -42,8 +42,9 @@ void main() {
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockAppCubit.stream).thenAnswer((_) => const Stream.empty());
-    when(() => mockAppCubit.changeTheme(theme: any(named: 'theme')))
-        .thenAnswer((_) async {});
+    when(
+      () => mockAppCubit.changeTheme(theme: any(named: 'theme')),
+    ).thenAnswer((_) async {});
   });
 
   Widget buildView({GoRouter? router}) {
@@ -90,8 +91,9 @@ void main() {
       expect(find.byType(AppChangeLanguage), findsOneWidget);
     });
 
-    testWidgets('calls emailChanged when typing in email field',
-        (tester) async {
+    testWidgets('calls emailChanged when typing in email field', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
@@ -99,8 +101,9 @@ void main() {
       verify(() => mockLoginCubit.emailChanged('test@example.com')).called(1);
     });
 
-    testWidgets('calls passwordChanged when typing in password field',
-        (tester) async {
+    testWidgets('calls passwordChanged when typing in password field', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
@@ -108,8 +111,9 @@ void main() {
       verify(() => mockLoginCubit.passwordChanged('password123')).called(1);
     });
 
-    testWidgets('calls togglePasswordVisibility when tapping suffix icon',
-        (tester) async {
+    testWidgets('calls togglePasswordVisibility when tapping suffix icon', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
@@ -123,8 +127,9 @@ void main() {
       verify(() => mockLoginCubit.togglePasswordVisibility()).called(1);
     });
 
-    testWidgets('calls loginWithEmail when pressing login button',
-        (tester) async {
+    testWidgets('calls loginWithEmail when pressing login button', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
@@ -132,8 +137,9 @@ void main() {
       verify(() => mockLoginCubit.loginWithEmail(any())).called(1);
     });
 
-    testWidgets('calls loginWithGoogle when pressing Google button',
-        (tester) async {
+    testWidgets('calls loginWithGoogle when pressing Google button', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
@@ -143,9 +149,9 @@ void main() {
 
     testWidgets('renders loading state correctly', (tester) async {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      when(() => mockLoginCubit.state).thenReturn(
-        const LoginState(status: LoginStatus.loading),
-      );
+      when(
+        () => mockLoginCubit.state,
+      ).thenReturn(const LoginState(status: LoginStatus.loading));
 
       await tester.pumpWidget(buildView());
       await tester.pump();
@@ -195,14 +201,17 @@ void main() {
       await stateController.close();
     });
 
-    testWidgets('navigates to RegisterPage when tapping register button',
-        (tester) async {
+    testWidgets('navigates to RegisterPage when tapping register button', (
+      tester,
+    ) async {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
-      final registerButton =
-          find.widgetWithText(TextButton, l10n.registerButton);
+      final registerButton = find.widgetWithText(
+        TextButton,
+        l10n.registerButton,
+      );
       expect(registerButton, findsOneWidget);
 
       await tester.tap(registerButton);

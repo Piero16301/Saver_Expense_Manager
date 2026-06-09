@@ -205,10 +205,7 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
       }
 
       if (to != null) {
-        query = query.where(
-          'date',
-          isLessThan: Timestamp.fromDate(to),
-        );
+        query = query.where('date', isLessThan: Timestamp.fromDate(to));
       }
 
       final snapshot = await query.get();

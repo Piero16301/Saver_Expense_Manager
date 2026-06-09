@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class HealthAnimatedIcon extends StatefulWidget {
-  const HealthAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const HealthAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;

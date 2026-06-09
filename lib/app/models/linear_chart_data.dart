@@ -5,10 +5,7 @@ import 'package:equatable/equatable.dart';
 /// {@endtemplate}
 class LinearChartData extends Equatable {
   /// {@macro linear_chart_data}
-  const LinearChartData({
-    required this.xValue,
-    required this.yValue,
-  });
+  const LinearChartData({required this.xValue, required this.yValue});
 
   /// Creates an instance of [LinearChartData] from a [Map]
   factory LinearChartData.fromJson(Map<String, dynamic> json) {
@@ -20,10 +17,7 @@ class LinearChartData extends Equatable {
 
   /// Creates a [Map] from an instance of [LinearChartData]
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'xValue': xValue,
-      'yValue': yValue,
-    };
+    return <String, dynamic>{'xValue': xValue, 'yValue': yValue};
   }
 
   /// Chart data label
@@ -33,8 +27,5 @@ class LinearChartData extends Equatable {
   final double yValue;
 
   @override
-  List<Object> get props => [
-        xValue,
-        yValue,
-      ];
+  List<Object> get props => [xValue, yValue];
 }

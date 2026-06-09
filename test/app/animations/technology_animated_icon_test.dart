@@ -3,8 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/app/animations/technology_animated_icon.dart';
 
 void main() {
-  testWidgets('TechnologyAnimatedIcon renders and animates without errors',
-      (tester) async {
+  testWidgets('TechnologyAnimatedIcon renders and animates without errors', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(

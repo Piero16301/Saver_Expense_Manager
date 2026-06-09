@@ -44,16 +44,11 @@ void main() {
           'user': user,
         };
 
-        expect(
-          Movement.fromJson(json),
-          equals(createSubject()),
-        );
+        expect(Movement.fromJson(json), equals(createSubject()));
       });
 
       test('returns correct Movement from empty json', () {
-        final json = <String, dynamic>{
-          'id': 'test_id',
-        };
+        final json = <String, dynamic>{'id': 'test_id'};
 
         final movement = Movement.fromJson(json);
 

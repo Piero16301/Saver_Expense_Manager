@@ -26,10 +26,7 @@ void main() {
           home: Scaffold(
             body: BlocProvider<AppCubit>.value(
               value: appCubit,
-              child: AppDateField(
-                label: 'Date',
-                initialDate: initialDate,
-              ),
+              child: AppDateField(label: 'Date', initialDate: initialDate),
             ),
           ),
         ),

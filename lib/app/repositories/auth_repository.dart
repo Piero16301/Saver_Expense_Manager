@@ -19,14 +19,8 @@ abstract class AuthRepository {
     required String password,
   });
   Future<bool> signInWithGoogle();
-  Future<bool> signInWithEmailAndPassword(
-    String email,
-    String password,
-  );
-  Future<bool> signUpWithEmailAndPassword(
-    String email,
-    String password,
-  );
+  Future<bool> signInWithEmailAndPassword(String email, String password);
+  Future<bool> signUpWithEmailAndPassword(String email, String password);
   Future<bool> updateUserName(String newName);
 }
 
@@ -91,10 +85,8 @@ class MockAuthRepository implements AuthRepository {
 }
 
 class FirebaseAuthRepository implements AuthRepository {
-  FirebaseAuthRepository({
-    FirebaseAuth? auth,
-    GoogleSignIn? googleSignIn,
-  })  : _auth = auth ?? FirebaseAuth.instance,
+  FirebaseAuthRepository({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
+      : _auth = auth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
 
   final FirebaseAuth _auth;
@@ -117,14 +109,14 @@ class FirebaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Stream<AppUser?> get userChanges => _auth
-      .userChanges()
-      .map((u) => u == null ? null : AppUser.fromFirebaseUser(u));
+  Stream<AppUser?> get userChanges => _auth.userChanges().map(
+        (u) => u == null ? null : AppUser.fromFirebaseUser(u),
+      );
 
   @override
-  Stream<AppUser?> get authStateChanges => _auth
-      .authStateChanges()
-      .map((u) => u == null ? null : AppUser.fromFirebaseUser(u));
+  Stream<AppUser?> get authStateChanges => _auth.authStateChanges().map(
+        (u) => u == null ? null : AppUser.fromFirebaseUser(u),
+      );
 
   @override
   AppUser? get currentUser => _auth.currentUser == null
@@ -224,8 +216,10 @@ class FirebaseAuthRepository implements AuthRepository {
     required String password,
   }) async {
     try {
-      final credential =
-          EmailAuthProvider.credential(email: email, password: password);
+      final credential = EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      );
       await _auth.currentUser?.linkWithCredential(credential);
       return true;
     } on Exception catch (e, stackTrace) {
@@ -265,17 +259,11 @@ class FirebaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<bool> signInWithEmailAndPassword(
-    String email,
-    String password,
-  ) async {
+  Future<bool> signInWithEmailAndPassword(String email, String password) async {
     final performance = getIt<PerformanceService>();
     final trace = performance.startTrace('auth_sign_in_email');
     try {
-      await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
       return true;
     } on Exception catch (e, stackTrace) {
       getIt<CrashService>().recordError(
@@ -290,10 +278,7 @@ class FirebaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<bool> signUpWithEmailAndPassword(
-    String email,
-    String password,
-  ) async {
+  Future<bool> signUpWithEmailAndPassword(String email, String password) async {
     final performance = getIt<PerformanceService>();
     final trace = performance.startTrace('auth_sign_up_email');
     try {

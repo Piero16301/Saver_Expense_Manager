@@ -20,9 +20,9 @@ class CategoryView extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             AppFunctions.getCategoryName(state.category.name, l10n),
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
           notificationPredicate: (notification) => false,
           leading: IconButton(
@@ -131,19 +131,14 @@ class _CategoryTabBarState extends State<CategoryTabBar>
               ),
               Tab(
                 text: l10n.categoryTabMovements,
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedListView,
-                ),
+                icon: const HugeIcon(icon: HugeIcons.strokeRoundedListView),
               ),
             ],
           ),
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                TabTrendCategory(),
-                TabMovementsCategory(),
-              ],
+              children: const [TabTrendCategory(), TabMovementsCategory()],
             ),
           ),
         ],
@@ -161,8 +156,9 @@ class TabTrendCategory extends StatefulWidget {
 
 class _TabTrendCategoryState extends State<TabTrendCategory> {
   DateTime endMonth = DateTime.now();
-  DateTime startMonth =
-      AppFunctions.substracMonth(AppVariables.deafultMonthsTrend);
+  DateTime startMonth = AppFunctions.substracMonth(
+    AppVariables.deafultMonthsTrend,
+  );
 
   @override
   Widget build(BuildContext context) {

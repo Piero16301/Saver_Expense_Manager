@@ -14,8 +14,9 @@ class CategoryExpenseData extends Equatable {
   /// Creates an instance of [CategoryExpenseData] from a [Map]
   factory CategoryExpenseData.fromJson(Map<String, dynamic> json) {
     return CategoryExpenseData(
-      category:
-          Category.fromJson(json['category'] as Map<String, dynamic>? ?? {}),
+      category: Category.fromJson(
+        json['category'] as Map<String, dynamic>? ?? {},
+      ),
       totalExpense: (json['totalExpense'] as num?)?.toDouble() ?? 0.0,
     );
   }
@@ -35,8 +36,5 @@ class CategoryExpenseData extends Equatable {
   final double totalExpense;
 
   @override
-  List<Object> get props => [
-        category,
-        totalExpense,
-      ];
+  List<Object> get props => [category, totalExpense];
 }

@@ -27,29 +27,17 @@ class AppAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.titleLarge,
-      ),
+      title: Text(title, style: Theme.of(context).textTheme.titleLarge),
       content: SizedBox(
         width: isForm ? double.maxFinite : null,
         child: child ??
             (content != null
-                ? Text(
-                    content!,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  )
+                ? Text(content!, style: Theme.of(context).textTheme.bodyMedium)
                 : null),
       ),
       actions: [
-        AppOutlinedButton(
-          onPressed: onCancel,
-          label: cancelLabel,
-        ),
-        AppFilledButton(
-          onPressed: onConfirm,
-          label: confirmLabel,
-        ),
+        AppOutlinedButton(onPressed: onCancel, label: cancelLabel),
+        AppFilledButton(onPressed: onConfirm, label: confirmLabel),
       ],
     );
   }

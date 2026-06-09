@@ -17,6 +17,24 @@ class MockFilePicker extends Mock
     with MockPlatformInterfaceMixin
     implements FilePickerPlatform {}
 
+When<Future<FilePickerResult?>> _whenPickFiles(MockFilePicker mock) => when(
+      () => mock.pickFiles(
+        dialogTitle: any(named: 'dialogTitle'),
+        initialDirectory: any(named: 'initialDirectory'),
+        type: any(named: 'type'),
+        allowedExtensions: any(named: 'allowedExtensions'),
+        onFileLoading: any(named: 'onFileLoading'),
+        compressionQuality: any(named: 'compressionQuality'),
+        allowMultiple: any(named: 'allowMultiple'),
+        withData: any(named: 'withData'),
+        withReadStream: any(named: 'withReadStream'),
+        lockParentWindow: any(named: 'lockParentWindow'),
+        readSequential: any(named: 'readSequential'),
+        cancelUploadOnWindowBlur: any(named: 'cancelUploadOnWindowBlur'),
+        androidSafOptions: any(named: 'androidSafOptions'),
+      ),
+    );
+
 void main() {
   late RemoteStorageService remoteStorageService;
   late MockFilePicker mockFilePicker;
@@ -41,8 +59,9 @@ void main() {
   });
 
   group('AppFileField', () {
-    testWidgets('renders labels and attachments with different types',
-        (tester) async {
+    testWidgets('renders labels and attachments with different types', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -107,8 +126,9 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('shows confirmation dialog on remove and calls onRemove',
-        (tester) async {
+    testWidgets('shows confirmation dialog on remove and calls onRemove', (
+      tester,
+    ) async {
       String? removed;
       await tester.pumpWidget(
         MaterialApp(
@@ -147,23 +167,15 @@ void main() {
 
     testWidgets('handles file upload successfully', (tester) async {
       String? added;
-      when(
-        () => mockFilePicker.pickFiles(
-          type: any(named: 'type'),
-          allowedExtensions: any(named: 'allowedExtensions'),
-        ),
-      ).thenAnswer(
+      _whenPickFiles(mockFilePicker).thenAnswer(
         (_) async => FilePickerResult([
-          PlatformFile(
-            name: 'test.png',
-            size: 100,
-            path: 'path/to/test.png',
-          ),
+          PlatformFile(name: 'test.png', size: 100, path: 'path/to/test.png'),
         ]),
       );
 
-      when(() => remoteStorageService.uploadFile(any(), any()))
-          .thenAnswer((_) async => 'uploaded_path.png');
+      when(
+        () => remoteStorageService.uploadFile(any<File>(), any<String>()),
+      ).thenAnswer((_) async => 'uploaded_path.png');
 
       await tester.pumpWidget(
         MaterialApp(
@@ -190,12 +202,7 @@ void main() {
     });
 
     testWidgets('handles upload error and shows SnackBar', (tester) async {
-      when(
-        () => mockFilePicker.pickFiles(
-          type: any(named: 'type'),
-          allowedExtensions: any(named: 'allowedExtensions'),
-        ),
-      ).thenThrow(Exception('Upload failed'));
+      _whenPickFiles(mockFilePicker).thenThrow(Exception('Upload failed'));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -217,17 +224,17 @@ void main() {
       await tester.tap(find.text('Upload'));
       await tester.pumpAndSettle();
 
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.textContaining('Exception: Upload failed'), findsOneWidget);
+      expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+      expect(
+        find.textContaining('Exception: Upload failed', skipOffstage: false),
+        findsOneWidget,
+      );
     });
 
     testWidgets('does nothing if file picking is cancelled', (tester) async {
-      when(
-        () => mockFilePicker.pickFiles(
-          type: any(named: 'type'),
-          allowedExtensions: any(named: 'allowedExtensions'),
-        ),
-      ).thenAnswer((_) async => null);
+      _whenPickFiles(
+        mockFilePicker,
+      ).thenAnswer((_) async => null as FilePickerResult?);
 
       await tester.pumpWidget(
         MaterialApp(

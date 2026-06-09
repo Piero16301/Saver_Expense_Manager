@@ -9,10 +9,7 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MovementsHomeView extends StatelessWidget {
-  const MovementsHomeView({
-    required this.categories,
-    super.key,
-  });
+  const MovementsHomeView({required this.categories, super.key});
 
   final List<Category> categories;
 
@@ -112,9 +109,7 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
                   height: 40,
                   child: AppFilledButton(
                     icon: state.recommendationsStatus.isLoading
-                        ? Image.asset(
-                            'assets/animations/gemini-loading.gif',
-                          )
+                        ? Image.asset('assets/animations/gemini-loading.gif')
                         : const HugeIcon(
                             icon: HugeIcons.strokeRoundedAiIdea,
                             strokeWidth: 2,
@@ -149,9 +144,9 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
                       side: filterType == null
                           ? null
                           : BorderSide(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondaryContainer,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.secondaryContainer,
                             ),
                       label: Row(
                         spacing: 4,
@@ -191,9 +186,9 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
                         side: filterCategory == null
                             ? null
                             : BorderSide(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .secondaryContainer,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.secondaryContainer,
                               ),
                         label: Row(
                           spacing: 4,
@@ -247,8 +242,9 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
             ),
             child: Column(
               children: [
@@ -308,10 +304,7 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
     );
   }
 
-  void _showFilterCategoryMenu(
-    BuildContext context,
-    Category? filterCategory,
-  ) {
+  void _showFilterCategoryMenu(BuildContext context, Category? filterCategory) {
     final l10n = AppLocalizations.of(context);
 
     unawaited(
@@ -328,8 +321,9 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
             ),
             child: Column(
               children: [
@@ -366,9 +360,7 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
                             contentPadding: EdgeInsets.zero,
                           ),
                           ...categories
-                              .where(
-                                (category) => category.type == filterType,
-                              )
+                              .where((category) => category.type == filterType)
                               .map(
                                 (category) => RadioListTile<Category?>(
                                   title: Text(
@@ -397,11 +389,7 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
 }
 
 class ListMovementsHome extends StatelessWidget {
-  const ListMovementsHome({
-    this.filterType,
-    this.filterCategory,
-    super.key,
-  });
+  const ListMovementsHome({this.filterType, this.filterCategory, super.key});
 
   final CategoryType? filterType;
   final Category? filterCategory;
@@ -446,10 +434,7 @@ class AntRecommendationsWidget extends StatelessWidget {
             return SizeTransition(
               sizeFactor: animation,
               alignment: Alignment.topCenter,
-              child: FadeTransition(
-                opacity: animation,
-                child: child,
-              ),
+              child: FadeTransition(opacity: animation, child: child),
             );
           },
           child: (!state.recommendationsStatus.isSuccess ||
@@ -477,9 +462,7 @@ class AntRecommendationsWidget extends StatelessWidget {
                             padding: const EdgeInsets.all(12),
                             child: SingleChildScrollView(
                               physics: const BouncingScrollPhysics(),
-                              child: MarkdownBody(
-                                data: recommendation,
-                              ),
+                              child: MarkdownBody(data: recommendation),
                             ),
                           ),
                         );

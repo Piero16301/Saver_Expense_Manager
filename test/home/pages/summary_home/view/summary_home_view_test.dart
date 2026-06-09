@@ -58,8 +58,9 @@ void main() {
     mockAuthService = MockAuthService();
     mockAppCubit = MockAppCubit();
     mockSummaryHomeCubit = MockSummaryHomeCubit();
-    when(() => mockAuthService.currentUser)
-        .thenReturn(const AppUser(uid: 'user123'));
+    when(
+      () => mockAuthService.currentUser,
+    ).thenReturn(const AppUser(uid: 'user123'));
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
 
@@ -93,20 +94,24 @@ void main() {
       );
     }
 
-    testWidgets('renders CircularProgressIndicator when loading categories',
-        (tester) async {
-      when(() => mockDatabaseService.getCategoriesStream())
-          .thenAnswer((_) => const Stream.empty());
+    testWidgets('renders CircularProgressIndicator when loading categories', (
+      tester,
+    ) async {
+      when(
+        () => mockDatabaseService.getCategoriesStream(),
+      ).thenAnswer((_) => const Stream.empty());
 
       await tester.pumpWidget(buildPage());
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('renders error message when category stream fails',
-        (tester) async {
-      when(() => mockDatabaseService.getCategoriesStream())
-          .thenAnswer((_) => Stream.error('Error'));
+    testWidgets('renders error message when category stream fails', (
+      tester,
+    ) async {
+      when(
+        () => mockDatabaseService.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.error('Error'));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -114,10 +119,12 @@ void main() {
       expect(find.text('Error loading categories'), findsOneWidget);
     });
 
-    testWidgets('renders no categories found message when list is empty',
-        (tester) async {
-      when(() => mockDatabaseService.getCategoriesStream())
-          .thenAnswer((_) => Stream.value([]));
+    testWidgets('renders no categories found message when list is empty', (
+      tester,
+    ) async {
+      when(
+        () => mockDatabaseService.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.value([]));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -125,10 +132,12 @@ void main() {
       expect(find.text('No categories found'), findsOneWidget);
     });
 
-    testWidgets('renders SummaryHomeView when categories are loaded',
-        (tester) async {
-      when(() => mockDatabaseService.getCategoriesStream())
-          .thenAnswer((_) => Stream.value(testCategories));
+    testWidgets('renders SummaryHomeView when categories are loaded', (
+      tester,
+    ) async {
+      when(
+        () => mockDatabaseService.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.value(testCategories));
       when(
         () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
@@ -182,8 +191,9 @@ void main() {
       );
     }
 
-    testWidgets('renders CircularProgressIndicator when loading movements',
-        (tester) async {
+    testWidgets('renders CircularProgressIndicator when loading movements', (
+      tester,
+    ) async {
       when(
         () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
@@ -201,8 +211,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('renders no movements message when list is empty',
-        (tester) async {
+    testWidgets('renders no movements message when list is empty', (
+      tester,
+    ) async {
       when(
         () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),
@@ -221,8 +232,9 @@ void main() {
       expect(find.text('No movements registered'), findsOneWidget);
     });
 
-    testWidgets('renders components correctly in portrait mode',
-        (tester) async {
+    testWidgets('renders components correctly in portrait mode', (
+      tester,
+    ) async {
       final movements = <Movement>[
         Movement(
           id: '1',
@@ -256,8 +268,9 @@ void main() {
       expect(find.byType(CategoriesResumeCards), findsOneWidget);
     });
 
-    testWidgets('renders components correctly in landscape mode',
-        (tester) async {
+    testWidgets('renders components correctly in landscape mode', (
+      tester,
+    ) async {
       final movements = <Movement>[
         Movement(
           id: '1',
@@ -371,60 +384,62 @@ void main() {
       expect(find.byType(MonthPickerDialog), findsOneWidget);
     });
 
-    testWidgets('switches between Expense and Income in CategoriesResumeCards',
-        (tester) async {
-      final movements = <Movement>[
-        Movement(
-          id: '1',
-          title: 'Lunch',
-          description: 'Subway',
-          price: 15,
-          date: DateTime.now(),
-          category: testCategories.first,
-          user: 'user123',
-        ),
-        Movement(
-          id: '2',
-          title: 'Salary',
-          description: 'Company',
-          price: 1000,
-          date: DateTime.now(),
-          category: testCategories.last,
-          user: 'user123',
-        ),
-      ];
-
-      when(
-        () => mockDatabaseService.getMovementsStream(
-          userId: any(named: 'userId'),
-          startDate: any(named: 'startDate'),
-          endDate: any(named: 'endDate'),
-          type: any(named: 'type'),
-          categoryId: any(named: 'categoryId'),
-          limit: any(named: 'limit'),
-          orderByDate: any(named: 'orderByDate'),
-        ),
-      ).thenAnswer((_) => Stream.value(movements));
-
-      await tester.pumpWidget(buildView());
-      await tester.pumpAndSettle();
-
-      final segmentedButton = find.byType(SegmentedButton<CategoryType>);
-      expect(segmentedButton, findsOneWidget);
-
-      await tester.tap(
-        find.descendant(
-          of: segmentedButton,
-          matching: find.byWidgetPredicate(
-            (widget) =>
-                widget is HugeIcon &&
-                widget.icon == HugeIcons.strokeRoundedMoneyAdd01,
+    testWidgets(
+      'switches between Expense and Income in CategoriesResumeCards',
+      (tester) async {
+        final movements = <Movement>[
+          Movement(
+            id: '1',
+            title: 'Lunch',
+            description: 'Subway',
+            price: 15,
+            date: DateTime.now(),
+            category: testCategories.first,
+            user: 'user123',
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+          Movement(
+            id: '2',
+            title: 'Salary',
+            description: 'Company',
+            price: 1000,
+            date: DateTime.now(),
+            category: testCategories.last,
+            user: 'user123',
+          ),
+        ];
 
-      expect(find.text('Salary'), findsOneWidget);
-    });
+        when(
+          () => mockDatabaseService.getMovementsStream(
+            userId: any(named: 'userId'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            type: any(named: 'type'),
+            categoryId: any(named: 'categoryId'),
+            limit: any(named: 'limit'),
+            orderByDate: any(named: 'orderByDate'),
+          ),
+        ).thenAnswer((_) => Stream.value(movements));
+
+        await tester.pumpWidget(buildView());
+        await tester.pumpAndSettle();
+
+        final segmentedButton = find.byType(SegmentedButton<CategoryType>);
+        expect(segmentedButton, findsOneWidget);
+
+        await tester.tap(
+          find.descendant(
+            of: segmentedButton,
+            matching: find.byWidgetPredicate(
+              (widget) =>
+                  widget is HugeIcon &&
+                  widget.icon == HugeIcons.strokeRoundedMoneyAdd01,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Salary'), findsOneWidget);
+      },
+    );
   });
 }

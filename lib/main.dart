@@ -11,9 +11,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase with the default options
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   const currentEnv = Environment.prod;
 
@@ -35,9 +33,7 @@ Future<void> main() async {
             )
           : const AndroidPlayIntegrityProvider(),
       providerApple: kDebugMode
-          ? AppleDebugProvider(
-              debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'],
-            )
+          ? AppleDebugProvider(debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'])
           : const AppleDeviceCheckProvider(),
     ),
     getIt<AuthService>().initialize(),

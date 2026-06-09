@@ -45,8 +45,9 @@ void main() {
       await controller.close();
     });
 
-    testWidgets('shows empty state when stream returns empty list',
-        (tester) async {
+    testWidgets('shows empty state when stream returns empty list', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -125,10 +126,8 @@ void main() {
                   streamCalls.add(limit);
                   return Stream.value(List.generate(limit, (i) => 'Item $i'));
                 },
-                itemBuilder: (context, docs, index) => SizedBox(
-                  height: 100,
-                  child: Text(docs[index]),
-                ),
+                itemBuilder: (context, docs, index) =>
+                    SizedBox(height: 100, child: Text(docs[index])),
               ),
             ),
           ),

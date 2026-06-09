@@ -32,9 +32,9 @@ class ProfileView extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             l10n.profileTitle,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
           notificationPredicate: (notification) => false,
           leading: IconButton(
@@ -53,10 +53,12 @@ class ProfileView extends StatelessWidget {
             }
 
             final providers = user.providerData;
-            final isGoogleLinked = providers
-                .any((p) => p.providerId == AppVariables.googleProvider);
-            final isEmailLinked = providers
-                .any((p) => p.providerId == AppVariables.emailProvider);
+            final isGoogleLinked = providers.any(
+              (p) => p.providerId == AppVariables.googleProvider,
+            );
+            final isEmailLinked = providers.any(
+              (p) => p.providerId == AppVariables.emailProvider,
+            );
 
             return Align(
               alignment: Alignment.topCenter,
@@ -71,9 +73,9 @@ class ProfileView extends StatelessWidget {
                       // User Avatar
                       CircleAvatar(
                         radius: 80,
-                        backgroundColor: Theme.of(context)
-                            .primaryColor
-                            .withValues(alpha: 0.1),
+                        backgroundColor: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.1),
                         child: user.photoURL == null
                             ? Container(
                                 width: 160,
@@ -81,8 +83,9 @@ class ProfileView extends StatelessWidget {
                                 foregroundDecoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     width: 5,
                                   ),
                                 ),
@@ -99,8 +102,9 @@ class ProfileView extends StatelessWidget {
                                 foregroundDecoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     width: 5,
                                   ),
                                 ),
@@ -119,9 +123,9 @@ class ProfileView extends StatelessWidget {
                                       child: HugeIcon(
                                         icon: HugeIcons.strokeRoundedUser,
                                         strokeWidth: 2,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                       ),
                                     ),
                                   ),
@@ -137,9 +141,7 @@ class ProfileView extends StatelessWidget {
                           if (state.isEditingName)
                             Expanded(
                               child: AppTextField(
-                                key: ValueKey(
-                                  state.isEditingName,
-                                ),
+                                key: ValueKey(state.isEditingName),
                                 label: l10n.nameLabel,
                                 initialValue: state.userName.isEmpty
                                     ? user.displayName
@@ -367,9 +369,7 @@ class ProfileView extends StatelessWidget {
                   label: l10n.emailLabel,
                   hintText: l10n.emailHint,
                   keyboardType: TextInputType.emailAddress,
-                  prefix: const HugeIcon(
-                    icon: HugeIcons.strokeRoundedMail01,
-                  ),
+                  prefix: const HugeIcon(icon: HugeIcons.strokeRoundedMail01),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return l10n.emailRequired;
@@ -477,15 +477,12 @@ class _ProviderListTile extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
       subtitle: isConnected && subtitle != null
-          ? Text(
-              subtitle!,
-              style: Theme.of(context).textTheme.bodyMedium,
-            )
+          ? Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium)
           : null,
       trailing: isConnected
           ? IconButton(
@@ -496,10 +493,7 @@ class _ProviderListTile extends StatelessWidget {
               ),
               onPressed: onUnlink,
             )
-          : AppOutlinedButton(
-              onPressed: onLink,
-              label: l10n.connectButton,
-            ),
+          : AppOutlinedButton(onPressed: onLink, label: l10n.connectButton),
     );
   }
 }

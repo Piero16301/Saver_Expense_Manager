@@ -7,9 +7,8 @@ void setupServiceLocator(Environment env) {
   getIt
     // 1. Infraestructura y Telemetría (Base de todo)
     ..registerLazySingleton<CrashService>(
-      () => CrashService(
-        crashRepository: ServiceFactory.getCrashRepository(env),
-      ),
+      () =>
+          CrashService(crashRepository: ServiceFactory.getCrashRepository(env)),
     )
     ..registerLazySingleton<PerformanceService>(
       () => PerformanceService(
@@ -21,7 +20,6 @@ void setupServiceLocator(Environment env) {
         analyticsRepository: ServiceFactory.getAnalyticsRepository(env),
       ),
     )
-
     // 2. Configuración y Almacenamiento Local
     ..registerLazySingleton<LocalStorageService>(
       () => LocalStorageService(
@@ -33,14 +31,10 @@ void setupServiceLocator(Environment env) {
         remoteConfigRepository: ServiceFactory.getRemoteConfigRepository(env),
       ),
     )
-
     // 3. Autenticación (Fundamental para servicios de datos)
     ..registerLazySingleton<AuthService>(
-      () => AuthService(
-        authRepository: ServiceFactory.getAuthRepository(env),
-      ),
+      () => AuthService(authRepository: ServiceFactory.getAuthRepository(env)),
     )
-
     // 4. Servicios de Datos y Almacenamiento Remoto
     ..registerLazySingleton<DatabaseService>(
       () => DatabaseService(
@@ -52,12 +46,9 @@ void setupServiceLocator(Environment env) {
         remoteStorageRepository: ServiceFactory.getRemoteStorageRepository(env),
       ),
     )
-
     // 5. Servicios de Lógica de Negocio / IA
     ..registerLazySingleton<AiService>(
-      () => AiService(
-        aiRepository: ServiceFactory.getAiRepository(env),
-      ),
+      () => AiService(aiRepository: ServiceFactory.getAiRepository(env)),
     );
 }
 

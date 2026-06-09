@@ -205,11 +205,9 @@ class _OthersIncomePainter extends CustomPainter {
       ..close();
     canvas
       ..drawPath(flapPathBack, paintFill)
-
       // Clear line between back flap and contents? Box is open, so back flap is
       // behind contents.
       // Instead of drawing contents here, the contents fly out.
-
       // Main Box Body
       ..drawRRect(
         RRect.fromRectAndRadius(

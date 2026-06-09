@@ -25,11 +25,7 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
-            body: LinearChart(
-              titles: titles,
-              colors: colors,
-              data: data,
-            ),
+            body: LinearChart(titles: titles, colors: colors, data: data),
           ),
         ),
       );

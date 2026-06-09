@@ -131,8 +131,9 @@ class _InsurancePainter extends CustomPainter {
           ..translate(-cx, -shieldCy);
 
         final ripplePaint = Paint()
-          ..color =
-              color.withValues(alpha: (rippleOpacity * 0.4).clamp(0.0, 1.0))
+          ..color = color.withValues(
+            alpha: (rippleOpacity * 0.4).clamp(0.0, 1.0),
+          )
           ..style = PaintingStyle.stroke
           ..strokeWidth = w * 0.015;
 

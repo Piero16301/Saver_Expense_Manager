@@ -38,9 +38,5 @@ class SummaryHomeState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        startMonth,
-        endMonth,
-        selResumeItems,
-      ];
+  List<Object?> get props => [startMonth, endMonth, selResumeItems];
 }

@@ -16,10 +16,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({
-    required this.categories,
-    super.key,
-  });
+  const HomeView({required this.categories, super.key});
 
   final List<Category> categories;
 
@@ -97,7 +94,9 @@ class HomeView extends StatelessWidget {
                                   HugeIcon(
                                 icon: HugeIcons.strokeRoundedUser,
                                 strokeWidth: 2,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
                               ),
                             ),
                           ),
@@ -112,29 +111,24 @@ class HomeView extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: AnimatedSwitcher(
                   duration: AppVariables.animationDuration,
-                  transitionBuilder: (child, animation) => FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  ),
-                  child: _getSelectedBody(
-                    state.selectedIndex,
-                  ),
+                  transitionBuilder: (child, animation) =>
+                      FadeTransition(opacity: animation, child: child),
+                  child: _getSelectedBody(state.selectedIndex),
                 ),
               ),
             ),
             bottomNavigationBar: const BottomNavigationBarHome(),
-            floatingActionButton:
-                _getFloatingActionButton(context, state.selectedIndex),
+            floatingActionButton: _getFloatingActionButton(
+              context,
+              state.selectedIndex,
+            ),
           ),
         );
       },
     );
   }
 
-  Widget? _getFloatingActionButton(
-    BuildContext context,
-    int selectedIndex,
-  ) {
+  Widget? _getFloatingActionButton(BuildContext context, int selectedIndex) {
     switch (selectedIndex) {
       case 0:
         return FloatingActionButton(
@@ -169,9 +163,7 @@ class HomeView extends StatelessWidget {
     }
   }
 
-  Widget _getSelectedBody(
-    int selectedIndex,
-  ) {
+  Widget _getSelectedBody(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
         return const ExpensesHomePage();
@@ -277,13 +269,16 @@ class AddMovementBottomSheet extends StatelessWidget {
         ),
       );
 
-      getIt<CrashService>()
-          .setCustomKey('file_pick_model_type', modelType.name);
+      getIt<CrashService>().setCustomKey(
+        'file_pick_model_type',
+        modelType.name,
+      );
       getIt<CrashService>().setCustomKey('movement_type', movementType.name);
 
       if (modelType.isLocal &&
-          !AppVariables.imageExtensions
-              .contains(result.files.first.extension)) {
+          !AppVariables.imageExtensions.contains(
+            result.files.first.extension,
+          )) {
         throw Exception(AppVariables.unsupportedLocalModelFile);
       }
 
@@ -387,8 +382,10 @@ class AddMovementBottomSheet extends StatelessWidget {
         ),
       );
 
-      getIt<CrashService>()
-          .setCustomKey('document_scan_model_type', modelType.name);
+      getIt<CrashService>().setCustomKey(
+        'document_scan_model_type',
+        modelType.name,
+      );
       getIt<CrashService>().setCustomKey('movement_type', movementType.name);
 
       if (modelType.isLocal &&

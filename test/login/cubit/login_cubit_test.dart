@@ -33,13 +33,15 @@ void main() {
       ),
     ).thenAnswer((_) {});
 
-    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
-        .thenAnswer((_) {});
+    when(
+      () => mockAnalyticsService.setUserId(id: any(named: 'id')),
+    ).thenAnswer((_) {});
 
     when(() => mockL10n.genericError).thenReturn('Generic Error');
     when(() => mockAuthService.currentUser).thenReturn(null);
-    when(() => mockAuthService.authStateChanges)
-        .thenAnswer((_) => const Stream.empty());
+    when(
+      () => mockAuthService.authStateChanges,
+    ).thenAnswer((_) => const Stream.empty());
   });
 
   group('LoginState', () {
@@ -81,55 +83,35 @@ void main() {
       'emailChanged emits valid state for good email',
       build: () => LoginCubit(authService: mockAuthService),
       act: (cubit) => cubit.emailChanged('test@example.com'),
-      expect: () => [
-        const LoginState(
-          email: 'test@example.com',
-        ),
-      ],
+      expect: () => [const LoginState(email: 'test@example.com')],
     );
 
     blocTest<LoginCubit, LoginState>(
       'emailChanged emits invalid state for bad email',
       build: () => LoginCubit(authService: mockAuthService),
       act: (cubit) => cubit.emailChanged('bad_email'),
-      expect: () => [
-        const LoginState(
-          email: 'bad_email',
-          isEmailValid: false,
-        ),
-      ],
+      expect: () => [const LoginState(email: 'bad_email', isEmailValid: false)],
     );
 
     blocTest<LoginCubit, LoginState>(
       'passwordChanged emits valid state for good password',
       build: () => LoginCubit(authService: mockAuthService),
       act: (cubit) => cubit.passwordChanged('Pass123!'),
-      expect: () => [
-        const LoginState(
-          password: 'Pass123!',
-        ),
-      ],
+      expect: () => [const LoginState(password: 'Pass123!')],
     );
 
     blocTest<LoginCubit, LoginState>(
       'passwordChanged emits invalid state for simple password',
       build: () => LoginCubit(authService: mockAuthService),
       act: (cubit) => cubit.passwordChanged('123'),
-      expect: () => [
-        const LoginState(
-          password: '123',
-          isPasswordValid: false,
-        ),
-      ],
+      expect: () => [const LoginState(password: '123', isPasswordValid: false)],
     );
 
     blocTest<LoginCubit, LoginState>(
       'togglePasswordVisibility works correctly',
       build: () => LoginCubit(authService: mockAuthService),
       act: (cubit) => cubit.togglePasswordVisibility(),
-      expect: () => [
-        const LoginState(isPasswordVisible: true),
-      ],
+      expect: () => [const LoginState(isPasswordVisible: true)],
     );
 
     group('loginWithEmail', () {
@@ -151,10 +133,8 @@ void main() {
           ).thenAnswer((_) async => true);
           return LoginCubit(authService: mockAuthService);
         },
-        seed: () => const LoginState(
-          email: 'test@test.com',
-          password: 'Pass123!',
-        ),
+        seed: () =>
+            const LoginState(email: 'test@test.com', password: 'Pass123!'),
         act: (cubit) => cubit.loginWithEmail(mockL10n),
         expect: () => [
           const LoginState(
@@ -181,10 +161,8 @@ void main() {
           ).thenAnswer((_) async => false);
           return LoginCubit(authService: mockAuthService);
         },
-        seed: () => const LoginState(
-          email: 'test@test.com',
-          password: 'Pass123!',
-        ),
+        seed: () =>
+            const LoginState(email: 'test@test.com', password: 'Pass123!'),
         act: (cubit) => cubit.loginWithEmail(mockL10n),
         expect: () => [
           const LoginState(
@@ -206,8 +184,9 @@ void main() {
       blocTest<LoginCubit, LoginState>(
         'emits loading and success when authentication succeeds',
         build: () {
-          when(() => mockAuthService.signInWithGoogle())
-              .thenAnswer((_) async => true);
+          when(
+            () => mockAuthService.signInWithGoogle(),
+          ).thenAnswer((_) async => true);
           return LoginCubit(authService: mockAuthService);
         },
         act: (cubit) => cubit.loginWithGoogle(mockL10n),
@@ -220,8 +199,9 @@ void main() {
       blocTest<LoginCubit, LoginState>(
         'emits failure when authentication throws',
         build: () {
-          when(() => mockAuthService.signInWithGoogle())
-              .thenAnswer((_) async => false);
+          when(
+            () => mockAuthService.signInWithGoogle(),
+          ).thenAnswer((_) async => false);
           return LoginCubit(authService: mockAuthService);
         },
         act: (cubit) => cubit.loginWithGoogle(mockL10n),

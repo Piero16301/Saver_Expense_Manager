@@ -43,8 +43,9 @@ void main() {
       expect(find.byType(IconButton), findsOneWidget);
     });
 
-    testWidgets('triggers onChangeStartMonth when tapping start month',
-        (tester) async {
+    testWidgets('triggers onChangeStartMonth when tapping start month', (
+      tester,
+    ) async {
       DateTime? changedDate;
       await tester.pumpWidget(
         MaterialApp(
@@ -91,8 +92,9 @@ void main() {
       expect(changedDate?.month, DateTime.february);
     });
 
-    testWidgets('triggers onChangeEndMonth when tapping end month',
-        (tester) async {
+    testWidgets('triggers onChangeEndMonth when tapping end month', (
+      tester,
+    ) async {
       DateTime? changedDate;
       await tester.pumpWidget(
         MaterialApp(

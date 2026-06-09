@@ -120,11 +120,7 @@ class _InterestsPainter extends CustomPainter {
         ..scale(scaleX, 1)
         ..drawCircle(Offset.zero, coinRadius, paintFill)
         // Inner clear circle
-        ..drawCircle(
-          Offset.zero,
-          coinRadius * 0.6,
-          clearPaintList,
-        )
+        ..drawCircle(Offset.zero, coinRadius * 0.6, clearPaintList)
         // little plus or symbol in the center
         ..drawLine(
           Offset(0, -coinRadius * 0.3),

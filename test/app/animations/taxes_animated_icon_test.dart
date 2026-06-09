@@ -3,13 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/app/animations/taxes_animated_icon.dart';
 
 void main() {
-  testWidgets('TaxesAnimatedIcon renders and animates without errors',
-      (tester) async {
+  testWidgets('TaxesAnimatedIcon renders and animates without errors', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: TaxesAnimatedIcon(color: Colors.blue, size: 40),
-        ),
+        home: Scaffold(body: TaxesAnimatedIcon(color: Colors.blue, size: 40)),
       ),
     );
 

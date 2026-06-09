@@ -99,8 +99,9 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
 
   @override
   Locale? getLanguage() {
-    final languageString =
-        _prefs?.getString(LocalStorageRepository.kUserLanguage);
+    final languageString = _prefs?.getString(
+      LocalStorageRepository.kUserLanguage,
+    );
     if (languageString == null) {
       return null;
     }
@@ -139,8 +140,9 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
 
   @override
   Color? getBaseColor() {
-    final baseColorString =
-        _prefs?.getString(LocalStorageRepository.kUserBaseColor);
+    final baseColorString = _prefs?.getString(
+      LocalStorageRepository.kUserBaseColor,
+    );
     if (baseColorString == null) {
       return null;
     }
@@ -150,10 +152,7 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
   @override
   void saveFontFamily({required String fontFamily}) {
     _prefs
-        ?.setString(
-          LocalStorageRepository.kUserFontFamily,
-          fontFamily,
-        )
+        ?.setString(LocalStorageRepository.kUserFontFamily, fontFamily)
         .ignore();
   }
 
@@ -195,8 +194,6 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
 
   @override
   List<String>? getRecommendations() {
-    return _prefs?.getStringList(
-      LocalStorageRepository.kUserRecommendations,
-    );
+    return _prefs?.getStringList(LocalStorageRepository.kUserRecommendations);
   }
 }

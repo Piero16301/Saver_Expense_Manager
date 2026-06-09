@@ -29,12 +29,7 @@ void main() {
       test('returns correct instance with defaults from empty map', () {
         expect(
           CategoryData.fromJson(const {}),
-          equals(
-            CategoryData(
-              category: Category.fromJson(const {}),
-              value: 0,
-            ),
-          ),
+          equals(CategoryData(category: Category.fromJson(const {}), value: 0)),
         );
       });
     });
@@ -44,10 +39,7 @@ void main() {
         const data = CategoryData(category: category, value: value);
         expect(
           data.toJson(),
-          equals({
-            'category': category.toJson(),
-            'value': value,
-          }),
+          equals({'category': category.toJson(), 'value': value}),
         );
       });
     });

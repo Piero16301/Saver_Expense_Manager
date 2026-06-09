@@ -8,22 +8,13 @@ class MockAppUser extends Mock implements AppUser {}
 void main() {
   group('ProfileState', () {
     test('supports value equality', () {
-      expect(
-        const ProfileState(),
-        equals(const ProfileState()),
-      );
+      expect(const ProfileState(), equals(const ProfileState()));
     });
 
     test('props are correct', () {
       expect(
         const ProfileState().props,
-        equals(<Object?>[
-          ProfileStatus.initial,
-          null,
-          '',
-          false,
-          null,
-        ]),
+        equals(<Object?>[ProfileStatus.initial, null, '', false, null]),
       );
     });
 
@@ -50,10 +41,7 @@ void main() {
     });
 
     test('copyWith returns original object when properties are null', () {
-      expect(
-        const ProfileState().copyWith(),
-        equals(const ProfileState()),
-      );
+      expect(const ProfileState().copyWith(), equals(const ProfileState()));
     });
   });
 }

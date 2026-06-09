@@ -33,11 +33,7 @@ void main() {
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: Scaffold(
-            body: TotalSpentChart(
-              data: data,
-            ),
-          ),
+          home: Scaffold(body: TotalSpentChart(data: data)),
         ),
       );
 

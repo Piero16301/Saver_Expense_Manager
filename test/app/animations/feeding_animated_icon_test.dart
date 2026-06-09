@@ -3,13 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/app/animations/feeding_animated_icon.dart';
 
 void main() {
-  testWidgets('FeedingAnimatedIcon renders and animates without errors',
-      (tester) async {
+  testWidgets('FeedingAnimatedIcon renders and animates without errors', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: FeedingAnimatedIcon(color: Colors.blue, size: 40),
-        ),
+        home: Scaffold(body: FeedingAnimatedIcon(color: Colors.blue, size: 40)),
       ),
     );
 

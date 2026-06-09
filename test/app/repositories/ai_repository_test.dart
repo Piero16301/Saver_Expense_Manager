@@ -49,16 +49,14 @@ void main() {
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
       ..registerSingleton<CrashService>(mockCrashService);
 
-    when(() => mockPerformanceService.startTrace(any<String>()))
-        .thenReturn(mockTrace);
+    when(
+      () => mockPerformanceService.startTrace(any<String>()),
+    ).thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
     when(() => mockRemoteConfigService.geminiModelId).thenReturn('gemini-1.5');
     when(() => mockRemoteConfigService.geminiApiKey).thenReturn('test-key');
 
-    repository = GeminiAiRepository(
-      dio: mockDio,
-      localModel: mockLocalModel,
-    );
+    repository = GeminiAiRepository(dio: mockDio, localModel: mockLocalModel);
   });
 
   group('MockAiRepository', () {
@@ -141,7 +139,7 @@ void main() {
                       {'text': 'Hello Gemini'},
                     ],
                   },
-                }
+                },
               ],
             },
           ),

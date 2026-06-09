@@ -78,8 +78,9 @@ void main() {
     setUp(() async {
       fakeFirestore = FakeFirebaseFirestore();
       databaseService = DatabaseService(
-        databaseRepository:
-            FirestoreDatabaseRepository(firestore: fakeFirestore),
+        databaseRepository: FirestoreDatabaseRepository(
+          firestore: fakeFirestore,
+        ),
       );
       mockRemoteStorageService = MockRemoteStorageService();
       mockCrashService = MockCrashService();
@@ -112,8 +113,9 @@ void main() {
         ),
       ).thenAnswer((_) async => true);
 
-      when(() => mockCrashService.log(any<String>()))
-          .thenAnswer((_) async => true);
+      when(
+        () => mockCrashService.log(any<String>()),
+      ).thenAnswer((_) async => true);
       when(
         () => mockCrashService.recordError(
           any<dynamic>(),
@@ -124,8 +126,9 @@ void main() {
         ),
       ).thenAnswer((_) async => true);
 
-      when(() => mockPathProviderPlatform.getApplicationCachePath())
-          .thenAnswer((_) async => '.');
+      when(
+        () => mockPathProviderPlatform.getApplicationCachePath(),
+      ).thenAnswer((_) async => '.');
 
       movementCubit = MovementCubit();
     });
@@ -149,11 +152,9 @@ void main() {
               .having((s) => s.category, 'category', category)
               .having((s) => s.price, 'price', 5)
               .having((s) => s.company, 'company', 'Starbucks')
-              .having(
-            (s) => s.attachments,
-            'attachments',
-            const ['file1'],
-          ).having((s) => s.formKey, 'formKey', isNotNull),
+              .having((s) => s.attachments, 'attachments', const [
+            'file1',
+          ]).having((s) => s.formKey, 'formKey', isNotNull),
         ],
       );
 
@@ -235,8 +236,9 @@ void main() {
       blocTest<MovementCubit, MovementState>(
         'removes attachment and deletes from storage',
         setUp: () {
-          when(() => mockRemoteStorageService.deleteFile(any()))
-              .thenAnswer((_) async => true);
+          when(
+            () => mockRemoteStorageService.deleteFile(any()),
+          ).thenAnswer((_) async => true);
         },
         build: () => movementCubit,
         seed: () => const MovementState(attachments: ['file1', 'file2']),
@@ -252,8 +254,9 @@ void main() {
       blocTest<MovementCubit, MovementState>(
         'removes attachment and continues if storage service returns false',
         setUp: () {
-          when(() => mockRemoteStorageService.deleteFile(any()))
-              .thenAnswer((_) async => false);
+          when(
+            () => mockRemoteStorageService.deleteFile(any()),
+          ).thenAnswer((_) async => false);
         },
         build: () => movementCubit,
         seed: () => const MovementState(attachments: ['file1', 'file2']),
@@ -269,8 +272,9 @@ void main() {
 
     group('attachOpen', () {
       test('handles exception in attachOpen', () async {
-        when(() => mockRemoteStorageService.getData(any()))
-            .thenThrow(Exception('Error'));
+        when(
+          () => mockRemoteStorageService.getData(any()),
+        ).thenThrow(Exception('Error'));
 
         await movementCubit.attachOpen('file1');
 
@@ -278,8 +282,9 @@ void main() {
       });
 
       test('opens attachment and handles null data', () async {
-        when(() => mockRemoteStorageService.getData(any()))
-            .thenAnswer((_) async => Uint8List(0));
+        when(
+          () => mockRemoteStorageService.getData(any()),
+        ).thenAnswer((_) async => Uint8List(0));
 
         try {
           await movementCubit.attachOpen('file1');
@@ -338,35 +343,37 @@ void main() {
         expect(collection.docs.first.data()['title'], 'Coffee');
       });
 
-      test('saves movement even if database service fails (fire and forget)',
-          () async {
-        final mockDatabaseService = MockDatabaseService();
+      test(
+        'saves movement even if database service fails (fire and forget)',
+        () async {
+          final mockDatabaseService = MockDatabaseService();
 
-        await getIt.unregister<DatabaseService>();
-        getIt.registerSingleton<DatabaseService>(mockDatabaseService);
+          await getIt.unregister<DatabaseService>();
+          getIt.registerSingleton<DatabaseService>(mockDatabaseService);
 
-        when(
-          () => mockDatabaseService.saveMovement(
-            movement: any(named: 'movement'),
-          ),
-        ).thenReturn(null);
+          when(
+            () => mockDatabaseService.saveMovement(
+              movement: any(named: 'movement'),
+            ),
+          ).thenReturn(null);
 
-        final mockFormState = MockFormState();
-        final mockFormKey = MockGlobalKey();
-        when(() => mockFormKey.currentState).thenReturn(mockFormState);
-        when(mockFormState.validate).thenReturn(true);
+          final mockFormState = MockFormState();
+          final mockFormKey = MockGlobalKey();
+          when(() => mockFormKey.currentState).thenReturn(mockFormState);
+          when(mockFormState.validate).thenReturn(true);
 
-        movementCubit
-          ..init(movement, categories)
-          ..emit(movementCubit.state.copyWith(formKey: mockFormKey))
-          ..saveMovement('userId', mockL10n);
+          movementCubit
+            ..init(movement, categories)
+            ..emit(movementCubit.state.copyWith(formKey: mockFormKey))
+            ..saveMovement('userId', mockL10n);
 
-        verify(
-          () => mockDatabaseService.saveMovement(
-            movement: any(named: 'movement'),
-          ),
-        ).called(1);
-      });
+          verify(
+            () => mockDatabaseService.saveMovement(
+              movement: any(named: 'movement'),
+            ),
+          ).called(1);
+        },
+      );
     });
 
     group('removeMovement', () {
@@ -376,8 +383,9 @@ void main() {
       });
 
       test('removes movement and associated attachments', () async {
-        when(() => mockRemoteStorageService.deleteFile(any()))
-            .thenAnswer((_) async => true);
+        when(
+          () => mockRemoteStorageService.deleteFile(any()),
+        ).thenAnswer((_) async => true);
 
         await fakeFirestore
             .collection(AppVariables.movementsCollection)

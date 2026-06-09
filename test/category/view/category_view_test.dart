@@ -49,8 +49,9 @@ void main() {
       mockRemoteConfig = MockRemoteConfigService();
 
       when(() => appCubit.state).thenReturn(const AppState());
-      when(() => categoryCubit.state)
-          .thenReturn(const CategoryState(category: category));
+      when(
+        () => categoryCubit.state,
+      ).thenReturn(const CategoryState(category: category));
       when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user1'));
       when(
         () => mockDatabase.getMovementsStream(
@@ -157,8 +158,9 @@ void main() {
       expect(find.byType(TabMovementsCategory), findsOneWidget);
     });
 
-    testWidgets('TabTrendCategory shows loading and then empty state',
-        (tester) async {
+    testWidgets('TabTrendCategory shows loading and then empty state', (
+      tester,
+    ) async {
       final streamController = StreamController<List<Movement>>();
       when(
         () => mockDatabase.getMovementsStream(
@@ -246,13 +248,15 @@ void main() {
       monthRangeSelector.onChangeStartMonth(DateTime(2023, 5));
       await tester.pump();
 
-      final r2 =
-          tester.widget<MonthRangeSelector>(find.byType(MonthRangeSelector));
+      final r2 = tester.widget<MonthRangeSelector>(
+        find.byType(MonthRangeSelector),
+      );
       r2.onChangeEndMonth(DateTime(2023, 6));
       await tester.pump();
 
-      final r3 =
-          tester.widget<MonthRangeSelector>(find.byType(MonthRangeSelector));
+      final r3 = tester.widget<MonthRangeSelector>(
+        find.byType(MonthRangeSelector),
+      );
       r3.onChangeStartMonth(null);
       r3.onChangeEndMonth(null);
       await tester.pump();
@@ -260,8 +264,9 @@ void main() {
       await streamController.close();
     });
 
-    testWidgets('TabMovementsCategory handles month navigation edge cases',
-        (tester) async {
+    testWidgets('TabMovementsCategory handles month navigation edge cases', (
+      tester,
+    ) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pump();
       await tester.tap(find.text('Movements'));

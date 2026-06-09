@@ -24,9 +24,5 @@ class ExpensesHomeState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        monthSelected,
-        selectedIndex,
-        data,
-      ];
+  List<Object?> get props => [monthSelected, selectedIndex, data];
 }

@@ -4,11 +4,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class RadialCircularChart extends StatefulWidget {
-  const RadialCircularChart({
-    required this.data,
-    this.image,
-    super.key,
-  });
+  const RadialCircularChart({required this.data, this.image, super.key});
 
   final List<CategoryData> data;
   final String? image;
@@ -39,10 +35,7 @@ class _RadialCircularChartState extends State<RadialCircularChart> {
   @override
   Widget build(BuildContext context) {
     return SfCircularChart(
-      legend: const Legend(
-        isVisible: true,
-        position: LegendPosition.bottom,
-      ),
+      legend: const Legend(isVisible: true, position: LegendPosition.bottom),
       series: _buildRadialSeries(),
       tooltipBehavior: _tooltipBehavior,
       annotations: [
@@ -52,10 +45,7 @@ class _RadialCircularChartState extends State<RadialCircularChart> {
           widget: ClipRRect(
             borderRadius: BorderRadius.circular(60),
             child: widget.image == null
-                ? const HugeIcon(
-                    icon: HugeIcons.strokeRoundedUser,
-                    size: 100,
-                  )
+                ? const HugeIcon(icon: HugeIcons.strokeRoundedUser, size: 100)
                 : Image.network(
                     widget.image!,
                     fit: BoxFit.cover,

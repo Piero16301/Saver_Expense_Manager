@@ -27,9 +27,9 @@ class MovementView extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             _appBarTitle(l10n),
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
           notificationPredicate: (notification) => false,
           actions: _appBarActions(context, l10n),
@@ -42,8 +42,12 @@ class MovementView extends StatelessWidget {
           ),
         ),
         body: Padding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 50),
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: 50,
+          ),
           child: Center(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -75,8 +79,9 @@ class MovementView extends StatelessWidget {
                         errorText: l10n.movementDescriptionError,
                         onChanged:
                             context.read<MovementCubit>().descriptionChanged,
-                        prefix:
-                            const HugeIcon(icon: HugeIcons.strokeRoundedNote),
+                        prefix: const HugeIcon(
+                          icon: HugeIcons.strokeRoundedNote,
+                        ),
                         initialValue: state.description,
                         maxLines: 7,
                         maxLength: 300,
@@ -108,8 +113,9 @@ class MovementView extends StatelessWidget {
                                         category.name,
                                         l10n,
                                       ),
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge,
                                     ),
                                   ],
                                 ),
@@ -117,8 +123,9 @@ class MovementView extends StatelessWidget {
                             )
                             .toList(),
                         selected: state.category,
-                        leadingIcon:
-                            AppFunctions.getCategoryIcon(state.category!.icon),
+                        leadingIcon: AppFunctions.getCategoryIcon(
+                          state.category!.icon,
+                        ),
                         onChanged:
                             context.read<MovementCubit>().categoryChanged,
                       ),
@@ -305,10 +312,7 @@ class MovementView extends StatelessWidget {
 }
 
 class MovementMetadata extends StatelessWidget {
-  const MovementMetadata({
-    required this.id,
-    super.key,
-  });
+  const MovementMetadata({required this.id, super.key});
 
   final String id;
 

@@ -64,10 +64,7 @@ void main() {
 
     group('hasInternetConnection', () {
       test('does not throw', () async {
-        await expectLater(
-          AppFunctions.hasInternetConnection,
-          returnsNormally,
-        );
+        await expectLater(AppFunctions.hasInternetConnection, returnsNormally);
       });
     });
 
@@ -314,8 +311,9 @@ void main() {
         when(() => mockL10n.categoryTransport).thenReturn('Transporte');
         when(() => mockL10n.categoryFeeding).thenReturn('Alimentación');
         when(() => mockL10n.categoryHealth).thenReturn('Salud');
-        when(() => mockL10n.categoryEntertainment)
-            .thenReturn('Entretenimiento');
+        when(
+          () => mockL10n.categoryEntertainment,
+        ).thenReturn('Entretenimiento');
         when(() => mockL10n.categoryTrips).thenReturn('Viajes');
         when(() => mockL10n.categoryTechnology).thenReturn('Tecnología');
         when(() => mockL10n.categoryEducation).thenReturn('Educación');
@@ -701,10 +699,12 @@ void main() {
     group('getPrompt', () {
       test('replaces variables correctly', () {
         final mockRemoteConfig = MockRemoteConfigService();
-        when(() => mockRemoteConfig.geminiPromptExtractReceiptData)
-            .thenReturn('Test {{type}} {{language}} {{categories}}');
-        getIt
-            .registerLazySingleton<RemoteConfigService>(() => mockRemoteConfig);
+        when(
+          () => mockRemoteConfig.geminiPromptExtractReceiptData,
+        ).thenReturn('Test {{type}} {{language}} {{categories}}');
+        getIt.registerLazySingleton<RemoteConfigService>(
+          () => mockRemoteConfig,
+        );
 
         final result = AppFunctions.getPrompt(
           movementType: CategoryType.expense,
@@ -736,8 +736,9 @@ void main() {
       test('uses remote model when local is unavailable', () async {
         final mockRemoteConfig = MockRemoteConfigService();
         final mockAiService = MockAiService();
-        when(() => mockRemoteConfig.geminiPromptExtractReceiptData)
-            .thenReturn('Prompt');
+        when(
+          () => mockRemoteConfig.geminiPromptExtractReceiptData,
+        ).thenReturn('Prompt');
         when(() => mockAiService.isLocalModelAvailable).thenReturn(false);
         when(
           () => mockAiService.generateContentRemote(
@@ -770,8 +771,9 @@ void main() {
       test('uses local model when requested and available', () async {
         final mockRemoteConfig = MockRemoteConfigService();
         final mockAiService = MockAiService();
-        when(() => mockRemoteConfig.geminiPromptExtractReceiptData)
-            .thenReturn('Prompt');
+        when(
+          () => mockRemoteConfig.geminiPromptExtractReceiptData,
+        ).thenReturn('Prompt');
         when(() => mockAiService.isLocalModelAvailable).thenReturn(true);
         when(
           () => mockAiService.generateContentLocal(
@@ -809,8 +811,9 @@ void main() {
         final mockDatabaseService = MockDatabaseService();
         final mockL10n = MockAppLocalizations();
 
-        when(() => mockRemoteConfig.geminiPromptDetectAntExpense)
-            .thenReturn('Prompt {{transactions_list}}');
+        when(
+          () => mockRemoteConfig.geminiPromptDetectAntExpense,
+        ).thenReturn('Prompt {{transactions_list}}');
         when(() => mockRemoteConfig.geminiAntLookbackDays).thenReturn(30);
 
         when(
@@ -823,9 +826,8 @@ void main() {
 
         when(() => mockAiService.isLocalModelAvailable).thenReturn(false);
         when(
-          () => mockAiService.generateContentRemote(
-            prompt: any(named: 'prompt'),
-          ),
+          () =>
+              mockAiService.generateContentRemote(prompt: any(named: 'prompt')),
         ).thenAnswer((_) async => 'Rec 1 ||| Rec 2 ||| Rec 3');
 
         getIt

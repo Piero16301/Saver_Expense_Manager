@@ -50,8 +50,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      verify(() => appCubit.changeLanguage(language: const Locale('es', 'ES')))
-          .called(1);
+      verify(
+        () => appCubit.changeLanguage(language: const Locale('es', 'ES')),
+      ).called(1);
     });
   });
 }

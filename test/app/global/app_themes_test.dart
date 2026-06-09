@@ -13,9 +13,7 @@ void main() {
       expect(theme.brightness, equals(Brightness.light));
       expect(
         theme.colorScheme.primary.toARGB32(),
-        equals(
-          ColorScheme.fromSeed(seedColor: Colors.blue).primary.toARGB32(),
-        ),
+        equals(ColorScheme.fromSeed(seedColor: Colors.blue).primary.toARGB32()),
       );
       expect(theme.textTheme.bodyMedium?.fontFamily, equals('Roboto'));
     });

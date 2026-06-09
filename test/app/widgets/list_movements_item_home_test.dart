@@ -37,9 +37,7 @@ void main() {
         MaterialApp(
           home: BlocProvider.value(
             value: appCubit,
-            child: Scaffold(
-              body: ListMovementsItemHome(movement: movement),
-            ),
+            child: Scaffold(body: ListMovementsItemHome(movement: movement)),
           ),
         ),
       );
@@ -55,9 +53,7 @@ void main() {
             path: '/',
             builder: (context, state) => BlocProvider.value(
               value: appCubit,
-              child: Scaffold(
-                body: ListMovementsItemHome(movement: movement),
-              ),
+              child: Scaffold(body: ListMovementsItemHome(movement: movement)),
             ),
           ),
           GoRoute(
@@ -69,11 +65,7 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(
-        MaterialApp.router(
-          routerConfig: router,
-        ),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
       await tester.tap(find.byType(ListTile));
       await tester.pumpAndSettle();

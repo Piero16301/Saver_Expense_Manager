@@ -287,7 +287,6 @@ class _TechnologyPainter extends CustomPainter {
         ),
         clearPaint,
       )
-
       // Diagonal corner cuts inside CPU
       ..drawLine(
         Offset(cx - boxSize * 0.25, cy - boxSize * 0.25),

@@ -41,10 +41,8 @@ class MockAiRepository implements AiRepository {
 }
 
 class GeminiAiRepository implements AiRepository {
-  GeminiAiRepository({
-    Dio? dio,
-    GeminiNanoAndroid? localModel,
-  })  : _dio = dio ?? Dio(),
+  GeminiAiRepository({Dio? dio, GeminiNanoAndroid? localModel})
+      : _dio = dio ?? Dio(),
         _localModel = localModel ?? GeminiNanoAndroid();
 
   final Dio _dio;
@@ -82,9 +80,7 @@ class GeminiAiRepository implements AiRepository {
       final partsJson = prompt.map((p) {
         switch (p.type) {
           case PromptPartType.text:
-            return {
-              'text': p.text ?? '',
-            };
+            return {'text': p.text ?? ''};
           case PromptPartType.file:
             return {
               'inlineData': {
@@ -97,9 +93,7 @@ class GeminiAiRepository implements AiRepository {
 
       final requestBody = {
         'contents': [
-          {
-            'parts': partsJson,
-          }
+          {'parts': partsJson},
         ],
         'safetySettings': [
           {
@@ -107,19 +101,13 @@ class GeminiAiRepository implements AiRepository {
             'threshold': 'BLOCK_NONE',
           },
         ],
-        'generationConfig': {
-          'responseMimeType': responseMimeType,
-        },
+        'generationConfig': {'responseMimeType': responseMimeType},
       };
 
       final response = await _dio.post<Map<String, dynamic>>(
         url,
         data: requestBody,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       final responseData = response.data;

@@ -13,12 +13,7 @@ class LoginCubit extends Cubit<LoginState> {
   final AuthService _authService;
 
   void emailChanged(String value) {
-    emit(
-      state.copyWith(
-        email: value,
-        isEmailValid: _validateEmail(value),
-      ),
-    );
+    emit(state.copyWith(email: value, isEmailValid: _validateEmail(value)));
   }
 
   void passwordChanged(String value) {

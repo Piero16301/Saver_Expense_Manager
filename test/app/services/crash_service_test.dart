@@ -54,8 +54,9 @@ void main() {
     });
 
     test('setCustomKey calls FirebaseCrashlytics.setCustomKey', () {
-      when(() => mockCrashlytics.setCustomKey(any<String>(), any<Object>()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockCrashlytics.setCustomKey(any<String>(), any<Object>()),
+      ).thenAnswer((_) async {});
 
       crashService.setCustomKey('key', 'value');
 
@@ -63,8 +64,9 @@ void main() {
     });
 
     test('setUserIdentifier calls FirebaseCrashlytics.setUserIdentifier', () {
-      when(() => mockCrashlytics.setUserIdentifier(any<String>()))
-          .thenAnswer((_) async {});
+      when(
+        () => mockCrashlytics.setUserIdentifier(any<String>()),
+      ).thenAnswer((_) async {});
 
       crashService.setUserIdentifier('user123');
 

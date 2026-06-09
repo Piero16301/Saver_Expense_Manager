@@ -107,10 +107,12 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('renders CircularProgressIndicator when loading categories',
-        (tester) async {
-      when(() => databaseService.getCategoriesStream())
-          .thenAnswer((_) => const Stream.empty());
+    testWidgets('renders CircularProgressIndicator when loading categories', (
+      tester,
+    ) async {
+      when(
+        () => databaseService.getCategoriesStream(),
+      ).thenAnswer((_) => const Stream.empty());
 
       await pumpMovementPage(tester);
 
@@ -118,8 +120,9 @@ void main() {
     });
 
     testWidgets('renders error text when categories are empty', (tester) async {
-      when(() => databaseService.getCategoriesStream())
-          .thenAnswer((_) => Stream.value([]));
+      when(
+        () => databaseService.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.value([]));
 
       await pumpMovementPage(tester);
       await tester.pumpAndSettle();
@@ -127,10 +130,12 @@ void main() {
       expect(find.text('No categories found'), findsOneWidget);
     });
 
-    testWidgets('renders MovementView when categories are loaded',
-        (tester) async {
-      when(() => databaseService.getCategoriesStream())
-          .thenAnswer((_) => Stream.value(categories));
+    testWidgets('renders MovementView when categories are loaded', (
+      tester,
+    ) async {
+      when(
+        () => databaseService.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.value(categories));
 
       await pumpMovementPage(tester);
       await tester.pumpAndSettle();

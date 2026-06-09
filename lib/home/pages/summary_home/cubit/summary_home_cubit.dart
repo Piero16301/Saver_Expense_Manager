@@ -16,8 +16,9 @@ class SummaryHomeCubit extends Cubit<SummaryHomeState> {
   }
 
   void toggleResumeItem(ResumeItemType resumeItemType) {
-    final newSelResumeItems =
-        Map<ResumeItemType, bool>.from(state.selResumeItems);
+    final newSelResumeItems = Map<ResumeItemType, bool>.from(
+      state.selResumeItems,
+    );
     newSelResumeItems[resumeItemType] =
         !(newSelResumeItems[resumeItemType] ?? true);
     emit(state.copyWith(selResumeItems: newSelResumeItems));

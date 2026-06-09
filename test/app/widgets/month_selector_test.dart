@@ -22,8 +22,9 @@ void main() {
       forwardCalled = false;
     });
 
-    testWidgets('renders normally and formats date based on locale',
-        (tester) async {
+    testWidgets('renders normally and formats date based on locale', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -44,8 +45,9 @@ void main() {
 
       expect(find.text('MARCH 2024'), findsOneWidget);
 
-      when(() => appCubit.state)
-          .thenReturn(const AppState(language: Locale('es')));
+      when(
+        () => appCubit.state,
+      ).thenReturn(const AppState(language: Locale('es')));
       await tester.pumpWidget(
         MaterialApp(
           locale: const Locale('es'),
@@ -88,9 +90,7 @@ void main() {
       );
 
       final backButton = tester.widget<IconButton>(
-        find.byWidgetPredicate(
-          (w) => w is IconButton && w.onPressed == null,
-        ),
+        find.byWidgetPredicate((w) => w is IconButton && w.onPressed == null),
       );
       expect(backButton, isNotNull);
 
@@ -119,9 +119,7 @@ void main() {
       );
 
       final forwardButton = tester.widget<IconButton>(
-        find.byWidgetPredicate(
-          (w) => w is IconButton && w.onPressed == null,
-        ),
+        find.byWidgetPredicate((w) => w is IconButton && w.onPressed == null),
       );
       expect(forwardButton, isNotNull);
 
@@ -153,8 +151,9 @@ void main() {
       expect(forwardCalled, isTrue);
     });
 
-    testWidgets('opens month picker and triggers onChangeMonth',
-        (tester) async {
+    testWidgets('opens month picker and triggers onChangeMonth', (
+      tester,
+    ) async {
       DateTime? changedDate;
       await tester.pumpWidget(
         MaterialApp(

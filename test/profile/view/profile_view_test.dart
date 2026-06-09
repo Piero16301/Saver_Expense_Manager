@@ -14,10 +14,7 @@ class MockProfileCubit extends MockCubit<ProfileState>
 
 class FakeAppLocalizations extends Fake implements AppLocalizations {}
 
-const _userNoProviders = AppUser(
-  uid: 'uid-1',
-  displayName: 'Test User',
-);
+const _userNoProviders = AppUser(uid: 'uid-1', displayName: 'Test User');
 
 const _userBothProviders = AppUser(
   uid: 'uid-2',
@@ -28,11 +25,7 @@ const _userBothProviders = AppUser(
       providerId: 'google.com',
       email: 'user@gmail.com',
     ),
-    AppUserInfo(
-      uid: 'uid-2',
-      providerId: 'password',
-      email: 'user@email.com',
-    ),
+    AppUserInfo(uid: 'uid-2', providerId: 'password', email: 'user@email.com'),
   ],
 );
 
@@ -93,8 +86,9 @@ void main() {
       }
     }
 
-    testWidgets('shows CircularProgressIndicator when user is null',
-        (tester) async {
+    testWidgets('shows CircularProgressIndicator when user is null', (
+      tester,
+    ) async {
       await pumpProfileView(tester, state: const ProfileState());
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -110,8 +104,9 @@ void main() {
       expect(find.text('Test User'), findsOneWidget);
     });
 
-    testWidgets('shows HugeIcon user placeholder when photoURL is null',
-        (tester) async {
+    testWidgets('shows HugeIcon user placeholder when photoURL is null', (
+      tester,
+    ) async {
       await pumpProfileView(
         tester,
         state: const ProfileState(
@@ -127,8 +122,9 @@ void main() {
       );
     });
 
-    testWidgets('shows Connect buttons when no providers are linked',
-        (tester) async {
+    testWidgets('shows Connect buttons when no providers are linked', (
+      tester,
+    ) async {
       await pumpProfileView(
         tester,
         state: const ProfileState(
@@ -140,8 +136,9 @@ void main() {
       expect(find.text('Connect'), findsNWidgets(2));
     });
 
-    testWidgets('shows unlink buttons when providers are linked',
-        (tester) async {
+    testWidgets('shows unlink buttons when providers are linked', (
+      tester,
+    ) async {
       await pumpProfileView(
         tester,
         state: const ProfileState(
@@ -205,8 +202,9 @@ void main() {
       verify(() => profileCubit.nameChanged('New Name')).called(1);
     });
 
-    testWidgets('calls toggleEditingName when edit icon is tapped',
-        (tester) async {
+    testWidgets('calls toggleEditingName when edit icon is tapped', (
+      tester,
+    ) async {
       await pumpProfileView(
         tester,
         state: const ProfileState(
@@ -222,8 +220,9 @@ void main() {
       verify(() => profileCubit.toggleEditingName()).called(1);
     });
 
-    testWidgets('calls toggleEditingName when cancel icon is tapped',
-        (tester) async {
+    testWidgets('calls toggleEditingName when cancel icon is tapped', (
+      tester,
+    ) async {
       await pumpProfileView(
         tester,
         state: const ProfileState(
@@ -262,8 +261,9 @@ void main() {
       verify(() => profileCubit.saveName(any())).called(1);
     });
 
-    testWidgets('shows logout dialog when logout button is tapped',
-        (tester) async {
+    testWidgets('shows logout dialog when logout button is tapped', (
+      tester,
+    ) async {
       await pumpProfileView(
         tester,
         state: const ProfileState(
@@ -292,16 +292,18 @@ void main() {
       await tester.tap(find.byType(AppFilledButton));
       await tester.pumpAndSettle();
 
-      final l10n =
-          AppLocalizations.of(tester.element(find.byType(AppAlertDialog)));
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AppAlertDialog)),
+      );
       await tester.tap(find.text(l10n.logoutConfirm).last);
       await tester.pumpAndSettle();
 
       verify(() => profileCubit.logout(any())).called(1);
     });
 
-    testWidgets('dismisses logout dialog when cancel is tapped',
-        (tester) async {
+    testWidgets('dismisses logout dialog when cancel is tapped', (
+      tester,
+    ) async {
       await pumpProfileView(
         tester,
         state: const ProfileState(
@@ -314,8 +316,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AppAlertDialog), findsOneWidget);
 
-      final l10n =
-          AppLocalizations.of(tester.element(find.byType(AppAlertDialog)));
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AppAlertDialog)),
+      );
       await tester.tap(find.text(l10n.logoutCancel));
       await tester.pumpAndSettle();
 
@@ -345,8 +348,9 @@ void main() {
       expect(find.text('Something went wrong'), findsOneWidget);
     });
 
-    testWidgets('calls linkGoogle when Google connect button is tapped',
-        (tester) async {
+    testWidgets('calls linkGoogle when Google connect button is tapped', (
+      tester,
+    ) async {
       when(() => profileCubit.linkGoogle(any())).thenAnswer((_) async {});
 
       await pumpProfileView(
@@ -362,61 +366,66 @@ void main() {
     });
 
     testWidgets(
-        'shows unlink dialog for Google when delete icon is tapped with 2 '
-        'providers', (tester) async {
-      await pumpProfileView(
-        tester,
-        state: const ProfileState(
-          status: ProfileStatus.success,
-          user: _userBothProviders,
-        ),
-      );
+      'shows unlink dialog for Google when delete icon is tapped with 2 '
+      'providers',
+      (tester) async {
+        await pumpProfileView(
+          tester,
+          state: const ProfileState(
+            status: ProfileStatus.success,
+            user: _userBothProviders,
+          ),
+        );
 
-      final deleteButtons = find.byWidgetPredicate(
-        (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedDelete01,
-      );
-      await tester.tap(deleteButtons.first);
-      await tester.pumpAndSettle();
+        final deleteButtons = find.byWidgetPredicate(
+          (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedDelete01,
+        );
+        await tester.tap(deleteButtons.first);
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
-    });
+        expect(find.byType(AppAlertDialog), findsOneWidget);
+      },
+    );
 
     testWidgets(
-        'shows snackbar instead of dialog when only one provider is linked',
-        (tester) async {
-      const userWithOneProvider = AppUser(
-        uid: 'uid-single',
-        displayName: 'Single Provider User',
-        providerData: [
-          AppUserInfo(
-            uid: 'uid-single',
-            providerId: 'google.com',
-            email: 'single@gmail.com',
+      'shows snackbar instead of dialog when only one provider is linked',
+      (tester) async {
+        const userWithOneProvider = AppUser(
+          uid: 'uid-single',
+          displayName: 'Single Provider User',
+          providerData: [
+            AppUserInfo(
+              uid: 'uid-single',
+              providerId: 'google.com',
+              email: 'single@gmail.com',
+            ),
+          ],
+        );
+
+        await pumpProfileView(
+          tester,
+          state: const ProfileState(
+            status: ProfileStatus.success,
+            user: userWithOneProvider,
           ),
-        ],
-      );
+        );
 
-      await pumpProfileView(
-        tester,
-        state: const ProfileState(
-          status: ProfileStatus.success,
-          user: userWithOneProvider,
-        ),
-      );
+        final deleteButton = find.byWidgetPredicate(
+          (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedDelete01,
+        );
+        await tester.tap(deleteButton.first);
+        await tester.pumpAndSettle();
 
-      final deleteButton = find.byWidgetPredicate(
-        (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedDelete01,
-      );
-      await tester.tap(deleteButton.first);
-      await tester.pumpAndSettle();
+        expect(find.byType(AppAlertDialog), findsNothing);
+      },
+    );
 
-      expect(find.byType(AppAlertDialog), findsNothing);
-    });
-
-    testWidgets('calls unlinkProvider when unlink dialog is confirmed',
-        (tester) async {
-      when(() => profileCubit.unlinkProvider(any(), any()))
-          .thenAnswer((_) async {});
+    testWidgets('calls unlinkProvider when unlink dialog is confirmed', (
+      tester,
+    ) async {
+      when(
+        () => profileCubit.unlinkProvider(any(), any()),
+      ).thenAnswer((_) async {});
 
       await pumpProfileView(
         tester,
@@ -432,8 +441,9 @@ void main() {
       await tester.tap(deleteButtons.first);
       await tester.pumpAndSettle();
 
-      final l10n =
-          AppLocalizations.of(tester.element(find.byType(AppAlertDialog)));
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AppAlertDialog)),
+      );
       await tester.tap(find.text(l10n.unlinkProviderConfirm));
       await tester.pumpAndSettle();
 
@@ -441,28 +451,26 @@ void main() {
     });
 
     testWidgets(
-        'shows link email dialog when Email provider Connect button is tapped',
-        (tester) async {
-      await pumpProfileView(
-        tester,
-        state: const ProfileState(
-          status: ProfileStatus.success,
-          user: _userNoProviders,
-        ),
-      );
+      'shows link email dialog when Email provider Connect button is tapped',
+      (tester) async {
+        await pumpProfileView(
+          tester,
+          state: const ProfileState(
+            status: ProfileStatus.success,
+            user: _userNoProviders,
+          ),
+        );
 
-      await tester.tap(find.text('Connect').last);
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Connect').last);
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
-      expect(find.byType(AppTextField), findsWidgets);
-    });
+        expect(find.byType(AppAlertDialog), findsOneWidget);
+        expect(find.byType(AppTextField), findsWidgets);
+      },
+    );
 
     testWidgets('navigates back when back button is tapped', (tester) async {
-      await pumpProfileView(
-        tester,
-        state: const ProfileState(),
-      );
+      await pumpProfileView(tester, state: const ProfileState());
 
       final backButton = find.byType(IconButton).first;
       await tester.tap(backButton);

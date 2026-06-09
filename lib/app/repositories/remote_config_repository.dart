@@ -113,12 +113,14 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
       _remoteConfig.getString(RemoteConfigRepository.configGeminiApiKey);
 
   @override
-  String get geminiPromptExtractReceiptData => _remoteConfig
-      .getString(RemoteConfigRepository.configGeminiPromptExtractReceiptData);
+  String get geminiPromptExtractReceiptData => _remoteConfig.getString(
+        RemoteConfigRepository.configGeminiPromptExtractReceiptData,
+      );
 
   @override
-  String get geminiPromptDetectAntExpense => _remoteConfig
-      .getString(RemoteConfigRepository.configGeminiPromptDetectAntExpense);
+  String get geminiPromptDetectAntExpense => _remoteConfig.getString(
+        RemoteConfigRepository.configGeminiPromptDetectAntExpense,
+      );
 
   @override
   int get geminiAntLookbackDays =>

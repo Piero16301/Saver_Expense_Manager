@@ -7,9 +7,7 @@ void main() {
     testWidgets('renders normally with label', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(label: 'Email'),
-          ),
+          home: Scaffold(body: AppTextField(label: 'Email')),
         ),
       );
 
@@ -22,10 +20,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: AppTextField(
-              label: 'Name',
-              onChanged: (v) => value = v,
-            ),
+            body: AppTextField(label: 'Name', onChanged: (v) => value = v),
           ),
         ),
       );
@@ -38,10 +33,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: AppTextField(
-              label: 'Required',
-              errorText: 'Field required',
-            ),
+            body: AppTextField(label: 'Required', errorText: 'Field required'),
           ),
         ),
       );
@@ -73,10 +65,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: AppTextField(
-              label: 'Initial',
-              initialValue: 'Hello',
-            ),
+            body: AppTextField(label: 'Initial', initialValue: 'Hello'),
           ),
         ),
       );
@@ -89,10 +78,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: AppTextField(
-              label: 'Ctrl',
-              controller: controller,
-            ),
+            body: AppTextField(label: 'Ctrl', controller: controller),
           ),
         ),
       );
@@ -103,12 +89,7 @@ void main() {
     testWidgets('obscureText works', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: AppTextField(
-              label: 'Pass',
-              obscureText: true,
-            ),
-          ),
+          home: Scaffold(body: AppTextField(label: 'Pass', obscureText: true)),
         ),
       );
 

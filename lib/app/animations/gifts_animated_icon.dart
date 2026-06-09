@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class GiftsAnimatedIcon extends StatefulWidget {
-  const GiftsAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const GiftsAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -151,7 +147,6 @@ class _GiftsPainter extends CustomPainter {
         RRect.fromRectAndRadius(boxRect, Radius.circular(w * 0.03)),
         paintFill,
       )
-
       // Vertical ribbon cutout
       ..drawRect(
         Rect.fromCenter(
@@ -161,7 +156,6 @@ class _GiftsPainter extends CustomPainter {
         ),
         clearPaint,
       )
-
       // Horizontal ribbon cutout
       ..drawRect(
         Rect.fromCenter(
@@ -191,11 +185,12 @@ class _GiftsPainter extends CustomPainter {
       width: lidW,
       height: lidH,
     );
-    final lidRRect =
-        RRect.fromRectAndRadius(lidRect, Radius.circular(w * 0.03));
+    final lidRRect = RRect.fromRectAndRadius(
+      lidRect,
+      Radius.circular(w * 0.03),
+    );
     canvas
       ..drawRRect(lidRRect, paintFill)
-
       // Lid vertical ribbon cutout
       ..drawRect(
         Rect.fromCenter(
@@ -205,7 +200,6 @@ class _GiftsPainter extends CustomPainter {
         ),
         clearPaint,
       )
-
       // Separation line between lid and box
       ..drawLine(
         Offset(cx - lidW / 2, lidCy),
@@ -266,7 +260,6 @@ class _GiftsPainter extends CustomPainter {
     canvas
       ..drawPath(leftLoop, insideBow)
       ..drawPath(rightLoop, insideBow)
-
       // Center knot of the bow
       ..drawCircle(Offset(cx, lidCy - lidH - h * 0.02), w * 0.03, paintFill)
       ..restore(); // end lid transform

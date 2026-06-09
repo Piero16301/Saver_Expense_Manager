@@ -83,8 +83,11 @@ class MovementCubit extends Cubit<MovementState> {
       await file.writeAsBytes(data.toList());
       await OpenFile.open(filePath);
     } on Exception catch (e, stackTrace) {
-      getIt<CrashService>()
-          .recordError(e, stackTrace, reason: 'MovementCubit attachOpen error');
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'MovementCubit attachOpen error',
+      );
     }
   }
 

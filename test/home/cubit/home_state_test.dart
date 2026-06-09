@@ -11,19 +11,12 @@ void main() {
     });
 
     test('props are correct', () {
-      expect(
-        const HomeState(selectedIndex: 1).props,
-        equals(<Object?>[
-          1,
-        ]),
-      );
+      expect(const HomeState(selectedIndex: 1).props, equals(<Object?>[1]));
     });
 
     test('copyWith returns object with updated properties', () {
       expect(
-        const HomeState(selectedIndex: 0).copyWith(
-          selectedIndex: 2,
-        ),
+        const HomeState(selectedIndex: 0).copyWith(selectedIndex: 2),
         equals(const HomeState(selectedIndex: 2)),
       );
     });

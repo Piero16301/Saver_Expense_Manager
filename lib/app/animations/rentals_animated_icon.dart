@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class RentalsAnimatedIcon extends StatefulWidget {
-  const RentalsAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const RentalsAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -194,12 +190,9 @@ class _RentalsPainter extends CustomPainter {
       ..addRect(
         Rect.fromLTWH(-keyW * 0.2, keyH * 0.2, keyW * 0.4, keyH * 0.8),
       ) // key shaft
-
       // Teeth
       ..addRect(Rect.fromLTWH(keyW * 0.1, keyH * 0.7, keyW * 0.3, keyH * 0.1))
-      ..addRect(
-        Rect.fromLTWH(keyW * 0.1, keyH * 0.85, keyW * 0.3, keyH * 0.1),
-      );
+      ..addRect(Rect.fromLTWH(keyW * 0.1, keyH * 0.85, keyW * 0.3, keyH * 0.1));
 
     canvas
       ..drawPath(

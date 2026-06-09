@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 class TaxesAnimatedIcon extends StatefulWidget {
-  const TaxesAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const TaxesAnimatedIcon({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -180,8 +176,10 @@ class _TaxesPainter extends CustomPainter {
     for (var row = 0; row < 4; row++) {
       for (var col = 0; col < 3; col++) {
         final btnRect = Rect.fromCenter(
-          center:
-              Offset(startX + col * calcW * 0.25, startY + row * calcH * 0.14),
+          center: Offset(
+            startX + col * calcW * 0.25,
+            startY + row * calcH * 0.14,
+          ),
           width: btnW,
           height: btnH,
         );

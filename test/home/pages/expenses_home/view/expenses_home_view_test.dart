@@ -43,11 +43,12 @@ void main() {
 
       when(() => mockAppCubit.state).thenReturn(const AppState());
 
-      when(() => mockCubit.state).thenReturn(
-        ExpensesHomeState(monthSelected: DateTime(2024, 3)),
-      );
-      when(() => mockAuth.currentUser)
-          .thenReturn(const AppUser(uid: 'user123'));
+      when(
+        () => mockCubit.state,
+      ).thenReturn(ExpensesHomeState(monthSelected: DateTime(2024, 3)));
+      when(
+        () => mockAuth.currentUser,
+      ).thenReturn(const AppUser(uid: 'user123'));
 
       when(
         () => mockDatabase.getMovementsStream(
@@ -110,8 +111,9 @@ void main() {
       );
     }
 
-    testWidgets('renders MonthSelector and loading indicator initially',
-        (tester) async {
+    testWidgets('renders MonthSelector and loading indicator initially', (
+      tester,
+    ) async {
       final controller = StreamController<List<Movement>>();
       when(
         () => mockDatabase.getMovementsStream(
@@ -155,8 +157,9 @@ void main() {
       expect(find.textContaining('expenses'), findsWidgets);
     });
 
-    testWidgets('shows chart and list when movements are present',
-        (tester) async {
+    testWidgets('shows chart and list when movements are present', (
+      tester,
+    ) async {
       final movement = Movement(
         id: '1',
         title: 'Lunch',
@@ -194,8 +197,9 @@ void main() {
       expect(find.byType(TotalSpentChart), findsOneWidget);
     });
 
-    testWidgets('shows landscape layout when in landscape orientation',
-        (tester) async {
+    testWidgets('shows landscape layout when in landscape orientation', (
+      tester,
+    ) async {
       final movement = Movement(
         id: '2',
         title: 'Dinner',
@@ -224,9 +228,7 @@ void main() {
         ),
       ).thenAnswer((_) => Stream.value([movement]));
 
-      await tester.pumpWidget(
-        buildSubject(orientation: Orientation.landscape),
-      );
+      await tester.pumpWidget(buildSubject(orientation: Orientation.landscape));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
@@ -234,8 +236,9 @@ void main() {
       expect(find.byType(MonthSelector), findsOneWidget);
     });
 
-    testWidgets('tapping back on MonthSelector calls previousMonth',
-        (tester) async {
+    testWidgets('tapping back on MonthSelector calls previousMonth', (
+      tester,
+    ) async {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
@@ -257,8 +260,9 @@ void main() {
       verify(() => mockCubit.previousMonth()).called(1);
     });
 
-    testWidgets('tapping forward on MonthSelector calls nextMonth',
-        (tester) async {
+    testWidgets('tapping forward on MonthSelector calls nextMonth', (
+      tester,
+    ) async {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),

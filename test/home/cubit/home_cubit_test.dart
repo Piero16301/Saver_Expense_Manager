@@ -28,10 +28,7 @@ void main() {
 
     test('initial state gets correct tab index from RemoteConfigService', () {
       final state = HomeState.initial();
-      expect(
-        state.selectedIndex,
-        equals(0),
-      );
+      expect(state.selectedIndex, equals(0));
     });
 
     test('copyWith returns exactly the same state if no params passed', () {
@@ -57,9 +54,7 @@ void main() {
       'toggleSelectedIndex emits correct state with new index',
       build: HomeCubit.new,
       act: (cubit) => cubit.toggleSelectedIndex(2),
-      expect: () => [
-        const HomeState(selectedIndex: 2),
-      ],
+      expect: () => [const HomeState(selectedIndex: 2)],
     );
   });
 }

@@ -65,9 +65,7 @@ class _AppStreamPaginatedState<T> extends State<AppStreamPaginated<T>> {
           );
         }
         if (!snapshot.hasData) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         final data = snapshot.data!;

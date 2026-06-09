@@ -28,8 +28,9 @@ void main() {
     localStorageService = MockLocalStorageService();
     mockAnalyticsService = MockAnalyticsService();
 
-    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
-        .thenAnswer((_) {});
+    when(
+      () => mockAnalyticsService.setUserId(id: any(named: 'id')),
+    ).thenAnswer((_) {});
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AuthService>()) {
@@ -43,21 +44,22 @@ void main() {
     }
 
     getIt
-      ..registerLazySingleton<AuthService>(
-        () => authenticationService,
-      )
+      ..registerLazySingleton<AuthService>(() => authenticationService)
       ..registerLazySingleton<LocalStorageService>(() => localStorageService)
       ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService);
 
-    when(() => authenticationService.userChanges)
-        .thenAnswer((_) => const Stream.empty());
-    when(() => authenticationService.authStateChanges)
-        .thenAnswer((_) => const Stream.empty());
+    when(
+      () => authenticationService.userChanges,
+    ).thenAnswer((_) => const Stream.empty());
+    when(
+      () => authenticationService.authStateChanges,
+    ).thenAnswer((_) => const Stream.empty());
     when(() => authenticationService.isLoggedIn).thenReturn(false);
     when(() => authenticationService.currentUser).thenReturn(null);
 
-    when(() => localStorageService.getLanguage())
-        .thenReturn(const Locale('en', 'US'));
+    when(
+      () => localStorageService.getLanguage(),
+    ).thenReturn(const Locale('en', 'US'));
     when(() => localStorageService.getTheme()).thenReturn(ThemeMode.system);
     when(() => localStorageService.getBaseColor()).thenReturn(Colors.green);
     when(() => localStorageService.getFontFamily()).thenReturn('Poppins');
@@ -65,12 +67,12 @@ void main() {
     when(
       () => localStorageService.saveLanguage(language: any(named: 'language')),
     ).thenAnswer((_) async {});
-    when(() => localStorageService.saveTheme(theme: any(named: 'theme')))
-        .thenAnswer((_) async {});
     when(
-      () => localStorageService.saveBaseColor(
-        baseColor: any(named: 'baseColor'),
-      ),
+      () => localStorageService.saveTheme(theme: any(named: 'theme')),
+    ).thenAnswer((_) async {});
+    when(
+      () =>
+          localStorageService.saveBaseColor(baseColor: any(named: 'baseColor')),
     ).thenAnswer((_) async {});
     when(
       () => localStorageService.saveFontFamily(

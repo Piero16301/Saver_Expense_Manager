@@ -13,21 +13,11 @@ class RegisterCubit extends Cubit<RegisterState> {
   final AuthService _authService;
 
   void nameChanged(String value) {
-    emit(
-      state.copyWith(
-        name: value,
-        isNameValid: _validateName(value),
-      ),
-    );
+    emit(state.copyWith(name: value, isNameValid: _validateName(value)));
   }
 
   void emailChanged(String value) {
-    emit(
-      state.copyWith(
-        email: value,
-        isEmailValid: _validateEmail(value),
-      ),
-    );
+    emit(state.copyWith(email: value, isEmailValid: _validateEmail(value)));
   }
 
   void passwordChanged(String value) {
@@ -70,18 +60,12 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   void toggleConfirmPasswordVisibility() {
     emit(
-      state.copyWith(
-        isConfirmPasswordVisible: !state.isConfirmPasswordVisible,
-      ),
+      state.copyWith(isConfirmPasswordVisible: !state.isConfirmPasswordVisible),
     );
   }
 
   void reset() {
-    emit(
-      state.copyWith(
-        status: RegisterStatus.initial,
-      ),
-    );
+    emit(state.copyWith(status: RegisterStatus.initial));
   }
 
   Future<void> register(AppLocalizations l10n) async {

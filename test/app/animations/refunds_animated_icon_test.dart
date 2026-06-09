@@ -3,13 +3,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:saver_expense_manager/app/animations/refunds_animated_icon.dart';
 
 void main() {
-  testWidgets('RefundsAnimatedIcon renders and animates without errors',
-      (tester) async {
+  testWidgets('RefundsAnimatedIcon renders and animates without errors', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: RefundsAnimatedIcon(color: Colors.blue, size: 40),
-        ),
+        home: Scaffold(body: RefundsAnimatedIcon(color: Colors.blue, size: 40)),
       ),
     );
 

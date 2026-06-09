@@ -225,11 +225,7 @@ class _OthersExpensePainter extends CustomPainter {
       // Offset dots phase
       final dotPhase = (animationValue * 2.0 + index * 0.2) % 1.0;
       final dotYOffset = math.sin(dotPhase * math.pi * 2) * h * 0.03;
-      canvas.drawCircle(
-        Offset(x, h * 0.65 + dotYOffset),
-        w * 0.04,
-        clearPaint,
-      );
+      canvas.drawCircle(Offset(x, h * 0.65 + dotYOffset), w * 0.04, clearPaint);
     }
 
     drawDot(0, cx - w * 0.15);

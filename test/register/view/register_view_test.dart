@@ -33,12 +33,14 @@ void main() {
     mockAppCubit = MockAppCubit();
 
     when(() => mockRegisterCubit.state).thenReturn(const RegisterState());
-    when(() => mockRegisterCubit.stream)
-        .thenAnswer((_) => const Stream.empty());
+    when(
+      () => mockRegisterCubit.stream,
+    ).thenAnswer((_) => const Stream.empty());
     when(() => mockRegisterCubit.register(any())).thenAnswer((_) async {});
     when(() => mockRegisterCubit.togglePasswordVisibility()).thenReturn(null);
-    when(() => mockRegisterCubit.toggleConfirmPasswordVisibility())
-        .thenReturn(null);
+    when(
+      () => mockRegisterCubit.toggleConfirmPasswordVisibility(),
+    ).thenReturn(null);
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockAppCubit.stream).thenAnswer((_) => const Stream.empty());
@@ -106,8 +108,9 @@ void main() {
       verify(() => mockRegisterCubit.nameChanged('John Doe')).called(1);
     });
 
-    testWidgets('calls emailChanged when typing in email field',
-        (tester) async {
+    testWidgets('calls emailChanged when typing in email field', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
@@ -119,18 +122,22 @@ void main() {
         find.descendant(of: field, matching: find.byType(TextField)),
         'test@example.com',
       );
-      verify(() => mockRegisterCubit.emailChanged('test@example.com'))
-          .called(1);
+      verify(
+        () => mockRegisterCubit.emailChanged('test@example.com'),
+      ).called(1);
     });
 
-    testWidgets('calls passwordChanged when typing in password field',
-        (tester) async {
+    testWidgets('calls passwordChanged when typing in password field', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
       final field = find.widgetWithText(
         AppTextField,
-        (await AppLocalizations.delegate.load(const Locale('en')))
+        (await AppLocalizations.delegate.load(
+          const Locale('en'),
+        ))
             .passwordLabel,
       );
       await tester.enterText(
@@ -141,51 +148,63 @@ void main() {
     });
 
     testWidgets(
-        'calls confirmPasswordChanged when typing in confirm password field',
-        (tester) async {
-      await tester.pumpWidget(buildView());
-      await tester.pumpAndSettle();
+      'calls confirmPasswordChanged when typing in confirm password field',
+      (tester) async {
+        await tester.pumpWidget(buildView());
+        await tester.pumpAndSettle();
 
-      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      final field =
-          find.widgetWithText(AppTextField, l10n.confirmPasswordLabel);
-      await tester.ensureVisible(field);
-      await tester.enterText(
-        find.descendant(of: field, matching: find.byType(TextField)),
-        'password123',
-      );
-      verify(() => mockRegisterCubit.confirmPasswordChanged('password123'))
-          .called(1);
-    });
-
-    testWidgets(
-        'calls togglePasswordVisibility when tapping password suffix icon',
-        (tester) async {
-      await tester.pumpWidget(buildView());
-      await tester.pumpAndSettle();
-
-      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      final field = find.widgetWithText(AppTextField, l10n.passwordLabel);
-      await tester
-          .tap(find.descendant(of: field, matching: find.byType(IconButton)));
-      verify(() => mockRegisterCubit.togglePasswordVisibility()).called(1);
-    });
+        final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+        final field = find.widgetWithText(
+          AppTextField,
+          l10n.confirmPasswordLabel,
+        );
+        await tester.ensureVisible(field);
+        await tester.enterText(
+          find.descendant(of: field, matching: find.byType(TextField)),
+          'password123',
+        );
+        verify(
+          () => mockRegisterCubit.confirmPasswordChanged('password123'),
+        ).called(1);
+      },
+    );
 
     testWidgets(
-        'calls toggleConfirmPasswordVisibility when tapping confirm password '
-        'suffix icon', (tester) async {
-      await tester.pumpWidget(buildView());
-      await tester.pumpAndSettle();
+      'calls togglePasswordVisibility when tapping password suffix icon',
+      (tester) async {
+        await tester.pumpWidget(buildView());
+        await tester.pumpAndSettle();
 
-      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      final field =
-          find.widgetWithText(AppTextField, l10n.confirmPasswordLabel);
-      await tester.ensureVisible(field);
-      await tester
-          .tap(find.descendant(of: field, matching: find.byType(IconButton)));
-      verify(() => mockRegisterCubit.toggleConfirmPasswordVisibility())
-          .called(1);
-    });
+        final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+        final field = find.widgetWithText(AppTextField, l10n.passwordLabel);
+        await tester.tap(
+          find.descendant(of: field, matching: find.byType(IconButton)),
+        );
+        verify(() => mockRegisterCubit.togglePasswordVisibility()).called(1);
+      },
+    );
+
+    testWidgets(
+      'calls toggleConfirmPasswordVisibility when tapping confirm password '
+      'suffix icon',
+      (tester) async {
+        await tester.pumpWidget(buildView());
+        await tester.pumpAndSettle();
+
+        final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+        final field = find.widgetWithText(
+          AppTextField,
+          l10n.confirmPasswordLabel,
+        );
+        await tester.ensureVisible(field);
+        await tester.tap(
+          find.descendant(of: field, matching: find.byType(IconButton)),
+        );
+        verify(
+          () => mockRegisterCubit.toggleConfirmPasswordVisibility(),
+        ).called(1);
+      },
+    );
 
     testWidgets('calls register when pressing register button', (tester) async {
       await tester.pumpWidget(buildView());
@@ -199,9 +218,9 @@ void main() {
 
     testWidgets('renders loading state correctly', (tester) async {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      when(() => mockRegisterCubit.state).thenReturn(
-        const RegisterState(status: RegisterStatus.loading),
-      );
+      when(
+        () => mockRegisterCubit.state,
+      ).thenReturn(const RegisterState(status: RegisterStatus.loading));
 
       await tester.pumpWidget(buildView());
       await tester.pump();
@@ -251,8 +270,9 @@ void main() {
       await stateController.close();
     });
 
-    testWidgets('navigates to LoginPage when tapping login button',
-        (tester) async {
+    testWidgets('navigates to LoginPage when tapping login button', (
+      tester,
+    ) async {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
