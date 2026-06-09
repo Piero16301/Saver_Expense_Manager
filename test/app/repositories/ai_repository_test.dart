@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:firebase_ai/firebase_ai.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseAI extends Mock implements FirebaseAI {}
+class MockDio extends Mock implements Dio {}
 
 class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid {}
 
@@ -20,7 +20,7 @@ class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 class MockCrashService extends Mock implements CrashService {}
 
 void main() {
-  late MockFirebaseAI mockRemoteModel;
+  late MockDio mockDio;
   late MockGeminiNanoAndroid mockLocalModel;
   late MockTrace mockTrace;
 
@@ -28,15 +28,14 @@ void main() {
   late MockRemoteConfigService mockRemoteConfigService;
   late MockCrashService mockCrashService;
 
-  late FirebaseAiRepository repository;
+  late GeminiAiRepository repository;
 
   setUpAll(() {
-    registerFallbackValue(Content.text(''));
     registerFallbackValue(MockTrace());
   });
 
   setUp(() async {
-    mockRemoteModel = MockFirebaseAI();
+    mockDio = MockDio();
     mockLocalModel = MockGeminiNanoAndroid();
     mockTrace = MockTrace();
 
@@ -54,9 +53,10 @@ void main() {
         .thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
     when(() => mockRemoteConfigService.geminiModelId).thenReturn('gemini-1.5');
+    when(() => mockRemoteConfigService.geminiApiKey).thenReturn('test-key');
 
-    repository = FirebaseAiRepository(
-      remoteModel: mockRemoteModel,
+    repository = GeminiAiRepository(
+      dio: mockDio,
       localModel: mockLocalModel,
     );
   });
@@ -83,7 +83,7 @@ void main() {
     });
   });
 
-  group('FirebaseAiRepository', () {
+  group('GeminiAiRepository', () {
     test('initialize checks local model availability', () async {
       when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
       await repository.initialize();
@@ -96,14 +96,14 @@ void main() {
         expect(result, isNull);
       });
 
-      test('records error and rethrows if generativeModel fails', () async {
+      test('records error and rethrows if post fails', () async {
         when(
-          () => mockRemoteModel.generativeModel(
-            model: any<String>(named: 'model'),
-            safetySettings: any<List<SafetySetting>?>(named: 'safetySettings'),
-            generationConfig: any<GenerationConfig?>(named: 'generationConfig'),
+          () => mockDio.post<Map<String, dynamic>>(
+            any(),
+            data: any(named: 'data'),
+            options: any(named: 'options'),
           ),
-        ).thenThrow(Exception('Remote Fail during generativeModel'));
+        ).thenThrow(Exception('Remote Fail during post'));
 
         expect(
           () => repository.generateContentRemote(
@@ -117,9 +117,41 @@ void main() {
           () => mockCrashService.recordError(
             any<Object>(),
             any<StackTrace?>(),
-            reason: 'AiService generateContentRemote error',
+            reason: 'AiService generateContentRemote error via HTTP/Dio',
           ),
         ).called(1);
+      });
+
+      test('returns text if response is valid', () async {
+        when(
+          () => mockDio.post<Map<String, dynamic>>(
+            any(),
+            data: any(named: 'data'),
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer(
+          (_) async => Response<Map<String, dynamic>>(
+            requestOptions: RequestOptions(),
+            statusCode: 200,
+            data: {
+              'candidates': [
+                {
+                  'content': {
+                    'parts': [
+                      {'text': 'Hello Gemini'},
+                    ],
+                  },
+                }
+              ],
+            },
+          ),
+        );
+
+        final result = await repository.generateContentRemote(
+          prompt: [const PromptPart(text: 'h', type: PromptPartType.text)],
+        );
+
+        expect(result, 'Hello Gemini');
       });
     });
 

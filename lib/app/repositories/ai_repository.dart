@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:firebase_ai/firebase_ai.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:dio/dio.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
@@ -40,15 +40,14 @@ class MockAiRepository implements AiRepository {
       null;
 }
 
-class FirebaseAiRepository implements AiRepository {
-  FirebaseAiRepository({
-    FirebaseAI? remoteModel,
+class GeminiAiRepository implements AiRepository {
+  GeminiAiRepository({
+    Dio? dio,
     GeminiNanoAndroid? localModel,
-  })  : _remoteModel = remoteModel ??
-            FirebaseAI.googleAI(appCheck: FirebaseAppCheck.instance),
+  })  : _dio = dio ?? Dio(),
         _localModel = localModel ?? GeminiNanoAndroid();
 
-  final FirebaseAI _remoteModel;
+  final Dio _dio;
   final GeminiNanoAndroid _localModel;
   bool _isLocalModelAvailable = false;
 
@@ -71,42 +70,80 @@ class FirebaseAiRepository implements AiRepository {
 
     final performance = getIt<PerformanceService>();
     final trace = performance.startTrace('gemini_generate_remote');
+
     try {
       final remoteConfig = getIt<RemoteConfigService>();
-      final remoteModel = _remoteModel.generativeModel(
-        model: remoteConfig.geminiModelId,
-        safetySettings: [
-          SafetySetting(
-            HarmCategory.dangerousContent,
-            HarmBlockThreshold.none,
-            null,
-          ),
+      final model = remoteConfig.geminiModelId;
+      final apiKey = remoteConfig.geminiApiKey;
+
+      final url =
+          'https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey';
+
+      final partsJson = prompt.map((p) {
+        switch (p.type) {
+          case PromptPartType.text:
+            return {
+              'text': p.text ?? '',
+            };
+          case PromptPartType.file:
+            return {
+              'inlineData': {
+                'mimeType': p.mimeType ?? '',
+                'data': base64Encode(p.bytes ?? Uint8List(0)),
+              },
+            };
+        }
+      }).toList();
+
+      final requestBody = {
+        'contents': [
+          {
+            'parts': partsJson,
+          }
         ],
-        generationConfig: GenerationConfig(
-          responseMimeType: responseMimeType,
+        'safetySettings': [
+          {
+            'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
+            'threshold': 'BLOCK_NONE',
+          },
+        ],
+        'generationConfig': {
+          'responseMimeType': responseMimeType,
+        },
+      };
+
+      final response = await _dio.post<Map<String, dynamic>>(
+        url,
+        data: requestBody,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
         ),
       );
 
-      final contentPrompt = prompt.map((p) {
-        switch (p.type) {
-          case PromptPartType.text:
-            return Content.text(p.text ?? '');
-          case PromptPartType.file:
-            return Content.inlineData(
-              p.mimeType ?? '',
-              p.bytes ?? Uint8List(0),
-            );
+      final responseData = response.data;
+      if (response.statusCode == 200 && responseData != null) {
+        final candidates = responseData['candidates'] as List<dynamic>?;
+        if (candidates != null && candidates.isNotEmpty) {
+          final candidate = candidates.first as Map<String, dynamic>;
+          final content = candidate['content'] as Map<String, dynamic>?;
+          if (content != null) {
+            final parts = content['parts'] as List<dynamic>?;
+            if (parts != null && parts.isNotEmpty) {
+              final part = parts.first as Map<String, dynamic>;
+              return part['text'] as String?;
+            }
+          }
         }
-      });
+      }
 
-      final response = await remoteModel.generateContent(contentPrompt);
-
-      return response.text;
+      return null;
     } catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
-        reason: 'AiService generateContentRemote error',
+        reason: 'AiService generateContentRemote error via HTTP/Dio',
       );
       rethrow;
     } finally {

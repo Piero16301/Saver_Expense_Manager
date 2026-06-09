@@ -2,7 +2,7 @@
 // ignore_for_file: type=lint
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, TargetPlatform;
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -16,6 +16,12 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
+    if (kIsWeb) {
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
+    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
@@ -44,8 +50,8 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCr0Q9aOOiIOra_Jkown14_Omv8v0rlWpo',
-    appId: '1:269318126118:android:19c0edc290b70b9dfb04e7',
+    apiKey: 'AIzaSyAAcoroTvz0_YXTx-b9oKUbEmKyrjXKRcw',
+    appId: '1:269318126118:android:09311aaa03c92bdcfb04e7',
     messagingSenderId: '269318126118',
     projectId: 'saver-expense-manager',
     storageBucket: 'saver-expense-manager.firebasestorage.app',
@@ -53,14 +59,14 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDjHJTHg_QH6D3Jd0EXdaU7_a8Wunijksg',
-    appId: '1:269318126118:ios:6d066e01d36f5381fb04e7',
+    appId: '1:269318126118:ios:e540158656abbe49fb04e7',
     messagingSenderId: '269318126118',
     projectId: 'saver-expense-manager',
     storageBucket: 'saver-expense-manager.firebasestorage.app',
     androidClientId:
-        '269318126118-59i8g260ddou15dolopo2thrjc0tj6r2.apps.googleusercontent.com',
+        '269318126118-cp3js8sb2v0961q8mg3c6h4gtq22pmml.apps.googleusercontent.com',
     iosClientId:
-        '269318126118-7t1rqm8oho4m39a01tlvavd8735559dn.apps.googleusercontent.com',
+        '269318126118-1okee6h2hvj2gft9p05ki94qisfatf89.apps.googleusercontent.com',
     iosBundleId: 'com.pmorales.saver.expense.manager',
   );
 

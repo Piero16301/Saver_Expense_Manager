@@ -7,44 +7,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:269318126118:android:19c0edc290b70b9dfb04e7",
+        "mobilesdk_app_id": "1:269318126118:android:09311aaa03c92bdcfb04e7",
         "android_client_info": {
           "package_name": "com.pmorales.saver.expense.manager"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "269318126118-cp3js8sb2v0961q8mg3c6h4gtq22pmml.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pmorales.saver.expense.manager",
-            "certificate_hash": "383d45e852679d7372951cb0f73306d7c92dbb31"
-          }
-        },
-        {
-          "client_id": "269318126118-jk0bofoe2le4s3i9q21dgi61kv5vp0r2.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pmorales.saver.expense.manager",
-            "certificate_hash": "99ce14ebe7679c828803a203c0c3effb9809fbc4"
-          }
-        },
-        {
-          "client_id": "269318126118-o3ueo4v2t98k0hg518bctvmg5s66dnm5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pmorales.saver.expense.manager",
-            "certificate_hash": "40e3109a1786325d063dc17bf97ed7b1ce5be1b0"
-          }
-        },
-        {
-          "client_id": "269318126118-qajmvgjcjga2f8scpueobju5q7qpbkqp.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pmorales.saver.expense.manager",
-            "certificate_hash": "a13a54f94300db07340535071ac33f92bc5f1e57"
-          }
-        },
         {
           "client_id": "269318126118-54eh6vkdnfggcl9jv43ds7pcd927gd34.apps.googleusercontent.com",
           "client_type": 3
@@ -52,7 +20,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCr0Q9aOOiIOra_Jkown14_Omv8v0rlWpo"
+          "current_key": "AIzaSyAAcoroTvz0_YXTx-b9oKUbEmKyrjXKRcw"
         }
       ],
       "services": {
@@ -61,13 +29,6 @@
             {
               "client_id": "269318126118-54eh6vkdnfggcl9jv43ds7pcd927gd34.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "269318126118-7t1rqm8oho4m39a01tlvavd8735559dn.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.pmorales.saver.expense.manager"
-              }
             }
           ]
         }

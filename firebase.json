@@ -3,7 +3,7 @@
         "platforms": {
             "android": {
                 "default": {
-                    "appId": "1:269318126118:android:19c0edc290b70b9dfb04e7",
+                    "appId": "1:269318126118:android:09311aaa03c92bdcfb04e7",
                     "fileOutput": "android/app/google-services.json",
                     "projectId": "saver-expense-manager"
                 }
@@ -11,18 +11,18 @@
             "dart": {
                 "lib/firebase_options.dart": {
                     "configurations": {
-                        "android": "1:269318126118:android:19c0edc290b70b9dfb04e7",
-                        "ios": "1:269318126118:ios:6d066e01d36f5381fb04e7"
+                        "android": "1:269318126118:android:09311aaa03c92bdcfb04e7",
+                        "ios": "1:269318126118:ios:e540158656abbe49fb04e7"
                     },
                     "projectId": "saver-expense-manager"
                 }
             },
             "ios": {
                 "default": {
-                    "appId": "1:269318126118:ios:6d066e01d36f5381fb04e7",
+                    "appId": "1:269318126118:ios:e540158656abbe49fb04e7",
                     "fileOutput": "ios/Runner/GoogleService-Info.plist",
                     "projectId": "saver-expense-manager",
-                    "uploadDebugSymbols": false
+                    "uploadDebugSymbols": true
                 }
             }
         }

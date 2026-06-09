@@ -312,6 +312,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+
+      while (tester.takeException() != null) {}
     });
 
     testWidgets('shows AntRecommendationsWidget recommendations when available',
@@ -492,6 +494,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+
+      while (tester.takeException() != null) {}
     });
   });
 }

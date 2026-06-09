@@ -141,7 +141,7 @@ class ServiceFactory {
       case Environment.mock:
         return MockAiRepository();
       case Environment.prod:
-        return FirebaseAiRepository();
+        return GeminiAiRepository();
     }
   }
 }
