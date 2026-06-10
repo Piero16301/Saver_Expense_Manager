@@ -427,6 +427,7 @@ void main() {
           await tester.tap(find.text('File'));
 
           for (var i = 0; i < 15; i++) {
+            await Future<void>.delayed(const Duration(milliseconds: 100));
             await tester.pump(const Duration(milliseconds: 500));
           }
 
@@ -625,6 +626,7 @@ void main() {
           await tester.tap(find.text('Scan'));
 
           for (var i = 0; i < 5; i++) {
+            await Future<void>.delayed(const Duration(milliseconds: 100));
             await tester.pump(const Duration(milliseconds: 500));
           }
 
@@ -659,6 +661,7 @@ void main() {
             await tester.tap(find.text('Scan'));
 
             for (var i = 0; i < 5; i++) {
+              await Future<void>.delayed(const Duration(milliseconds: 100));
               await tester.pump(const Duration(milliseconds: 500));
             }
 
