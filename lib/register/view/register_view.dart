@@ -203,7 +203,9 @@ class RegisterView extends StatelessWidget {
                                   child: Text(
                                     l10n.loginButton,
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
+                                      fontVariations: <FontVariation>[
+                                        FontVariation('wght', 600),
+                                      ],
                                     ),
                                   ),
                                 ),

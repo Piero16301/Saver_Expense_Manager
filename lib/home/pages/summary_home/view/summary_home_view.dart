@@ -308,9 +308,11 @@ class ResumeItemCardMovements extends StatelessWidget {
                 Text(
                   _valueFormatted(),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                      ),
+                    fontVariations: <FontVariation>[
+                      const FontVariation('wght', 600),
+                    ],
+                    color: color,
+                  ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -327,9 +329,11 @@ class ResumeItemCardMovements extends StatelessWidget {
                       '${difference >= 0 ? '+' : ''}'
                       '${difference.abs().toInt()}%',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: _differenceColor,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: _differenceColor,
+                        fontVariations: <FontVariation>[
+                          const FontVariation('wght', 600),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -673,9 +677,11 @@ class CategoryExpenseCard extends StatelessWidget {
                     child: Text(
                       _getRankingText(),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: _rankingColor,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: _rankingColor,
+                        fontVariations: <FontVariation>[
+                          const FontVariation('wght', 600),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -695,8 +701,10 @@ class CategoryExpenseCard extends StatelessWidget {
                   Text(
                     AppExtensions.moneyFormat.format(amount),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontVariations: <FontVariation>[
+                        const FontVariation('wght', 600),
+                      ],
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),

@@ -24,12 +24,6 @@ class MovementPage extends StatelessWidget {
     return StreamBuilder<List<Category>>(
       stream: database.getCategoriesStream(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-
         if (snapshot.hasError) {
           return Scaffold(
             body: Center(
@@ -38,6 +32,12 @@ class MovementPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 

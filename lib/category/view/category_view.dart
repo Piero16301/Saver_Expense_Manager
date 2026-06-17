@@ -22,7 +22,11 @@ class CategoryView extends StatelessWidget {
             AppFunctions.getCategoryName(state.category.name, l10n),
             style: Theme.of(
               context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+            ).textTheme.titleLarge?.copyWith(
+              fontVariations: <FontVariation>[
+                const FontVariation('wght', 600),
+              ],
+            ),
           ),
           notificationPredicate: (notification) => false,
           leading: IconButton(

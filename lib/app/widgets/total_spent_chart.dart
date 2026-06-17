@@ -26,7 +26,11 @@ class TotalSpentChart extends StatelessWidget {
             ),
             style: Theme.of(
               context,
-            ).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w600),
+            ).textTheme.titleLarge!.copyWith(
+              fontVariations: <FontVariation>[
+                const FontVariation('wght', 600),
+              ],
+            ),
           ),
         ],
       ),

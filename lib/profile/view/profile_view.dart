@@ -34,7 +34,11 @@ class ProfileView extends StatelessWidget {
             l10n.profileTitle,
             style: Theme.of(
               context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+            ).textTheme.titleLarge?.copyWith(
+              fontVariations: <FontVariation>[
+                const FontVariation('wght', 600),
+              ],
+            ),
           ),
           notificationPredicate: (notification) => false,
           leading: IconButton(
@@ -479,7 +483,11 @@ class _ProviderListTile extends StatelessWidget {
         title,
         style: Theme.of(
           context,
-        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        ).textTheme.titleMedium?.copyWith(
+          fontVariations: <FontVariation>[
+            const FontVariation('wght', 600),
+          ],
+        ),
       ),
       subtitle: isConnected && subtitle != null
           ? Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium)

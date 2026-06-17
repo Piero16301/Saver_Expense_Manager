@@ -175,5 +175,105 @@ void main() {
         ),
       ],
     );
+    blocTest<RegisterCubit, RegisterState>(
+      'emits correct state on nameChanged (valid)',
+      build: () => registerCubit,
+      act: (cubit) => cubit.nameChanged('John Doe'),
+      expect: () => [const RegisterState(name: 'John Doe')],
+    );
+
+    blocTest<RegisterCubit, RegisterState>(
+      'emits correct state on nameChanged (invalid)',
+      build: () => registerCubit,
+      act: (cubit) => cubit.nameChanged('123'),
+      expect: () => [const RegisterState(name: '123', isNameValid: false)],
+    );
+
+    blocTest<RegisterCubit, RegisterState>(
+      'emits correct state on passwordChanged (valid)',
+      build: () => registerCubit,
+      act: (cubit) => cubit.passwordChanged('Password123!'),
+      expect: () => [
+        const RegisterState(
+          password: 'Password123!',
+          isConfirmPasswordValid: false,
+        ),
+      ],
+    );
+
+    blocTest<RegisterCubit, RegisterState>(
+      'emits correct state on reset',
+      build: () => registerCubit,
+      seed: () => const RegisterState(status: RegisterStatus.failure),
+      act: (cubit) => cubit.reset(),
+      expect: () => [const RegisterState()],
+    );
+
+    blocTest<RegisterCubit, RegisterState>(
+      'register emits [loading, failure] when auth fails',
+      build: () => registerCubit,
+      seed: () => const RegisterState(
+        name: 'Piero',
+        email: 'test@test.com',
+        password: 'Password123!',
+        confirmPassword: 'Password123!',
+      ),
+      setUp: () {
+        when(
+          () => mockAuthService.signUpWithEmailAndPassword(
+            any<String>(),
+            any<String>(),
+          ),
+        ).thenAnswer((_) async => false);
+      },
+      act: (cubit) => cubit.register(mockAppLocalizations),
+      expect: () => const [
+        RegisterState(
+          name: 'Piero',
+          email: 'test@test.com',
+          password: 'Password123!',
+          confirmPassword: 'Password123!',
+          status: RegisterStatus.loading,
+        ),
+        RegisterState(
+          name: 'Piero',
+          email: 'test@test.com',
+          password: 'Password123!',
+          confirmPassword: 'Password123!',
+          status: RegisterStatus.failure,
+          errorMessage: 'Error',
+        ),
+      ],
+    );
+
+    blocTest<RegisterCubit, RegisterState>(
+      'register sets user identifier if user is not null',
+      build: () => registerCubit,
+      seed: () => const RegisterState(
+        name: 'Piero',
+        email: 'test@test.com',
+        password: 'Password123!',
+        confirmPassword: 'Password123!',
+      ),
+      setUp: () {
+        when(
+          () => mockAuthService.signUpWithEmailAndPassword(
+            any<String>(),
+            any<String>(),
+          ),
+        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.currentUser).thenReturn(
+          const AppUser(uid: 'user-id', displayName: 'Piero'),
+        );
+        when(
+          () => mockAuthService.updateUserName(any<String>()),
+        ).thenAnswer((_) async => true);
+      },
+      act: (cubit) => cubit.register(mockAppLocalizations),
+      verify: (_) {
+        verify(() => mockAnalyticsService.setUserId(id: 'user-id')).called(1);
+        verify(() => mockCrashService.setUserIdentifier('user-id')).called(1);
+      },
+    );
   });
 }

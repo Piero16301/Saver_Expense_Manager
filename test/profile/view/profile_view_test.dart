@@ -478,5 +478,184 @@ void main() {
 
       expect(find.text('Home'), findsOneWidget);
     });
+    testWidgets('shows Image when photoURL is not null', (tester) async {
+      await pumpProfileView(
+        tester,
+        state: const ProfileState(
+          status: ProfileStatus.success,
+          user: AppUser(
+            uid: 'uid-3',
+            displayName: 'Test',
+            photoURL: 'https://example.com/photo.png',
+          ),
+        ),
+      );
+      expect(find.byType(Image), findsOneWidget);
+    });
+
+    testWidgets('validates link email form fields', (tester) async {
+      await pumpProfileView(
+        tester,
+        state: const ProfileState(
+          status: ProfileStatus.success,
+          user: _userNoProviders,
+        ),
+      );
+
+      await tester.tap(find.text('Connect').last);
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AppAlertDialog)),
+      );
+
+      await tester.tap(find.text(l10n.linkEmailButton));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.emailRequired), findsOneWidget);
+      expect(find.text(l10n.passwordRequired), findsOneWidget);
+
+      await tester.enterText(find.byType(AppTextField).at(0), 'invalid');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.linkEmailButton));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.invalidEmailFormat), findsOneWidget);
+
+      await tester.enterText(find.byType(AppTextField).at(0), 'test@test.com');
+      await tester.enterText(find.byType(AppTextField).at(1), '123');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.linkEmailButton));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.invalidPasswordFormat), findsOneWidget);
+
+      await tester.enterText(find.byType(AppTextField).at(1), 'Password123!');
+      await tester.enterText(find.byType(AppTextField).at(2), 'Password123');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.linkEmailButton));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.passwordMismatchError), findsOneWidget);
+    });
+
+    testWidgets('toggles password visibility in link email dialog', (
+      tester,
+    ) async {
+      await pumpProfileView(
+        tester,
+        state: const ProfileState(
+          status: ProfileStatus.success,
+          user: _userNoProviders,
+        ),
+      );
+
+      await tester.tap(find.text('Connect').last);
+      await tester.pumpAndSettle();
+
+      final visibilityButtons = find.byWidgetPredicate(
+        (w) =>
+            w is HugeIcon &&
+            (w.icon == HugeIcons.strokeRoundedView ||
+                w.icon == HugeIcons.strokeRoundedViewOff),
+      );
+
+      expect(visibilityButtons, findsNWidgets(2));
+      await tester.tap(visibilityButtons.first);
+      await tester.tap(visibilityButtons.last);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('calls linkEmail when link email form is valid', (
+      tester,
+    ) async {
+      when(
+        () => profileCubit.linkEmail(
+          any(),
+          email: any(named: 'email'),
+          password: any(named: 'password'),
+        ),
+      ).thenAnswer((_) async {});
+
+      await pumpProfileView(
+        tester,
+        state: const ProfileState(
+          status: ProfileStatus.success,
+          user: _userNoProviders,
+        ),
+      );
+
+      await tester.tap(find.text('Connect').last);
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AppAlertDialog)),
+      );
+
+      await tester.enterText(find.byType(AppTextField).at(0), 'test@test.com');
+      await tester.enterText(find.byType(AppTextField).at(1), 'Password123!');
+      await tester.enterText(find.byType(AppTextField).at(2), 'Password123!');
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text(l10n.linkEmailButton));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => profileCubit.linkEmail(
+          any(),
+          email: 'test@test.com',
+          password: 'Password123!',
+        ),
+      ).called(1);
+    });
+
+    testWidgets('cancels unlink dialog', (tester) async {
+      await pumpProfileView(
+        tester,
+        state: const ProfileState(
+          status: ProfileStatus.success,
+          user: _userBothProviders,
+        ),
+      );
+
+      final deleteButtons = find.byWidgetPredicate(
+        (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedDelete01,
+      );
+      await tester.tap(deleteButtons.first);
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AppAlertDialog)),
+      );
+      await tester.tap(find.text(l10n.unlinkProviderCancel));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => profileCubit.unlinkProvider(any(), any()));
+      expect(find.byType(AppAlertDialog), findsNothing);
+    });
+
+    testWidgets('cancels link email dialog', (tester) async {
+      await pumpProfileView(
+        tester,
+        state: const ProfileState(
+          status: ProfileStatus.success,
+          user: _userNoProviders,
+        ),
+      );
+
+      await tester.tap(find.text('Connect').last);
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AppAlertDialog)),
+      );
+      await tester.tap(find.text(l10n.cancel));
+      await tester.pumpAndSettle();
+
+      verifyNever(
+        () => profileCubit.linkEmail(
+          any(),
+          email: any(named: 'email'),
+          password: any(named: 'password'),
+        ),
+      );
+      expect(find.byType(AppAlertDialog), findsNothing);
+    });
   });
 }

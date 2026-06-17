@@ -142,5 +142,16 @@ void main() {
 
       expect(find.byType(MovementView), findsOneWidget);
     });
+
+    testWidgets('renders error text when stream has error', (tester) async {
+      when(
+        () => databaseService.getCategoriesStream(),
+      ).thenAnswer((_) => Stream.error(Exception('error')));
+
+      await pumpMovementPage(tester);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Error loading categories'), findsOneWidget);
+    });
   });
 }
