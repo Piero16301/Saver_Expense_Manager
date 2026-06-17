@@ -227,9 +227,9 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                 : isSelectedCircle
                     ? colorScheme.onPrimary
                     : colorScheme.onSurface,
-            fontWeight: isToday || isSelectedCircle
-                ? FontWeight.w600
-                : FontWeight.normal,
+            fontVariations: <FontVariation>[
+              FontVariation('wght', isToday || isSelectedCircle ? 600 : 100),
+            ],
           ),
         ),
       ),
@@ -377,7 +377,9 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                       '${_displayedYear.year}',
                       style: textTheme.titleMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
+                        fontVariations: <FontVariation>[
+                          const FontVariation('wght', 600),
+                        ],
                       ),
                     ),
                   ),

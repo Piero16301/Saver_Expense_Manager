@@ -89,7 +89,9 @@ class AppFunctions {
               child: Text(
                 message ?? '',
                 style: const TextStyle(
-                  fontWeight: FontWeight.w600,
+                  fontVariations: <FontVariation>[
+                    FontVariation('wght', 600),
+                  ],
                   color: Colors.white,
                 ),
               ),

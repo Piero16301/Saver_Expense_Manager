@@ -180,5 +180,83 @@ void main() {
       await pumpMovementView(tester);
       expect(find.byType(MovementMetadata), findsOneWidget);
     });
+
+    testWidgets('shows warning dialog when date is old and cancels save',
+        (tester) async {
+      final oldDateState = MovementState(
+        id: '1',
+        title: 'Title',
+        description: 'Description',
+        date: DateTime.now().subtract(const Duration(days: 40)),
+        categories: const [category],
+        category: category,
+        price: 10,
+        company: 'Company',
+        formKey: GlobalKey<FormState>(),
+      );
+      when(() => movementCubit.state).thenReturn(oldDateState);
+
+      await pumpMovementView(tester);
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppAlertDialog), findsOneWidget);
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => movementCubit.saveMovement(any(), any()));
+    });
+
+    testWidgets('shows warning dialog when date is old and confirms save',
+        (tester) async {
+      when(() => movementCubit.saveMovement(any(), any()))
+          .thenAnswer((_) async => true);
+      final oldDateState = MovementState(
+        id: '1',
+        title: 'Title',
+        description: 'Description',
+        date: DateTime.now().subtract(const Duration(days: 40)),
+        categories: const [category],
+        category: category,
+        price: 10,
+        company: 'Company',
+        formKey: GlobalKey<FormState>(),
+      );
+      when(() => movementCubit.state).thenReturn(oldDateState);
+
+      await pumpMovementView(tester);
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppAlertDialog), findsOneWidget);
+
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      verify(() => movementCubit.saveMovement('uid', any())).called(1);
+    });
+
+    testWidgets('cancels delete movement when cancel button is pressed',
+        (tester) async {
+      await pumpMovementView(tester, screenType: MovementScreenType.edit);
+
+      final deleteButton = find.byWidgetPredicate(
+        (widget) =>
+            widget is HugeIcon &&
+            widget.icon == HugeIcons.strokeRoundedDelete02,
+      );
+      expect(deleteButton, findsOneWidget);
+
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppAlertDialog), findsOneWidget);
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => movementCubit.removeMovement());
+    });
   });
 }

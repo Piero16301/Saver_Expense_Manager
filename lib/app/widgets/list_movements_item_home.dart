@@ -32,7 +32,11 @@ class ListMovementsItemHome extends StatelessWidget {
         movement.title,
         style: Theme.of(
           context,
-        ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+        ).textTheme.bodyMedium?.copyWith(
+          fontVariations: <FontVariation>[
+            const FontVariation('wght', 600),
+          ],
+        ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -57,7 +61,11 @@ class ListMovementsItemHome extends StatelessWidget {
             AppExtensions.moneyFormat.format(movement.price),
             style: Theme.of(
               context,
-            ).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w600),
+            ).textTheme.labelLarge!.copyWith(
+              fontVariations: <FontVariation>[
+                const FontVariation('wght', 600),
+              ],
+            ),
             textAlign: TextAlign.center,
           ),
         ),

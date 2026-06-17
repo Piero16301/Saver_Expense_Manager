@@ -29,7 +29,11 @@ class MovementView extends StatelessWidget {
             _appBarTitle(l10n),
             style: Theme.of(
               context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+            ).textTheme.titleLarge?.copyWith(
+              fontVariations: <FontVariation>[
+                const FontVariation('wght', 600),
+              ],
+            ),
           ),
           notificationPredicate: (notification) => false,
           actions: _appBarActions(context, l10n),
@@ -328,9 +332,11 @@ class MovementMetadata extends StatelessWidget {
             text: TextSpan(
               text: 'ID: ',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: Theme.of(context).colorScheme.primary,
+                fontVariations: <FontVariation>[
+                  const FontVariation('wght', 600),
+                ],
+              ),
               children: [
                 TextSpan(
                   text: id,
