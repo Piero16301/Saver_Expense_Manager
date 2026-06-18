@@ -9,8 +9,8 @@ part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({AuthService? authService})
-      : _authService = authService ?? getIt<AuthService>(),
-        super(const ProfileState()) {
+    : _authService = authService ?? getIt<AuthService>(),
+      super(const ProfileState()) {
     _init();
   }
 

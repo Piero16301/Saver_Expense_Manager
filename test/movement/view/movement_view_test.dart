@@ -181,8 +181,9 @@ void main() {
       expect(find.byType(MovementMetadata), findsOneWidget);
     });
 
-    testWidgets('shows warning dialog when date is old and cancels save',
-        (tester) async {
+    testWidgets('shows warning dialog when date is old and cancels save', (
+      tester,
+    ) async {
       final oldDateState = MovementState(
         id: '1',
         title: 'Title',
@@ -208,10 +209,12 @@ void main() {
       verifyNever(() => movementCubit.saveMovement(any(), any()));
     });
 
-    testWidgets('shows warning dialog when date is old and confirms save',
-        (tester) async {
-      when(() => movementCubit.saveMovement(any(), any()))
-          .thenAnswer((_) async => true);
+    testWidgets('shows warning dialog when date is old and confirms save', (
+      tester,
+    ) async {
+      when(
+        () => movementCubit.saveMovement(any(), any()),
+      ).thenAnswer((_) async => true);
       final oldDateState = MovementState(
         id: '1',
         title: 'Title',
@@ -237,8 +240,9 @@ void main() {
       verify(() => movementCubit.saveMovement('uid', any())).called(1);
     });
 
-    testWidgets('cancels delete movement when cancel button is pressed',
-        (tester) async {
+    testWidgets('cancels delete movement when cancel button is pressed', (
+      tester,
+    ) async {
       await pumpMovementView(tester, screenType: MovementScreenType.edit);
 
       final deleteButton = find.byWidgetPredicate(

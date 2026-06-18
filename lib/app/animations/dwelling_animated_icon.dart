@@ -218,7 +218,8 @@ class _DwellingPainter extends CustomPainter {
       final smokeY = startY - phase * (startY - endY);
 
       // Drift slightly right
-      final smokeX = cx +
+      final smokeX =
+          cx +
           w * 0.2 +
           phase * w * 0.15 +
           math.sin(phase * math.pi * 2) * w * 0.05;

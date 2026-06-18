@@ -55,10 +55,12 @@ class MovementsHomeView extends StatelessWidget {
                 categories: categories,
                 filterType: state.filterType,
                 filterCategory: state.filterCategory,
-                onFilterTypeChanged:
-                    context.read<MovementsHomeCubit>().updateFilterType,
-                onFilterCategoryChanged:
-                    context.read<MovementsHomeCubit>().updateFilterCategory,
+                onFilterTypeChanged: context
+                    .read<MovementsHomeCubit>()
+                    .updateFilterType,
+                onFilterCategoryChanged: context
+                    .read<MovementsHomeCubit>()
+                    .updateFilterCategory,
               );
             },
           ),
@@ -117,12 +119,12 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
                     onPressed: state.recommendationsStatus.isLoading
                         ? null
                         : state.recommendationsStatus.isSuccess
-                            ? () => context
-                                .read<MovementsHomeCubit>()
-                                .changeShowRecommendations()
-                            : () => context
-                                .read<MovementsHomeCubit>()
-                                .getRecommendations(l10n: l10n),
+                        ? () => context
+                              .read<MovementsHomeCubit>()
+                              .changeShowRecommendations()
+                        : () => context
+                              .read<MovementsHomeCubit>()
+                              .getRecommendations(l10n: l10n),
                     isOnlyIcon: true,
                     innerPadding: const EdgeInsets.all(6),
                   ),
@@ -437,7 +439,8 @@ class AntRecommendationsWidget extends StatelessWidget {
               child: FadeTransition(opacity: animation, child: child),
             );
           },
-          child: (!state.recommendationsStatus.isSuccess ||
+          child:
+              (!state.recommendationsStatus.isSuccess ||
                   state.recommendations == null ||
                   state.recommendations!.isEmpty ||
                   !state.showRecommendations)

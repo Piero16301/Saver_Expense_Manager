@@ -121,8 +121,8 @@ class RegisterView extends StatelessWidget {
                                 onPressed: state.status.isLoading
                                     ? null
                                     : () => context
-                                        .read<RegisterCubit>()
-                                        .togglePasswordVisibility(),
+                                          .read<RegisterCubit>()
+                                          .togglePasswordVisibility(),
                                 icon: HugeIcon(
                                   icon: state.isPasswordVisible
                                       ? HugeIcons.strokeRoundedView
@@ -152,8 +152,8 @@ class RegisterView extends StatelessWidget {
                                 onPressed: state.status.isLoading
                                     ? null
                                     : () => context
-                                        .read<RegisterCubit>()
-                                        .toggleConfirmPasswordVisibility(),
+                                          .read<RegisterCubit>()
+                                          .toggleConfirmPasswordVisibility(),
                                 icon: HugeIcon(
                                   icon: state.isConfirmPasswordVisible
                                       ? HugeIcons.strokeRoundedView
@@ -174,8 +174,8 @@ class RegisterView extends StatelessWidget {
                               onPressed: state.status.isLoading
                                   ? null
                                   : () => context
-                                      .read<RegisterCubit>()
-                                      .register(l10n),
+                                        .read<RegisterCubit>()
+                                        .register(l10n),
                               icon: const HugeIcon(
                                 icon: HugeIcons.strokeRoundedUserAdd01,
                                 strokeWidth: 2,
@@ -198,13 +198,21 @@ class RegisterView extends StatelessWidget {
                                   onPressed: state.status.isLoading
                                       ? null
                                       : () => context.goNamed(
-                                            AppRoute.login.name,
-                                          ),
+                                          AppRoute.login.name,
+                                        ),
                                   child: Text(
                                     l10n.loginButton,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontVariations: <FontVariation>[
-                                        FontVariation('wght', 600),
+                                        ...(Theme.of(
+                                                      context,
+                                                    )
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.fontVariations ??
+                                                const <FontVariation>[])
+                                            .where((v) => v.axis != 'wght'),
+                                        const FontVariation('wght', 700),
                                       ],
                                     ),
                                   ),

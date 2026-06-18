@@ -137,8 +137,7 @@ void main() {
         AppTextField,
         (await AppLocalizations.delegate.load(
           const Locale('en'),
-        ))
-            .passwordLabel,
+        )).passwordLabel,
       );
       await tester.enterText(
         find.descendant(of: field, matching: find.byType(TextField)),

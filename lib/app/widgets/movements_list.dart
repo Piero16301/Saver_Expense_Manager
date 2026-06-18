@@ -49,13 +49,19 @@ class MovementsList extends StatelessWidget {
             contentPadding: const EdgeInsets.only(left: 8, right: 8),
             title: Text(
               movement.title,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium!.copyWith(
-                fontVariations: <FontVariation>[
-                  const FontVariation('wght', 600),
-                ],
-              ),
+              style:
+                  Theme.of(
+                    context,
+                  ).textTheme.bodyMedium!.copyWith(
+                    fontVariations: <FontVariation>[
+                      ...(Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.fontVariations ??
+                              const <FontVariation>[])
+                          .where((v) => v.axis != 'wght'),
+                      const FontVariation('wght', 700),
+                    ],
+                  ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -77,13 +83,19 @@ class MovementsList extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
                   AppExtensions.moneyFormat.format(movement.price),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall!.copyWith(
-                    fontVariations: <FontVariation>[
-                      const FontVariation('wght', 600),
-                    ],
-                  ),
+                  style:
+                      Theme.of(
+                        context,
+                      ).textTheme.bodySmall!.copyWith(
+                        fontVariations: <FontVariation>[
+                          ...(Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.fontVariations ??
+                                  const <FontVariation>[])
+                              .where((v) => v.axis != 'wght'),
+                          const FontVariation('wght', 700),
+                        ],
+                      ),
                   textAlign: TextAlign.center,
                 ),
               ),

@@ -20,13 +20,19 @@ class CategoryView extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             AppFunctions.getCategoryName(state.category.name, l10n),
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(
-              fontVariations: <FontVariation>[
-                const FontVariation('wght', 600),
-              ],
-            ),
+            style:
+                Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(
+                  fontVariations: <FontVariation>[
+                    ...(Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.fontVariations ??
+                            const <FontVariation>[])
+                        .where((v) => v.axis != 'wght'),
+                    const FontVariation('wght', 700),
+                  ],
+                ),
           ),
           notificationPredicate: (notification) => false,
           leading: IconButton(
@@ -81,7 +87,8 @@ class CategoryIcon extends StatelessWidget {
 
     return SizedBox.square(
       dimension: 200,
-      child: AppFunctions.getCategoryAnimatedIcon(category, 90) ??
+      child:
+          AppFunctions.getCategoryAnimatedIcon(category, 90) ??
           HugeIcon(
             icon: AppFunctions.getCategoryIcon(category.icon),
             size: 70,

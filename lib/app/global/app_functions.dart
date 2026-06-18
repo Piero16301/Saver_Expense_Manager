@@ -88,9 +88,14 @@ class AppFunctions {
             Expanded(
               child: Text(
                 message ?? '',
-                style: const TextStyle(
+                style: TextStyle(
                   fontVariations: <FontVariation>[
-                    FontVariation('wght', 600),
+                    ...(Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.fontVariations ??
+                            const <FontVariation>[])
+                        .where((v) => v.axis != 'wght'),
+                    const FontVariation('wght', 700),
                   ],
                   color: Colors.white,
                 ),
@@ -102,10 +107,10 @@ class AppFunctions {
         backgroundColor: type.isSuccess
             ? Colors.green
             : type.isError
-                ? Colors.red
-                : type.isWarning
-                    ? Colors.orange
-                    : Colors.blue,
+            ? Colors.red
+            : type.isWarning
+            ? Colors.orange
+            : Colors.blue,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
@@ -204,8 +209,9 @@ class AppFunctions {
       }
     }
     for (final category in categories) {
-      final movementsByCategory =
-          movements.where((element) => element.category == category).toList();
+      final movementsByCategory = movements
+          .where((element) => element.category == category)
+          .toList();
       final total = movementsByCategory.fold<double>(
         0,
         (previousValue, element) => previousValue + element.price,
@@ -222,12 +228,14 @@ class AppFunctions {
     required String language,
   }) {
     final data = <LinearChartData>[];
-    for (var i = startMonth;
-        i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
-        i = DateTime(
-      i.month == 12 ? i.year + 1 : i.year,
-      i.month == 12 ? 1 : i.month + 1,
-    )) {
+    for (
+      var i = startMonth;
+      i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
+      i = DateTime(
+        i.month == 12 ? i.year + 1 : i.year,
+        i.month == 12 ? 1 : i.month + 1,
+      )
+    ) {
       final movementsByMonth = movements
           .where(
             (element) =>
@@ -259,12 +267,14 @@ class AppFunctions {
     final incomeData = <LinearChartData>[];
     final expenseData = <LinearChartData>[];
     final balanceData = <LinearChartData>[];
-    for (var i = startMonth;
-        i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
-        i = DateTime(
-      i.month == 12 ? i.year + 1 : i.year,
-      i.month == 12 ? 1 : i.month + 1,
-    )) {
+    for (
+      var i = startMonth;
+      i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
+      i = DateTime(
+        i.month == 12 ? i.year + 1 : i.year,
+        i.month == 12 ? 1 : i.month + 1,
+      )
+    ) {
       final movementsByMonth = movements
           .where(
             (element) =>
@@ -281,8 +291,8 @@ class AppFunctions {
         0,
         (previousValue, element) =>
             element.category.type == CategoryType.expense
-                ? previousValue + element.price
-                : previousValue,
+            ? previousValue + element.price
+            : previousValue,
       );
       final balance = totalIncome - totalExpense;
       incomeData.add(
@@ -354,8 +364,10 @@ class AppFunctions {
       );
     }
 
-    final responseClean =
-        response?.replaceAll('```json', '').replaceAll('```', '').trim();
+    final responseClean = response
+        ?.replaceAll('```json', '')
+        .replaceAll('```', '')
+        .trim();
     var responseJson = <String, dynamic>{};
     if (responseClean?[0] == '[') {
       final responseList = jsonDecode(responseClean ?? '') as List<dynamic>;

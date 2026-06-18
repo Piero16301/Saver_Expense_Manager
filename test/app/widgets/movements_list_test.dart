@@ -84,10 +84,10 @@ void main() {
         ),
       ).thenAnswer(
         (_) => query.snapshots().map(
-              (snapshot) => snapshot.docs
-                  .map((doc) => Movement.fromJson(doc.data()))
-                  .toList(),
-            ),
+          (snapshot) => snapshot.docs
+              .map((doc) => Movement.fromJson(doc.data()))
+              .toList(),
+        ),
       );
     });
 

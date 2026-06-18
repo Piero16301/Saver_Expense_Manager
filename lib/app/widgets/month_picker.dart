@@ -188,20 +188,24 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
       isDisabled = true;
     }
 
-    final isStart = widget.mode == MonthPickerMode.range &&
+    final isStart =
+        widget.mode == MonthPickerMode.range &&
         _startDate != null &&
         _isSameMonth(date, _startDate!);
-    final isEnd = widget.mode == MonthPickerMode.range &&
+    final isEnd =
+        widget.mode == MonthPickerMode.range &&
         _endDate != null &&
         _isSameMonth(date, _endDate!);
-    final isInRange = widget.mode == MonthPickerMode.range &&
+    final isInRange =
+        widget.mode == MonthPickerMode.range &&
         _startDate != null &&
         _endDate != null &&
         date.isAfter(_startDate!) &&
         date.isBefore(_endDate!) &&
         !isStart &&
         !isEnd;
-    final isSingleSelected = widget.mode == MonthPickerMode.single &&
+    final isSingleSelected =
+        widget.mode == MonthPickerMode.single &&
         _selectedDate != null &&
         _isSameMonth(date, _selectedDate!);
     final isToday = _isSameMonth(date, DateTime.now());
@@ -225,10 +229,15 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
             color: isDisabled
                 ? colorScheme.onSurface.withValues(alpha: 0.38)
                 : isSelectedCircle
-                    ? colorScheme.onPrimary
-                    : colorScheme.onSurface,
+                ? colorScheme.onPrimary
+                : colorScheme.onSurface,
             fontVariations: <FontVariation>[
-              FontVariation('wght', isToday || isSelectedCircle ? 600 : 100),
+              ...(Theme.of(context).textTheme.bodyMedium?.fontVariations ??
+                      const <FontVariation>[])
+                  .where(
+                    (v) => v.axis != 'wght',
+                  ),
+              FontVariation('wght', isToday || isSelectedCircle ? 700 : 400),
             ],
           ),
         ),
@@ -378,7 +387,12 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                       style: textTheme.titleMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                         fontVariations: <FontVariation>[
-                          const FontVariation('wght', 600),
+                          ...(Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium?.fontVariations ??
+                                  const <FontVariation>[])
+                              .where((v) => v.axis != 'wght'),
+                          const FontVariation('wght', 700),
                         ],
                       ),
                     ),

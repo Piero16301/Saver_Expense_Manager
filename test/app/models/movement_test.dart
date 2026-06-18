@@ -15,16 +15,16 @@ void main() {
     const user = 'user';
 
     Movement createSubject() => Movement(
-          id: id,
-          title: title,
-          description: description,
-          date: date,
-          category: category,
-          price: price,
-          company: company,
-          attachments: attachments,
-          user: user,
-        );
+      id: id,
+      title: title,
+      description: description,
+      date: date,
+      category: category,
+      price: price,
+      company: company,
+      attachments: attachments,
+      user: user,
+    );
 
     test('supports value equality', () {
       expect(createSubject(), equals(createSubject()));

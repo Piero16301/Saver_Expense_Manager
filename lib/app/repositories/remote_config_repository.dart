@@ -62,7 +62,7 @@ class MockRemoteConfigRepository implements RemoteConfigRepository {
 
 class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
   FirebaseRemoteConfigRepository({FirebaseRemoteConfig? remoteConfig})
-      : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance;
+    : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance;
 
   final FirebaseRemoteConfig _remoteConfig;
 
@@ -114,13 +114,13 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
 
   @override
   String get geminiPromptExtractReceiptData => _remoteConfig.getString(
-        RemoteConfigRepository.configGeminiPromptExtractReceiptData,
-      );
+    RemoteConfigRepository.configGeminiPromptExtractReceiptData,
+  );
 
   @override
   String get geminiPromptDetectAntExpense => _remoteConfig.getString(
-        RemoteConfigRepository.configGeminiPromptDetectAntExpense,
-      );
+    RemoteConfigRepository.configGeminiPromptDetectAntExpense,
+  );
 
   @override
   int get geminiAntLookbackDays =>

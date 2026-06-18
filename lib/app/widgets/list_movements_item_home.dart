@@ -30,13 +30,17 @@ class ListMovementsItemHome extends StatelessWidget {
       contentPadding: const EdgeInsets.only(left: 8, right: 8),
       title: Text(
         movement.title,
-        style: Theme.of(
-          context,
-        ).textTheme.bodyMedium?.copyWith(
-          fontVariations: <FontVariation>[
-            const FontVariation('wght', 600),
-          ],
-        ),
+        style:
+            Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(
+              fontVariations: <FontVariation>[
+                ...(Theme.of(context).textTheme.bodyMedium?.fontVariations ??
+                        const <FontVariation>[])
+                    .where((v) => v.axis != 'wght'),
+                const FontVariation('wght', 700),
+              ],
+            ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -49,23 +53,30 @@ class ListMovementsItemHome extends StatelessWidget {
       trailing: Container(
         width: 90,
         decoration: BoxDecoration(
-          color: (movement.category.type == CategoryType.expense
-                  ? Colors.red
-                  : Colors.green)
-              .withValues(alpha: 0.3),
+          color:
+              (movement.category.type == CategoryType.expense
+                      ? Colors.red
+                      : Colors.green)
+                  .withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
           child: Text(
             AppExtensions.moneyFormat.format(movement.price),
-            style: Theme.of(
-              context,
-            ).textTheme.labelLarge!.copyWith(
-              fontVariations: <FontVariation>[
-                const FontVariation('wght', 600),
-              ],
-            ),
+            style:
+                Theme.of(
+                  context,
+                ).textTheme.labelLarge!.copyWith(
+                  fontVariations: <FontVariation>[
+                    ...(Theme.of(
+                              context,
+                            ).textTheme.labelLarge?.fontVariations ??
+                            const <FontVariation>[])
+                        .where((v) => v.axis != 'wght'),
+                    const FontVariation('wght', 700),
+                  ],
+                ),
             textAlign: TextAlign.center,
           ),
         ),

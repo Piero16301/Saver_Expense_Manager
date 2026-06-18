@@ -7,8 +7,8 @@ part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit({AuthService? authService})
-      : _authService = authService ?? getIt<AuthService>(),
-        super(const LoginState());
+    : _authService = authService ?? getIt<AuthService>(),
+      super(const LoginState());
 
   final AuthService _authService;
 

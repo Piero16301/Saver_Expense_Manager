@@ -53,15 +53,15 @@ class MovementState extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        description,
-        date,
-        categories,
-        category,
-        price,
-        company,
-        attachments,
-        formKey,
-      ];
+    id,
+    title,
+    description,
+    date,
+    categories,
+    category,
+    price,
+    company,
+    attachments,
+    formKey,
+  ];
 }

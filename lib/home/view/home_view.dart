@@ -92,12 +92,12 @@ class HomeView extends StatelessWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
                                   HugeIcon(
-                                icon: HugeIcons.strokeRoundedUser,
-                                strokeWidth: 2,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.primary,
-                              ),
+                                    icon: HugeIcons.strokeRoundedUser,
+                                    strokeWidth: 2,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                  ),
                             ),
                           ),
                         ),
@@ -239,8 +239,9 @@ class AddMovementBottomSheet extends StatelessWidget {
   Future<void> handleFilePick(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final language = context.read<AppCubit>().state.language;
-    final selectedCategories =
-        categories.where((c) => c.type == movementType).toList();
+    final selectedCategories = categories
+        .where((c) => c.type == movementType)
+        .toList();
     final loader = AppLoader(context);
 
     try {
@@ -264,8 +265,9 @@ class AddMovementBottomSheet extends StatelessWidget {
 
       unawaited(
         loader.showLoading(
-          message:
-              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+          message: modelType.isCloud
+              ? l10n.usingModelCloud
+              : l10n.usingModelLocal,
         ),
       );
 
@@ -354,8 +356,9 @@ class AddMovementBottomSheet extends StatelessWidget {
   Future<void> handleDocumentScan(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
     final language = context.read<AppCubit>().state.language;
-    final selectedCategories =
-        categories.where((c) => c.type == movementType).toList();
+    final selectedCategories = categories
+        .where((c) => c.type == movementType)
+        .toList();
     final loader = AppLoader(context);
 
     try {
@@ -377,8 +380,9 @@ class AddMovementBottomSheet extends StatelessWidget {
 
       unawaited(
         loader.showLoading(
-          message:
-              modelType.isCloud ? l10n.usingModelCloud : l10n.usingModelLocal,
+          message: modelType.isCloud
+              ? l10n.usingModelCloud
+              : l10n.usingModelLocal,
         ),
       );
 

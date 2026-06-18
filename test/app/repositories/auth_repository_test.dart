@@ -292,8 +292,7 @@ void main() {
       verify(() => mockUser.reload()).called(1);
     });
 
-    test(
-        'linkWithGoogle calls googleSignIn, authenticate, and '
+    test('linkWithGoogle calls googleSignIn, authenticate, and '
         'linkWithCredential', () async {
       final mockGoogleAccount = MockGoogleSignInAccount();
       final mockGoogleAuth = MockGoogleSignInAuthentication();
@@ -319,8 +318,7 @@ void main() {
       ).called(1);
     });
 
-    test(
-        'signInWithGoogle calls googleSignIn, authenticate, and '
+    test('signInWithGoogle calls googleSignIn, authenticate, and '
         'signInWithCredential', () async {
       final mockGoogleAccount = MockGoogleSignInAccount();
       final mockGoogleAuth = MockGoogleSignInAuthentication();

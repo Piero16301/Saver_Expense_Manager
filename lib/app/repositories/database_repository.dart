@@ -107,7 +107,7 @@ class MockDatabaseRepository implements DatabaseRepository {
 
 class FirestoreDatabaseRepository implements DatabaseRepository {
   FirestoreDatabaseRepository({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
 
@@ -139,8 +139,10 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
         .collection(AppVariables.categoriesCollection)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) => Category.fromJson(doc.data())).toList();
-    });
+          return snapshot.docs
+              .map((doc) => Category.fromJson(doc.data()))
+              .toList();
+        });
   }
 
   @override

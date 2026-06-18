@@ -45,10 +45,10 @@ class ProfileState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        user,
-        userName,
-        isEditingName,
-        errorMessage,
-      ];
+    status,
+    user,
+    userName,
+    isEditingName,
+    errorMessage,
+  ];
 }

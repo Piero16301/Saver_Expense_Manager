@@ -7,8 +7,8 @@ part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
   RegisterCubit({AuthService? authService})
-      : _authService = authService ?? getIt<AuthService>(),
-        super(const RegisterState());
+    : _authService = authService ?? getIt<AuthService>(),
+      super(const RegisterState());
 
   final AuthService _authService;
 

@@ -109,7 +109,9 @@ class _TripsPainter extends CustomPainter {
             final clearTrailPaint = Paint()
               ..blendMode = BlendMode.clear
               ..style = PaintingStyle.stroke
-              ..strokeWidth = w * 0.035 // Thicker for a nice gap
+              ..strokeWidth =
+                  w *
+                  0.035 // Thicker for a nice gap
               ..strokeCap = StrokeCap.round;
             canvas.drawLine(p1, p2, clearTrailPaint);
           } else if (!clearMode) {

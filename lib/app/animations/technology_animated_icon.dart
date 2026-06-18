@@ -78,8 +78,8 @@ class _TechnologyPainter extends CustomPainter {
 
     // Background pulsing glow (behind CPU)
     final pulseScale = 1.0 + math.sin(animationValue * math.pi * 2) * 0.15;
-    final glowOpacity =
-        (0.5 + math.sin(animationValue * math.pi * 2) * 0.3).clamp(0.0, 1.0);
+    final glowOpacity = (0.5 + math.sin(animationValue * math.pi * 2) * 0.3)
+        .clamp(0.0, 1.0);
 
     final glowPaint = Paint()
       ..color = color.withValues(alpha: glowOpacity * 0.4)

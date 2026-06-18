@@ -99,7 +99,8 @@ class _DividendsPainter extends CustomPainter {
           pieCenter.dx + math.cos(-math.pi / 4) * (coinPhase * w * 0.8);
       // add a parabolic arc to the y motion
       final arcMod = math.sin(coinPhase * math.pi) * h * 0.25;
-      final coinY = pieCenter.dy +
+      final coinY =
+          pieCenter.dy +
           math.sin(-math.pi / 4) * (coinPhase * w * 0.8) -
           arcMod;
 

@@ -102,8 +102,8 @@ class LoginView extends StatelessWidget {
                                 onPressed: state.status.isLoading
                                     ? null
                                     : () => context
-                                        .read<LoginCubit>()
-                                        .togglePasswordVisibility(),
+                                          .read<LoginCubit>()
+                                          .togglePasswordVisibility(),
                                 icon: HugeIcon(
                                   icon: state.isPasswordVisible
                                       ? HugeIcons.strokeRoundedView
@@ -125,8 +125,8 @@ class LoginView extends StatelessWidget {
                               onPressed: state.status.isLoading
                                   ? null
                                   : () => context
-                                      .read<LoginCubit>()
-                                      .loginWithEmail(l10n),
+                                        .read<LoginCubit>()
+                                        .loginWithEmail(l10n),
                               icon: const HugeIcon(
                                 icon: HugeIcons.strokeRoundedLogin01,
                                 strokeWidth: 2,
@@ -142,8 +142,8 @@ class LoginView extends StatelessWidget {
                               onPressed: state.status.isLoading
                                   ? null
                                   : () => context
-                                      .read<LoginCubit>()
-                                      .loginWithGoogle(l10n),
+                                        .read<LoginCubit>()
+                                        .loginWithGoogle(l10n),
                               icon: HugeIcons.strokeRoundedGoogle,
                               label: l10n.googleLoginButton,
                             ),
@@ -161,13 +161,21 @@ class LoginView extends StatelessWidget {
                                   onPressed: state.status.isLoading
                                       ? null
                                       : () => context.push(
-                                            AppRoute.register.path,
-                                          ),
+                                          AppRoute.register.path,
+                                        ),
                                   child: Text(
                                     l10n.registerButton,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontVariations: <FontVariation>[
-                                        FontVariation('wght', 600),
+                                        ...(Theme.of(
+                                                      context,
+                                                    )
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.fontVariations ??
+                                                const <FontVariation>[])
+                                            .where((v) => v.axis != 'wght'),
+                                        const FontVariation('wght', 700),
                                       ],
                                     ),
                                   ),

@@ -4,10 +4,10 @@ class PromptPart {
   const PromptPart({required this.type, this.text, this.mimeType, this.bytes});
 
   PromptPart.text({required String text})
-      : this(type: PromptPartType.text, text: text);
+    : this(type: PromptPartType.text, text: text);
 
   PromptPart.file({required String mimeType, required Uint8List bytes})
-      : this(type: PromptPartType.file, mimeType: mimeType, bytes: bytes);
+    : this(type: PromptPartType.file, mimeType: mimeType, bytes: bytes);
 
   final PromptPartType type;
   final String? text;

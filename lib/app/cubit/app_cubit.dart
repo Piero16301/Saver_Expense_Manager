@@ -17,7 +17,8 @@ class AppCubit extends Cubit<AppState> {
     final language = localStorage.getLanguage();
     if (language == null) {
       final deviceLocale = Platform.localeName.split('_').first;
-      final deviceLanguage = AppVariables.deviceLanguageMap[deviceLocale] ??
+      final deviceLanguage =
+          AppVariables.deviceLanguageMap[deviceLocale] ??
           AppVariables.supportedLocales.first;
       localStorage.saveLanguage(language: deviceLanguage);
     }
@@ -36,13 +37,14 @@ class AppCubit extends Cubit<AppState> {
 
     // Setting the font family to Popping if it's not set
     var fontFamily = localStorage.getFontFamily();
-    final isFontSupported = fontFamily != null &&
+    final isFontSupported =
+        fontFamily != null &&
         AppVariables.availableFonts.containsValue(fontFamily);
 
     if (!isFontSupported) {
       final defaultFont =
           AppVariables.availableFonts[AppVariables.defaultFontFamily] ??
-              AppVariables.defaultFontFamily;
+          AppVariables.defaultFontFamily;
       localStorage.saveFontFamily(fontFamily: defaultFont);
       fontFamily = defaultFont;
     }

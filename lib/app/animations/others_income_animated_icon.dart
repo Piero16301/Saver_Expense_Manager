@@ -122,7 +122,8 @@ class _OthersIncomePainter extends CustomPainter {
         bool isCoin = false,
       }) {
         final itemX = startX + t * endXOffset;
-        final itemY = baseCy -
+        final itemY =
+            baseCy -
             boxH * 0.4 -
             math.sin(t * math.pi) * arcHeight -
             (t * h * 0.2); // parabolic + drifting up

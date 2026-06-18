@@ -20,8 +20,7 @@ class FakeUploadTask extends Fake implements UploadTask {
   Future<T> then<T>(
     FutureOr<T> Function(TaskSnapshot) onValue, {
     Function? onError,
-  }) =>
-      Future.value(onValue(MockTaskSnapshot()));
+  }) => Future.value(onValue(MockTaskSnapshot()));
 }
 
 class MockTaskSnapshot extends Mock implements TaskSnapshot {}

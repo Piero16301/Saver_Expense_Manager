@@ -31,13 +31,13 @@ class AppUserInfo extends Equatable {
 
   @override
   List<Object?> get props => [
-        uid,
-        providerId,
-        email,
-        displayName,
-        photoURL,
-        phoneNumber,
-      ];
+    uid,
+    providerId,
+    email,
+    displayName,
+    photoURL,
+    phoneNumber,
+  ];
 }
 
 class AppUser extends Equatable {
@@ -57,8 +57,9 @@ class AppUser extends Equatable {
       displayName: user.displayName,
       photoURL: user.photoURL,
       phoneNumber: user.phoneNumber,
-      providerData:
-          user.providerData.map(AppUserInfo.fromFirebaseUserInfo).toList(),
+      providerData: user.providerData
+          .map(AppUserInfo.fromFirebaseUserInfo)
+          .toList(),
     );
   }
 
@@ -76,11 +77,11 @@ class AppUser extends Equatable {
 
   @override
   List<Object?> get props => [
-        uid,
-        email,
-        displayName,
-        photoURL,
-        phoneNumber,
-        providerData,
-      ];
+    uid,
+    email,
+    displayName,
+    photoURL,
+    phoneNumber,
+    providerData,
+  ];
 }
