@@ -141,7 +141,8 @@ class _InvestmentsPainter extends CustomPainter {
       final uuu = uu * u;
       final ttt = tt * t;
 
-      final p = startP * uuu +
+      final p =
+          startP * uuu +
           ctrl1 * (3 * uu * t) +
           ctrl2 * (3 * u * tt) +
           endP * ttt;

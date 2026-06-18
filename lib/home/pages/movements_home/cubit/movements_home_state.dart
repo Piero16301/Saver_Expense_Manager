@@ -46,10 +46,10 @@ class MovementsHomeState extends Equatable {
 
   @override
   List<Object?> get props => [
-        filterType,
-        filterCategory,
-        recommendationsStatus,
-        recommendations,
-        showRecommendations,
-      ];
+    filterType,
+    filterCategory,
+    recommendationsStatus,
+    recommendations,
+    showRecommendations,
+  ];
 }

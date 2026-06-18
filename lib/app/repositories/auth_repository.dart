@@ -60,8 +60,7 @@ class MockAuthRepository implements AuthRepository {
   Future<bool> linkWithEmailPassword({
     required String email,
     required String password,
-  }) async =>
-      true;
+  }) async => true;
 
   @override
   Future<bool> signInWithGoogle() async => true;
@@ -70,15 +69,13 @@ class MockAuthRepository implements AuthRepository {
   Future<bool> signInWithEmailAndPassword(
     String email,
     String password,
-  ) async =>
-      true;
+  ) async => true;
 
   @override
   Future<bool> signUpWithEmailAndPassword(
     String email,
     String password,
-  ) async =>
-      true;
+  ) async => true;
 
   @override
   Future<bool> updateUserName(String newName) async => true;
@@ -86,8 +83,8 @@ class MockAuthRepository implements AuthRepository {
 
 class FirebaseAuthRepository implements AuthRepository {
   FirebaseAuthRepository({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
-      : _auth = auth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+    : _auth = auth ?? FirebaseAuth.instance,
+      _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
@@ -110,13 +107,13 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Stream<AppUser?> get userChanges => _auth.userChanges().map(
-        (u) => u == null ? null : AppUser.fromFirebaseUser(u),
-      );
+    (u) => u == null ? null : AppUser.fromFirebaseUser(u),
+  );
 
   @override
   Stream<AppUser?> get authStateChanges => _auth.authStateChanges().map(
-        (u) => u == null ? null : AppUser.fromFirebaseUser(u),
-      );
+    (u) => u == null ? null : AppUser.fromFirebaseUser(u),
+  );
 
   @override
   AppUser? get currentUser => _auth.currentUser == null

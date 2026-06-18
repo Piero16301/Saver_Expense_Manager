@@ -110,7 +110,7 @@ flutter {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.20")
     implementation("androidx.activity:activity-ktx:1.9.3")
 }
 

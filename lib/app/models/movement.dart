@@ -32,7 +32,8 @@ class Movement extends Equatable {
       ),
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       company: json['company'] as String? ?? '',
-      attachments: (json['attachments'] as List<dynamic>?)
+      attachments:
+          (json['attachments'] as List<dynamic>?)
               ?.map((e) => e as String? ?? '')
               .toList() ??
           [],
@@ -142,14 +143,14 @@ class Movement extends Equatable {
 
   @override
   List<Object> get props => [
-        id,
-        title,
-        description,
-        date,
-        category,
-        price,
-        company,
-        attachments,
-        user,
-      ];
+    id,
+    title,
+    description,
+    date,
+    category,
+    price,
+    company,
+    attachments,
+    user,
+  ];
 }

@@ -29,21 +29,19 @@ class MockAiRepository implements AiRepository {
   Future<String?> generateContentRemote({
     required List<PromptPart> prompt,
     String responseMimeType = 'text/plain',
-  }) async =>
-      null;
+  }) async => null;
 
   @override
   Future<String?> generateContentLocal({
     required PromptPart textPrompt,
     PromptPart? imagePrompt,
-  }) async =>
-      null;
+  }) async => null;
 }
 
 class GeminiAiRepository implements AiRepository {
   GeminiAiRepository({Dio? dio, GeminiNanoAndroid? localModel})
-      : _dio = dio ?? Dio(),
-        _localModel = localModel ?? GeminiNanoAndroid();
+    : _dio = dio ?? Dio(),
+      _localModel = localModel ?? GeminiNanoAndroid();
 
   final Dio _dio;
   final GeminiNanoAndroid _localModel;

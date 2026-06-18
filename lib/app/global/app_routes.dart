@@ -21,8 +21,9 @@ class AppRoutes {
         AppRouteObserver(analyticsService: getIt<AnalyticsService>()),
       ],
       redirect: redirect,
-      initialLocation:
-          authService.isLoggedIn ? AppRoute.home.path : AppRoute.login.path,
+      initialLocation: authService.isLoggedIn
+          ? AppRoute.home.path
+          : AppRoute.login.path,
       routes: [
         GoRoute(
           name: AppRoute.register.name,
@@ -55,7 +56,8 @@ class AppRoutes {
                 );
                 final type =
                     state.pathParameters['type'] ?? CategoryType.expense.value;
-                final screenType = state.pathParameters['screenType'] ??
+                final screenType =
+                    state.pathParameters['screenType'] ??
                     MovementScreenType.add.name.toUpperCase();
                 return MovementPage(
                   movement: movement,
@@ -64,8 +66,8 @@ class AppRoutes {
                       : CategoryType.income,
                   screenType:
                       screenType == MovementScreenType.add.name.toUpperCase()
-                          ? MovementScreenType.add
-                          : MovementScreenType.edit,
+                      ? MovementScreenType.add
+                      : MovementScreenType.edit,
                 );
               },
             ),
@@ -131,8 +133,8 @@ class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners();
     _subscription = stream.asBroadcastStream().listen(
-          (dynamic _) => notifyListeners(),
-        );
+      (dynamic _) => notifyListeners(),
+    );
   }
 
   late final StreamSubscription<dynamic> _subscription;

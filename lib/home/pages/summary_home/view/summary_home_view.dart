@@ -163,9 +163,9 @@ class ResumeMovementsChart extends StatelessWidget {
         difference: pastMonthIncomes == 0
             ? (currentMonthIncomes > 0 ? 100 : 0)
             : ((currentMonthIncomes - pastMonthIncomes) /
-                    pastMonthIncomes *
-                    100)
-                .roundToDouble(),
+                      pastMonthIncomes *
+                      100)
+                  .roundToDouble(),
         color: AppVariables.incomeColor,
         isSelected: selResumeItems[ResumeItemType.income] ?? true,
         onTap: onChangeResumeItems,
@@ -176,9 +176,9 @@ class ResumeMovementsChart extends StatelessWidget {
         difference: pastMonthBalance == 0
             ? (currentMonthBalance > 0 ? 100 : 0)
             : ((currentMonthBalance - pastMonthBalance) /
-                    pastMonthBalance *
-                    100)
-                .roundToDouble(),
+                      pastMonthBalance *
+                      100)
+                  .roundToDouble(),
         color: AppVariables.balanceColor,
         isSelected: selResumeItems[ResumeItemType.balance] ?? true,
         onTap: onChangeResumeItems,
@@ -189,9 +189,9 @@ class ResumeMovementsChart extends StatelessWidget {
         difference: pastMonthExpenses == 0
             ? (currentMonthExpenses > 0 ? 100 : 0)
             : ((currentMonthExpenses - pastMonthExpenses) /
-                    pastMonthExpenses *
-                    100)
-                .roundToDouble(),
+                      pastMonthExpenses *
+                      100)
+                  .roundToDouble(),
         color: AppVariables.expenseColor,
         isSelected: selResumeItems[ResumeItemType.expense] ?? true,
         onTap: onChangeResumeItems,
@@ -279,8 +279,9 @@ class ResumeItemCardMovements extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color:
-                isSelected ? color.withValues(alpha: 0.5) : Colors.transparent,
+            color: isSelected
+                ? color.withValues(alpha: 0.5)
+                : Colors.transparent,
             width: 2,
           ),
         ),
@@ -300,8 +301,8 @@ class ResumeItemCardMovements extends StatelessWidget {
                     Text(
                       _title(context),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                          ),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -309,7 +310,12 @@ class ResumeItemCardMovements extends StatelessWidget {
                   _valueFormatted(),
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     fontVariations: <FontVariation>[
-                      const FontVariation('wght', 600),
+                      ...(Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.fontVariations ??
+                              const <FontVariation>[])
+                          .where((v) => v.axis != 'wght'),
+                      const FontVariation('wght', 700),
                     ],
                     color: color,
                   ),
@@ -331,7 +337,12 @@ class ResumeItemCardMovements extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: _differenceColor,
                         fontVariations: <FontVariation>[
-                          const FontVariation('wght', 600),
+                          ...(Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.fontVariations ??
+                                  const <FontVariation>[])
+                              .where((v) => v.axis != 'wght'),
+                          const FontVariation('wght', 700),
                         ],
                       ),
                     ),
@@ -679,7 +690,12 @@ class CategoryExpenseCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: _rankingColor,
                         fontVariations: <FontVariation>[
-                          const FontVariation('wght', 600),
+                          ...(Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.fontVariations ??
+                                  const <FontVariation>[])
+                              .where((v) => v.axis != 'wght'),
+                          const FontVariation('wght', 700),
                         ],
                       ),
                     ),
@@ -692,8 +708,8 @@ class CategoryExpenseCard extends StatelessWidget {
                   Text(
                     AppFunctions.getCategoryName(category.name, l10n),
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w400,
-                        ),
+                      fontWeight: FontWeight.w400,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -702,7 +718,12 @@ class CategoryExpenseCard extends StatelessWidget {
                     AppExtensions.moneyFormat.format(amount),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontVariations: <FontVariation>[
-                        const FontVariation('wght', 600),
+                        ...(Theme.of(
+                                  context,
+                                ).textTheme.titleLarge?.fontVariations ??
+                                const <FontVariation>[])
+                            .where((v) => v.axis != 'wght'),
+                        const FontVariation('wght', 700),
                       ],
                     ),
                     maxLines: 1,
@@ -722,11 +743,11 @@ class CategoryExpenseCard extends StatelessWidget {
                   Text(
                     l10n.summaryPercentageOfTotal(percentage.toInt()),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
-                          fontWeight: FontWeight.w500,
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),

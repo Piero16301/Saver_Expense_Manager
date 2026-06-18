@@ -1,8 +1,7 @@
 import 'package:saver_expense_manager/app/app.dart';
 
 class AuthService {
-  AuthService({required AuthRepository authRepository})
-      : _authRepository = authRepository;
+  AuthService({required this._authRepository});
 
   final AuthRepository _authRepository;
 
@@ -31,8 +30,7 @@ class AuthService {
   Future<bool> linkWithEmailPassword({
     required String email,
     required String password,
-  }) =>
-      _authRepository.linkWithEmailPassword(email: email, password: password);
+  }) => _authRepository.linkWithEmailPassword(email: email, password: password);
 
   Future<bool> signInWithGoogle() => _authRepository.signInWithGoogle();
 

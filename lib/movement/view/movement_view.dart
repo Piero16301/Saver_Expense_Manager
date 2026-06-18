@@ -27,13 +27,19 @@ class MovementView extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             _appBarTitle(l10n),
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(
-              fontVariations: <FontVariation>[
-                const FontVariation('wght', 600),
-              ],
-            ),
+            style:
+                Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(
+                  fontVariations: <FontVariation>[
+                    ...(Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.fontVariations ??
+                            const <FontVariation>[])
+                        .where((v) => v.axis != 'wght'),
+                    const FontVariation('wght', 700),
+                  ],
+                ),
           ),
           notificationPredicate: (notification) => false,
           actions: _appBarActions(context, l10n),
@@ -81,8 +87,9 @@ class MovementView extends StatelessWidget {
                         label: l10n.movementDescription,
                         hintText: l10n.movementDescriptionHint,
                         errorText: l10n.movementDescriptionError,
-                        onChanged:
-                            context.read<MovementCubit>().descriptionChanged,
+                        onChanged: context
+                            .read<MovementCubit>()
+                            .descriptionChanged,
                         prefix: const HugeIcon(
                           icon: HugeIcons.strokeRoundedNote,
                         ),
@@ -94,8 +101,9 @@ class MovementView extends StatelessWidget {
                       AppDateField(
                         label: l10n.movementDate,
                         initialDate: state.date!,
-                        onDateChanged:
-                            context.read<MovementCubit>().dateChanged,
+                        onDateChanged: context
+                            .read<MovementCubit>()
+                            .dateChanged,
                       ),
                       const SizedBox(height: 20),
                       AppDropdownField<Category>(
@@ -130,8 +138,9 @@ class MovementView extends StatelessWidget {
                         leadingIcon: AppFunctions.getCategoryIcon(
                           state.category!.icon,
                         ),
-                        onChanged:
-                            context.read<MovementCubit>().categoryChanged,
+                        onChanged: context
+                            .read<MovementCubit>()
+                            .categoryChanged,
                       ),
                       const SizedBox(height: 20),
                       AppTextField(
@@ -334,7 +343,10 @@ class MovementMetadata extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.primary,
                 fontVariations: <FontVariation>[
-                  const FontVariation('wght', 600),
+                  ...(Theme.of(context).textTheme.bodyMedium?.fontVariations ??
+                          const <FontVariation>[])
+                      .where((v) => v.axis != 'wght'),
+                  const FontVariation('wght', 700),
                 ],
               ),
               children: [

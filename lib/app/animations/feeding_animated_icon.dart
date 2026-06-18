@@ -134,8 +134,9 @@ class _FeedingPainter extends CustomPainter {
     final isResting = phase < 0;
 
     // Shake slightly when resting
-    final shake =
-        isResting ? math.sin(animationValue * math.pi * 16) * (h * 0.005) : 0.0;
+    final shake = isResting
+        ? math.sin(animationValue * math.pi * 16) * (h * 0.005)
+        : 0.0;
     final lift = math.max(0, phase) * (h * 0.12) + math.max(0.0, shake);
     final tilt = math.max(0, phase) * 0.12;
 

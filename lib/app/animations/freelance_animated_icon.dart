@@ -263,7 +263,8 @@ class _FreelancePainter extends CustomPainter {
       ) {
         final phase = (animationValue * speed + phaseOffset) % 1.0;
         final startX = cx - w * 0.05 - innerScreen.width / 2 + w * 0.04;
-        final endX = startX +
+        final endX =
+            startX +
             innerScreen.width *
                 widthFactor *
                 (0.3 + 0.7 * math.sin(phase * math.pi));

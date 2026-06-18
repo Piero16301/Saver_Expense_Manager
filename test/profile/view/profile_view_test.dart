@@ -63,9 +63,9 @@ void main() {
                 path: 'profile',
                 builder: (routeContext, routeState) =>
                     BlocProvider<ProfileCubit>(
-                  create: (_) => profileCubit,
-                  child: const ProfileView(),
-                ),
+                      create: (_) => profileCubit,
+                      child: const ProfileView(),
+                    ),
               ),
             ],
           ),

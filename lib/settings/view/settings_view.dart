@@ -20,13 +20,19 @@ class SettingsView extends StatelessWidget {
           appBar: AppBar(
             title: Text(
               l10n.settingsAppBarTitle,
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(
-                fontVariations: <FontVariation>[
-                  const FontVariation('wght', 600),
-                ],
-              ),
+              style:
+                  Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(
+                    fontVariations: <FontVariation>[
+                      ...(Theme.of(
+                                context,
+                              ).textTheme.titleLarge?.fontVariations ??
+                              const <FontVariation>[])
+                          .where((v) => v.axis != 'wght'),
+                      const FontVariation('wght', 700),
+                    ],
+                  ),
             ),
             notificationPredicate: (notification) => false,
             leading: IconButton(
@@ -143,8 +149,8 @@ class ThemeSettingsCard extends StatelessWidget {
                 icon: themeMode == ThemeMode.light
                     ? HugeIcons.strokeRoundedSun03
                     : (themeMode == ThemeMode.dark
-                        ? HugeIcons.strokeRoundedMoon02
-                        : HugeIcons.strokeRoundedSmartPhone01),
+                          ? HugeIcons.strokeRoundedMoon02
+                          : HugeIcons.strokeRoundedSmartPhone01),
                 size: 20,
                 strokeWidth: 2,
               ),
@@ -291,8 +297,8 @@ class FontSettingsCard extends StatelessWidget {
     final validValue = fontItems.any((item) => item.value == state.fontFamily)
         ? state.fontFamily
         : (AppVariables.availableFonts[state.fontFamily] ??
-            fontItems.firstOrNull?.value ??
-            state.fontFamily);
+              fontItems.firstOrNull?.value ??
+              state.fontFamily);
 
     return SettingsCardBlock<String>(
       title: l10n.settingsFontTitle,

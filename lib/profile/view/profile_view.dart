@@ -32,13 +32,19 @@ class ProfileView extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             l10n.profileTitle,
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(
-              fontVariations: <FontVariation>[
-                const FontVariation('wght', 600),
-              ],
-            ),
+            style:
+                Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(
+                  fontVariations: <FontVariation>[
+                    ...(Theme.of(
+                              context,
+                            ).textTheme.titleLarge?.fontVariations ??
+                            const <FontVariation>[])
+                        .where((v) => v.axis != 'wght'),
+                    const FontVariation('wght', 700),
+                  ],
+                ),
           ),
           notificationPredicate: (notification) => false,
           leading: IconButton(
@@ -123,15 +129,15 @@ class ProfileView extends StatelessWidget {
                                     fit: BoxFit.cover,
                                     errorBuilder:
                                         (context, error, stackTrace) => Padding(
-                                      padding: const EdgeInsets.all(14),
-                                      child: HugeIcon(
-                                        icon: HugeIcons.strokeRoundedUser,
-                                        strokeWidth: 2,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                      ),
-                                    ),
+                                          padding: const EdgeInsets.all(14),
+                                          child: HugeIcon(
+                                            icon: HugeIcons.strokeRoundedUser,
+                                            strokeWidth: 2,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                        ),
                                   ),
                                 ),
                               ),
@@ -218,12 +224,12 @@ class ProfileView extends StatelessWidget {
                               isConnected: isGoogleLinked,
                               subtitle: isGoogleLinked
                                   ? providers
-                                      .firstWhere(
-                                        (p) =>
-                                            p.providerId ==
-                                            AppVariables.googleProvider,
-                                      )
-                                      .email!
+                                        .firstWhere(
+                                          (p) =>
+                                              p.providerId ==
+                                              AppVariables.googleProvider,
+                                        )
+                                        .email!
                                   : null,
                               onLink: () =>
                                   context.read<ProfileCubit>().linkGoogle(l10n),
@@ -241,12 +247,12 @@ class ProfileView extends StatelessWidget {
                               isConnected: isEmailLinked,
                               subtitle: isEmailLinked
                                   ? providers
-                                      .firstWhere(
-                                        (p) =>
-                                            p.providerId ==
-                                            AppVariables.emailProvider,
-                                      )
-                                      .email!
+                                        .firstWhere(
+                                          (p) =>
+                                              p.providerId ==
+                                              AppVariables.emailProvider,
+                                        )
+                                        .email!
                                   : null,
                               onLink: () => _showLinkEmailDialog(context),
                               onUnlink: () => _unlinkProvider(
@@ -353,10 +359,10 @@ class ProfileView extends StatelessWidget {
             if (formKey.currentState?.validate() ?? false) {
               unawaited(
                 context.read<ProfileCubit>().linkEmail(
-                      l10n,
-                      email: emailController.text,
-                      password: passwordController.text,
-                    ),
+                  l10n,
+                  email: emailController.text,
+                  password: passwordController.text,
+                ),
               );
               Navigator.of(context).pop();
             }
@@ -481,13 +487,17 @@ class _ProviderListTile extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(
-          fontVariations: <FontVariation>[
-            const FontVariation('wght', 600),
-          ],
-        ),
+        style:
+            Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(
+              fontVariations: <FontVariation>[
+                ...(Theme.of(context).textTheme.titleMedium?.fontVariations ??
+                        const <FontVariation>[])
+                    .where((v) => v.axis != 'wght'),
+                const FontVariation('wght', 700),
+              ],
+            ),
       ),
       subtitle: isConnected && subtitle != null
           ? Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium)

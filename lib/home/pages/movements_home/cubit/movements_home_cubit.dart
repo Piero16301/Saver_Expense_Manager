@@ -21,8 +21,8 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
         filterCategory: type == null
             ? null
             : type == state.filterType
-                ? state.filterCategory
-                : null,
+            ? state.filterCategory
+            : null,
       ),
     );
   }
@@ -63,7 +63,8 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
 
     try {
       final auth = getIt<AuthService>();
-      final language = getIt<LocalStorageService>().getLanguage() ??
+      final language =
+          getIt<LocalStorageService>().getLanguage() ??
           AppVariables.supportedLocales.first;
       final recommendations = await AppFunctions.getAntRecommendations(
         userId: auth.currentUser!.uid,

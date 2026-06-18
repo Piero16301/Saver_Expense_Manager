@@ -19,17 +19,17 @@ class LinearChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final maximum = data.isNotEmpty
         ? data
-            .expand((list) => list)
-            .map((e) => e.yValue)
-            .reduce((a, b) => a > b ? a : b)
+              .expand((list) => list)
+              .map((e) => e.yValue)
+              .reduce((a, b) => a > b ? a : b)
         : 10;
     final maximumRounded = (maximum / 100).ceil() * 100;
 
     final minimum = data.isNotEmpty
         ? data
-            .expand((list) => list)
-            .map((e) => e.yValue)
-            .reduce((a, b) => a < b ? a : b)
+              .expand((list) => list)
+              .map((e) => e.yValue)
+              .reduce((a, b) => a < b ? a : b)
         : 0;
     final minimumRounded = (minimum / 100).floor() * 100;
 
@@ -46,9 +46,9 @@ class LinearChart extends StatelessWidget {
         labelPlacement: LabelPlacement.onTicks,
         majorGridLines: const MajorGridLines(width: 0),
         labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w500,
-            ),
+          color: Theme.of(context).colorScheme.onSurface,
+          fontWeight: FontWeight.w500,
+        ),
       ),
       primaryYAxis: NumericAxis(
         opposedPosition: true,
@@ -59,9 +59,9 @@ class LinearChart extends StatelessWidget {
             ? (maximum + 100)
             : maximumRounded.toDouble(),
         labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w500,
-            ),
+          color: Theme.of(context).colorScheme.onSurface,
+          fontWeight: FontWeight.w500,
+        ),
       ),
       trackballBehavior: TrackballBehavior(
         enable: true,

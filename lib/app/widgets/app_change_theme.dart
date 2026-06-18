@@ -22,8 +22,8 @@ class AppChangeTheme extends StatelessWidget {
             icon: state.theme == ThemeMode.light
                 ? HugeIcons.strokeRoundedSun03
                 : (state.theme == ThemeMode.dark
-                    ? HugeIcons.strokeRoundedMoon02
-                    : HugeIcons.strokeRoundedSmartPhone01),
+                      ? HugeIcons.strokeRoundedMoon02
+                      : HugeIcons.strokeRoundedSmartPhone01),
             strokeWidth: 2,
           ),
           tooltip: l10n.selectTheme,
@@ -40,8 +40,8 @@ class AppChangeTheme extends StatelessWidget {
                     icon: value == ThemeMode.light
                         ? HugeIcons.strokeRoundedSun03
                         : (value == ThemeMode.dark
-                            ? HugeIcons.strokeRoundedMoon02
-                            : HugeIcons.strokeRoundedSmartPhone01),
+                              ? HugeIcons.strokeRoundedMoon02
+                              : HugeIcons.strokeRoundedSmartPhone01),
                     strokeWidth: 2,
                   ),
                 ),

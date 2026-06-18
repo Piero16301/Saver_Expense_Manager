@@ -59,12 +59,12 @@ class LoginState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        email,
-        password,
-        isPasswordVisible,
-        isEmailValid,
-        isPasswordValid,
-        errorMessage,
-      ];
+    status,
+    email,
+    password,
+    isPasswordVisible,
+    isEmailValid,
+    isPasswordValid,
+    errorMessage,
+  ];
 }

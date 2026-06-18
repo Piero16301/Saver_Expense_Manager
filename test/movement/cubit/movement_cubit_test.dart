@@ -153,8 +153,9 @@ void main() {
               .having((s) => s.price, 'price', 5)
               .having((s) => s.company, 'company', 'Starbucks')
               .having((s) => s.attachments, 'attachments', const [
-            'file1',
-          ]).having((s) => s.formKey, 'formKey', isNotNull),
+                'file1',
+              ])
+              .having((s) => s.formKey, 'formKey', isNotNull),
         ],
       );
 

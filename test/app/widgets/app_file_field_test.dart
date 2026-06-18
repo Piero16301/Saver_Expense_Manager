@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:file_picker/src/platform/file_picker_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -18,22 +17,22 @@ class MockFilePicker extends Mock
     implements FilePickerPlatform {}
 
 When<Future<FilePickerResult?>> _whenPickFiles(MockFilePicker mock) => when(
-      () => mock.pickFiles(
-        dialogTitle: any(named: 'dialogTitle'),
-        initialDirectory: any(named: 'initialDirectory'),
-        type: any(named: 'type'),
-        allowedExtensions: any(named: 'allowedExtensions'),
-        onFileLoading: any(named: 'onFileLoading'),
-        compressionQuality: any(named: 'compressionQuality'),
-        allowMultiple: any(named: 'allowMultiple'),
-        withData: any(named: 'withData'),
-        withReadStream: any(named: 'withReadStream'),
-        lockParentWindow: any(named: 'lockParentWindow'),
-        readSequential: any(named: 'readSequential'),
-        cancelUploadOnWindowBlur: any(named: 'cancelUploadOnWindowBlur'),
-        androidSafOptions: any(named: 'androidSafOptions'),
-      ),
-    );
+  () => mock.pickFiles(
+    dialogTitle: any(named: 'dialogTitle'),
+    initialDirectory: any(named: 'initialDirectory'),
+    type: any(named: 'type'),
+    allowedExtensions: any(named: 'allowedExtensions'),
+    onFileLoading: any(named: 'onFileLoading'),
+    compressionQuality: any(named: 'compressionQuality'),
+    allowMultiple: any(named: 'allowMultiple'),
+    withData: any(named: 'withData'),
+    withReadStream: any(named: 'withReadStream'),
+    lockParentWindow: any(named: 'lockParentWindow'),
+    readSequential: any(named: 'readSequential'),
+    cancelUploadOnWindowBlur: any(named: 'cancelUploadOnWindowBlur'),
+    androidSafOptions: any(named: 'androidSafOptions'),
+  ),
+);
 
 void main() {
   late RemoteStorageService remoteStorageService;

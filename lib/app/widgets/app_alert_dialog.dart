@@ -30,14 +30,24 @@ class AppAlertDialog extends StatelessWidget {
       title: Text(title, style: Theme.of(context).textTheme.titleLarge),
       content: SizedBox(
         width: isForm ? double.maxFinite : null,
-        child: child ??
+        child:
+            child ??
             (content != null
                 ? Text(content!, style: Theme.of(context).textTheme.bodyMedium)
                 : null),
       ),
       actions: [
-        AppOutlinedButton(onPressed: onCancel, label: cancelLabel),
-        AppFilledButton(onPressed: onConfirm, label: confirmLabel),
+        Row(
+          spacing: 10,
+          children: [
+            Expanded(
+              child: AppOutlinedButton(onPressed: onCancel, label: cancelLabel),
+            ),
+            Expanded(
+              child: AppFilledButton(onPressed: onConfirm, label: confirmLabel),
+            ),
+          ],
+        ),
       ],
     );
   }

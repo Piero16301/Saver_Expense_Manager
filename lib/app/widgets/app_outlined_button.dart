@@ -26,10 +26,12 @@ class AppOutlinedButton extends StatelessWidget {
       icon: icon != null ? HugeIcon(icon: icon!, strokeWidth: 2) : null,
       label: Text(
         label ?? '',
-        style: TextStyle(
-          fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
-          fontVariations: const <FontVariation>[
-            FontVariation('wght', 600),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontVariations: [
+            ...(Theme.of(context).textTheme.titleMedium?.fontVariations ??
+                    const <FontVariation>[])
+                .where((v) => v.axis != 'wght'),
+            const FontVariation('wght', 700),
           ],
         ),
       ),
