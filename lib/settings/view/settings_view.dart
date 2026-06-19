@@ -121,6 +121,12 @@ class LocaleSettingsCard extends StatelessWidget {
         return l10n.settingsLanguageSpanish;
       case 'it':
         return l10n.settingsLanguageItalian;
+      case 'fr':
+        return l10n.settingsLanguageFrench;
+      case 'de':
+        return l10n.settingsLanguageGerman;
+      case 'pt':
+        return l10n.settingsLanguagePortuguese;
       default:
         return locale.languageCode;
     }

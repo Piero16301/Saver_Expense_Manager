@@ -73,12 +73,18 @@ class AppVariables {
     Locale('en', 'US'),
     Locale('es', 'ES'),
     Locale('it', 'IT'),
+    Locale('fr', 'FR'),
+    Locale('de', 'DE'),
+    Locale('pt', 'PT'),
   ];
 
   static const Map<String, Locale> deviceLanguageMap = {
     'en': Locale('en', 'US'),
     'es': Locale('es', 'ES'),
     'it': Locale('it', 'IT'),
+    'fr': Locale('fr', 'FR'),
+    'de': Locale('de', 'DE'),
+    'pt': Locale('pt', 'PT'),
   };
 }
 
