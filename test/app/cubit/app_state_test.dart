@@ -15,7 +15,7 @@ void main() {
           const Locale('en', 'US'),
           ThemeMode.system,
           Colors.green,
-          'Poppins',
+          'GoogleSansFlex',
         ]),
       );
     });

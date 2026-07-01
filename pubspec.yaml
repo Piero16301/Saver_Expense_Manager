@@ -11,13 +11,13 @@ dependencies:
   bloc: ^9.2.1
   cloud_firestore: ^6.6.0
   country_flags: ^4.1.2
-  cunning_document_scanner: ^1.4.0
-  dio: ^5.9.2
+  cunning_document_scanner: ^2.4.0
+  dio: ^5.10.0
   equatable: ^2.0.8
   file_picker: ^12.0.0-beta.7
   firebase_analytics: ^12.4.3
   firebase_app_check: ^0.4.5
-  firebase_auth: ^6.5.3
+  firebase_auth: ^6.5.4
   firebase_core: ^4.11.0
   firebase_crashlytics: ^5.2.4
   firebase_performance: ^0.11.4+2
@@ -38,11 +38,11 @@ dependencies:
   intl: ^0.20.2
   mime: ^2.0.0
   open_file: ^4.0.0
-  package_info_plus: ^10.1.0
+  package_info_plus: ^10.2.0
   path_provider: ^2.1.6
   shared_preferences: ^2.5.5
-  syncfusion_flutter_charts: ^33.2.13
-  syncfusion_flutter_core: ^33.2.13
+  syncfusion_flutter_charts: ^33.2.15
+  syncfusion_flutter_core: ^33.2.15
   uuid: ^4.5.3
 
 dev_dependencies:
