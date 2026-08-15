@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -28,7 +27,7 @@ class _DividendsAnimatedIconState extends State<DividendsAnimatedIcon>
       vsync: this,
       duration: const Duration(milliseconds: 3000),
     );
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override

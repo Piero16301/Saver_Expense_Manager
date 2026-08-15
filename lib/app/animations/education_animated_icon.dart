@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -28,7 +27,7 @@ class _EducationAnimatedIconState extends State<EducationAnimatedIcon>
       vsync: this,
       duration: const Duration(milliseconds: 2500),
     );
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override

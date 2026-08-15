@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class _HealthAnimatedIconState extends State<HealthAnimatedIcon>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override

@@ -155,14 +155,13 @@ class AppFileField extends StatelessWidget {
 
   Future<void> _handleUpload(BuildContext context, AppLoader appLoader) async {
     try {
-      final result = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: AppVariables.allowedExtensions,
       );
 
-      if (result != null) {
+      if (file != null) {
         unawaited(appLoader.showLoading());
-        final file = result.files.single;
         final ext = file.path!.split('.').last;
         final path = '${const Uuid().v4()}.$ext';
         final name = await getIt<RemoteStorageService>().uploadFile(

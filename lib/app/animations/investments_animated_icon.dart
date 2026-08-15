@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -29,7 +28,7 @@ class _InvestmentsAnimatedIconState extends State<InvestmentsAnimatedIcon>
       vsync: this,
       duration: const Duration(milliseconds: 2500),
     );
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override
