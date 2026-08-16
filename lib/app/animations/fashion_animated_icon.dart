@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class FashionAnimatedIcon extends StatefulWidget {
   const FashionAnimatedIcon({required this.color, super.key, this.size = 60.0});

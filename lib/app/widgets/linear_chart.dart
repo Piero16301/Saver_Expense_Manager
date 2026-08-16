@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -35,37 +35,47 @@ class LinearChart extends StatelessWidget {
 
     final l10n = AppLocalizations.of(context);
 
-    return SfCartesianChart(
-      tooltipBehavior: TooltipBehavior(
-        enable: true,
-        animationDuration: 100,
-        decimalPlaces: 2,
-      ),
-      series: _buildLineSeries(l10n),
-      primaryXAxis: CategoryAxis(
-        labelPlacement: LabelPlacement.onTicks,
-        majorGridLines: const MajorGridLines(width: 0),
-        labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontWeight: FontWeight.w500,
+    // Use until flutter_markdown_plus 2.0.0 release
+    // ignore: deprecated_member_use
+    return MaterialUiCompatibilityBridge(
+      child: SfCartesianChart(
+        plotAreaBorderWidth: 0,
+        tooltipBehavior: TooltipBehavior(
+          enable: true,
+          animationDuration: 100,
+          decimalPlaces: 2,
         ),
-      ),
-      primaryYAxis: NumericAxis(
-        opposedPosition: true,
-        minimum: minimum == minimumRounded
-            ? (minimum - 100)
-            : minimumRounded.toDouble(),
-        maximum: maximum == maximumRounded
-            ? (maximum + 100)
-            : maximumRounded.toDouble(),
-        labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontWeight: FontWeight.w500,
+        series: _buildLineSeries(l10n),
+        primaryXAxis: CategoryAxis(
+          labelPlacement: LabelPlacement.onTicks,
+          plotOffset: 10,
+          majorTickLines: const MajorTickLines(width: 0),
+          majorGridLines: const MajorGridLines(width: 0),
+          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-      ),
-      trackballBehavior: TrackballBehavior(
-        enable: true,
-        activationMode: ActivationMode.singleTap,
+        primaryYAxis: NumericAxis(
+          tickPosition: TickPosition.inside,
+          plotOffset: 10,
+          minimum: minimum == minimumRounded
+              ? (minimum - 100)
+              : minimumRounded.toDouble(),
+          maximum: maximum == maximumRounded
+              ? (maximum + 100)
+              : maximumRounded.toDouble(),
+          majorTickLines: const MajorTickLines(width: 0),
+          majorGridLines: const MajorGridLines(width: 0),
+          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trackballBehavior: TrackballBehavior(
+          enable: true,
+          activationMode: ActivationMode.singleTap,
+        ),
       ),
     );
   }

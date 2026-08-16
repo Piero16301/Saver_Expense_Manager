@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
@@ -50,7 +51,10 @@ class _AppViewState extends State<AppView> {
               child: child!,
             );
           },
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            ...GlobalMaterialLocalizations.delegates,
+          ],
           supportedLocales: AppVariables.supportedLocales,
           locale: state.language,
           theme: AppThemes.lightTheme(

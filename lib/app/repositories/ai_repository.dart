@@ -105,7 +105,10 @@ class GeminiAiRepository implements AiRepository {
       final response = await _dio.post<Map<String, dynamic>>(
         url,
         data: requestBody,
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+          validateStatus: (_) => true,
+        ),
       );
 
       final responseData = response.data;

@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SalaryAnimatedIcon extends StatefulWidget {
   const SalaryAnimatedIcon({required this.color, super.key, this.size = 60.0});
