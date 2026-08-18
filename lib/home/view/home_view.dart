@@ -5,10 +5,10 @@ import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
@@ -245,14 +245,12 @@ class AddMovementBottomSheet extends StatelessWidget {
     final loader = AppLoader(context);
 
     try {
-      final result = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: AppVariables.allowedExtensions,
       );
 
-      if (result == null) {
-        return;
-      }
+      if (file == null) return;
 
       unawaited(loader.showLoading(message: l10n.checkInternetConnection));
 
@@ -279,12 +277,11 @@ class AddMovementBottomSheet extends StatelessWidget {
 
       if (modelType.isLocal &&
           !AppVariables.imageExtensions.contains(
-            result.files.first.extension,
+            file.name.split('.').last,
           )) {
         throw Exception(AppVariables.unsupportedLocalModelFile);
       }
 
-      final file = result.files.single;
       final ext = file.path!.split('.').last;
       final path = '${const Uuid().v4()}.$ext';
       final bytes = await File(file.path!).readAsBytes();

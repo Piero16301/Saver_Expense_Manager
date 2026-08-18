@@ -1,8 +1,8 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/bootstrap.dart';
 import 'package:saver_expense_manager/firebase_options.dart';

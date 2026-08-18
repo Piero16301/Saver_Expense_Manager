@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_performance/firebase_performance.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -39,6 +39,31 @@ class MockFilePicker extends Mock
     with MockPlatformInterfaceMixin
     implements FilePickerPlatform {}
 
+final class FakePlatformFile extends PlatformFile {
+  FakePlatformFile({required this.name, required String path, this.bytes})
+    : uri = Uri.file(path);
+
+  @override
+  final String name;
+
+  @override
+  final Uri uri;
+
+  final Uint8List? bytes;
+
+  @override
+  Never get xFile => throw UnimplementedError();
+
+  @override
+  Future<int> length() async => 100;
+
+  @override
+  Future<Uint8List> readAsBytes() async => bytes ?? Uint8List(0);
+
+  @override
+  Stream<Uint8List> readAsByteStream() async* {}
+}
+
 class MockRemoteStorageService extends Mock implements RemoteStorageService {}
 
 class MockPerformanceService extends Mock implements PerformanceService {}
@@ -47,21 +72,14 @@ class MockCrashService extends Mock implements CrashService {}
 
 class MockAiService extends Mock implements AiService {}
 
-When<Future<FilePickerResult?>> _whenPickFiles(MockFilePicker mock) => when(
-  () => mock.pickFiles(
+When<Future<PlatformFile?>> _whenPickFile(MockFilePicker mock) => when(
+  () => mock.pickFile(
     dialogTitle: any(named: 'dialogTitle'),
     initialDirectory: any(named: 'initialDirectory'),
     type: any(named: 'type'),
     allowedExtensions: any(named: 'allowedExtensions'),
     onFileLoading: any(named: 'onFileLoading'),
     compressionQuality: any(named: 'compressionQuality'),
-    allowMultiple: any(named: 'allowMultiple'),
-    withData: any(named: 'withData'),
-    withReadStream: any(named: 'withReadStream'),
-    lockParentWindow: any(named: 'lockParentWindow'),
-    readSequential: any(named: 'readSequential'),
-    cancelUploadOnWindowBlur: any(named: 'cancelUploadOnWindowBlur'),
-    androidSafOptions: any(named: 'androidSafOptions'),
   ),
 );
 
@@ -389,15 +407,14 @@ void main() {
         final mockFilePicker = MockFilePicker();
         FilePickerPlatform.instance = mockFilePicker;
 
-        _whenPickFiles(mockFilePicker).thenAnswer(
-          (_) async => FilePickerResult([
-            PlatformFile(
-              name: 'test.png',
-              size: 100,
-              path: '/tmp/test.png',
-              bytes: Uint8List.fromList([1, 2, 3]),
-            ),
-          ]),
+        final mockFile = FakePlatformFile(
+          name: 'test.png',
+          path: '/tmp/test.png',
+          bytes: Uint8List.fromList([1, 2, 3]),
+        );
+
+        _whenPickFile(mockFilePicker).thenAnswer(
+          (_) async => mockFile,
         );
 
         when(
@@ -459,9 +476,9 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      _whenPickFiles(
+      _whenPickFile(
         mockFilePicker,
-      ).thenAnswer((_) async => null as FilePickerResult?);
+      ).thenAnswer((_) async => null);
 
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);
@@ -481,7 +498,7 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      _whenPickFiles(mockFilePicker).thenThrow(Exception('Test error'));
+      _whenPickFile(mockFilePicker).thenThrow(Exception('Test error'));
 
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);
@@ -513,7 +530,7 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      _whenPickFiles(
+      _whenPickFile(
         mockFilePicker,
       ).thenThrow(Exception(AppVariables.unsupportedLocalModelFile));
 

@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -16,21 +17,40 @@ class MockFilePicker extends Mock
     with MockPlatformInterfaceMixin
     implements FilePickerPlatform {}
 
-When<Future<FilePickerResult?>> _whenPickFiles(MockFilePicker mock) => when(
-  () => mock.pickFiles(
+final class FakePlatformFile extends PlatformFile {
+  FakePlatformFile({required this.name, required this.path})
+    : uri = Uri.file(path!);
+
+  @override
+  final String name;
+
+  @override
+  final String? path;
+
+  @override
+  final Uri uri;
+
+  @override
+  Never get xFile => throw UnimplementedError();
+
+  @override
+  Future<int> length() async => 100;
+
+  @override
+  Future<Uint8List> readAsBytes() async => throw UnimplementedError();
+
+  @override
+  Stream<Uint8List> readAsByteStream() async* {}
+}
+
+When<Future<PlatformFile?>> _whenPickFile(MockFilePicker mock) => when(
+  () => mock.pickFile(
     dialogTitle: any(named: 'dialogTitle'),
     initialDirectory: any(named: 'initialDirectory'),
     type: any(named: 'type'),
     allowedExtensions: any(named: 'allowedExtensions'),
     onFileLoading: any(named: 'onFileLoading'),
     compressionQuality: any(named: 'compressionQuality'),
-    allowMultiple: any(named: 'allowMultiple'),
-    withData: any(named: 'withData'),
-    withReadStream: any(named: 'withReadStream'),
-    lockParentWindow: any(named: 'lockParentWindow'),
-    readSequential: any(named: 'readSequential'),
-    cancelUploadOnWindowBlur: any(named: 'cancelUploadOnWindowBlur'),
-    androidSafOptions: any(named: 'androidSafOptions'),
   ),
 );
 
@@ -166,10 +186,13 @@ void main() {
 
     testWidgets('handles file upload successfully', (tester) async {
       String? added;
-      _whenPickFiles(mockFilePicker).thenAnswer(
-        (_) async => FilePickerResult([
-          PlatformFile(name: 'test.png', size: 100, path: 'path/to/test.png'),
-        ]),
+      final mockFile = FakePlatformFile(
+        name: 'test.png',
+        path: '/path/to/test.png',
+      );
+
+      _whenPickFile(mockFilePicker).thenAnswer(
+        (_) async => mockFile,
       );
 
       when(
@@ -201,7 +224,7 @@ void main() {
     });
 
     testWidgets('handles upload error and shows SnackBar', (tester) async {
-      _whenPickFiles(mockFilePicker).thenThrow(Exception('Upload failed'));
+      _whenPickFile(mockFilePicker).thenThrow(Exception('Upload failed'));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -231,9 +254,9 @@ void main() {
     });
 
     testWidgets('does nothing if file picking is cancelled', (tester) async {
-      _whenPickFiles(
+      _whenPickFile(
         mockFilePicker,
-      ).thenAnswer((_) async => null as FilePickerResult?);
+      ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         MaterialApp(

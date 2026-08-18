@@ -1,7 +1,6 @@
-import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class OthersIncomeAnimatedIcon extends StatefulWidget {
   const OthersIncomeAnimatedIcon({
@@ -29,7 +28,7 @@ class _OthersIncomeAnimatedIconState extends State<OthersIncomeAnimatedIcon>
       vsync: this,
       duration: const Duration(milliseconds: 3000),
     );
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override

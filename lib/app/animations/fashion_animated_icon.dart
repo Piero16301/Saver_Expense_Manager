@@ -1,7 +1,6 @@
-import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class FashionAnimatedIcon extends StatefulWidget {
   const FashionAnimatedIcon({required this.color, super.key, this.size = 60.0});
@@ -24,7 +23,7 @@ class _FashionAnimatedIconState extends State<FashionAnimatedIcon>
       vsync: this,
       duration: const Duration(milliseconds: 3000),
     );
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override

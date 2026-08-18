@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -465,7 +465,13 @@ class AntRecommendationsWidget extends StatelessWidget {
                             padding: const EdgeInsets.all(12),
                             child: SingleChildScrollView(
                               physics: const BouncingScrollPhysics(),
-                              child: MarkdownBody(data: recommendation),
+                              // Use until flutter_markdown_plus 2.0.0 release
+                              // ignore: deprecated_member_use
+                              child: MaterialUiCompatibilityBridge(
+                                child: MarkdownBody(
+                                  data: recommendation,
+                                ),
+                              ),
                             ),
                           ),
                         );

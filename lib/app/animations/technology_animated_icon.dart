@@ -1,7 +1,6 @@
-import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class TechnologyAnimatedIcon extends StatefulWidget {
   const TechnologyAnimatedIcon({
@@ -28,7 +27,7 @@ class _TechnologyAnimatedIconState extends State<TechnologyAnimatedIcon>
       vsync: this,
       duration: const Duration(milliseconds: 2500),
     );
-    unawaited(_controller.repeat());
+    _controller.repeat();
   }
 
   @override
