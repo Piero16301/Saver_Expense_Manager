@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -17,6 +16,10 @@ class ListMovementsItemHome extends StatelessWidget {
     );
 
     return ListTile(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      horizontalTitleGap: 8,
       onTap: () => context.pushNamed<bool>(
         AppRoute.movement.name,
         pathParameters: {
@@ -27,7 +30,7 @@ class ListMovementsItemHome extends StatelessWidget {
         },
         extra: movement,
       ),
-      contentPadding: const EdgeInsets.only(left: 8, right: 8),
+      contentPadding: EdgeInsets.zero,
       title: Text(
         movement.title,
         style:
@@ -81,12 +84,7 @@ class ListMovementsItemHome extends StatelessWidget {
           ),
         ),
       ),
-      leading: HugeIcon(
-        icon: AppFunctions.getCategoryIcon(movement.category.icon),
-        size: 32,
-        color: HexColor.fromHex(movement.category.color),
-        strokeWidth: 2,
-      ),
+      leading: MovementIcon(movement: movement),
     );
   }
 }

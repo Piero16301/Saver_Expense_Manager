@@ -10,6 +10,10 @@ class TotalSpentChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final totalValue = data.fold<double>(
+      0,
+      (previousValue, element) => previousValue + element.value,
+    );
 
     return Padding(
       padding: const EdgeInsets.only(top: 10),
@@ -18,16 +22,11 @@ class TotalSpentChart extends StatelessWidget {
         children: [
           Text(l10n.homeTotal, style: Theme.of(context).textTheme.bodyMedium),
           Text(
-            AppExtensions.moneyFormat.format(
-              data.fold<double>(
-                0,
-                (previousValue, element) => previousValue + element.value,
-              ),
-            ),
+            AppExtensions.moneyFormat.format(totalValue),
             style:
                 Theme.of(
                   context,
-                ).textTheme.titleLarge!.copyWith(
+                ).textTheme.headlineSmall!.copyWith(
                   fontVariations: <FontVariation>[
                     ...(Theme.of(
                               context,
