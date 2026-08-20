@@ -18,7 +18,7 @@ class ExpensesHomeView extends StatelessWidget {
 
     return BlocBuilder<ExpensesHomeCubit, ExpensesHomeState>(
       builder: (context, state) => Column(
-        spacing: 16,
+        spacing: 8,
         children: [
           ConstrainedBox(
             constraints: const BoxConstraints(

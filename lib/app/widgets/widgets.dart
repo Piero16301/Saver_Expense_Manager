@@ -16,6 +16,7 @@ export 'list_movements_item_home.dart';
 export 'month_picker.dart';
 export 'month_range_selector.dart';
 export 'month_selector.dart';
+export 'movement_icon.dart';
 export 'movements_list.dart';
 export 'movements_list_chart.dart';
 export 'radial_circular_chart.dart';

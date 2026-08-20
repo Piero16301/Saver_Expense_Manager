@@ -49,6 +49,36 @@ class AppVariables {
   static const MaterialColor growthColor = Colors.green;
   static const MaterialAccentColor decreaseColor = Colors.redAccent;
 
+  static const List<String> companiesWithLogo = [
+    'netflix',
+    'youtube',
+    'google',
+    'hbo',
+    'disney',
+    'prime',
+    'paramount',
+    'directv',
+    'spotify',
+    'mercadolibre',
+    'falabella',
+    'yape',
+    'claro',
+    'amazon',
+    'xbox',
+    'microsoft',
+    'uber',
+    'indrive',
+    'bcp',
+    'mass',
+    'hidrandina',
+    'sedalib',
+    'mifibra',
+    'cinemark',
+    'cinepolis',
+    'cineplanet',
+    'crisol',
+  ];
+
   static Map<String, String> availableFonts = getAvailableFonts();
 
   static Map<String, String> getAvailableFonts() {
