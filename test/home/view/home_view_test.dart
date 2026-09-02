@@ -14,10 +14,11 @@ import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+
+import '../../helpers/helpers.dart';
 
 class MockAuthService extends Mock implements AuthService {}
 
@@ -35,35 +36,6 @@ class MockLocalStorageService extends Mock implements LocalStorageService {}
 
 class MockTrace extends Mock implements Trace {}
 
-class MockFilePicker extends Mock
-    with MockPlatformInterfaceMixin
-    implements FilePickerPlatform {}
-
-final class FakePlatformFile extends PlatformFile {
-  FakePlatformFile({required this.name, required String path, this.bytes})
-    : uri = Uri.file(path);
-
-  @override
-  final String name;
-
-  @override
-  final Uri uri;
-
-  final Uint8List? bytes;
-
-  @override
-  Never get xFile => throw UnimplementedError();
-
-  @override
-  Future<int> length() async => 100;
-
-  @override
-  Future<Uint8List> readAsBytes() async => bytes ?? Uint8List(0);
-
-  @override
-  Stream<Uint8List> readAsByteStream() async* {}
-}
-
 class MockRemoteStorageService extends Mock implements RemoteStorageService {}
 
 class MockPerformanceService extends Mock implements PerformanceService {}
@@ -71,17 +43,6 @@ class MockPerformanceService extends Mock implements PerformanceService {}
 class MockCrashService extends Mock implements CrashService {}
 
 class MockAiService extends Mock implements AiService {}
-
-When<Future<PlatformFile?>> _whenPickFile(MockFilePicker mock) => when(
-  () => mock.pickFile(
-    dialogTitle: any(named: 'dialogTitle'),
-    initialDirectory: any(named: 'initialDirectory'),
-    type: any(named: 'type'),
-    allowedExtensions: any(named: 'allowedExtensions'),
-    onFileLoading: any(named: 'onFileLoading'),
-    compressionQuality: any(named: 'compressionQuality'),
-  ),
-);
 
 void main() {
   late MockAuthService mockAuthService;
@@ -413,7 +374,7 @@ void main() {
           bytes: Uint8List.fromList([1, 2, 3]),
         );
 
-        _whenPickFile(mockFilePicker).thenAnswer(
+        whenPickFile(mockFilePicker).thenAnswer(
           (_) async => mockFile,
         );
 
@@ -476,7 +437,7 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      _whenPickFile(
+      whenPickFile(
         mockFilePicker,
       ).thenAnswer((_) async => null);
 
@@ -498,7 +459,7 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      _whenPickFile(mockFilePicker).thenThrow(Exception('Test error'));
+      whenPickFile(mockFilePicker).thenThrow(Exception('Test error'));
 
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);
@@ -530,7 +491,7 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      _whenPickFile(
+      whenPickFile(
         mockFilePicker,
       ).thenThrow(Exception(AppVariables.unsupportedLocalModelFile));
 

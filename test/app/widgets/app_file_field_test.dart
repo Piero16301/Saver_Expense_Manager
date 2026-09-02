@@ -1,58 +1,17 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
+import '../../helpers/helpers.dart';
+
 class MockRemoteStorageService extends Mock implements RemoteStorageService {}
-
-class MockFilePicker extends Mock
-    with MockPlatformInterfaceMixin
-    implements FilePickerPlatform {}
-
-final class FakePlatformFile extends PlatformFile {
-  FakePlatformFile({required this.name, required this.path})
-    : uri = Uri.file(path!);
-
-  @override
-  final String name;
-
-  @override
-  final String? path;
-
-  @override
-  final Uri uri;
-
-  @override
-  Never get xFile => throw UnimplementedError();
-
-  @override
-  Future<int> length() async => 100;
-
-  @override
-  Future<Uint8List> readAsBytes() async => throw UnimplementedError();
-
-  @override
-  Stream<Uint8List> readAsByteStream() async* {}
-}
-
-When<Future<PlatformFile?>> _whenPickFile(MockFilePicker mock) => when(
-  () => mock.pickFile(
-    dialogTitle: any(named: 'dialogTitle'),
-    initialDirectory: any(named: 'initialDirectory'),
-    type: any(named: 'type'),
-    allowedExtensions: any(named: 'allowedExtensions'),
-    onFileLoading: any(named: 'onFileLoading'),
-    compressionQuality: any(named: 'compressionQuality'),
-  ),
-);
 
 void main() {
   late RemoteStorageService remoteStorageService;
@@ -191,7 +150,7 @@ void main() {
         path: '/path/to/test.png',
       );
 
-      _whenPickFile(mockFilePicker).thenAnswer(
+      whenPickFile(mockFilePicker).thenAnswer(
         (_) async => mockFile,
       );
 
@@ -224,7 +183,7 @@ void main() {
     });
 
     testWidgets('handles upload error and shows SnackBar', (tester) async {
-      _whenPickFile(mockFilePicker).thenThrow(Exception('Upload failed'));
+      whenPickFile(mockFilePicker).thenThrow(Exception('Upload failed'));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -254,7 +213,7 @@ void main() {
     });
 
     testWidgets('does nothing if file picking is cancelled', (tester) async {
-      _whenPickFile(
+      whenPickFile(
         mockFilePicker,
       ).thenAnswer((_) async => null);
 
