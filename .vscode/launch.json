@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Debug",
+      "name": "Launch Mobile",
       "request": "launch",
       "type": "dart",
       "flutterMode": "debug",
@@ -15,6 +15,17 @@
         "production",
         "--target",
         "lib/main.dart",
+      ]
+    },
+    {
+      "name": "Launch Web",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "args": [
+        "--wasm",
+        "--target",
+        "lib/main.dart"
       ]
     }
   ]

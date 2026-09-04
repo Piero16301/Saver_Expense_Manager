@@ -135,6 +135,6 @@ class ProfileCubit extends Cubit<ProfileState> {
   @override
   Future<void> close() async {
     await _userSubscription?.cancel();
-    return super.close();
+    return await super.close();
   }
 }

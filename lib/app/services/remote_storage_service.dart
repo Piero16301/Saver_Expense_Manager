@@ -5,9 +5,7 @@ import 'dart:typed_data';
 import 'package:saver_expense_manager/app/app.dart';
 
 class RemoteStorageService {
-  RemoteStorageService({
-    required this._remoteStorageRepository,
-  });
+  RemoteStorageService({required this._remoteStorageRepository});
 
   final RemoteStorageRepository _remoteStorageRepository;
 
@@ -16,10 +14,10 @@ class RemoteStorageService {
   }
 
   Future<String?> uploadFile(File file, String path) async {
-    return _remoteStorageRepository.uploadFile(file, path);
+    return await _remoteStorageRepository.uploadFile(file, path);
   }
 
   Future<Uint8List?> getData(String path) async {
-    return _remoteStorageRepository.getData(path);
+    return await _remoteStorageRepository.getData(path);
   }
 }
