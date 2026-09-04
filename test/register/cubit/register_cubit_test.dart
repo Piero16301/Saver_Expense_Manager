@@ -262,9 +262,9 @@ void main() {
             any<String>(),
           ),
         ).thenAnswer((_) async => true);
-        when(() => mockAuthService.currentUser).thenReturn(
-          const AppUser(uid: 'user-id', displayName: 'Piero'),
-        );
+        when(
+          () => mockAuthService.currentUser,
+        ).thenReturn(const AppUser(uid: 'user-id', displayName: 'Piero'));
         when(
           () => mockAuthService.updateUserName(any<String>()),
         ).thenAnswer((_) async => true);

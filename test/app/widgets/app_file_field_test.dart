@@ -150,9 +150,7 @@ void main() {
         path: '/path/to/test.png',
       );
 
-      whenPickFile(mockFilePicker).thenAnswer(
-        (_) async => mockFile,
-      );
+      whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
 
       when(
         () => remoteStorageService.uploadFile(any<File>(), any<String>()),
@@ -213,9 +211,7 @@ void main() {
     });
 
     testWidgets('does nothing if file picking is cancelled', (tester) async {
-      whenPickFile(
-        mockFilePicker,
-      ).thenAnswer((_) async => null);
+      whenPickFile(mockFilePicker).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         MaterialApp(

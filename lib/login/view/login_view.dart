@@ -167,9 +167,7 @@ class LoginView extends StatelessWidget {
                                     l10n.registerButton,
                                     style: TextStyle(
                                       fontVariations: <FontVariation>[
-                                        ...(Theme.of(
-                                                      context,
-                                                    )
+                                        ...(Theme.of(context)
                                                     .textTheme
                                                     .bodyMedium
                                                     ?.fontVariations ??

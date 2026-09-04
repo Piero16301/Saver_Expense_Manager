@@ -276,9 +276,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       getIt<CrashService>().setCustomKey('movement_type', movementType.name);
 
       if (modelType.isLocal &&
-          !AppVariables.imageExtensions.contains(
-            file.name.split('.').last,
-          )) {
+          !AppVariables.imageExtensions.contains(file.name.split('.').last)) {
         throw Exception(AppVariables.unsupportedLocalModelFile);
       }
 

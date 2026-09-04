@@ -374,9 +374,7 @@ void main() {
           bytes: Uint8List.fromList([1, 2, 3]),
         );
 
-        whenPickFile(mockFilePicker).thenAnswer(
-          (_) async => mockFile,
-        );
+        whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
 
         when(
           () => mockRemoteStorageService.uploadFile(any<File>(), any<String>()),
@@ -437,9 +435,7 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      whenPickFile(
-        mockFilePicker,
-      ).thenAnswer((_) async => null);
+      whenPickFile(mockFilePicker).thenAnswer((_) async => null);
 
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);

@@ -27,19 +27,14 @@ class MovementView extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             _appBarTitle(l10n),
-            style:
-                Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(
-                  fontVariations: <FontVariation>[
-                    ...(Theme.of(
-                              context,
-                            ).textTheme.titleLarge?.fontVariations ??
-                            const <FontVariation>[])
-                        .where((v) => v.axis != 'wght'),
-                    const FontVariation('wght', 700),
-                  ],
-                ),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontVariations: <FontVariation>[
+                ...(Theme.of(context).textTheme.titleLarge?.fontVariations ??
+                        const <FontVariation>[])
+                    .where((v) => v.axis != 'wght'),
+                const FontVariation('wght', 700),
+              ],
+            ),
           ),
           notificationPredicate: (notification) => false,
           actions: _appBarActions(context, l10n),

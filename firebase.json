@@ -12,7 +12,8 @@
                 "lib/firebase_options.dart": {
                     "configurations": {
                         "android": "1:269318126118:android:09311aaa03c92bdcfb04e7",
-                        "ios": "1:269318126118:ios:e540158656abbe49fb04e7"
+                        "ios": "1:269318126118:ios:e540158656abbe49fb04e7",
+                        "web": "1:269318126118:web:4964b9f4a91d3e03fb04e7"
                     },
                     "projectId": "saver-expense-manager"
                 }

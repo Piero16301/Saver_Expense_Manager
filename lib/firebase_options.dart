@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -76,4 +73,14 @@ class DefaultFirebaseOptions {
 
   static const String googleRedirectUri =
       'https://saver-expense-manager.firebaseapp.com/__/auth/handler';
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyC170N6DhHnMHhQl3tBErKctlV-4vzYlWI',
+    appId: '1:269318126118:web:4964b9f4a91d3e03fb04e7',
+    messagingSenderId: '269318126118',
+    projectId: 'saver-expense-manager',
+    authDomain: 'saver-expense-manager.firebaseapp.com',
+    storageBucket: 'saver-expense-manager.firebasestorage.app',
+    measurementId: 'G-9MPK6L0YB8',
+  );
 }

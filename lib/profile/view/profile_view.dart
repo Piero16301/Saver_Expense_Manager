@@ -32,19 +32,14 @@ class ProfileView extends StatelessWidget {
         appBar: AppBar(
           title: Text(
             l10n.profileTitle,
-            style:
-                Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(
-                  fontVariations: <FontVariation>[
-                    ...(Theme.of(
-                              context,
-                            ).textTheme.titleLarge?.fontVariations ??
-                            const <FontVariation>[])
-                        .where((v) => v.axis != 'wght'),
-                    const FontVariation('wght', 700),
-                  ],
-                ),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontVariations: <FontVariation>[
+                ...(Theme.of(context).textTheme.titleLarge?.fontVariations ??
+                        const <FontVariation>[])
+                    .where((v) => v.axis != 'wght'),
+                const FontVariation('wght', 700),
+              ],
+            ),
           ),
           notificationPredicate: (notification) => false,
           leading: IconButton(
@@ -487,17 +482,14 @@ class _ProviderListTile extends StatelessWidget {
       ),
       title: Text(
         title,
-        style:
-            Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(
-              fontVariations: <FontVariation>[
-                ...(Theme.of(context).textTheme.titleMedium?.fontVariations ??
-                        const <FontVariation>[])
-                    .where((v) => v.axis != 'wght'),
-                const FontVariation('wght', 700),
-              ],
-            ),
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontVariations: <FontVariation>[
+            ...(Theme.of(context).textTheme.titleMedium?.fontVariations ??
+                    const <FontVariation>[])
+                .where((v) => v.axis != 'wght'),
+            const FontVariation('wght', 700),
+          ],
+        ),
       ),
       subtitle: isConnected && subtitle != null
           ? Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium)
