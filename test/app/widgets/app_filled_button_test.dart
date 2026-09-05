@@ -56,5 +56,20 @@ void main() {
 
       expect(find.byIcon(Icons.star), findsNWidgets(2));
     });
+
+    testWidgets(
+      'uses VisualDensity.standard by default even in compact theme',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(visualDensity: VisualDensity.compact),
+            home: const Scaffold(body: AppFilledButton(label: 'Click me')),
+          ),
+        );
+
+        final button = tester.widget<FilledButton>(find.byType(FilledButton));
+        expect(button.style?.visualDensity, equals(VisualDensity.standard));
+      },
+    );
   });
 }

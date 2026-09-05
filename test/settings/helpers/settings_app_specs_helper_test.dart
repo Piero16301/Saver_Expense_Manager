@@ -22,24 +22,26 @@ void main() {
       expect(specs.updateDate, now);
     });
 
-    test('formats versionDisplay without parentheses when buildNumber is empty',
-        () {
-      final now = DateTime(2026, 9, 5, 12);
-      final packageInfo = PackageInfo(
-        appName: 'Saver',
-        packageName: 'com.saver',
-        version: '1.0.0',
-        buildNumber: '',
-        installTime: now,
-      );
+    test(
+      'formats versionDisplay without parentheses when buildNumber is empty',
+      () {
+        final now = DateTime(2026, 9, 5, 12);
+        final packageInfo = PackageInfo(
+          appName: 'Saver',
+          packageName: 'com.saver',
+          version: '1.0.0',
+          buildNumber: '',
+          installTime: now,
+        );
 
-      final specs = AppSpecsData.fromPackageInfo(packageInfo);
+        final specs = AppSpecsData.fromPackageInfo(packageInfo);
 
-      expect(specs.version, '1.0.0');
-      expect(specs.buildNumber, '');
-      expect(specs.versionDisplay, '1.0.0');
-      expect(specs.updateDate, now);
-    });
+        expect(specs.version, '1.0.0');
+        expect(specs.buildNumber, '');
+        expect(specs.versionDisplay, '1.0.0');
+        expect(specs.updateDate, now);
+      },
+    );
 
     test('falls back to now if times are null', () {
       final before = DateTime.now();

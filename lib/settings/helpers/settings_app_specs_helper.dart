@@ -13,15 +13,18 @@ class AppSpecsData {
 
   factory AppSpecsData.fromPackageInfo(PackageInfo packageInfo) {
     const buildDateEnv = String.fromEnvironment('BUILD_DATE');
-    final envDate =
-        buildDateEnv.isNotEmpty ? DateTime.tryParse(buildDateEnv) : null;
+    final envDate = buildDateEnv.isNotEmpty
+        ? DateTime.tryParse(buildDateEnv)
+        : null;
 
     final version = packageInfo.version;
     final buildNumber = packageInfo.buildNumber;
-    final versionDisplay =
-        buildNumber.isNotEmpty ? '$version ($buildNumber)' : version;
+    final versionDisplay = buildNumber.isNotEmpty
+        ? '$version ($buildNumber)'
+        : version;
 
-    final updateDate = envDate ??
+    final updateDate =
+        envDate ??
         packageInfo.updateTime ??
         packageInfo.installTime ??
         helper.getWebLastModified() ??

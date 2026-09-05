@@ -7,6 +7,7 @@ class AppOutlinedButton extends StatelessWidget {
     this.icon,
     this.label,
     this.innerPadding,
+    this.visualDensity,
     super.key,
   });
 
@@ -14,12 +15,14 @@ class AppOutlinedButton extends StatelessWidget {
   final List<List<dynamic>>? icon;
   final String? label;
   final EdgeInsetsGeometry? innerPadding;
+  final VisualDensity? visualDensity;
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
+        visualDensity: visualDensity ?? VisualDensity.standard,
         padding: innerPadding ?? const EdgeInsets.all(12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
