@@ -62,8 +62,9 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
 
       final ref = _storage.ref().child(path);
       final mimeType = lookupMimeType(path);
-      final metadata =
-          mimeType != null ? SettableMetadata(contentType: mimeType) : null;
+      final metadata = mimeType != null
+          ? SettableMetadata(contentType: mimeType)
+          : null;
       await ref.putData(bytes, metadata);
       return ref.name;
     } on Exception catch (e, stackTrace) {
