@@ -27,6 +27,11 @@ Future<void> main() async {
   final trace = performance.startTrace('app_initialization');
   await Future.wait([
     FirebaseAppCheck.instance.activate(
+      providerWeb: kDebugMode
+          ? WebDebugProvider(debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'])
+          : ReCaptchaEnterpriseProvider(
+              DefaultFirebaseOptions.recaptchaEnterpriseSiteKey,
+            ),
       providerAndroid: kDebugMode
           ? AndroidDebugProvider(
               debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'],

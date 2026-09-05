@@ -45,6 +45,7 @@ dependencies:
   syncfusion_flutter_charts: ^34.2.6
   syncfusion_flutter_core: ^34.2.6
   uuid: ^4.6.0
+  web: ^1.1.1
 
 dev_dependencies:
   bloc_test: ^10.0.0

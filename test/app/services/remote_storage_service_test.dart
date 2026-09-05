@@ -15,7 +15,7 @@ void main() {
   late MockRemoteStorageRepository mockRepository;
 
   setUpAll(() {
-    registerFallbackValue(FakeFile());
+    registerFallbackValue(Uint8List(0));
   });
 
   setUp(() {
@@ -38,13 +38,13 @@ void main() {
     });
 
     test('uploadFile calls repository', () async {
-      final file = FakeFile();
+      final bytes = Uint8List(0);
       when(
-        () => mockRepository.uploadFile(any<File>(), any<String>()),
+        () => mockRepository.uploadFile(any<Uint8List>(), any<String>()),
       ).thenAnswer((_) async => 'url');
-      final result = await service.uploadFile(file, 'path');
+      final result = await service.uploadFile(bytes, 'path');
       expect(result, equals('url'));
-      verify(() => mockRepository.uploadFile(file, 'path')).called(1);
+      verify(() => mockRepository.uploadFile(bytes, 'path')).called(1);
     });
 
     test('getData calls repository', () async {

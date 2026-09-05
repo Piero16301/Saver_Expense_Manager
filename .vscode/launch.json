@@ -1,7 +1,4 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
@@ -14,7 +11,7 @@
         "--flavor",
         "production",
         "--target",
-        "lib/main.dart",
+        "lib/main.dart"
       ]
     },
     {
@@ -23,7 +20,8 @@
       "type": "dart",
       "program": "lib/main.dart",
       "args": [
-        "--wasm",
+        "--web-hostname",
+        "localhost",
         "--target",
         "lib/main.dart"
       ]

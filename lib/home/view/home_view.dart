@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -280,18 +281,15 @@ class AddMovementBottomSheet extends StatelessWidget {
         throw Exception(AppVariables.unsupportedLocalModelFile);
       }
 
-      final ext = file.path!.split('.').last;
+      final ext = file.name.split('.').last;
       final path = '${const Uuid().v4()}.$ext';
-      final bytes = await File(file.path!).readAsBytes();
+      final bytes = await file.readAsBytes();
 
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_file');
       // Upload file to Firebase Storage and build movement from file in
       // parallel
-      final uploadTask = getIt<RemoteStorageService>().uploadFile(
-        File(file.path!),
-        path,
-      );
+      final uploadTask = getIt<RemoteStorageService>().uploadFile(bytes, path);
       final movementFuture = AppFunctions.buildMovementFromFile(
         movementType: movementType,
         categories: selectedCategories,
@@ -400,10 +398,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       final trace = performance.startTrace('receipt_processing_scan');
       // Upload file to Firebase Storage and build movement from file in
       // parallel
-      final uploadTask = getIt<RemoteStorageService>().uploadFile(
-        File(files.first),
-        path,
-      );
+      final uploadTask = getIt<RemoteStorageService>().uploadFile(bytes, path);
       final movementFuture = AppFunctions.buildMovementFromFile(
         movementType: movementType,
         categories: selectedCategories,
@@ -503,11 +498,12 @@ class AddMovementBottomSheet extends StatelessWidget {
                 icon: HugeIcons.strokeRoundedUpload04,
                 onPressed: () => handleFilePick(context),
               ),
-              TonalButtonActionHome(
-                title: l10n.homeScan,
-                icon: HugeIcons.strokeRoundedCamera01,
-                onPressed: () => handleDocumentScan(context),
-              ),
+              if (!kIsWeb)
+                TonalButtonActionHome(
+                  title: l10n.homeScan,
+                  icon: HugeIcons.strokeRoundedCamera01,
+                  onPressed: () => handleDocumentScan(context),
+                ),
               TonalButtonActionHome(
                 title: l10n.homeEnter,
                 icon: HugeIcons.strokeRoundedEdit02,

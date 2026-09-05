@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
@@ -49,6 +49,10 @@ class GeminiAiRepository implements AiRepository {
 
   @override
   Future<void> initialize() async {
+    if (kIsWeb) {
+      _isLocalModelAvailable = false;
+      return;
+    }
     _isLocalModelAvailable = await _localModel.isAvailable();
   }
 

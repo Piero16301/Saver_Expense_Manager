@@ -83,4 +83,7 @@ class DefaultFirebaseOptions {
     storageBucket: 'saver-expense-manager.firebasestorage.app',
     measurementId: 'G-9MPK6L0YB8',
   );
+
+  static const String recaptchaEnterpriseSiteKey =
+      '6LcwG6otAAAAAC5Sl4lK7RsU4JkgRw0a1Y7R7fZP';
 }

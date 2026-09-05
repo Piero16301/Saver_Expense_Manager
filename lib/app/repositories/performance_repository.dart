@@ -24,16 +24,27 @@ class FirebasePerformanceRepository implements PerformanceRepository {
     : _performance = performance ?? FirebasePerformance.instance;
 
   final FirebasePerformance _performance;
+  final Map<Trace, Future<void>> _startingTraces = {};
 
   @override
   Trace startTrace(String name) {
     final trace = _performance.newTrace(name);
-    unawaited(trace.start());
+    final startFuture = trace.start().catchError((_) {});
+    _startingTraces[trace] = startFuture;
     return trace;
   }
 
   @override
   void stopTrace(Trace trace) {
-    unawaited(trace.stop());
+    final startFuture = _startingTraces.remove(trace);
+    if (startFuture != null) {
+      unawaited(
+        startFuture.then((_) {
+          unawaited(trace.stop().catchError((_) {}));
+        }),
+      );
+    } else {
+      unawaited(trace.stop().catchError((_) {}));
+    }
   }
 }

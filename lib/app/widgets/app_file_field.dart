@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -162,10 +161,11 @@ class AppFileField extends StatelessWidget {
 
       if (file != null) {
         unawaited(appLoader.showLoading());
-        final ext = file.path!.split('.').last;
+        final ext = file.name.split('.').last;
         final path = '${const Uuid().v4()}.$ext';
+        final bytes = await file.readAsBytes();
         final name = await getIt<RemoteStorageService>().uploadFile(
-          File(file.path!),
+          bytes,
           path,
         );
 

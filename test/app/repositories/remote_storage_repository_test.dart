@@ -32,7 +32,7 @@ void main() {
   late FirebaseRemoteStorageRepository repository;
 
   setUpAll(() {
-    registerFallbackValue(FakeFile());
+    registerFallbackValue(Uint8List(0));
   });
 
   setUp(() async {
@@ -54,7 +54,7 @@ void main() {
       final mock = MockRemoteStorageRepository();
       expect(await mock.deleteFile('path'), isTrue);
       expect(await mock.getData('path'), isA<Uint8List>());
-      expect(await mock.uploadFile(File('path'), 'path'), equals('path'));
+      expect(await mock.uploadFile(Uint8List(0), 'path'), equals('path'));
     });
   });
 
@@ -90,31 +90,25 @@ void main() {
       verify(() => mockReference.getData(any<int>())).called(1);
     });
 
-    test('uploadFile calls ref.putFile and returns ref.name', () async {
+    test('uploadFile calls ref.putData and returns ref.name', () async {
       final fakeTask = FakeUploadTask();
       when(
-        () => mockReference.putFile(any<File>()),
+        () => mockReference.putData(any<Uint8List>()),
       ).thenAnswer((_) => fakeTask);
       when(() => mockReference.name).thenReturn('uploaded_file');
 
-      final result = await repository.uploadFile(
-        File('dummy_path'),
-        'remote_path',
-      );
+      final result = await repository.uploadFile(Uint8List(0), 'remote_path');
 
       expect(result, equals('uploaded_file'));
-      verify(() => mockReference.putFile(any<File>())).called(1);
+      verify(() => mockReference.putData(any<Uint8List>())).called(1);
     });
 
     test('uploadFile records error and returns null on exception', () async {
       when(
-        () => mockReference.putFile(any<File>()),
+        () => mockReference.putData(any<Uint8List>()),
       ).thenThrow(Exception('Upload Fail'));
 
-      final result = await repository.uploadFile(
-        File('dummy_path'),
-        'remote_path',
-      );
+      final result = await repository.uploadFile(Uint8List(0), 'remote_path');
 
       expect(result, isNull);
       await Future<void>.delayed(Duration.zero);

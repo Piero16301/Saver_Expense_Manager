@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+import 'package:saver_expense_manager/settings/helpers/settings_app_specs_helper.dart';
 
 class SettingsAppSpecs extends StatelessWidget {
   const SettingsAppSpecs({super.key});
@@ -17,9 +18,7 @@ class SettingsAppSpecs extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        final version = snapshot.data?.version ?? '';
-        final buildNumber = snapshot.data?.buildNumber ?? '';
-        final updateDate = snapshot.data?.updateTime ?? DateTime.now();
+        final specs = AppSpecsData.fromPackageInfo(snapshot.data!);
 
         return Card(
           child: Padding(
@@ -35,7 +34,7 @@ class SettingsAppSpecs extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     Text(
-                      '$version ($buildNumber)',
+                      specs.versionDisplay,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontVariations: <FontVariation>[
                           ...(Theme.of(
@@ -58,7 +57,7 @@ class SettingsAppSpecs extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     Text(
-                      DateFormat('dd/MM/yyyy').format(updateDate),
+                      DateFormat('dd/MM/yyyy').format(specs.updateDate),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontVariations: <FontVariation>[
                           ...(Theme.of(

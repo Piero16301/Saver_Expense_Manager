@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,7 +6,7 @@ import 'package:saver_expense_manager/app/app.dart';
 
 abstract class RemoteStorageRepository {
   Future<bool> deleteFile(String path);
-  Future<String?> uploadFile(File file, String path);
+  Future<String?> uploadFile(Uint8List bytes, String path);
   Future<Uint8List?> getData(String path);
 }
 
@@ -21,8 +20,8 @@ class MockRemoteStorageRepository implements RemoteStorageRepository {
   }
 
   @override
-  Future<String?> uploadFile(File file, String path) {
-    return Future.value(file.path);
+  Future<String?> uploadFile(Uint8List bytes, String path) {
+    return Future.value(path);
   }
 }
 
@@ -48,14 +47,14 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
   }
 
   @override
-  Future<String?> uploadFile(File file, String path) async {
+  Future<String?> uploadFile(Uint8List bytes, String path) async {
     try {
       if (!(await AppFunctions.hasInternetConnection())) {
         return null;
       }
 
       final ref = _storage.ref().child(path);
-      await ref.putFile(file);
+      await ref.putData(bytes);
       return ref.name;
     } on Exception catch (e, stackTrace) {
       getIt<CrashService>().recordError(

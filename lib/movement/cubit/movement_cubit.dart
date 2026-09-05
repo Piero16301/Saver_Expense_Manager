@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
+import 'package:saver_expense_manager/movement/cubit/attachment_helper/attachment_opener.dart';
 
 part 'movement_state.dart';
 
@@ -74,14 +71,10 @@ class MovementCubit extends Cubit<MovementState> {
 
   Future<void> attachOpen(String value) async {
     try {
-      final appTemDir = await getApplicationCacheDirectory();
-      final filePath = '${appTemDir.path}/$value';
-      final file = File(filePath);
-
-      final data =
-          await getIt<RemoteStorageService>().getData(value) ?? Uint8List(0);
-      await file.writeAsBytes(data.toList());
-      await OpenFile.open(filePath);
+      await openAttachment(
+        value,
+        () => getIt<RemoteStorageService>().getData(value),
+      );
     } on Exception catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,

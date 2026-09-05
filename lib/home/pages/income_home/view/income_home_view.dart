@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -76,12 +77,16 @@ class IncomeHomeView extends StatelessWidget {
               return Expanded(
                 child: isLandscape
                     ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         spacing: 16,
                         children: [
                           Expanded(
                             child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: kIsWeb
+                                    ? ClampingScrollPhysics()
+                                    : BouncingScrollPhysics(),
+                              ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 spacing: isLandscape ? 16 : 0,
@@ -107,7 +112,12 @@ class IncomeHomeView extends StatelessWidget {
                             spacing: isLandscape ? 16 : 0,
                             children: [
                               TotalSpentChart(data: data),
-                              doughnutChart,
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxHeight: AppVariables.tabletMaxHeight,
+                                ),
+                                child: doughnutChart,
+                              ),
                             ],
                           ),
                           list,

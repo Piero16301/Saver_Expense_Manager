@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -282,6 +283,113 @@ void main() {
       await tester.tap(forwardButton);
 
       verify(() => mockCubit.nextMonth()).called(1);
+    });
+    testWidgets('can scroll list with pointer scroll in portrait', (
+      tester,
+    ) async {
+      final movements = List.generate(
+        20,
+        (i) => Movement(
+          id: '$i',
+          title: 'Item $i',
+          description: 'Desc $i',
+          price: 10.0 + i,
+          date: DateTime(2024, 3, 10),
+          category: const Category(
+            id: 'cat1',
+            name: 'FEEDING',
+            icon: 'food_icon',
+            color: 'FF00FF00',
+            type: CategoryType.expense,
+          ),
+          user: 'user123',
+        ),
+      );
+
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value(movements));
+
+      await tester.pumpWidget(buildSubject());
+      await tester.pumpAndSettle();
+
+      final initialTop = tester
+          .getTopLeft(find.byType(ListMovementsItemHome).first)
+          .dy;
+      final listCenter = tester.getCenter(find.byType(ListView));
+      await tester.sendEventToBinding(
+        PointerScrollEvent(
+          position: listCenter,
+          scrollDelta: const Offset(0, 200),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final newTop = tester
+          .getTopLeft(find.byType(ListMovementsItemHome).first)
+          .dy;
+      expect(newTop, isNot(equals(initialTop)));
+    });
+
+    testWidgets('can scroll list with pointer scroll in landscape', (
+      tester,
+    ) async {
+      final movements = List.generate(
+        20,
+        (i) => Movement(
+          id: '$i',
+          title: 'Item $i',
+          description: 'Desc $i',
+          price: 10.0 + i,
+          date: DateTime(2024, 3, 10),
+          category: const Category(
+            id: 'cat1',
+            name: 'FEEDING',
+            icon: 'food_icon',
+            color: 'FF00FF00',
+            type: CategoryType.expense,
+          ),
+          user: 'user123',
+        ),
+      );
+
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value(movements));
+
+      await tester.pumpWidget(buildSubject(orientation: Orientation.landscape));
+      await tester.pumpAndSettle();
+
+      final initialTop = tester
+          .getTopLeft(find.byType(ListMovementsItemHome).first)
+          .dy;
+      final listCenter = tester.getCenter(find.byType(ListView));
+      await tester.sendEventToBinding(
+        PointerScrollEvent(
+          position: listCenter,
+          scrollDelta: const Offset(0, 200),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final newTop = tester
+          .getTopLeft(find.byType(ListMovementsItemHome).first)
+          .dy;
+      expect(newTop, isNot(equals(initialTop)));
     });
   });
 }

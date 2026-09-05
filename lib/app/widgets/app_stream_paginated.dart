@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -38,6 +39,7 @@ class _AppStreamPaginatedState<T> extends State<AppStreamPaginated<T>> {
   }
 
   void _onScroll() {
+    if (!_scrollController.hasClients) return;
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       if (_dataLength >= _limiteActual) {
@@ -47,6 +49,20 @@ class _AppStreamPaginatedState<T> extends State<AppStreamPaginated<T>> {
         });
       }
     }
+  }
+
+  void _checkAutoPaginate() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          _scrollController.hasClients &&
+          _scrollController.position.maxScrollExtent <= 0 &&
+          _dataLength >= _limiteActual) {
+        setState(() {
+          _limiteActual += _incremento;
+          _currentStream = widget.stream(_limiteActual);
+        });
+      }
+    });
   }
 
   @override
@@ -80,13 +96,24 @@ class _AppStreamPaginatedState<T> extends State<AppStreamPaginated<T>> {
           );
         }
 
-        return ListView.builder(
-          physics: const BouncingScrollPhysics(),
+        _checkAutoPaginate();
+
+        return Scrollbar(
           controller: _scrollController,
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            return widget.itemBuilder(context, data, index);
-          },
+          thumbVisibility: kIsWeb,
+          interactive: true,
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: kIsWeb
+                  ? ClampingScrollPhysics()
+                  : BouncingScrollPhysics(),
+            ),
+            controller: _scrollController,
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              return widget.itemBuilder(context, data, index);
+            },
+          ),
         );
       },
     );

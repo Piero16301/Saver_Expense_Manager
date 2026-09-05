@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:saver_expense_manager/app/app.dart';
@@ -13,8 +12,8 @@ class RemoteStorageService {
     return _remoteStorageRepository.deleteFile(path);
   }
 
-  Future<String?> uploadFile(File file, String path) async {
-    return await _remoteStorageRepository.uploadFile(file, path);
+  Future<String?> uploadFile(Uint8List bytes, String path) async {
+    return await _remoteStorageRepository.uploadFile(bytes, path);
   }
 
   Future<Uint8List?> getData(String path) async {
