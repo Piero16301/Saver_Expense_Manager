@@ -5,9 +5,10 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<void> openAttachment(
-  String fileName,
-  Future<Uint8List?> Function() getData,
-) async {
+  String fileName, {
+  required Future<Uint8List?> Function() getData,
+  Future<String?> Function()? getDownloadURL,
+}) async {
   final appTemDir = await getApplicationCacheDirectory();
   final filePath = '${appTemDir.path}/$fileName';
   final file = File(filePath);

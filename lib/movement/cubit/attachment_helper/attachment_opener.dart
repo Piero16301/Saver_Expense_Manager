@@ -5,8 +5,13 @@ import 'package:saver_expense_manager/movement/cubit/attachment_helper/attachmen
     as opener;
 
 Future<void> openAttachment(
-  String fileName,
-  Future<Uint8List?> Function() getData,
-) async {
-  await opener.openAttachment(fileName, getData);
+  String fileName, {
+  required Future<Uint8List?> Function() getData,
+  Future<String?> Function()? getDownloadURL,
+}) async {
+  await opener.openAttachment(
+    fileName,
+    getData: getData,
+    getDownloadURL: getDownloadURL,
+  );
 }

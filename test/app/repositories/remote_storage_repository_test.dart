@@ -33,6 +33,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(Uint8List(0));
+    registerFallbackValue(SettableMetadata());
   });
 
   setUp(() async {
@@ -55,6 +56,10 @@ void main() {
       expect(await mock.deleteFile('path'), isTrue);
       expect(await mock.getData('path'), isA<Uint8List>());
       expect(await mock.uploadFile(Uint8List(0), 'path'), equals('path'));
+      expect(
+        await mock.getDownloadURL('path'),
+        equals('https://example.com/path'),
+      );
     });
   });
 
@@ -93,19 +98,19 @@ void main() {
     test('uploadFile calls ref.putData and returns ref.name', () async {
       final fakeTask = FakeUploadTask();
       when(
-        () => mockReference.putData(any<Uint8List>()),
+        () => mockReference.putData(any<Uint8List>(), any()),
       ).thenAnswer((_) => fakeTask);
       when(() => mockReference.name).thenReturn('uploaded_file');
 
       final result = await repository.uploadFile(Uint8List(0), 'remote_path');
 
       expect(result, equals('uploaded_file'));
-      verify(() => mockReference.putData(any<Uint8List>())).called(1);
+      verify(() => mockReference.putData(any<Uint8List>(), any())).called(1);
     });
 
     test('uploadFile records error and returns null on exception', () async {
       when(
-        () => mockReference.putData(any<Uint8List>()),
+        () => mockReference.putData(any<Uint8List>(), any()),
       ).thenThrow(Exception('Upload Fail'));
 
       final result = await repository.uploadFile(Uint8List(0), 'remote_path');
@@ -138,5 +143,37 @@ void main() {
         ),
       ).called(1);
     });
+
+    test('getDownloadURL calls ref.getDownloadURL', () async {
+      when(
+        () => mockReference.getDownloadURL(),
+      ).thenAnswer((_) async => 'https://download.url');
+
+      final result = await repository.getDownloadURL('remote_path');
+
+      expect(result, equals('https://download.url'));
+      verify(() => mockReference.getDownloadURL()).called(1);
+    });
+
+    test(
+      'getDownloadURL records error and returns null on exception',
+      () async {
+        when(
+          () => mockReference.getDownloadURL(),
+        ).thenThrow(Exception('Download URL Fail'));
+
+        final result = await repository.getDownloadURL('remote_path');
+
+        expect(result, isNull);
+        await Future<void>.delayed(Duration.zero);
+        verify(
+          () => mockCrashService.recordError(
+            any<Object>(),
+            any<StackTrace?>(),
+            reason: 'RemoteStorageService getDownloadURL error',
+          ),
+        ).called(1);
+      },
+    );
   });
 }

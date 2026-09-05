@@ -73,7 +73,9 @@ class MovementCubit extends Cubit<MovementState> {
     try {
       await openAttachment(
         value,
-        () => getIt<RemoteStorageService>().getData(value),
+        getData: () => getIt<RemoteStorageService>().getData(value),
+        getDownloadURL: () =>
+            getIt<RemoteStorageService>().getDownloadURL(value),
       );
     } on Exception catch (e, stackTrace) {
       getIt<CrashService>().recordError(

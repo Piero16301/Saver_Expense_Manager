@@ -56,5 +56,14 @@ void main() {
       expect(result, equals(data));
       verify(() => mockRepository.getData('path')).called(1);
     });
+
+    test('getDownloadURL calls repository', () async {
+      when(
+        () => mockRepository.getDownloadURL(any<String>()),
+      ).thenAnswer((_) async => 'https://example.com/file.pdf');
+      final result = await service.getDownloadURL('path');
+      expect(result, equals('https://example.com/file.pdf'));
+      verify(() => mockRepository.getDownloadURL('path')).called(1);
+    });
   });
 }

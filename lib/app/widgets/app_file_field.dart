@@ -44,27 +44,34 @@ class AppFileField extends StatelessWidget {
                 children: [
                   for (var i = 0; i < attachments.length; i++)
                     SizedBox(
-                      child: GestureDetector(
-                        onTap: () async {
-                          unawaited(appLoader.showLoading());
-                          await openFile(attachments[i]);
-                          if (appLoader.isLoading) {
-                            appLoader.hideLoading();
-                          }
-                        },
-                        child: Chip(
-                          label: Text(
-                            getAttachmentName(attachments[i], i + 1, l10n),
-                          ),
-                          avatar: HugeIcon(
-                            icon: getAttachmentIcon(attachments[i]),
-                            color: Theme.of(context).colorScheme.primary,
-                            strokeWidth: 2,
-                          ),
-                          onDeleted: () => _showRemoveConfirmationDialog(
-                            context,
-                            attachments[i],
-                            l10n,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () async {
+                            unawaited(appLoader.showLoading());
+                            try {
+                              await openFile(attachments[i]);
+                            } finally {
+                              if (appLoader.isLoading) {
+                                appLoader.hideLoading();
+                              }
+                            }
+                          },
+                          child: Chip(
+                            label: Text(
+                              getAttachmentName(attachments[i], i + 1, l10n),
+                            ),
+                            avatar: HugeIcon(
+                              icon: getAttachmentIcon(attachments[i]),
+                              color: Theme.of(context).colorScheme.primary,
+                              strokeWidth: 2,
+                            ),
+                            onDeleted: () => _showRemoveConfirmationDialog(
+                              context,
+                              attachments[i],
+                              l10n,
+                            ),
                           ),
                         ),
                       ),

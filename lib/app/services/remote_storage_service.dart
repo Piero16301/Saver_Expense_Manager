@@ -19,4 +19,8 @@ class RemoteStorageService {
   Future<Uint8List?> getData(String path) async {
     return await _remoteStorageRepository.getData(path);
   }
+
+  Future<String?> getDownloadURL(String path) async {
+    return await _remoteStorageRepository.getDownloadURL(path);
+  }
 }
