@@ -98,22 +98,29 @@ class _AppStreamPaginatedState<T> extends State<AppStreamPaginated<T>> {
 
         _checkAutoPaginate();
 
-        return Scrollbar(
-          controller: _scrollController,
-          thumbVisibility: kIsWeb,
-          interactive: true,
-          child: ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: kIsWeb
-                  ? ClampingScrollPhysics()
-                  : BouncingScrollPhysics(),
-            ),
-            controller: _scrollController,
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              return widget.itemBuilder(context, data, index);
-            },
+        final listView = ListView.builder(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: kIsWeb ? ClampingScrollPhysics() : BouncingScrollPhysics(),
           ),
+          controller: _scrollController,
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            return widget.itemBuilder(context, data, index);
+          },
+        );
+
+        if (kIsWeb) {
+          return Scrollbar(
+            controller: _scrollController,
+            thumbVisibility: true,
+            interactive: true,
+            child: listView,
+          );
+        }
+
+        return ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: listView,
         );
       },
     );

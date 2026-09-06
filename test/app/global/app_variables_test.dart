@@ -20,6 +20,12 @@ void main() {
       expect(fonts.isNotEmpty, isTrue);
       expect(fonts.containsKey('Roboto'), isTrue);
     });
+
+    test('chart dimensions are properly configured', () {
+      expect(AppVariables.mobileChartMaxHeight, equals(340.0));
+      expect(AppVariables.webChartMaxHeight, equals(480.0));
+      expect(AppVariables.tabletMaxHeight, equals(400.0));
+    });
   });
 
   group('SnackBarType', () {

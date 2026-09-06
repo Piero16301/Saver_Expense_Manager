@@ -26,51 +26,54 @@ class DoughnutCircularChart extends StatelessWidget {
         CircularChartAnnotation(
           height: '90%',
           width: '90%',
-          widget: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                AppFunctions.getCategoryName(
-                  data[selectedIndex].category.name,
-                  l10n,
-                ),
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              Text(
-                AppExtensions.moneyFormat.format(data[selectedIndex].value),
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  fontVariations: <FontVariation>[
-                    ...(Theme.of(
-                              context,
-                            ).textTheme.titleLarge?.fontVariations ??
-                            const <FontVariation>[])
-                        .where((v) => v.axis != 'wght'),
-                    const FontVariation('wght', 700),
-                  ],
-                ),
-              ),
-              Text(
-                '${_percentage.toInt()}%',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 5),
-              SizedBox(
-                height: 30,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+          widget: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppFunctions.getCategoryName(
+                    data[selectedIndex].category.name,
+                    l10n,
                   ),
-                  onPressed: () => context.pushNamed(
-                    AppRoute.category.name,
-                    extra: data[selectedIndex].category,
-                  ),
-                  child: Text(
-                    l10n.homeDetails,
-                    style: Theme.of(context).textTheme.titleSmall,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                Text(
+                  AppExtensions.moneyFormat.format(data[selectedIndex].value),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    fontVariations: <FontVariation>[
+                      ...(Theme.of(
+                                context,
+                              ).textTheme.titleLarge?.fontVariations ??
+                              const <FontVariation>[])
+                          .where((v) => v.axis != 'wght'),
+                      const FontVariation('wght', 700),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                Text(
+                  '${_percentage.toInt()}%',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 5),
+                SizedBox(
+                  height: 30,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                    ),
+                    onPressed: () => context.pushNamed(
+                      AppRoute.category.name,
+                      extra: data[selectedIndex].category,
+                    ),
+                    child: Text(
+                      l10n.homeDetails,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

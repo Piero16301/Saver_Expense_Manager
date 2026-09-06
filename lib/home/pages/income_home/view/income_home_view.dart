@@ -61,73 +61,121 @@ class IncomeHomeView extends StatelessWidget {
                 movements: snapshot.data!,
               );
 
-              final Widget doughnutChart = DoughnutCircularChart(
-                data: data,
-                selectedIndex: state.selectedIndex,
-                onPointTap: (p0) => context
-                    .read<IncomeHomeCubit>()
-                    .changeExplodeIndex(p0.pointIndex),
-              );
-
-              final list = MovementsListChart(
-                expenseType: CategoryType.income,
-                monthSelected: state.monthSelected!,
-              );
-
               return Expanded(
                 child: isLandscape
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        spacing: 16,
-                        children: [
-                          Expanded(
-                            child: SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(
-                                parent: kIsWeb
-                                    ? ClampingScrollPhysics()
-                                    : BouncingScrollPhysics(),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                spacing: isLandscape ? 16 : 0,
-                                children: [
-                                  TotalSpentChart(data: data),
-                                  ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      maxHeight: AppVariables.tabletMaxHeight,
-                                    ),
-                                    child: doughnutChart,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          list,
-                        ],
+                    ? IncomeHomeWebView(
+                        data: data,
+                        selectedIndex: state.selectedIndex,
+                        monthSelected: state.monthSelected!,
                       )
-                    : Column(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            spacing: isLandscape ? 16 : 0,
-                            children: [
-                              TotalSpentChart(data: data),
-                              ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  maxHeight: AppVariables.tabletMaxHeight,
-                                ),
-                                child: doughnutChart,
-                              ),
-                            ],
-                          ),
-                          list,
-                        ],
+                    : IncomeHomeMobileView(
+                        data: data,
+                        selectedIndex: state.selectedIndex,
+                        monthSelected: state.monthSelected!,
                       ),
               );
             },
           ),
         ],
       ),
+    );
+  }
+}
+
+class IncomeHomeMobileView extends StatelessWidget {
+  const IncomeHomeMobileView({
+    required this.data,
+    required this.selectedIndex,
+    required this.monthSelected,
+    super.key,
+  });
+
+  final List<CategoryData> data;
+  final int selectedIndex;
+  final DateTime monthSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TotalSpentChart(data: data),
+            ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxHeight: AppVariables.mobileChartMaxHeight,
+              ),
+              child: DoughnutCircularChart(
+                data: data,
+                selectedIndex: selectedIndex,
+                onPointTap: (p0) => context
+                    .read<IncomeHomeCubit>()
+                    .changeExplodeIndex(p0.pointIndex),
+              ),
+            ),
+          ],
+        ),
+        MovementsListChart(
+          expenseType: CategoryType.income,
+          monthSelected: monthSelected,
+        ),
+      ],
+    );
+  }
+}
+
+class IncomeHomeWebView extends StatelessWidget {
+  const IncomeHomeWebView({
+    required this.data,
+    required this.selectedIndex,
+    required this.monthSelected,
+    super.key,
+  });
+
+  final List<CategoryData> data;
+  final int selectedIndex;
+  final DateTime monthSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 16,
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: kIsWeb
+                  ? ClampingScrollPhysics()
+                  : BouncingScrollPhysics(),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 16,
+              children: [
+                TotalSpentChart(data: data),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxHeight: AppVariables.webChartMaxHeight,
+                  ),
+                  child: DoughnutCircularChart(
+                    data: data,
+                    selectedIndex: selectedIndex,
+                    onPointTap: (p0) => context
+                        .read<IncomeHomeCubit>()
+                        .changeExplodeIndex(p0.pointIndex),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        MovementsListChart(
+          expenseType: CategoryType.income,
+          monthSelected: monthSelected,
+        ),
+      ],
     );
   }
 }

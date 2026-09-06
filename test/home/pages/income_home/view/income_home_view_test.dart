@@ -277,6 +277,8 @@ void main() {
       expect(find.byType(MonthSelector), findsOneWidget);
       expect(find.byType(DoughnutCircularChart), findsOneWidget);
       expect(find.byType(TotalSpentChart), findsOneWidget);
+      expect(find.byType(IncomeHomeMobileView), findsOneWidget);
+      expect(find.byType(IncomeHomeWebView), findsNothing);
     });
 
     testWidgets('shows landscape layout when in landscape orientation', (
@@ -316,6 +318,8 @@ void main() {
 
       expect(find.byType(Row), findsWidgets);
       expect(find.byType(MonthSelector), findsOneWidget);
+      expect(find.byType(IncomeHomeWebView), findsOneWidget);
+      expect(find.byType(IncomeHomeMobileView), findsNothing);
     });
 
     testWidgets('tapping back on MonthSelector calls previousMonth', (
