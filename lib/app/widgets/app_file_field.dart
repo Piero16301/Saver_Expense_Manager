@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -45,27 +44,34 @@ class AppFileField extends StatelessWidget {
                 children: [
                   for (var i = 0; i < attachments.length; i++)
                     SizedBox(
-                      child: GestureDetector(
-                        onTap: () async {
-                          unawaited(appLoader.showLoading());
-                          await openFile(attachments[i]);
-                          if (appLoader.isLoading) {
-                            appLoader.hideLoading();
-                          }
-                        },
-                        child: Chip(
-                          label: Text(
-                            getAttachmentName(attachments[i], i + 1, l10n),
-                          ),
-                          avatar: HugeIcon(
-                            icon: getAttachmentIcon(attachments[i]),
-                            color: Theme.of(context).colorScheme.primary,
-                            strokeWidth: 2,
-                          ),
-                          onDeleted: () => _showRemoveConfirmationDialog(
-                            context,
-                            attachments[i],
-                            l10n,
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () async {
+                            unawaited(appLoader.showLoading());
+                            try {
+                              await openFile(attachments[i]);
+                            } finally {
+                              if (appLoader.isLoading) {
+                                appLoader.hideLoading();
+                              }
+                            }
+                          },
+                          child: Chip(
+                            label: Text(
+                              getAttachmentName(attachments[i], i + 1, l10n),
+                            ),
+                            avatar: HugeIcon(
+                              icon: getAttachmentIcon(attachments[i]),
+                              color: Theme.of(context).colorScheme.primary,
+                              strokeWidth: 2,
+                            ),
+                            onDeleted: () => _showRemoveConfirmationDialog(
+                              context,
+                              attachments[i],
+                              l10n,
+                            ),
                           ),
                         ),
                       ),
@@ -162,10 +168,11 @@ class AppFileField extends StatelessWidget {
 
       if (file != null) {
         unawaited(appLoader.showLoading());
-        final ext = file.path!.split('.').last;
+        final ext = file.name.split('.').last;
         final path = '${const Uuid().v4()}.$ext';
+        final bytes = await file.readAsBytes();
         final name = await getIt<RemoteStorageService>().uploadFile(
-          File(file.path!),
+          bytes,
           path,
         );
 

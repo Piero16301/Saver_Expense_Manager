@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'dart:ui';
-
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class AppBlocObserver extends BlocObserver {
@@ -49,7 +48,9 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   Bloc.observer = const AppBlocObserver();
 
   // Add cross-flavor configuration here
-  unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+  if (!kIsWeb) {
+    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+  }
 
   runApp(await builder());
 }

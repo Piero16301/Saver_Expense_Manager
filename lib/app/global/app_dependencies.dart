@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
@@ -56,6 +57,9 @@ enum Environment { mock, prod }
 
 class ServiceFactory {
   static CrashRepository getCrashRepository(Environment env) {
+    if (kIsWeb) {
+      return MockCrashRepository();
+    }
     switch (env) {
       case Environment.mock:
         return MockCrashRepository();

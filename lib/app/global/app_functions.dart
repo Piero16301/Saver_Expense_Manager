@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +32,9 @@ class AppFunctions {
   static Future<bool> hasInternetConnection() async {
     if (internetConnectionTestValue != null) {
       return internetConnectionTestValue!;
+    }
+    if (kIsWeb) {
+      return true;
     }
     try {
       final result = await InternetAddress.lookup(

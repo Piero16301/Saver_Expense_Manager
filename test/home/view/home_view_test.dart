@@ -86,6 +86,7 @@ void main() {
     registerFallbackValue(FileType.custom);
     registerFallbackValue(ModelType.cloud);
     registerFallbackValue(File(''));
+    registerFallbackValue(Uint8List(0));
     AppVariables.useTestFonts = true;
     Intl.defaultLocale = 'en_US';
     unawaited(initializeDateFormatting('en_US'));
@@ -374,12 +375,13 @@ void main() {
           bytes: Uint8List.fromList([1, 2, 3]),
         );
 
-        whenPickFile(mockFilePicker).thenAnswer(
-          (_) async => mockFile,
-        );
+        whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
 
         when(
-          () => mockRemoteStorageService.uploadFile(any<File>(), any<String>()),
+          () => mockRemoteStorageService.uploadFile(
+            any<Uint8List>(),
+            any<String>(),
+          ),
         ).thenAnswer((_) async => 'upload_name');
 
         AppFunctions.internetConnectionTestValue = true;
@@ -437,9 +439,7 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      whenPickFile(
-        mockFilePicker,
-      ).thenAnswer((_) async => null);
+      whenPickFile(mockFilePicker).thenAnswer((_) async => null);
 
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);
@@ -532,7 +532,10 @@ void main() {
         );
 
         when(
-          () => mockRemoteStorageService.uploadFile(any<File>(), any<String>()),
+          () => mockRemoteStorageService.uploadFile(
+            any<Uint8List>(),
+            any<String>(),
+          ),
         ).thenAnswer((_) async => 'upload_name');
 
         AppFunctions.internetConnectionTestValue = true;

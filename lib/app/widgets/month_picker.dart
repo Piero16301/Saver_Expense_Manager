@@ -14,7 +14,7 @@ class MonthPicker {
     DateTime? firstDate,
     DateTime? lastDate,
   }) async {
-    return showDialog<DateTime>(
+    return await showDialog<DateTime>(
       context: context,
       builder: (_) => BlocProvider.value(
         value: context.read<AppCubit>(),
@@ -35,7 +35,7 @@ class MonthPicker {
     DateTime? firstDate,
     DateTime? lastDate,
   }) async {
-    return showDialog<DateTimeRange>(
+    return await showDialog<DateTimeRange>(
       context: context,
       builder: (_) => BlocProvider.value(
         value: context.read<AppCubit>(),
@@ -234,9 +234,7 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
             fontVariations: <FontVariation>[
               ...(Theme.of(context).textTheme.bodyMedium?.fontVariations ??
                       const <FontVariation>[])
-                  .where(
-                    (v) => v.axis != 'wght',
-                  ),
+                  .where((v) => v.axis != 'wght'),
               FontVariation('wght', isToday || isSelectedCircle ? 700 : 400),
             ],
           ),

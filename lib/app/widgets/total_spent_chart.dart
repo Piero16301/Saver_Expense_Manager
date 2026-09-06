@@ -23,19 +23,14 @@ class TotalSpentChart extends StatelessWidget {
           Text(l10n.homeTotal, style: Theme.of(context).textTheme.bodyMedium),
           Text(
             AppExtensions.moneyFormat.format(totalValue),
-            style:
-                Theme.of(
-                  context,
-                ).textTheme.headlineSmall!.copyWith(
-                  fontVariations: <FontVariation>[
-                    ...(Theme.of(
-                              context,
-                            ).textTheme.titleLarge?.fontVariations ??
-                            const <FontVariation>[])
-                        .where((v) => v.axis != 'wght'),
-                    const FontVariation('wght', 700),
-                  ],
-                ),
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              fontVariations: <FontVariation>[
+                ...(Theme.of(context).textTheme.titleLarge?.fontVariations ??
+                        const <FontVariation>[])
+                    .where((v) => v.axis != 'wght'),
+                const FontVariation('wght', 700),
+              ],
+            ),
           ),
         ],
       ),

@@ -468,9 +468,7 @@ class AntRecommendationsWidget extends StatelessWidget {
                               // Use until flutter_markdown_plus 2.0.0 release
                               // ignore: deprecated_member_use
                               child: MaterialUiCompatibilityBridge(
-                                child: MarkdownBody(
-                                  data: recommendation,
-                                ),
+                                child: MarkdownBody(data: recommendation),
                               ),
                             ),
                           ),

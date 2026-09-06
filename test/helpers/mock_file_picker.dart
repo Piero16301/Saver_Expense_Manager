@@ -9,12 +9,9 @@ class MockFilePicker extends Mock
     implements FilePickerPlatform {}
 
 final class FakePlatformFile extends PlatformFile {
-  FakePlatformFile({
-    required this.name,
-    required String path,
-    this.bytes,
-  }) : path = path,
-       uri = Uri.file(path);
+  FakePlatformFile({required this.name, required String path, this.bytes})
+    : path = path,
+      uri = Uri.file(path);
 
   @override
   final String name;

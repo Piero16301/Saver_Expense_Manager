@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
@@ -16,7 +18,9 @@ class AppCubit extends Cubit<AppState> {
     // Setting the language to the device language if it's not set
     final language = localStorage.getLanguage();
     if (language == null) {
-      final deviceLocale = Platform.localeName.split('_').first;
+      final deviceLocale = kIsWeb
+          ? PlatformDispatcher.instance.locale.languageCode
+          : Platform.localeName.split('_').first;
       final deviceLanguage =
           AppVariables.deviceLanguageMap[deviceLocale] ??
           AppVariables.supportedLocales.first;

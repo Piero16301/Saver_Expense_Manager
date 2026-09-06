@@ -45,5 +45,22 @@ void main() {
       await tester.tap(find.byType(AppOutlinedButton));
       expect(pressed, isTrue);
     });
+
+    testWidgets(
+      'uses VisualDensity.standard by default even in compact theme',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(visualDensity: VisualDensity.compact),
+            home: const Scaffold(body: AppOutlinedButton(label: 'Press')),
+          ),
+        );
+
+        final button = tester.widget<OutlinedButton>(
+          find.byType(OutlinedButton),
+        );
+        expect(button.style?.visualDensity, equals(VisualDensity.standard));
+      },
+    );
   });
 }

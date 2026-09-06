@@ -15,7 +15,7 @@ class AuthService {
   bool get isLoggedIn => _authRepository.isLoggedIn;
 
   Future<bool> updateDisplayName(String newName) async {
-    return _authRepository.updateDisplayName(newName);
+    return await _authRepository.updateDisplayName(newName);
   }
 
   Future<bool> signOut() => _authRepository.signOut();

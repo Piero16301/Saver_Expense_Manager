@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/firebase_options.dart';
@@ -91,6 +92,9 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> initialize() async {
+    if (kIsWeb) {
+      return;
+    }
     try {
       await _googleSignIn.initialize(
         serverClientId: DefaultFirebaseOptions.googleClientId,
@@ -188,6 +192,12 @@ class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<bool> linkWithGoogle() async {
     try {
+      if (kIsWeb) {
+        final googleProvider = GoogleAuthProvider();
+        await _auth.currentUser?.linkWithPopup(googleProvider);
+        return true;
+      }
+
       await _googleSignIn.signOut();
       final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;
@@ -234,6 +244,12 @@ class FirebaseAuthRepository implements AuthRepository {
     final performance = getIt<PerformanceService>();
     final trace = performance.startTrace('auth_sign_in_google');
     try {
+      if (kIsWeb) {
+        final googleProvider = GoogleAuthProvider();
+        await _auth.signInWithPopup(googleProvider);
+        return true;
+      }
+
       await _googleSignIn.signOut();
       final googleUser = await _googleSignIn.authenticate();
       final googleAuth = googleUser.authentication;

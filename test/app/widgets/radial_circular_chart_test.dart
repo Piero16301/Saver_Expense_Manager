@@ -136,25 +136,22 @@ void main() {
         return FakeStreamSubscription<List<int>>();
       });
 
-      await HttpOverrides.runZoned(
-        () async {
-          await tester.pumpWidget(
-            const MaterialApp(
-              home: Scaffold(
-                body: RadialCircularChart(
-                  data: [],
-                  image: 'https://example.com/image.png',
-                ),
+      await HttpOverrides.runZoned(() async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: RadialCircularChart(
+                data: [],
+                image: 'https://example.com/image.png',
               ),
             ),
-          );
+          ),
+        );
 
-          expect(find.byType(Image), findsOneWidget);
-          await tester.pump(const Duration(seconds: 1));
-          await tester.pumpAndSettle();
-        },
-        createHttpClient: (_) => mockHttpClient,
-      );
+        expect(find.byType(Image), findsOneWidget);
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pumpAndSettle();
+      }, createHttpClient: (_) => mockHttpClient);
     });
   });
 }

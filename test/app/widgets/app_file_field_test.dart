@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,7 +18,7 @@ void main() {
   late MockFilePicker mockFilePicker;
 
   setUpAll(() {
-    registerFallbackValue(File(''));
+    registerFallbackValue(Uint8List(0));
     registerFallbackValue(FileType.any);
   });
 
@@ -148,14 +148,13 @@ void main() {
       final mockFile = FakePlatformFile(
         name: 'test.png',
         path: '/path/to/test.png',
+        bytes: Uint8List(0),
       );
 
-      whenPickFile(mockFilePicker).thenAnswer(
-        (_) async => mockFile,
-      );
+      whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
 
       when(
-        () => remoteStorageService.uploadFile(any<File>(), any<String>()),
+        () => remoteStorageService.uploadFile(any<Uint8List>(), any<String>()),
       ).thenAnswer((_) async => 'uploaded_path.png');
 
       await tester.pumpWidget(
@@ -213,9 +212,7 @@ void main() {
     });
 
     testWidgets('does nothing if file picking is cancelled', (tester) async {
-      whenPickFile(
-        mockFilePicker,
-      ).thenAnswer((_) async => null);
+      whenPickFile(mockFilePicker).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
         MaterialApp(

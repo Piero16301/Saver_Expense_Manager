@@ -8,6 +8,7 @@ class AppFilledButton extends StatelessWidget {
     this.innerPadding,
     this.color,
     this.isOnlyIcon = false,
+    this.visualDensity,
     super.key,
   });
 
@@ -17,12 +18,14 @@ class AppFilledButton extends StatelessWidget {
   final EdgeInsetsGeometry? innerPadding;
   final Color? color;
   final bool isOnlyIcon;
+  final VisualDensity? visualDensity;
 
   @override
   Widget build(BuildContext context) {
     return FilledButton.icon(
       onPressed: onPressed,
       style: FilledButton.styleFrom(
+        visualDensity: visualDensity ?? VisualDensity.standard,
         backgroundColor: color,
         padding: innerPadding ?? const EdgeInsets.all(12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

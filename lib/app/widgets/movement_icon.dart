@@ -9,12 +9,9 @@ class MovementIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final customLogoKey = AppVariables.companiesWithLogo.firstWhere(
-      (company) {
-        return movement.company.toLowerCase().contains(company);
-      },
-      orElse: () => '',
-    );
+    final customLogoKey = AppVariables.companiesWithLogo.firstWhere((company) {
+      return movement.company.toLowerCase().contains(company);
+    }, orElse: () => '');
 
     if (customLogoKey.isNotEmpty) {
       return CircleAvatar(

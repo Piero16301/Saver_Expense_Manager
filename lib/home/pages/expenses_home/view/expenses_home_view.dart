@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -60,66 +61,123 @@ class ExpensesHomeView extends StatelessWidget {
 
               final data = AppFunctions.buildChartData(
                 movements: snapshot.data!,
-              );
-
-              final Widget doughnutChart = DoughnutCircularChart(
-                data: data..sort((a, b) => b.value.compareTo(a.value)),
-                selectedIndex: state.selectedIndex,
-                onPointTap: (p0) => context
-                    .read<ExpensesHomeCubit>()
-                    .changeExplodeIndex(p0.pointIndex),
-              );
-
-              final list = MovementsListChart(
-                expenseType: CategoryType.expense,
-                monthSelected: state.monthSelected!,
-              );
+              )..sort((a, b) => b.value.compareTo(a.value));
 
               return Expanded(
                 child: isLandscape
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        spacing: 16,
-                        children: [
-                          Expanded(
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                spacing: isLandscape ? 16 : 0,
-                                children: [
-                                  TotalSpentChart(data: data),
-                                  ConstrainedBox(
-                                    constraints: const BoxConstraints(
-                                      maxHeight: AppVariables.tabletMaxHeight,
-                                    ),
-                                    child: doughnutChart,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          list,
-                        ],
+                    ? ExpensesHomeWebView(
+                        data: data,
+                        selectedIndex: state.selectedIndex,
+                        monthSelected: state.monthSelected!,
                       )
-                    : Column(
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            spacing: isLandscape ? 16 : 0,
-                            children: [
-                              TotalSpentChart(data: data),
-                              doughnutChart,
-                            ],
-                          ),
-                          list,
-                        ],
+                    : ExpensesHomeMobileView(
+                        data: data,
+                        selectedIndex: state.selectedIndex,
+                        monthSelected: state.monthSelected!,
                       ),
               );
             },
           ),
         ],
       ),
+    );
+  }
+}
+
+class ExpensesHomeMobileView extends StatelessWidget {
+  const ExpensesHomeMobileView({
+    required this.data,
+    required this.selectedIndex,
+    required this.monthSelected,
+    super.key,
+  });
+
+  final List<CategoryData> data;
+  final int selectedIndex;
+  final DateTime monthSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TotalSpentChart(data: data),
+            ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxHeight: AppVariables.mobileChartMaxHeight,
+              ),
+              child: DoughnutCircularChart(
+                data: data,
+                selectedIndex: selectedIndex,
+                onPointTap: (p0) => context
+                    .read<ExpensesHomeCubit>()
+                    .changeExplodeIndex(p0.pointIndex),
+              ),
+            ),
+          ],
+        ),
+        MovementsListChart(
+          expenseType: CategoryType.expense,
+          monthSelected: monthSelected,
+        ),
+      ],
+    );
+  }
+}
+
+class ExpensesHomeWebView extends StatelessWidget {
+  const ExpensesHomeWebView({
+    required this.data,
+    required this.selectedIndex,
+    required this.monthSelected,
+    super.key,
+  });
+
+  final List<CategoryData> data;
+  final int selectedIndex;
+  final DateTime monthSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 16,
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: kIsWeb
+                  ? ClampingScrollPhysics()
+                  : BouncingScrollPhysics(),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 16,
+              children: [
+                TotalSpentChart(data: data),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxHeight: AppVariables.webChartMaxHeight,
+                  ),
+                  child: DoughnutCircularChart(
+                    data: data,
+                    selectedIndex: selectedIndex,
+                    onPointTap: (p0) => context
+                        .read<ExpensesHomeCubit>()
+                        .changeExplodeIndex(p0.pointIndex),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        MovementsListChart(
+          expenseType: CategoryType.expense,
+          monthSelected: monthSelected,
+        ),
+      ],
     );
   }
 }

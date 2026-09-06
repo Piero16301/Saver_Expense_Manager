@@ -10,12 +10,10 @@ class AppThemes {
     return ThemeData(
       textTheme: ThemeData.light().textTheme
           .apply(fontFamily: fontFamily)
-          .applyFontVariations(
-            const <FontVariation>[
-              FontVariation('ROND', 100),
-              FontVariation('wght', 500),
-            ],
-          ),
+          .applyFontVariations(const <FontVariation>[
+            FontVariation('ROND', 100),
+            FontVariation('wght', 500),
+          ]),
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(seedColor: baseColor),
       appBarTheme: const AppBarTheme(
@@ -30,9 +28,7 @@ class AppThemes {
         contentTextStyle: TextStyle(
           fontFamily: fontFamily,
           color: colorScheme.onSurface,
-          fontVariations: const <FontVariation>[
-            FontVariation('ROND', 100),
-          ],
+          fontVariations: const <FontVariation>[FontVariation('ROND', 100)],
         ),
         backgroundColor: colorScheme.surfaceContainer,
         closeIconColor: colorScheme.onSurface,
@@ -58,12 +54,10 @@ class AppThemes {
     return ThemeData(
       textTheme: ThemeData.dark().textTheme
           .apply(fontFamily: fontFamily)
-          .applyFontVariations(
-            const <FontVariation>[
-              FontVariation('ROND', 100),
-              FontVariation('wght', 500),
-            ],
-          ),
+          .applyFontVariations(const <FontVariation>[
+            FontVariation('ROND', 100),
+            FontVariation('wght', 500),
+          ]),
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
         seedColor: baseColor,
@@ -81,9 +75,7 @@ class AppThemes {
         contentTextStyle: TextStyle(
           fontFamily: fontFamily,
           color: colorScheme.onSurface,
-          fontVariations: const <FontVariation>[
-            FontVariation('ROND', 100),
-          ],
+          fontVariations: const <FontVariation>[FontVariation('ROND', 100)],
         ),
         backgroundColor: colorScheme.surfaceContainer,
         closeIconColor: colorScheme.onSurface,
