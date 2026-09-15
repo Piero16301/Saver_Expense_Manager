@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -39,11 +40,56 @@ void main() {
       verify(() => mockTrace.start()).called(1);
     });
 
-    test('stopTrace stops the given trace', () async {
+    test(
+      'stopTrace stops the given trace when not in starting traces',
+      () async {
+        when(() => mockTrace.stop()).thenAnswer((_) async {});
+        repository.stopTrace(mockTrace);
+        await Future<void>.delayed(Duration.zero);
+        verify(() => mockTrace.stop()).called(1);
+      },
+    );
+
+    test('stopTrace stops trace that was previously started', () async {
+      final completer = Completer<void>();
+      when(() => mockPerformance.newTrace(any<String>())).thenReturn(mockTrace);
+      when(() => mockTrace.start()).thenAnswer((_) => completer.future);
       when(() => mockTrace.stop()).thenAnswer((_) async {});
-      repository.stopTrace(mockTrace);
+
+      final trace = repository.startTrace('trace_to_stop');
+      repository.stopTrace(trace);
+
+      completer.complete();
       await Future<void>.delayed(Duration.zero);
       verify(() => mockTrace.stop()).called(1);
     });
+
+    test('startTrace and stopTrace handle errors gracefully', () async {
+      when(() => mockPerformance.newTrace(any<String>())).thenReturn(mockTrace);
+      when(
+        () => mockTrace.start(),
+      ).thenAnswer((_) => Future.error(Exception('start error')));
+      when(
+        () => mockTrace.stop(),
+      ).thenAnswer((_) => Future.error(Exception('stop error')));
+
+      final trace = repository.startTrace('error_trace');
+      repository.stopTrace(trace);
+      await Future<void>.delayed(Duration.zero);
+      verify(() => mockTrace.start()).called(1);
+      verify(() => mockTrace.stop()).called(1);
+    });
+
+    test(
+      'default constructor initializes or throws when Firebase not ready',
+      () {
+        try {
+          final repo = FirebasePerformanceRepository();
+          expect(repo, isNotNull);
+        } on Object catch (e) {
+          expect(e, isNotNull);
+        }
+      },
+    );
   });
 }

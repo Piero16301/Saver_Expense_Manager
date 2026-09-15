@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -230,76 +228,72 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
   void _showFilterTypeMenu(BuildContext context, CategoryType? filterType) {
     final l10n = AppLocalizations.of(context);
 
-    unawaited(
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.4,
-          minChildSize: 0.3,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) => Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        minChildSize: 0.3,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).buttonTheme.colorScheme!.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(2)),
+                  ),
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                      borderRadius: const BorderRadius.all(Radius.circular(2)),
+              const SizedBox(height: 16),
+              Text(
+                l10n.movementTypeTitle,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: RadioGroup<CategoryType?>(
+                    groupValue: filterType,
+                    onChanged: (value) {
+                      onFilterTypeChanged(value);
+                      Navigator.pop(context);
+                    },
+                    child: Column(
+                      children: [
+                        RadioListTile<CategoryType?>(
+                          title: Text(l10n.movementTypeAll),
+                          value: null,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        RadioListTile<CategoryType?>(
+                          title: Text(l10n.expenseName),
+                          value: CategoryType.expense,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        RadioListTile<CategoryType?>(
+                          title: Text(l10n.incomeName),
+                          value: CategoryType.income,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.movementTypeTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: RadioGroup<CategoryType?>(
-                      groupValue: filterType,
-                      onChanged: (value) {
-                        onFilterTypeChanged(value);
-                        Navigator.pop(context);
-                      },
-                      child: Column(
-                        children: [
-                          RadioListTile<CategoryType?>(
-                            title: Text(l10n.movementTypeAll),
-                            value: null,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          RadioListTile<CategoryType?>(
-                            title: Text(l10n.expenseName),
-                            value: CategoryType.expense,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          RadioListTile<CategoryType?>(
-                            title: Text(l10n.incomeName),
-                            value: CategoryType.income,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),
@@ -309,80 +303,76 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
   void _showFilterCategoryMenu(BuildContext context, Category? filterCategory) {
     final l10n = AppLocalizations.of(context);
 
-    unawaited(
-      showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          minChildSize: 0.3,
-          maxChildSize: 0.9,
-          expand: false,
-          builder: (context, scrollController) => Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.3,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).buttonTheme.colorScheme!.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(2)),
+                  ),
+                ),
               ),
-            ),
-            child: Column(
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                      borderRadius: const BorderRadius.all(Radius.circular(2)),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.movementCategoryTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: RadioGroup<Category?>(
-                      groupValue: filterCategory,
-                      onChanged: (value) {
-                        onFilterCategoryChanged(value);
-                        Navigator.pop(context);
-                      },
-                      child: Column(
-                        children: [
-                          RadioListTile<Category?>(
-                            title: Text(l10n.movementCategoryAll),
-                            value: null,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                          ...categories
-                              .where((category) => category.type == filterType)
-                              .map(
-                                (category) => RadioListTile<Category?>(
-                                  title: Text(
-                                    AppFunctions.getCategoryName(
-                                      category.name,
-                                      l10n,
-                                    ),
+              const SizedBox(height: 16),
+              Text(
+                l10n.movementCategoryTitle,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: RadioGroup<Category?>(
+                    groupValue: filterCategory,
+                    onChanged: (value) {
+                      onFilterCategoryChanged(value);
+                      Navigator.pop(context);
+                    },
+                    child: Column(
+                      children: [
+                        RadioListTile<Category?>(
+                          title: Text(l10n.movementCategoryAll),
+                          value: null,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        ...categories
+                            .where((category) => category.type == filterType)
+                            .map(
+                              (category) => RadioListTile<Category?>(
+                                title: Text(
+                                  AppFunctions.getCategoryName(
+                                    category.name,
+                                    l10n,
                                   ),
-                                  value: category,
-                                  contentPadding: EdgeInsets.zero,
                                 ),
+                                value: category,
+                                contentPadding: EdgeInsets.zero,
                               ),
-                        ],
-                      ),
+                            ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+            ],
           ),
         ),
       ),

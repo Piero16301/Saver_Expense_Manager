@@ -208,19 +208,15 @@ class MovementView extends StatelessWidget {
         const Duration(days: AppVariables.maxDaysWarning),
       ),
     )) {
-      unawaited(
-        showDialog<void>(
-          context: context,
-          builder: (dialogContext) => AppAlertDialog(
-            title: l10n.movementDateWarningTitle,
-            content: l10n.movementDateWarningContent(
-              AppVariables.maxDaysWarning,
-            ),
-            cancelLabel: l10n.cancel,
-            confirmLabel: l10n.confirm,
-            onCancel: () => context.pop(),
-            onConfirm: () => _onConfirmDialog(context, uid, l10n),
-          ),
+      showDialog<void>(
+        context: context,
+        builder: (dialogContext) => AppAlertDialog(
+          title: l10n.movementDateWarningTitle,
+          content: l10n.movementDateWarningContent(AppVariables.maxDaysWarning),
+          cancelLabel: l10n.cancel,
+          confirmLabel: l10n.confirm,
+          onCancel: () => context.pop(),
+          onConfirm: () => _onConfirmDialog(context, uid, l10n),
         ),
       );
     } else {
@@ -286,34 +282,32 @@ class MovementView extends StatelessWidget {
   }
 
   void _showDeleteDialog(BuildContext context, AppLocalizations l10n) {
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (dialogContext) => AppAlertDialog(
-          title: l10n.confirmDeleteMovementTitle,
-          content: l10n.confirmDeleteMovementMessage,
-          confirmLabel: l10n.deleteMovementConfirm,
-          cancelLabel: l10n.deleteMovementCancel,
-          onConfirm: () {
-            Navigator.of(dialogContext).pop();
-            context.read<MovementCubit>().removeMovement();
-            if (context.mounted) {
-              AppFunctions.showSnackBar(
-                context,
-                message: l10n.movementDeleteSuccess,
-                type: SnackBarType.success,
-              );
-              context.pop<bool>(true);
-            } else {
-              AppFunctions.showSnackBar(
-                context,
-                message: l10n.movementDeleteError,
-                type: SnackBarType.error,
-              );
-            }
-          },
-          onCancel: () => Navigator.of(dialogContext).pop(),
-        ),
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AppAlertDialog(
+        title: l10n.confirmDeleteMovementTitle,
+        content: l10n.confirmDeleteMovementMessage,
+        confirmLabel: l10n.deleteMovementConfirm,
+        cancelLabel: l10n.deleteMovementCancel,
+        onConfirm: () {
+          Navigator.of(dialogContext).pop();
+          context.read<MovementCubit>().removeMovement();
+          if (context.mounted) {
+            AppFunctions.showSnackBar(
+              context,
+              message: l10n.movementDeleteSuccess,
+              type: SnackBarType.success,
+            );
+            context.pop<bool>(true);
+          } else {
+            AppFunctions.showSnackBar(
+              context,
+              message: l10n.movementDeleteError,
+              type: SnackBarType.error,
+            );
+          }
+        },
+        onCancel: () => Navigator.of(dialogContext).pop(),
       ),
     );
   }
