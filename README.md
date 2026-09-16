@@ -2,6 +2,7 @@
 
 [![analysis](https://github.com/Piero16301/Saver_Expense_Manager/actions/workflows/beta.yaml/badge.svg?branch=dev)](https://github.com/Piero16301/Saver_Expense_Manager/actions/workflows/beta.yaml?query=branch%3Adev)
 [![codecov](https://codecov.io/gh/Piero16301/Saver_Expense_Manager/branch/dev/graph/badge.svg?token=7YR4328OP3)](https://codecov.io/gh/Piero16301/Saver_Expense_Manager/branch/dev)
+[![MobSF Security](https://img.shields.io/badge/MobSF-Audited%20%26%20Passed-brightgreen?logo=android&logoColor=white)](#%EF%B8%8F-security-assessment-mobsf-static-analysis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/sanjuanpamk)
 
@@ -28,7 +29,8 @@ Welcome to the comprehensive documentation for the **Saver Expense Manager** app
 4. [Localization (l10n)](#localization-l10n)
 5. [Bootstrap & Entrypoint](#bootstrap--entrypoint)
 6. [Packages & Data Models](#packages--data-models)
-7. [Configuration (`pubspec.yaml`)](#configuration-pubspecyaml)
+7. [Configuration & Testing](#configuration--testing)
+8. [Security Assessment (MobSF)](#%EF%B8%8F-security-assessment-mobsf-static-analysis)
 
 ---
 
@@ -273,6 +275,44 @@ The project has been refactored to support robust, isolated testing environments
 - **Mock Environments**: Replaces production repositories by instantiating `Environment.mock` in `ServiceFactory`. Yields classes like `MockAuthRepository` or `MockDatabaseRepository` natively without relying on network requests.
 - **Service & Logic Verification**: Feature Cubit and Widget View tests heavily utilize `mocktail` to verify service interactions, proper state emissions, navigation flows, and bottom sheet logic reliably.
 - CI/CD ensures green status tests on pull requests over `beta.yaml`.
+
+---
+
+## 🛡️ Security Assessment (MobSF Static Analysis)
+
+The application undergoes continuous static application security testing (SAST) using **Mobile Security Framework (MobSF)** aligned with the **OWASP Mobile Application Security Verification Standard (MASVS)**.
+
+| Category | Status | Details |
+| :--- | :---: | :--- |
+| **Android Manifest** | <img src="https://img.shields.io/badge/STATUS-PASSED-brightgreen" height="18" /> | Data backup disabled (`allowBackup="false"`), cleartext traffic blocked (`usesCleartextTraffic="false"`). |
+| **Exported Components** | <img src="https://img.shields.io/badge/STATUS-AUDITED-brightgreen" height="18" /> | Firebase Auth & Google Play Services endpoints verified and safe by design. |
+| **Code & Storage Quality** | <img src="https://img.shields.io/badge/STATUS-PASSED-brightgreen" height="18" /> | Parameterized SQL queries, R8 obfuscation enabled, scoped storage compliance. |
+| **Privacy & Telemetry** | <img src="https://img.shields.io/badge/STATUS-VERIFIED-brightgreen" height="18" /> | Strictly standard Google Crashlytics & Analytics complying with Play Store Data Safety. |
+
+<br>
+
+<details>
+<summary><b>🔍 View Detailed Audit & Remediation Findings</b></summary>
+
+### 1. Android Manifest Hardening
+* **Application Data Backup**: Explicitly disabled (`android:allowBackup="false"`), preventing unauthorized local data extraction via ADB.
+* **Network Security**: Strict TLS enforcement enabled (`android:usesCleartextTraffic="false"`), completely prohibiting insecure HTTP transmissions.
+* **Component Verification**: 
+  - `GenericIdpActivity` & `RecaptchaActivity` (`com.google.firebase.auth`): Mandatory OAuth browser delegates for secure Firebase Authentication flows.
+  - `RevocationBoundService` (`com.google.android.gms.auth`): Standard Google Sign-In account revocation handler.
+  - `ProfileInstallReceiver` (`androidx.profileinstaller`): Jetpack runtime optimization baseline profile installer.
+
+### 2. Plugins & Source Code Integrity
+* **SQL Injection Prevention**: All persistent interactions through `sqflite` strictly rely on parameterized queries (`whereArgs`) rather than raw string concatenation.
+* **Temporary Files & Scoped Storage**: Document scanning (`cunning_document_scanner`) writes transient receipt images only to the application-isolated internal cache directory, which is purged after processing.
+* **Cryptography**: Flagged SHA-1 and MD5 occurrences were reviewed and verified as non-cryptographic checksum algorithms used internally by the Flutter engine for asset resolution and font caching.
+* **Code Obfuscation**: Android R8/ProGuard minification (`isMinifyEnabled = true`) is active in release builds to protect business logic against reverse engineering.
+
+### 3. Trackers & Privacy
+* **Telemetry**: Only official Google Firebase Analytics and Crashlytics libraries are embedded.
+* **Data Safety**: Fully compliant with Google Play Data Safety requirements; no user financial identifiers or PII are collected or transmitted to external advertising networks.
+
+</details>
 
 ---
 

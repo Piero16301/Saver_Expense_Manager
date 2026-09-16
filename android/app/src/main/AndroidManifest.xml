@@ -4,6 +4,8 @@
         android:label="${appName}"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:usesCleartextTraffic="false"
         android:extractNativeLibs="false">
         <activity
             android:name=".MainActivity"
