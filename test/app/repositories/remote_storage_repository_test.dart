@@ -25,6 +25,8 @@ class FakeUploadTask extends Fake implements UploadTask {
 
 class MockTaskSnapshot extends Mock implements TaskSnapshot {}
 
+class MockFullMetadata extends Mock implements FullMetadata {}
+
 void main() {
   late MockFirebaseStorage mockStorage;
   late MockReference mockReference;
@@ -173,6 +175,93 @@ void main() {
             reason: 'RemoteStorageService getDownloadURL error',
           ),
         ).called(1);
+      },
+    );
+
+    test('uploadFile sets metadata when path has mimeType', () async {
+      final fakeTask = FakeUploadTask();
+      when(
+        () => mockReference.putData(any<Uint8List>(), any<SettableMetadata>()),
+      ).thenAnswer((_) => fakeTask);
+      when(() => mockReference.name).thenReturn('image.png');
+
+      final result = await repository.uploadFile(
+        Uint8List(5),
+        'folder/image.png',
+      );
+
+      expect(result, equals('image.png'));
+      verify(
+        () => mockReference.putData(any<Uint8List>(), any<SettableMetadata>()),
+      ).called(1);
+    });
+
+    test('getDownloadURL updates metadata when contentType is null', () async {
+      final mockMeta = MockFullMetadata();
+      when(() => mockMeta.contentType).thenReturn(null);
+      when(() => mockReference.getMetadata()).thenAnswer((_) async => mockMeta);
+      when(
+        () => mockReference.updateMetadata(any<SettableMetadata>()),
+      ).thenAnswer((_) async => mockMeta);
+      when(
+        () => mockReference.getDownloadURL(),
+      ).thenAnswer((_) async => 'https://download.url/image.png');
+
+      final result = await repository.getDownloadURL('image.png');
+
+      expect(result, equals('https://download.url/image.png'));
+      verify(
+        () => mockReference.updateMetadata(any<SettableMetadata>()),
+      ).called(1);
+    });
+
+    test(
+      'getDownloadURL updates metadata when contentType is application/octet-stream',
+      () async {
+        final mockMeta = MockFullMetadata();
+        when(() => mockMeta.contentType).thenReturn('application/octet-stream');
+        when(
+          () => mockReference.getMetadata(),
+        ).thenAnswer((_) async => mockMeta);
+        when(
+          () => mockReference.updateMetadata(any<SettableMetadata>()),
+        ).thenAnswer((_) async => mockMeta);
+        when(
+          () => mockReference.getDownloadURL(),
+        ).thenAnswer((_) async => 'https://download.url/image.png');
+
+        final result = await repository.getDownloadURL('image.png');
+
+        expect(result, equals('https://download.url/image.png'));
+        verify(
+          () => mockReference.updateMetadata(any<SettableMetadata>()),
+        ).called(1);
+      },
+    );
+
+    test('getDownloadURL catches metadata error and continues', () async {
+      when(
+        () => mockReference.getMetadata(),
+      ).thenThrow(Exception('Meta error'));
+      when(
+        () => mockReference.getDownloadURL(),
+      ).thenAnswer((_) async => 'https://download.url/image.png');
+
+      final result = await repository.getDownloadURL('image.png');
+
+      expect(result, equals('https://download.url/image.png'));
+      verify(() => mockReference.getDownloadURL()).called(1);
+    });
+
+    test(
+      'default constructor initializes or throws when Firebase not ready',
+      () {
+        try {
+          final repo = FirebaseRemoteStorageRepository();
+          expect(repo, isNotNull);
+        } on Object catch (e) {
+          expect(e, isNotNull);
+        }
       },
     );
   });

@@ -151,6 +151,57 @@ void main() {
 
         expect(result, 'Hello Gemini');
       });
+
+      test(
+        'returns text with file PromptPart and verifies options validateStatus',
+        () async {
+          Options? capturedOptions;
+          when(
+            () => mockDio.post<Map<String, dynamic>>(
+              any(),
+              data: any(named: 'data'),
+              options: any(named: 'options'),
+            ),
+          ).thenAnswer((invocation) async {
+            capturedOptions = invocation.namedArguments[#options] as Options?;
+            return Response<Map<String, dynamic>>(
+              requestOptions: RequestOptions(),
+              statusCode: 200,
+              data: {
+                'candidates': [
+                  {
+                    'content': {
+                      'parts': [
+                        {'text': 'Image parsed'},
+                      ],
+                    },
+                  },
+                ],
+              },
+            );
+          });
+
+          final result = await repository.generateContentRemote(
+            prompt: [
+              PromptPart(
+                type: PromptPartType.file,
+                mimeType: 'image/jpeg',
+                bytes: Uint8List.fromList([1, 2, 3]),
+              ),
+              const PromptPart(type: PromptPartType.file),
+            ],
+          );
+
+          expect(result, 'Image parsed');
+          expect(capturedOptions?.validateStatus?.call(200), isTrue);
+          expect(capturedOptions?.validateStatus?.call(500), isTrue);
+        },
+      );
+
+      test('default constructor initializes correctly', () {
+        final repo = GeminiAiRepository();
+        expect(repo, isNotNull);
+      });
     });
 
     group('generateContentLocal', () {

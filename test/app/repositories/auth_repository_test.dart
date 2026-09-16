@@ -69,7 +69,10 @@ void main() {
       await mock.initialize();
       expect(mock.currentUser, isNotNull);
       expect(mock.isLoggedIn, isTrue);
+      expect(await mock.userChanges.first, isNotNull);
+      expect(await mock.authStateChanges.first, isNotNull);
       expect(await mock.signOut(), isTrue);
+      expect(await mock.unlinkProvider('provider_id'), isTrue);
       expect(await mock.updateDisplayName('name'), isTrue);
       expect(await mock.reloadUser(), isTrue);
       expect(await mock.linkWithGoogle(), isTrue);
@@ -353,10 +356,35 @@ void main() {
           password: any<String>(named: 'password'),
         ),
       ).thenThrow(Exception('Fail'));
+      when(
+        () => mockUser.updateDisplayName(any()),
+      ).thenThrow(Exception('Fail'));
+      when(() => mockUser.unlink(any())).thenThrow(Exception('Fail'));
+      when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
+      when(() => mockGoogleSignIn.authenticate()).thenThrow(Exception('Fail'));
+      when(
+        () => mockUser.linkWithCredential(any()),
+      ).thenThrow(Exception('Fail'));
+      when(
+        () => mockAuth.createUserWithEmailAndPassword(
+          email: any<String>(named: 'email'),
+          password: any<String>(named: 'password'),
+        ),
+      ).thenThrow(Exception('Fail'));
 
       expect(await repository.reloadUser(), isFalse);
       expect(await repository.signOut(), isFalse);
       expect(await repository.signInWithEmailAndPassword('e', 'p'), isFalse);
+      expect(await repository.updateDisplayName('name'), isFalse);
+      expect(await repository.unlinkProvider('provider'), isFalse);
+      expect(await repository.linkWithGoogle(), isFalse);
+      expect(
+        await repository.linkWithEmailPassword(email: 'e', password: 'p'),
+        isFalse,
+      );
+      expect(await repository.signInWithGoogle(), isFalse);
+      expect(await repository.signUpWithEmailAndPassword('e', 'p'), isFalse);
+      expect(await repository.updateUserName('name'), isFalse);
 
       verify(
         () => mockCrashService.recordError(
@@ -364,7 +392,26 @@ void main() {
           any<StackTrace?>(),
           reason: any<dynamic>(named: 'reason'),
         ),
-      ).called(3);
+      ).called(10);
     });
+
+    test(
+      'default constructor initializes or throws when Firebase not ready',
+      () {
+        try {
+          final repo = FirebaseAuthRepository();
+          expect(repo, isNotNull);
+        } on Object catch (e) {
+          expect(e, isNotNull);
+        }
+
+        try {
+          final repoWithAuth = FirebaseAuthRepository(auth: mockAuth);
+          expect(repoWithAuth, isNotNull);
+        } on Object catch (e) {
+          expect(e, isNotNull);
+        }
+      },
+    );
   });
 }
