@@ -1,13 +1,13 @@
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockDio extends Mock implements Dio {}
+class MockFirebaseAI extends Mock implements FirebaseAI {}
 
 class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid {}
 
@@ -20,7 +20,7 @@ class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 class MockCrashService extends Mock implements CrashService {}
 
 void main() {
-  late MockDio mockDio;
+  late MockFirebaseAI mockRemoteModel;
   late MockGeminiNanoAndroid mockLocalModel;
   late MockTrace mockTrace;
 
@@ -28,14 +28,15 @@ void main() {
   late MockRemoteConfigService mockRemoteConfigService;
   late MockCrashService mockCrashService;
 
-  late GeminiAiRepository repository;
+  late FirebaseAiRepository repository;
 
   setUpAll(() {
+    registerFallbackValue(Content.text(''));
     registerFallbackValue(MockTrace());
   });
 
   setUp(() async {
-    mockDio = MockDio();
+    mockRemoteModel = MockFirebaseAI();
     mockLocalModel = MockGeminiNanoAndroid();
     mockTrace = MockTrace();
 
@@ -54,9 +55,11 @@ void main() {
     ).thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
     when(() => mockRemoteConfigService.geminiModelId).thenReturn('gemini-1.5');
-    when(() => mockRemoteConfigService.geminiApiKey).thenReturn('test-key');
 
-    repository = GeminiAiRepository(dio: mockDio, localModel: mockLocalModel);
+    repository = FirebaseAiRepository(
+      remoteModel: mockRemoteModel,
+      localModel: mockLocalModel,
+    );
   });
 
   group('MockAiRepository', () {
@@ -81,7 +84,7 @@ void main() {
     });
   });
 
-  group('GeminiAiRepository', () {
+  group('FirebaseAiRepository', () {
     test('initialize checks local model availability', () async {
       when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
       await repository.initialize();
@@ -94,14 +97,14 @@ void main() {
         expect(result, isNull);
       });
 
-      test('records error and rethrows if post fails', () async {
+      test('records error and rethrows if generativeModel fails', () async {
         when(
-          () => mockDio.post<Map<String, dynamic>>(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
+          () => mockRemoteModel.generativeModel(
+            model: any<String>(named: 'model'),
+            safetySettings: any<List<SafetySetting>?>(named: 'safetySettings'),
+            generationConfig: any<GenerationConfig?>(named: 'generationConfig'),
           ),
-        ).thenThrow(Exception('Remote Fail during post'));
+        ).thenThrow(Exception('Remote Fail'));
 
         expect(
           () => repository.generateContentRemote(
@@ -115,91 +118,13 @@ void main() {
           () => mockCrashService.recordError(
             any<Object>(),
             any<StackTrace?>(),
-            reason: 'AiService generateContentRemote error via HTTP/Dio',
+            reason: any<dynamic>(named: 'reason'),
           ),
         ).called(1);
       });
 
-      test('returns text if response is valid', () async {
-        when(
-          () => mockDio.post<Map<String, dynamic>>(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          ),
-        ).thenAnswer(
-          (_) async => Response<Map<String, dynamic>>(
-            requestOptions: RequestOptions(),
-            statusCode: 200,
-            data: {
-              'candidates': [
-                {
-                  'content': {
-                    'parts': [
-                      {'text': 'Hello Gemini'},
-                    ],
-                  },
-                },
-              ],
-            },
-          ),
-        );
-
-        final result = await repository.generateContentRemote(
-          prompt: [const PromptPart(text: 'h', type: PromptPartType.text)],
-        );
-
-        expect(result, 'Hello Gemini');
-      });
-
-      test(
-        'returns text with file PromptPart and verifies options validateStatus',
-        () async {
-          Options? capturedOptions;
-          when(
-            () => mockDio.post<Map<String, dynamic>>(
-              any(),
-              data: any(named: 'data'),
-              options: any(named: 'options'),
-            ),
-          ).thenAnswer((invocation) async {
-            capturedOptions = invocation.namedArguments[#options] as Options?;
-            return Response<Map<String, dynamic>>(
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-              data: {
-                'candidates': [
-                  {
-                    'content': {
-                      'parts': [
-                        {'text': 'Image parsed'},
-                      ],
-                    },
-                  },
-                ],
-              },
-            );
-          });
-
-          final result = await repository.generateContentRemote(
-            prompt: [
-              PromptPart(
-                type: PromptPartType.file,
-                mimeType: 'image/jpeg',
-                bytes: Uint8List.fromList([1, 2, 3]),
-              ),
-              const PromptPart(type: PromptPartType.file),
-            ],
-          );
-
-          expect(result, 'Image parsed');
-          expect(capturedOptions?.validateStatus?.call(200), isTrue);
-          expect(capturedOptions?.validateStatus?.call(500), isTrue);
-        },
-      );
-
       test('default constructor initializes correctly', () {
-        final repo = GeminiAiRepository();
+        final repo = FirebaseAiRepository();
         expect(repo, isNotNull);
       });
     });

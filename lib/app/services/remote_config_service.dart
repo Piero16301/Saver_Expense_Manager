@@ -11,7 +11,6 @@ class RemoteConfigService {
 
   String get homeInitialTab => _remoteConfigRepository.homeInitialTab;
   String get geminiModelId => _remoteConfigRepository.geminiModelId;
-  String get geminiApiKey => _remoteConfigRepository.geminiApiKey;
   String get geminiPromptExtractReceiptData =>
       _remoteConfigRepository.geminiPromptExtractReceiptData;
   String get geminiPromptDetectAntExpense =>

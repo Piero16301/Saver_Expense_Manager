@@ -1,6 +1,4 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/foundation.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -38,12 +36,12 @@ class MockAiRepository implements AiRepository {
   }) async => null;
 }
 
-class GeminiAiRepository implements AiRepository {
-  GeminiAiRepository({Dio? dio, GeminiNanoAndroid? localModel})
-    : _dio = dio ?? Dio(),
+class FirebaseAiRepository implements AiRepository {
+  FirebaseAiRepository({FirebaseAI? remoteModel, GeminiNanoAndroid? localModel})
+    : _remoteAi = remoteModel,
       _localModel = localModel ?? GeminiNanoAndroid();
 
-  final Dio _dio;
+  final FirebaseAI? _remoteAi;
   final GeminiNanoAndroid _localModel;
   bool _isLocalModelAvailable = false;
 
@@ -73,70 +71,39 @@ class GeminiAiRepository implements AiRepository {
 
     try {
       final remoteConfig = getIt<RemoteConfigService>();
-      final model = remoteConfig.geminiModelId;
-      final apiKey = remoteConfig.geminiApiKey;
-
-      final url =
-          'https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=$apiKey';
-
-      final partsJson = prompt.map((p) {
-        switch (p.type) {
-          case PromptPartType.text:
-            return {'text': p.text ?? ''};
-          case PromptPartType.file:
-            return {
-              'inlineData': {
-                'mimeType': p.mimeType ?? '',
-                'data': base64Encode(p.bytes ?? Uint8List(0)),
-              },
-            };
-        }
-      }).toList();
-
-      final requestBody = {
-        'contents': [
-          {'parts': partsJson},
+      final ai = _remoteAi ?? FirebaseAI.googleAI();
+      final remoteModel = ai.generativeModel(
+        model: remoteConfig.geminiModelId,
+        safetySettings: [
+          SafetySetting(
+            HarmCategory.dangerousContent,
+            HarmBlockThreshold.none,
+            null,
+          ),
         ],
-        'safetySettings': [
-          {
-            'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
-            'threshold': 'BLOCK_NONE',
-          },
-        ],
-        'generationConfig': {'responseMimeType': responseMimeType},
-      };
-
-      final response = await _dio.post<Map<String, dynamic>>(
-        url,
-        data: requestBody,
-        options: Options(
-          headers: {'Content-Type': 'application/json'},
-          validateStatus: (_) => true,
-        ),
+        generationConfig: GenerationConfig(responseMimeType: responseMimeType),
       );
 
-      final responseData = response.data;
-      if (response.statusCode == 200 && responseData != null) {
-        final candidates = responseData['candidates'] as List<dynamic>?;
-        if (candidates != null && candidates.isNotEmpty) {
-          final candidate = candidates.first as Map<String, dynamic>;
-          final content = candidate['content'] as Map<String, dynamic>?;
-          if (content != null) {
-            final parts = content['parts'] as List<dynamic>?;
-            if (parts != null && parts.isNotEmpty) {
-              final part = parts.first as Map<String, dynamic>;
-              return part['text'] as String?;
-            }
-          }
+      final contentPrompt = prompt.map((p) {
+        switch (p.type) {
+          case PromptPartType.text:
+            return Content.text(p.text ?? '');
+          case PromptPartType.file:
+            return Content.inlineData(
+              p.mimeType ?? '',
+              p.bytes ?? Uint8List(0),
+            );
         }
-      }
+      });
 
-      return null;
+      final response = await remoteModel.generateContent(contentPrompt);
+
+      return response.text;
     } catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
-        reason: 'AiService generateContentRemote error via HTTP/Dio',
+        reason: 'AiService generateContentRemote error',
       );
       rethrow;
     } finally {
