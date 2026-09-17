@@ -20,6 +20,12 @@
   "useGitignore": true,
   "words": [
     "Prefs",
-    "syncfusion"
+    "syncfusion",
+    "MASVS",
+    "Recaptcha",
+    "androidx",
+    "profileinstaller",
+    "Jetpack",
+    "sqflite"
   ]
 }
