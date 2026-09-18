@@ -10,7 +10,10 @@ class RemoteConfigService {
   }
 
   String get homeInitialTab => _remoteConfigRepository.homeInitialTab;
-  String get geminiModelId => _remoteConfigRepository.geminiModelId;
+  String get extractReceiptDataTemplateId =>
+      _remoteConfigRepository.extractReceiptDataTemplateId;
+  String get promptDetectAntExpenseTemplateId =>
+      _remoteConfigRepository.promptDetectAntExpenseTemplateId;
   String get geminiPromptExtractReceiptData =>
       _remoteConfigRepository.geminiPromptExtractReceiptData;
   String get geminiPromptDetectAntExpense =>

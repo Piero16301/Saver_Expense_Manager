@@ -30,9 +30,18 @@ void main() {
       expect(service.homeInitialTab, equals('home'));
     });
 
-    test('geminiModelId returns from repository', () {
-      when(() => mockRepository.geminiModelId).thenReturn('model');
-      expect(service.geminiModelId, equals('model'));
+    test('extractReceiptDataTemplateId returns from repository', () {
+      when(
+        () => mockRepository.extractReceiptDataTemplateId,
+      ).thenReturn('template_extract');
+      expect(service.extractReceiptDataTemplateId, equals('template_extract'));
+    });
+
+    test('promptDetectAntExpenseTemplateId returns from repository', () {
+      when(
+        () => mockRepository.promptDetectAntExpenseTemplateId,
+      ).thenReturn('template_ant');
+      expect(service.promptDetectAntExpenseTemplateId, equals('template_ant'));
     });
 
     test('geminiPromptExtractReceiptData returns from repository', () {

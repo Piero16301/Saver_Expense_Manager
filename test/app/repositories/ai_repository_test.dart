@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:firebase_ai/firebase_ai.dart';
@@ -54,7 +55,6 @@ void main() {
       () => mockPerformanceService.startTrace(any<String>()),
     ).thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
-    when(() => mockRemoteConfigService.geminiModelId).thenReturn('gemini-1.5');
 
     repository = FirebaseAiRepository(
       remoteModel: mockRemoteModel,
@@ -67,17 +67,14 @@ void main() {
       final mock = MockAiRepository();
       await mock.initialize();
       expect(mock.isLocalModelAvailable, isFalse);
-      expect(await mock.generateContentRemote(prompt: []), isNull);
+      expect(
+        await mock.generateContentFromTemplate(templateId: 'test'),
+        isNull,
+      );
       expect(
         await mock.generateContentLocal(
           textPrompt: const PromptPart(text: 't', type: PromptPartType.text),
           imagePrompt: const PromptPart(type: PromptPartType.file),
-        ),
-        isNull,
-      );
-      expect(
-        await mock.generateContentRemote(
-          prompt: [const PromptPart(text: 't', type: PromptPartType.text)],
         ),
         isNull,
       );
@@ -91,25 +88,78 @@ void main() {
       expect(repository.isLocalModelAvailable, isTrue);
     });
 
-    group('generateContentRemote', () {
-      test('returns null if prompt is empty', () async {
-        final result = await repository.generateContentRemote(prompt: []);
+    group('generateContentFromTemplate', () {
+      test('returns null if templateId is empty', () async {
+        final result = await repository.generateContentFromTemplate(
+          templateId: '',
+        );
         expect(result, isNull);
       });
 
-      test('records error and rethrows if generativeModel fails', () async {
-        when(
-          () => mockRemoteModel.generativeModel(
-            model: any<String>(named: 'model'),
-            safetySettings: any<List<SafetySetting>?>(named: 'safetySettings'),
-            generationConfig: any<GenerationConfig?>(named: 'generationConfig'),
+      test('calls templateContentGenerator and returns response text with file '
+          'attachment', () async {
+        final repo = FirebaseAiRepository(
+          templateGenerator: (id, {required inputs}) async {
+            expect(id, 'extractor-de-gastos');
+            expect(inputs['today'], '17/09/2026');
+            expect(
+              inputs['receiptUrl'],
+              'data:image/png;base64,${base64Encode([1, 2, 3])}',
+            );
+            expect(inputs['mimeType'], 'image/png');
+            return GenerateContentResponse([
+              Candidate(
+                Content('model', [const TextPart('{"title": "Test"}')]),
+                null,
+                null,
+                null,
+                null,
+              ),
+            ], null);
+          },
+        );
+        final result = await repo.generateContentFromTemplate(
+          templateId: 'extractor-de-gastos',
+          attachment: PromptPart.file(
+            mimeType: 'image/png',
+            bytes: Uint8List.fromList([1, 2, 3]),
           ),
-        ).thenThrow(Exception('Remote Fail'));
+          inputs: {'today': '17/09/2026'},
+        );
+        expect(result, '{"title": "Test"}');
+      });
+
+      test('calls templateContentGenerator with text attachment', () async {
+        final repo = FirebaseAiRepository(
+          templateGenerator: (id, {required inputs}) async {
+            expect(inputs['text'], 'hello');
+            return GenerateContentResponse([
+              Candidate(
+                Content('model', [const TextPart('OK')]),
+                null,
+                null,
+                null,
+                null,
+              ),
+            ], null);
+          },
+        );
+        final result = await repo.generateContentFromTemplate(
+          templateId: 'extractor-de-gastos',
+          attachment: PromptPart.text(text: 'hello'),
+        );
+        expect(result, 'OK');
+      });
+
+      test('records error and rethrows if template generation fails', () async {
+        final repo = FirebaseAiRepository(
+          templateGenerator: (id, {required inputs}) async {
+            throw Exception('Template Fail');
+          },
+        );
 
         expect(
-          () => repository.generateContentRemote(
-            prompt: [const PromptPart(text: 'h', type: PromptPartType.text)],
-          ),
+          () => repo.generateContentFromTemplate(templateId: 'test'),
           throwsException,
         );
 
@@ -118,7 +168,7 @@ void main() {
           () => mockCrashService.recordError(
             any<Object>(),
             any<StackTrace?>(),
-            reason: any<dynamic>(named: 'reason'),
+            reason: 'AiService generateContentFromTemplate error',
           ),
         ).called(1);
       });

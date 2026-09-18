@@ -33,7 +33,14 @@ void main() {
       final mock = MockRemoteConfigRepository();
       await mock.initialize();
       expect(mock.homeInitialTab, equals('movimientos'));
-      expect(mock.geminiModelId, equals('gemini-3-flash-preview'));
+      expect(
+        mock.extractReceiptDataTemplateId,
+        equals('config_extract_receipt_data_template_id'),
+      );
+      expect(
+        mock.promptDetectAntExpenseTemplateId,
+        equals('config_prompt_detect_ant_expense_template_id'),
+      );
       expect(mock.geminiPromptExtractReceiptData, isNotEmpty);
       expect(mock.geminiPromptDetectAntExpense, isNotEmpty);
       expect(mock.geminiAntLookbackDays, equals(30));
@@ -93,14 +100,15 @@ void main() {
       when(() => mockRemoteConfig.getInt(any<String>())).thenReturn(123);
 
       expect(repository.homeInitialTab, equals('value'));
-      expect(repository.geminiModelId, equals('value'));
+      expect(repository.extractReceiptDataTemplateId, equals('value'));
+      expect(repository.promptDetectAntExpenseTemplateId, equals('value'));
       expect(repository.geminiPromptExtractReceiptData, equals('value'));
       expect(repository.geminiPromptDetectAntExpense, equals('value'));
       expect(repository.geminiAntLookbackDays, equals(123));
       expect(repository.paginationLimit, equals(123));
       expect(repository.summaryLastMonths, equals(123));
 
-      verify(() => mockRemoteConfig.getString(any<String>())).called(4);
+      verify(() => mockRemoteConfig.getString(any<String>())).called(5);
       verify(() => mockRemoteConfig.getInt(any<String>())).called(3);
     });
   });

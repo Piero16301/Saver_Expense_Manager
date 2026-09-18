@@ -7,8 +7,10 @@ abstract class RemoteConfigRepository {
   static const String uiHomeInitialTab = 'ui_home_initial_tab';
 
   /// CONFIG
-  static const String configGeminiModelId = 'config_gemini_model_id';
-  static const String configGeminiApiKey = 'config_gemini_api_key';
+  static const String configExtractReceiptDataTemplateId =
+      'config_extract_receipt_data_template_id';
+  static const String configPromptDetectAntExpenseTemplateId =
+      'config_prompt_detect_ant_expense_template_id';
   static const String configGeminiPromptExtractReceiptData =
       'config_gemini_prompt_extract_receipt_data';
   static const String configGeminiPromptDetectAntExpense =
@@ -20,7 +22,8 @@ abstract class RemoteConfigRepository {
 
   Future<void> initialize();
   String get homeInitialTab;
-  String get geminiModelId;
+  String get extractReceiptDataTemplateId;
+  String get promptDetectAntExpenseTemplateId;
   String get geminiPromptExtractReceiptData;
   String get geminiPromptDetectAntExpense;
   int get geminiAntLookbackDays;
@@ -36,7 +39,12 @@ class MockRemoteConfigRepository implements RemoteConfigRepository {
   String get homeInitialTab => 'movimientos';
 
   @override
-  String get geminiModelId => 'gemini-3-flash-preview';
+  String get extractReceiptDataTemplateId =>
+      'config_extract_receipt_data_template_id';
+
+  @override
+  String get promptDetectAntExpenseTemplateId =>
+      'config_prompt_detect_ant_expense_template_id';
 
   @override
   String get geminiPromptExtractReceiptData =>
@@ -66,8 +74,6 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
   Future<void> initialize() async {
     await _remoteConfig.setDefaults({
       RemoteConfigRepository.uiHomeInitialTab: 'movimientos',
-      RemoteConfigRepository.configGeminiModelId: 'gemini-3-flash-preview',
-      RemoteConfigRepository.configGeminiApiKey: 'config_gemini_api_key',
       RemoteConfigRepository.configGeminiPromptExtractReceiptData:
           'config_gemini_prompt_extract_receipt_data',
       RemoteConfigRepository.configGeminiPromptDetectAntExpense:
@@ -101,8 +107,14 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
       _remoteConfig.getString(RemoteConfigRepository.uiHomeInitialTab);
 
   @override
-  String get geminiModelId =>
-      _remoteConfig.getString(RemoteConfigRepository.configGeminiModelId);
+  String get extractReceiptDataTemplateId => _remoteConfig.getString(
+    RemoteConfigRepository.configExtractReceiptDataTemplateId,
+  );
+
+  @override
+  String get promptDetectAntExpenseTemplateId => _remoteConfig.getString(
+    RemoteConfigRepository.configPromptDetectAntExpenseTemplateId,
+  );
 
   @override
   String get geminiPromptExtractReceiptData => _remoteConfig.getString(
