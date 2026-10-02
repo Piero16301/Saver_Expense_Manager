@@ -12,6 +12,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
+import 'package:saver_expense_manager/firebase_options.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:uuid/uuid.dart';
@@ -284,25 +285,38 @@ class AddMovementBottomSheet extends StatelessWidget {
       final ext = file.name.split('.').last;
       final path = '${const Uuid().v4()}.$ext';
       final bytes = await file.readAsBytes();
+      final mimeType =
+          lookupMimeType(file.name, headerBytes: bytes) ??
+          (AppVariables.imageExtensions.contains(ext.toLowerCase())
+              ? 'image/$ext'
+              : 'application/pdf');
+
+      final bucket = DefaultFirebaseOptions.currentPlatform.storageBucket;
+      final receiptUrl = 'gs://$bucket/$path';
 
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_file');
-      // Upload file to Firebase Storage and build movement from file in
-      // parallel
-      final uploadTask = getIt<RemoteStorageService>().uploadFile(bytes, path);
-      final movementFuture = AppFunctions.buildMovementFromFile(
+
+      final uploadTrace = performance.startTrace('receipt_upload_file');
+      final uploadName = await getIt<RemoteStorageService>().uploadFile(
+        bytes,
+        path,
+      );
+      performance.stopTrace(uploadTrace);
+
+      final aiTrace = performance.startTrace('receipt_ai_processing_file');
+      final movement = await AppFunctions.buildMovementFromFile(
         movementType: movementType,
         categories: selectedCategories,
         language: language.toString(),
-        mimeType: lookupMimeType(file.name) ?? 'application/pdf',
+        mimeType: mimeType,
         bytes: bytes,
         modelType: modelType,
+        receiptUrl: receiptUrl,
       );
-
-      final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
-      performance.stopTrace(trace);
-      final uploadName = results[0] as String?;
-      final movement = results[1] as Movement;
+      performance
+        ..stopTrace(aiTrace)
+        ..stopTrace(trace);
 
       if (loader.isLoading) {
         loader.hideLoading();
@@ -393,25 +407,38 @@ class AddMovementBottomSheet extends StatelessWidget {
       final ext = files.first.split('.').last;
       final path = '${const Uuid().v4()}.$ext';
       final bytes = await File(files.first).readAsBytes();
+      final mimeType =
+          lookupMimeType(files.first, headerBytes: bytes) ??
+          (AppVariables.imageExtensions.contains(ext.toLowerCase())
+              ? 'image/$ext'
+              : 'application/pdf');
+
+      final bucket = DefaultFirebaseOptions.currentPlatform.storageBucket;
+      final receiptUrl = 'gs://$bucket/$path';
 
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_scan');
-      // Upload file to Firebase Storage and build movement from file in
-      // parallel
-      final uploadTask = getIt<RemoteStorageService>().uploadFile(bytes, path);
-      final movementFuture = AppFunctions.buildMovementFromFile(
+
+      final uploadTrace = performance.startTrace('receipt_upload_scan');
+      final uploadName = await getIt<RemoteStorageService>().uploadFile(
+        bytes,
+        path,
+      );
+      performance.stopTrace(uploadTrace);
+
+      final aiTrace = performance.startTrace('receipt_ai_processing_scan');
+      final movement = await AppFunctions.buildMovementFromFile(
         movementType: movementType,
         categories: selectedCategories,
         language: language.toString(),
-        mimeType: lookupMimeType(files.first) ?? 'application/pdf',
+        mimeType: mimeType,
         bytes: bytes,
         modelType: modelType,
+        receiptUrl: receiptUrl,
       );
-
-      final results = await Future.wait<dynamic>([uploadTask, movementFuture]);
-      performance.stopTrace(trace);
-      final uploadName = results[0] as String?;
-      final movement = results[1] as Movement;
+      performance
+        ..stopTrace(aiTrace)
+        ..stopTrace(trace);
 
       if (loader.isLoading) {
         loader.hideLoading();

@@ -11,12 +11,14 @@ class AiService {
 
   bool get isLocalModelAvailable => _aiRepository.isLocalModelAvailable;
 
-  Future<String?> generateContentRemote({
-    required List<PromptPart> prompt,
-    String responseMimeType = 'text/plain',
-  }) => _aiRepository.generateContentRemote(
-    prompt: prompt,
-    responseMimeType: responseMimeType,
+  Future<String?> generateContentFromTemplate({
+    required String templateId,
+    PromptPart? attachment,
+    Map<String, Object?> inputs = const {},
+  }) => _aiRepository.generateContentFromTemplate(
+    templateId: templateId,
+    attachment: attachment,
+    inputs: inputs,
   );
 
   Future<String?> generateContentLocal({

@@ -12,9 +12,9 @@ dependencies:
   cloud_firestore: ^6.10.0
   country_flags: ^4.1.2
   cunning_document_scanner: ^3.0.3
-  dio: ^5.11.1
   equatable: ^3.0.0
   file_picker: ^13.1.0
+  firebase_ai: ^4.0.0
   firebase_analytics: ^12.6.0
   firebase_app_check: ^0.4.8
   firebase_auth: ^6.7.0

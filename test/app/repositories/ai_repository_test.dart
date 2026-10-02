@@ -1,13 +1,14 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockDio extends Mock implements Dio {}
+class MockFirebaseAI extends Mock implements FirebaseAI {}
 
 class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid {}
 
@@ -20,7 +21,7 @@ class MockRemoteConfigService extends Mock implements RemoteConfigService {}
 class MockCrashService extends Mock implements CrashService {}
 
 void main() {
-  late MockDio mockDio;
+  late MockFirebaseAI mockRemoteModel;
   late MockGeminiNanoAndroid mockLocalModel;
   late MockTrace mockTrace;
 
@@ -28,14 +29,15 @@ void main() {
   late MockRemoteConfigService mockRemoteConfigService;
   late MockCrashService mockCrashService;
 
-  late GeminiAiRepository repository;
+  late FirebaseAiRepository repository;
 
   setUpAll(() {
+    registerFallbackValue(Content.text(''));
     registerFallbackValue(MockTrace());
   });
 
   setUp(() async {
-    mockDio = MockDio();
+    mockRemoteModel = MockFirebaseAI();
     mockLocalModel = MockGeminiNanoAndroid();
     mockTrace = MockTrace();
 
@@ -53,10 +55,11 @@ void main() {
       () => mockPerformanceService.startTrace(any<String>()),
     ).thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
-    when(() => mockRemoteConfigService.geminiModelId).thenReturn('gemini-1.5');
-    when(() => mockRemoteConfigService.geminiApiKey).thenReturn('test-key');
 
-    repository = GeminiAiRepository(dio: mockDio, localModel: mockLocalModel);
+    repository = FirebaseAiRepository(
+      remoteModel: mockRemoteModel,
+      localModel: mockLocalModel,
+    );
   });
 
   group('MockAiRepository', () {
@@ -64,7 +67,10 @@ void main() {
       final mock = MockAiRepository();
       await mock.initialize();
       expect(mock.isLocalModelAvailable, isFalse);
-      expect(await mock.generateContentRemote(prompt: []), isNull);
+      expect(
+        await mock.generateContentFromTemplate(templateId: 'test'),
+        isNull,
+      );
       expect(
         await mock.generateContentLocal(
           textPrompt: const PromptPart(text: 't', type: PromptPartType.text),
@@ -72,41 +78,88 @@ void main() {
         ),
         isNull,
       );
-      expect(
-        await mock.generateContentRemote(
-          prompt: [const PromptPart(text: 't', type: PromptPartType.text)],
-        ),
-        isNull,
-      );
     });
   });
 
-  group('GeminiAiRepository', () {
+  group('FirebaseAiRepository', () {
     test('initialize checks local model availability', () async {
       when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
       await repository.initialize();
       expect(repository.isLocalModelAvailable, isTrue);
     });
 
-    group('generateContentRemote', () {
-      test('returns null if prompt is empty', () async {
-        final result = await repository.generateContentRemote(prompt: []);
+    group('generateContentFromTemplate', () {
+      test('returns null if templateId is empty', () async {
+        final result = await repository.generateContentFromTemplate(
+          templateId: '',
+        );
         expect(result, isNull);
       });
 
-      test('records error and rethrows if post fails', () async {
-        when(
-          () => mockDio.post<Map<String, dynamic>>(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
+      test('calls templateContentGenerator and returns response text with file '
+          'attachment', () async {
+        final repo = FirebaseAiRepository(
+          templateGenerator: (id, {required inputs}) async {
+            expect(id, 'extractor-de-gastos');
+            expect(inputs['today'], '17/09/2026');
+            expect(
+              inputs['receiptUrl'],
+              'data:image/png;base64,${base64Encode([1, 2, 3])}',
+            );
+            expect(inputs['mimeType'], 'image/png');
+            return GenerateContentResponse([
+              Candidate(
+                Content('model', [const TextPart('{"title": "Test"}')]),
+                null,
+                null,
+                null,
+                null,
+              ),
+            ], null);
+          },
+        );
+        final result = await repo.generateContentFromTemplate(
+          templateId: 'extractor-de-gastos',
+          attachment: PromptPart.file(
+            mimeType: 'image/png',
+            bytes: Uint8List.fromList([1, 2, 3]),
           ),
-        ).thenThrow(Exception('Remote Fail during post'));
+          inputs: {'today': '17/09/2026'},
+        );
+        expect(result, '{"title": "Test"}');
+      });
+
+      test('calls templateContentGenerator with text attachment', () async {
+        final repo = FirebaseAiRepository(
+          templateGenerator: (id, {required inputs}) async {
+            expect(inputs['text'], 'hello');
+            return GenerateContentResponse([
+              Candidate(
+                Content('model', [const TextPart('OK')]),
+                null,
+                null,
+                null,
+                null,
+              ),
+            ], null);
+          },
+        );
+        final result = await repo.generateContentFromTemplate(
+          templateId: 'extractor-de-gastos',
+          attachment: PromptPart.text(text: 'hello'),
+        );
+        expect(result, 'OK');
+      });
+
+      test('records error and rethrows if template generation fails', () async {
+        final repo = FirebaseAiRepository(
+          templateGenerator: (id, {required inputs}) async {
+            throw Exception('Template Fail');
+          },
+        );
 
         expect(
-          () => repository.generateContentRemote(
-            prompt: [const PromptPart(text: 'h', type: PromptPartType.text)],
-          ),
+          () => repo.generateContentFromTemplate(templateId: 'test'),
           throwsException,
         );
 
@@ -115,91 +168,13 @@ void main() {
           () => mockCrashService.recordError(
             any<Object>(),
             any<StackTrace?>(),
-            reason: 'AiService generateContentRemote error via HTTP/Dio',
+            reason: 'AiService generateContentFromTemplate error',
           ),
         ).called(1);
       });
 
-      test('returns text if response is valid', () async {
-        when(
-          () => mockDio.post<Map<String, dynamic>>(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          ),
-        ).thenAnswer(
-          (_) async => Response<Map<String, dynamic>>(
-            requestOptions: RequestOptions(),
-            statusCode: 200,
-            data: {
-              'candidates': [
-                {
-                  'content': {
-                    'parts': [
-                      {'text': 'Hello Gemini'},
-                    ],
-                  },
-                },
-              ],
-            },
-          ),
-        );
-
-        final result = await repository.generateContentRemote(
-          prompt: [const PromptPart(text: 'h', type: PromptPartType.text)],
-        );
-
-        expect(result, 'Hello Gemini');
-      });
-
-      test(
-        'returns text with file PromptPart and verifies options validateStatus',
-        () async {
-          Options? capturedOptions;
-          when(
-            () => mockDio.post<Map<String, dynamic>>(
-              any(),
-              data: any(named: 'data'),
-              options: any(named: 'options'),
-            ),
-          ).thenAnswer((invocation) async {
-            capturedOptions = invocation.namedArguments[#options] as Options?;
-            return Response<Map<String, dynamic>>(
-              requestOptions: RequestOptions(),
-              statusCode: 200,
-              data: {
-                'candidates': [
-                  {
-                    'content': {
-                      'parts': [
-                        {'text': 'Image parsed'},
-                      ],
-                    },
-                  },
-                ],
-              },
-            );
-          });
-
-          final result = await repository.generateContentRemote(
-            prompt: [
-              PromptPart(
-                type: PromptPartType.file,
-                mimeType: 'image/jpeg',
-                bytes: Uint8List.fromList([1, 2, 3]),
-              ),
-              const PromptPart(type: PromptPartType.file),
-            ],
-          );
-
-          expect(result, 'Image parsed');
-          expect(capturedOptions?.validateStatus?.call(200), isTrue);
-          expect(capturedOptions?.validateStatus?.call(500), isTrue);
-        },
-      );
-
       test('default constructor initializes correctly', () {
-        final repo = GeminiAiRepository();
+        final repo = FirebaseAiRepository();
         expect(repo, isNotNull);
       });
     });

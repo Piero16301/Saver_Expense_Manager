@@ -28,17 +28,29 @@ void main() {
       expect(service.isLocalModelAvailable, isTrue);
     });
 
-    test('generateContentRemote calls repository and returns result', () async {
-      const prompt = <PromptPart>[];
-      when(
-        () => mockRepository.generateContentRemote(prompt: prompt),
-      ).thenAnswer((_) async => 'result');
-      final result = await service.generateContentRemote(prompt: prompt);
-      expect(result, equals('result'));
-      verify(
-        () => mockRepository.generateContentRemote(prompt: prompt),
-      ).called(1);
-    });
+    test(
+      'generateContentFromTemplate calls repository and returns result',
+      () async {
+        when(
+          () => mockRepository.generateContentFromTemplate(
+            templateId: 'extractor-de-gastos',
+            attachment: any(named: 'attachment'),
+            inputs: any(named: 'inputs'),
+          ),
+        ).thenAnswer((_) async => 'result');
+        final result = await service.generateContentFromTemplate(
+          templateId: 'extractor-de-gastos',
+        );
+        expect(result, equals('result'));
+        verify(
+          () => mockRepository.generateContentFromTemplate(
+            templateId: 'extractor-de-gastos',
+            attachment: any(named: 'attachment'),
+            inputs: any(named: 'inputs'),
+          ),
+        ).called(1);
+      },
+    );
 
     test('generateContentLocal calls repository and returns result', () async {
       final textPrompt = PromptPart.text(text: 'text');
