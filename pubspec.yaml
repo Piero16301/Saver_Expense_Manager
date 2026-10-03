@@ -31,19 +31,19 @@ dependencies:
     sdk: flutter
   flutter_markdown_plus: ^1.0.12
   gemini_nano_android: ^1.2.1
-  get_it: ^9.2.1
-  go_router: ^18.0.1
+  get_it: ^9.3.0
+  go_router: ^18.0.2
   google_sign_in: ^7.2.0
-  hugeicons: ^1.1.7
+  hugeicons: ^1.2.0
   intl: ^0.20.3
-  material_ui: ^1.3.0
+  material_ui: ^1.5.0
   mime: ^2.1.0
   open_file: ^4.0.0
-  package_info_plus: ^10.2.1
+  package_info_plus: ^10.2.2
   path_provider: ^2.1.6
   shared_preferences: ^2.5.5
-  syncfusion_flutter_charts: ^34.2.8
-  syncfusion_flutter_core: ^34.2.8
+  syncfusion_flutter_charts: ^35.1.37
+  syncfusion_flutter_core: ^35.1.37
   uuid: ^4.6.0
   web: ^1.1.1
 
@@ -52,7 +52,7 @@ dependency_overrides:
 
 dev_dependencies:
   bloc_test: ^10.0.0
-  fake_cloud_firestore: ^4.2.0
+  fake_cloud_firestore: ^4.3.0
   flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
