@@ -344,7 +344,6 @@ class AppFunctions {
     required String mimeType,
     required Uint8List bytes,
     required ModelType modelType,
-    String? receiptUrl,
   }) async {
     final prompt = getPrompt(
       movementType: movementType,
@@ -360,24 +359,12 @@ class AppFunctions {
         imagePrompt: PromptPart.file(mimeType: mimeType, bytes: bytes),
       );
     } else {
-      final now = DateTime.now();
-      final today = DateFormat('dd/MM/yyyy').format(now);
-      final effectiveMimeType = mimeType.trim().isNotEmpty
-          ? mimeType
-          : 'image/jpeg';
-      final templateInputs = <String, Object?>{
-        'today': today,
-        'language': language,
-        'type': movementType.name.toLowerCase(),
-        'categories': categories.map((e) => e.name).join(', '),
-        'mimeType': effectiveMimeType,
-        if (receiptUrl != null && receiptUrl.isNotEmpty)
-          'receiptUrl': receiptUrl,
-      };
-      response = await getIt<AiService>().generateContentFromTemplate(
-        templateId: getIt<RemoteConfigService>().extractReceiptDataTemplateId,
-        attachment: PromptPart.file(mimeType: effectiveMimeType, bytes: bytes),
-        inputs: templateInputs,
+      response = await getIt<AiService>().generateContentRemote(
+        prompt: [
+          PromptPart.text(text: prompt),
+          PromptPart.file(mimeType: mimeType, bytes: bytes),
+        ],
+        responseMimeType: 'application/json',
       );
     }
 
@@ -408,8 +395,10 @@ class AppFunctions {
         getIt<RemoteConfigService>().geminiPromptExtractReceiptData;
     final type = movementType.name.toLowerCase();
     final categoriesStr = categories.map((e) => e.name).join(', ');
+    final nowDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
     return template
+        .replaceAll('{{today}}', nowDate)
         .replaceAll('{{type}}', type)
         .replaceAll('{{language}}', language)
         .replaceAll('{{categories}}', categoriesStr);
@@ -446,10 +435,8 @@ class AppFunctions {
     final hasInternet = await AppFunctions.hasInternetConnection();
 
     if (hasInternet) {
-      response = await aiService.generateContentFromTemplate(
-        templateId:
-            getIt<RemoteConfigService>().promptDetectAntExpenseTemplateId,
-        inputs: {'prompt': prompt},
+      response = await aiService.generateContentRemote(
+        prompt: [PromptPart.text(text: prompt)],
       );
     } else {
       if (aiService.isLocalModelAvailable) {

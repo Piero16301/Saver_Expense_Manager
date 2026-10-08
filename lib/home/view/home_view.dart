@@ -12,7 +12,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
-import 'package:saver_expense_manager/firebase_options.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:uuid/uuid.dart';
@@ -291,32 +290,36 @@ class AddMovementBottomSheet extends StatelessWidget {
               ? 'image/$ext'
               : 'application/pdf');
 
-      final bucket = DefaultFirebaseOptions.currentPlatform.storageBucket;
-      final receiptUrl = 'gs://$bucket/$path';
-
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_file');
 
-      final uploadTrace = performance.startTrace('receipt_upload_file');
-      final uploadName = await getIt<RemoteStorageService>().uploadFile(
-        bytes,
-        path,
-      );
-      performance.stopTrace(uploadTrace);
+      final uploadFuture = () async {
+        final uploadTrace = performance.startTrace('receipt_upload_file');
+        try {
+          return await getIt<RemoteStorageService>().uploadFile(bytes, path);
+        } finally {
+          performance.stopTrace(uploadTrace);
+        }
+      }();
 
-      final aiTrace = performance.startTrace('receipt_ai_processing_file');
-      final movement = await AppFunctions.buildMovementFromFile(
-        movementType: movementType,
-        categories: selectedCategories,
-        language: language.toString(),
-        mimeType: mimeType,
-        bytes: bytes,
-        modelType: modelType,
-        receiptUrl: receiptUrl,
-      );
-      performance
-        ..stopTrace(aiTrace)
-        ..stopTrace(trace);
+      final aiFuture = () async {
+        final aiTrace = performance.startTrace('receipt_ai_processing_file');
+        try {
+          return await AppFunctions.buildMovementFromFile(
+            movementType: movementType,
+            categories: selectedCategories,
+            language: language.toString(),
+            mimeType: mimeType,
+            bytes: bytes,
+            modelType: modelType,
+          );
+        } finally {
+          performance.stopTrace(aiTrace);
+        }
+      }();
+
+      final (uploadName, movement) = await (uploadFuture, aiFuture).wait;
+      performance.stopTrace(trace);
 
       if (loader.isLoading) {
         loader.hideLoading();
@@ -413,32 +416,36 @@ class AddMovementBottomSheet extends StatelessWidget {
               ? 'image/$ext'
               : 'application/pdf');
 
-      final bucket = DefaultFirebaseOptions.currentPlatform.storageBucket;
-      final receiptUrl = 'gs://$bucket/$path';
-
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_scan');
 
-      final uploadTrace = performance.startTrace('receipt_upload_scan');
-      final uploadName = await getIt<RemoteStorageService>().uploadFile(
-        bytes,
-        path,
-      );
-      performance.stopTrace(uploadTrace);
+      final uploadFuture = () async {
+        final uploadTrace = performance.startTrace('receipt_upload_scan');
+        try {
+          return await getIt<RemoteStorageService>().uploadFile(bytes, path);
+        } finally {
+          performance.stopTrace(uploadTrace);
+        }
+      }();
 
-      final aiTrace = performance.startTrace('receipt_ai_processing_scan');
-      final movement = await AppFunctions.buildMovementFromFile(
-        movementType: movementType,
-        categories: selectedCategories,
-        language: language.toString(),
-        mimeType: mimeType,
-        bytes: bytes,
-        modelType: modelType,
-        receiptUrl: receiptUrl,
-      );
-      performance
-        ..stopTrace(aiTrace)
-        ..stopTrace(trace);
+      final aiFuture = () async {
+        final aiTrace = performance.startTrace('receipt_ai_processing_scan');
+        try {
+          return await AppFunctions.buildMovementFromFile(
+            movementType: movementType,
+            categories: selectedCategories,
+            language: language.toString(),
+            mimeType: mimeType,
+            bytes: bytes,
+            modelType: modelType,
+          );
+        } finally {
+          performance.stopTrace(aiTrace);
+        }
+      }();
+
+      final (uploadName, movement) = await (uploadFuture, aiFuture).wait;
+      performance.stopTrace(trace);
 
       if (loader.isLoading) {
         loader.hideLoading();

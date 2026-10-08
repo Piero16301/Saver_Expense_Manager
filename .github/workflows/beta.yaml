@@ -1,11 +1,11 @@
-name: Open Beta
+name: Saver Expense Manager - Beta
 # CI workflow for Saver Expense Manager application.
 # This workflow checks the commit author, runs semantic checks, spell checks,
 # executes tests, builds the application, and deploys it to the Play Store
 # on the 'dev' branch. The application is deployed to the beta track.
 
 concurrency:
-  group: dev-$-$
+  group: beta-${{ github.ref }}
   cancel-in-progress: true
 
 on:
@@ -131,22 +131,18 @@ jobs:
     needs: build-android
     env:
       APP_PACKAGE_NAME: com.pmorales.saver.expense.manager
-      AAB_PATH: build/app/outputs/bundle/productionRelease/app-production-release.aab
       SERVICE_ACCOUNT_PATH: service-account.json
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - name: 📚 Checkout repo
+      - name: 📚 Git Checkout
         uses: actions/checkout@v7
+
       - name: ⬇️ Download Artifact
         uses: actions/download-artifact@master
         with:
           name: aab-stores
           path: ./downloaded
-      - name: 📁 Crear estructura de directorios
-        run: |
-          mkdir -p build/app/outputs/bundle/productionRelease/
-          cp ./downloaded/* build/app/outputs/bundle/productionRelease/
-          ls -la build/app/outputs/bundle/productionRelease/
+
       - name: 🔑 Decode Service Account
         run: echo "${{ secrets.ANDROID_RELEASE_SERVICE_ACCOUNT }}" | base64 --decode > ${{ env.SERVICE_ACCOUNT_PATH }}
 
@@ -155,7 +151,7 @@ jobs:
         with:
           serviceAccountJson: ${{ env.SERVICE_ACCOUNT_PATH }}
           packageName: ${{ env.APP_PACKAGE_NAME }}
-          releaseFiles: ${{ env.AAB_PATH }}
+          releaseFiles: ./downloaded/app-production-release.aab
           tracks: beta
           whatsNewDirectory: whatsnew
 

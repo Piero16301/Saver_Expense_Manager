@@ -3,32 +3,30 @@ import 'package:flutter/foundation.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 abstract class RemoteConfigRepository {
-  /// UI
-  static const String uiHomeInitialTab = 'ui_home_initial_tab';
-
   /// CONFIG
-  static const String configExtractReceiptDataTemplateId =
-      'config_extract_receipt_data_template_id';
-  static const String configPromptDetectAntExpenseTemplateId =
-      'config_prompt_detect_ant_expense_template_id';
-  static const String configGeminiPromptExtractReceiptData =
-      'config_gemini_prompt_extract_receipt_data';
-  static const String configGeminiPromptDetectAntExpense =
-      'config_gemini_prompt_detect_ant_expense';
   static const String configGeminiAntLookbackDays =
       'config_gemini_ant_lookback_days';
+  static const String configGeminiModelName = 'config_gemini_model_name';
+  static const String configGeminiPromptDetectAntExpense =
+      'config_gemini_prompt_detect_ant_expense';
+  static const String configGeminiPromptExtractReceiptData =
+      'config_gemini_prompt_extract_receipt_data';
   static const String configPaginationLimit = 'config_pagination_limit';
   static const String configSummaryLastMonths = 'config_summary_last_months';
 
+  /// UI
+  static const String uiHomeInitialTab = 'ui_home_initial_tab';
+
   Future<void> initialize();
-  String get homeInitialTab;
-  String get extractReceiptDataTemplateId;
-  String get promptDetectAntExpenseTemplateId;
-  String get geminiPromptExtractReceiptData;
-  String get geminiPromptDetectAntExpense;
+
   int get geminiAntLookbackDays;
+  String get geminiModelName;
+  String get geminiPromptDetectAntExpense;
+  String get geminiPromptExtractReceiptData;
   int get paginationLimit;
   int get summaryLastMonths;
+
+  String get homeInitialTab;
 }
 
 class MockRemoteConfigRepository implements RemoteConfigRepository {
@@ -36,32 +34,27 @@ class MockRemoteConfigRepository implements RemoteConfigRepository {
   Future<void> initialize() async {}
 
   @override
-  String get homeInitialTab => 'movimientos';
+  int get geminiAntLookbackDays => 30;
 
   @override
-  String get extractReceiptDataTemplateId =>
-      'config_extract_receipt_data_template_id';
-
-  @override
-  String get promptDetectAntExpenseTemplateId =>
-      'config_prompt_detect_ant_expense_template_id';
-
-  @override
-  String get geminiPromptExtractReceiptData =>
-      'config_gemini_prompt_extract_receipt_data';
+  String get geminiModelName => 'gemini-3.5-flash-lite';
 
   @override
   String get geminiPromptDetectAntExpense =>
       'config_gemini_prompt_detect_ant_expense';
 
   @override
-  int get geminiAntLookbackDays => 30;
+  String get geminiPromptExtractReceiptData =>
+      'config_gemini_prompt_extract_receipt_data';
 
   @override
   int get paginationLimit => 10;
 
   @override
   int get summaryLastMonths => 4;
+
+  @override
+  String get homeInitialTab => 'movimientos';
 }
 
 class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
@@ -73,14 +66,15 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
   @override
   Future<void> initialize() async {
     await _remoteConfig.setDefaults({
-      RemoteConfigRepository.uiHomeInitialTab: 'movimientos',
-      RemoteConfigRepository.configGeminiPromptExtractReceiptData:
-          'config_gemini_prompt_extract_receipt_data',
+      RemoteConfigRepository.configGeminiAntLookbackDays: 30,
+      RemoteConfigRepository.configGeminiModelName: 'gemini-3.5-flash-lite',
       RemoteConfigRepository.configGeminiPromptDetectAntExpense:
           'config_gemini_prompt_detect_ant_expense',
-      RemoteConfigRepository.configGeminiAntLookbackDays: 30,
+      RemoteConfigRepository.configGeminiPromptExtractReceiptData:
+          'config_gemini_prompt_extract_receipt_data',
       RemoteConfigRepository.configPaginationLimit: 10,
       RemoteConfigRepository.configSummaryLastMonths: 4,
+      RemoteConfigRepository.uiHomeInitialTab: 'movimientos',
     });
 
     try {
@@ -103,17 +97,16 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
   }
 
   @override
-  String get homeInitialTab =>
-      _remoteConfig.getString(RemoteConfigRepository.uiHomeInitialTab);
+  int get geminiAntLookbackDays =>
+      _remoteConfig.getInt(RemoteConfigRepository.configGeminiAntLookbackDays);
 
   @override
-  String get extractReceiptDataTemplateId => _remoteConfig.getString(
-    RemoteConfigRepository.configExtractReceiptDataTemplateId,
-  );
+  String get geminiModelName =>
+      _remoteConfig.getString(RemoteConfigRepository.configGeminiModelName);
 
   @override
-  String get promptDetectAntExpenseTemplateId => _remoteConfig.getString(
-    RemoteConfigRepository.configPromptDetectAntExpenseTemplateId,
+  String get geminiPromptDetectAntExpense => _remoteConfig.getString(
+    RemoteConfigRepository.configGeminiPromptDetectAntExpense,
   );
 
   @override
@@ -122,19 +115,14 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
   );
 
   @override
-  String get geminiPromptDetectAntExpense => _remoteConfig.getString(
-    RemoteConfigRepository.configGeminiPromptDetectAntExpense,
-  );
-
-  @override
-  int get geminiAntLookbackDays =>
-      _remoteConfig.getInt(RemoteConfigRepository.configGeminiAntLookbackDays);
-
-  @override
   int get paginationLimit =>
       _remoteConfig.getInt(RemoteConfigRepository.configPaginationLimit);
 
   @override
   int get summaryLastMonths =>
       _remoteConfig.getInt(RemoteConfigRepository.configSummaryLastMonths);
+
+  @override
+  String get homeInitialTab =>
+      _remoteConfig.getString(RemoteConfigRepository.uiHomeInitialTab);
 }
