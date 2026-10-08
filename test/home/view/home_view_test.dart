@@ -146,15 +146,11 @@ void main() {
     when(
       () => mockRemoteConfigService.geminiPromptExtractReceiptData,
     ).thenReturn('prompt');
-    when(
-      () => mockRemoteConfigService.extractReceiptDataTemplateId,
-    ).thenReturn('extractor-de-gastos');
     when(() => mockAiService.isLocalModelAvailable).thenReturn(true);
     when(
-      () => mockAiService.generateContentFromTemplate(
-        templateId: any<String>(named: 'templateId'),
-        attachment: any<PromptPart?>(named: 'attachment'),
-        inputs: any<Map<String, Object?>>(named: 'inputs'),
+      () => mockAiService.generateContentRemote(
+        prompt: any<List<PromptPart>>(named: 'prompt'),
+        responseMimeType: any<String>(named: 'responseMimeType'),
       ),
     ).thenAnswer(
       (_) async =>

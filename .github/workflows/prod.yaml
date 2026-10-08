@@ -1,11 +1,11 @@
-name: Production
+name: Saver Expense Manager - Prod
 # CI workflow for Saver Expense Manager application.
 # This workflow checks the commit author, runs semantic checks, spell checks,
 # executes tests, builds the application, and deploys it to the Play Store
 # on the 'main' branch. The application is deployed to the production track.
 
 concurrency:
-  group: main-$-$
+  group: prod-${{ github.ref }}
   cancel-in-progress: true
 
 on:
@@ -29,7 +29,7 @@ jobs:
         run: |
           COMMIT_MSG=$(git log -1 --pretty=format:'%s')
           echo "Commit message: $COMMIT_MSG"
-          if [[ "$COMMIT_MSG" == "Merge pull request"* && "$COMMIT_MSG" == *"from Piero16301/dev" ]]; then
+          if [[ "$COMMIT_MSG" == "Merge pull request"* && "$COMMIT_MSG" == *"dev"* ]] || [[ "$COMMIT_MSG" == *"Merge branch 'dev'"* ]]; then
             echo "is_dev_merge=true" >> $GITHUB_OUTPUT
             echo "Commit is a merge from dev branch, continuing with workflow"
           else
@@ -65,6 +65,8 @@ jobs:
     runs-on: ubuntu-26.04
     permissions:
       contents: read
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: 📚 Git Checkout
         uses: actions/checkout@v7
@@ -98,7 +100,8 @@ jobs:
 
   promote:
     name: "📈 Promote to Production"
-    needs: quality
+    needs: [check-commit-type, quality]
+    if: needs.check-commit-type.outputs.is_dev_merge == 'true'
     runs-on: ubuntu-26.04
     env:
       APP_PACKAGE_NAME: com.pmorales.saver.expense.manager

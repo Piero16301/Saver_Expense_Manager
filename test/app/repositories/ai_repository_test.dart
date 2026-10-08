@@ -1,7 +1,9 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:firebase_ai/src/base_model.dart';
+import 'package:firebase_ai/src/client.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
@@ -9,6 +11,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MockFirebaseAI extends Mock implements FirebaseAI {}
+
+class MockFirebaseApp extends Mock implements FirebaseApp {}
+
+class MockApiClient extends Mock implements ApiClient {}
 
 class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid {}
 
@@ -31,9 +37,38 @@ void main() {
 
   late FirebaseAiRepository repository;
 
+  GenerativeModel createTestModel(ApiClient client) {
+    final app = MockFirebaseApp();
+    when(() => app.name).thenReturn('default');
+    when(() => app.options).thenReturn(
+      const FirebaseOptions(
+        apiKey: 'key',
+        appId: 'id',
+        messagingSenderId: 'id',
+        projectId: 'proj',
+      ),
+    );
+    return createModelWithClient(
+      app: app,
+      location: 'us-central1',
+      model: 'gemini-1.5-flash',
+      client: client,
+      useAgentPlatform: true,
+    );
+  }
+
   setUpAll(() {
     registerFallbackValue(Content.text(''));
     registerFallbackValue(MockTrace());
+    registerFallbackValue(Uri());
+    registerFallbackValue(GenerationConfig());
+    registerFallbackValue(
+      SafetySetting(
+        HarmCategory.dangerousContent,
+        HarmBlockThreshold.none,
+        null,
+      ),
+    );
   });
 
   setUp(() async {
@@ -68,7 +103,9 @@ void main() {
       await mock.initialize();
       expect(mock.isLocalModelAvailable, isFalse);
       expect(
-        await mock.generateContentFromTemplate(templateId: 'test'),
+        await mock.generateContentRemote(
+          prompt: [PromptPart.text(text: 'test')],
+        ),
         isNull,
       );
       expect(
@@ -88,78 +125,103 @@ void main() {
       expect(repository.isLocalModelAvailable, isTrue);
     });
 
-    group('generateContentFromTemplate', () {
-      test('returns null if templateId is empty', () async {
-        final result = await repository.generateContentFromTemplate(
-          templateId: '',
-        );
+    group('generateContentRemote', () {
+      test('returns null if prompt is empty', () async {
+        final result = await repository.generateContentRemote(prompt: []);
         expect(result, isNull);
       });
 
-      test('calls templateContentGenerator and returns response text with file '
-          'attachment', () async {
-        final repo = FirebaseAiRepository(
-          templateGenerator: (id, {required inputs}) async {
-            expect(id, 'extractor-de-gastos');
-            expect(inputs['today'], '17/09/2026');
-            expect(
-              inputs['receiptUrl'],
-              'data:image/png;base64,${base64Encode([1, 2, 3])}',
-            );
-            expect(inputs['mimeType'], 'image/png');
-            return GenerateContentResponse([
-              Candidate(
-                Content('model', [const TextPart('{"title": "Test"}')]),
-                null,
-                null,
-                null,
-                null,
+      test(
+        'calls generativeModel and returns response text with file and text',
+        () async {
+          when(
+            () => mockRemoteConfigService.geminiModelName,
+          ).thenReturn('gemini-1.5-flash');
+          final mockApiClient = MockApiClient();
+          when(() => mockApiClient.makeRequest(any(), any())).thenAnswer(
+            (_) async => {
+              'candidates': [
+                {
+                  'content': {
+                    'role': 'model',
+                    'parts': [
+                      {'text': '{"title": "Test"}'},
+                    ],
+                  },
+                },
+              ],
+            },
+          );
+
+          final testModel = createTestModel(mockApiClient);
+          when(
+            () => mockRemoteModel.generativeModel(
+              model: any(named: 'model'),
+              generationConfig: any(named: 'generationConfig'),
+              safetySettings: any(named: 'safetySettings'),
+            ),
+          ).thenReturn(testModel);
+
+          final result = await repository.generateContentRemote(
+            prompt: [
+              PromptPart.text(text: 'Extract'),
+              PromptPart.file(
+                mimeType: 'image/png',
+                bytes: Uint8List.fromList([1, 2, 3]),
               ),
-            ], null);
-          },
-        );
-        final result = await repo.generateContentFromTemplate(
-          templateId: 'extractor-de-gastos',
-          attachment: PromptPart.file(
-            mimeType: 'image/png',
-            bytes: Uint8List.fromList([1, 2, 3]),
+            ],
+          );
+
+          expect(result, '{"title": "Test"}');
+          verify(
+            () => mockPerformanceService.startTrace('gemini_generate_remote'),
+          ).called(1);
+          verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
+        },
+      );
+
+      test('returns null when prompt parts are not text or file', () async {
+        when(
+          () => mockRemoteConfigService.geminiModelName,
+        ).thenReturn('gemini-1.5-flash');
+        final mockApiClient = MockApiClient();
+        final testModel = createTestModel(mockApiClient);
+        when(
+          () => mockRemoteModel.generativeModel(
+            model: any(named: 'model'),
+            generationConfig: any(named: 'generationConfig'),
+            safetySettings: any(named: 'safetySettings'),
           ),
-          inputs: {'today': '17/09/2026'},
+        ).thenReturn(testModel);
+
+        final result = await repository.generateContentRemote(
+          prompt: [const PromptPart(type: PromptPartType.text)],
         );
-        expect(result, '{"title": "Test"}');
+
+        expect(result, isNull);
       });
 
-      test('calls templateContentGenerator with text attachment', () async {
-        final repo = FirebaseAiRepository(
-          templateGenerator: (id, {required inputs}) async {
-            expect(inputs['text'], 'hello');
-            return GenerateContentResponse([
-              Candidate(
-                Content('model', [const TextPart('OK')]),
-                null,
-                null,
-                null,
-                null,
-              ),
-            ], null);
-          },
-        );
-        final result = await repo.generateContentFromTemplate(
-          templateId: 'extractor-de-gastos',
-          attachment: PromptPart.text(text: 'hello'),
-        );
-        expect(result, 'OK');
-      });
-
-      test('records error and rethrows if template generation fails', () async {
-        final repo = FirebaseAiRepository(
-          templateGenerator: (id, {required inputs}) async {
-            throw Exception('Template Fail');
-          },
-        );
+      test('records error and rethrows if remote generation fails', () async {
+        when(
+          () => mockRemoteConfigService.geminiModelName,
+        ).thenReturn('gemini-1.5-flash');
+        final mockApiClient = MockApiClient();
+        when(
+          () => mockApiClient.makeRequest(any(), any()),
+        ).thenThrow(Exception('Remote Fail'));
+        final testModel = createTestModel(mockApiClient);
+        when(
+          () => mockRemoteModel.generativeModel(
+            model: any(named: 'model'),
+            generationConfig: any(named: 'generationConfig'),
+            safetySettings: any(named: 'safetySettings'),
+          ),
+        ).thenReturn(testModel);
 
         expect(
-          () => repo.generateContentFromTemplate(templateId: 'test'),
+          () => repository.generateContentRemote(
+            prompt: [PromptPart.text(text: 'test')],
+          ),
           throwsException,
         );
 
@@ -168,7 +230,7 @@ void main() {
           () => mockCrashService.recordError(
             any<Object>(),
             any<StackTrace?>(),
-            reason: 'AiService generateContentFromTemplate error',
+            reason: 'AiService generateContentRemote error',
           ),
         ).called(1);
       });

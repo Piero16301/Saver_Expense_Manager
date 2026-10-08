@@ -739,15 +739,11 @@ void main() {
         when(
           () => mockRemoteConfig.geminiPromptExtractReceiptData,
         ).thenReturn('Prompt');
-        when(
-          () => mockRemoteConfig.extractReceiptDataTemplateId,
-        ).thenReturn('extractor-de-gastos');
         when(() => mockAiService.isLocalModelAvailable).thenReturn(false);
         when(
-          () => mockAiService.generateContentFromTemplate(
-            templateId: any<String>(named: 'templateId'),
-            attachment: any<PromptPart?>(named: 'attachment'),
-            inputs: any<Map<String, Object?>>(named: 'inputs'),
+          () => mockAiService.generateContentRemote(
+            prompt: any<List<PromptPart>>(named: 'prompt'),
+            responseMimeType: any<String>(named: 'responseMimeType'),
           ),
         ).thenAnswer(
           (_) async =>
@@ -818,9 +814,6 @@ void main() {
         when(
           () => mockRemoteConfig.geminiPromptDetectAntExpense,
         ).thenReturn('Prompt {{transactions_list}}');
-        when(
-          () => mockRemoteConfig.promptDetectAntExpenseTemplateId,
-        ).thenReturn('detector-gastos-hormiga');
         when(() => mockRemoteConfig.geminiAntLookbackDays).thenReturn(30);
 
         when(
@@ -833,9 +826,9 @@ void main() {
 
         when(() => mockAiService.isLocalModelAvailable).thenReturn(false);
         when(
-          () => mockAiService.generateContentFromTemplate(
-            templateId: any<String>(named: 'templateId'),
-            inputs: any<Map<String, Object?>>(named: 'inputs'),
+          () => mockAiService.generateContentRemote(
+            prompt: any<List<PromptPart>>(named: 'prompt'),
+            responseMimeType: any<String>(named: 'responseMimeType'),
           ),
         ).thenAnswer((_) async => 'Rec 1 ||| Rec 2 ||| Rec 3');
 

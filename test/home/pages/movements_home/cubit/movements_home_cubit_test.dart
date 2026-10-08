@@ -209,9 +209,6 @@ void main() {
       when(
         () => mockRemoteConfig.geminiPromptDetectAntExpense,
       ).thenReturn('prompt');
-      when(
-        () => mockRemoteConfig.promptDetectAntExpenseTemplateId,
-      ).thenReturn('template_ant');
       when(() => mockRemoteConfig.geminiAntLookbackDays).thenReturn(30);
       when(
         () => mockDatabase.getMovements(
@@ -222,9 +219,9 @@ void main() {
       ).thenAnswer((_) async => []);
 
       when(
-        () => mockAiService.generateContentFromTemplate(
-          templateId: any<String>(named: 'templateId'),
-          inputs: any<Map<String, Object?>>(named: 'inputs'),
+        () => mockAiService.generateContentRemote(
+          prompt: any<List<PromptPart>>(named: 'prompt'),
+          responseMimeType: any<String>(named: 'responseMimeType'),
         ),
       ).thenAnswer((_) async => 'Tip 3 ||| Tip 4');
       when(() => mockAiService.isLocalModelAvailable).thenReturn(true);

@@ -5,21 +5,17 @@ class RemoteConfigService {
 
   final RemoteConfigRepository _remoteConfigRepository;
 
-  Future<void> initialize() async {
-    await _remoteConfigRepository.initialize();
-  }
+  Future<void> initialize() async => await _remoteConfigRepository.initialize();
 
-  String get homeInitialTab => _remoteConfigRepository.homeInitialTab;
-  String get extractReceiptDataTemplateId =>
-      _remoteConfigRepository.extractReceiptDataTemplateId;
-  String get promptDetectAntExpenseTemplateId =>
-      _remoteConfigRepository.promptDetectAntExpenseTemplateId;
-  String get geminiPromptExtractReceiptData =>
-      _remoteConfigRepository.geminiPromptExtractReceiptData;
-  String get geminiPromptDetectAntExpense =>
-      _remoteConfigRepository.geminiPromptDetectAntExpense;
   int get geminiAntLookbackDays =>
       _remoteConfigRepository.geminiAntLookbackDays;
+  String get geminiModelName => _remoteConfigRepository.geminiModelName;
+  String get geminiPromptDetectAntExpense =>
+      _remoteConfigRepository.geminiPromptDetectAntExpense;
+  String get geminiPromptExtractReceiptData =>
+      _remoteConfigRepository.geminiPromptExtractReceiptData;
   int get paginationLimit => _remoteConfigRepository.paginationLimit;
   int get summaryLastMonths => _remoteConfigRepository.summaryLastMonths;
+
+  String get homeInitialTab => _remoteConfigRepository.homeInitialTab;
 }
