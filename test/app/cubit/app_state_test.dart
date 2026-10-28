@@ -12,10 +12,10 @@ void main() {
       expect(
         const AppState().props,
         equals(<Object?>[
-          const Locale('en', 'US'),
-          ThemeMode.system,
-          Colors.green,
-          'GoogleSansFlex',
+          ExpressiveLanguages.defaultLocale,
+          ExpressiveTheme.defaultTheme,
+          ExpressiveColors.defaultColor,
+          ExpressiveFonts.defaultFont,
         ]),
       );
     });

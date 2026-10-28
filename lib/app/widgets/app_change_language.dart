@@ -12,7 +12,7 @@ class AppChangeLanguage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    const languages = AppVariables.supportedLocales;
+    const languages = ExpressiveLanguages.supportedLocales;
 
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => Padding(

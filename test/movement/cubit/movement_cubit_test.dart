@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -41,8 +40,7 @@ void main() {
     late MovementCubit movementCubit;
     late MockRemoteStorageService mockRemoteStorageService;
     late MockAppLocalizations mockL10n;
-    late DatabaseService databaseService;
-    late FakeFirebaseFirestore fakeFirestore;
+    late MockDatabaseService mockDatabaseService;
     late MockPathProviderPlatform mockPathProviderPlatform;
     late MockCrashService mockCrashService;
     late MockAnalyticsService mockAnalyticsService;
@@ -76,12 +74,18 @@ void main() {
     });
 
     setUp(() async {
-      fakeFirestore = FakeFirebaseFirestore();
-      databaseService = DatabaseService(
-        databaseRepository: FirestoreDatabaseRepository(
-          firestore: fakeFirestore,
+      mockDatabaseService = MockDatabaseService();
+      when(() => mockDatabaseService.newId).thenReturn('generated_doc_id');
+      when(
+        () =>
+            mockDatabaseService.saveMovement(movement: any(named: 'movement')),
+      ).thenReturn(null);
+      when(
+        () => mockDatabaseService.deleteMovement(
+          movementId: any(named: 'movementId'),
         ),
-      );
+      ).thenReturn(null);
+
       mockRemoteStorageService = MockRemoteStorageService();
       mockCrashService = MockCrashService();
       mockL10n = MockAppLocalizations();
@@ -101,7 +105,7 @@ void main() {
       }
 
       getIt
-        ..registerSingleton<DatabaseService>(databaseService)
+        ..registerSingleton<DatabaseService>(mockDatabaseService)
         ..registerSingleton<RemoteStorageService>(mockRemoteStorageService)
         ..registerSingleton<CrashService>(mockCrashService)
         ..registerSingleton<AnalyticsService>(mockAnalyticsService);
@@ -315,13 +319,16 @@ void main() {
           ..emit(movementCubit.state.copyWith(formKey: mockFormKey))
           ..saveMovement('userId', mockL10n);
 
-        final doc = await fakeFirestore
-            .collection(AppVariables.movementsCollection)
-            .doc('m1')
-            .get();
-
-        expect(doc.exists, isTrue);
-        expect(doc.data()?['title'], 'Coffee');
+        verify(
+          () => mockDatabaseService.saveMovement(
+            movement: any(
+              named: 'movement',
+              that: isA<Movement>()
+                  .having((m) => m.id, 'id', 'm1')
+                  .having((m) => m.title, 'title', 'Coffee'),
+            ),
+          ),
+        ).called(1);
       });
 
       test('saves new movement and returns true', () async {
@@ -335,21 +342,21 @@ void main() {
           ..emit(movementCubit.state.copyWith(formKey: mockFormKey))
           ..saveMovement('userId', mockL10n);
 
-        final collection = await fakeFirestore
-            .collection(AppVariables.movementsCollection)
-            .get();
-        expect(collection.docs.length, 1);
-        expect(collection.docs.first.data()['title'], 'Coffee');
+        verify(
+          () => mockDatabaseService.saveMovement(
+            movement: any(
+              named: 'movement',
+              that: isA<Movement>()
+                  .having((m) => m.id, 'id', 'generated_doc_id')
+                  .having((m) => m.title, 'title', 'Coffee'),
+            ),
+          ),
+        ).called(1);
       });
 
       test(
         'saves movement even if database service fails (fire and forget)',
         () async {
-          final mockDatabaseService = MockDatabaseService();
-
-          await getIt.unregister<DatabaseService>();
-          getIt.registerSingleton<DatabaseService>(mockDatabaseService);
-
           when(
             () => mockDatabaseService.saveMovement(
               movement: any(named: 'movement'),
@@ -386,21 +393,13 @@ void main() {
           () => mockRemoteStorageService.deleteFile(any()),
         ).thenAnswer((_) async => true);
 
-        await fakeFirestore
-            .collection(AppVariables.movementsCollection)
-            .doc('m1')
-            .set(movement.toJson());
-
         movementCubit
           ..init(movement, categories)
           ..removeMovement();
 
-        final doc = await fakeFirestore
-            .collection(AppVariables.movementsCollection)
-            .doc('m1')
-            .get();
-        expect(doc.exists, isFalse);
-
+        verify(
+          () => mockDatabaseService.deleteMovement(movementId: 'm1'),
+        ).called(1);
         verify(() => mockRemoteStorageService.deleteFile('file1')).called(1);
       });
     });

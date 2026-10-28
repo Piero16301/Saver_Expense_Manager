@@ -7,8 +7,6 @@ class AppVariables {
   @visibleForTesting
   static bool useTestFonts = false;
 
-  static const Color defaultBaseColor = Colors.green;
-  static const String defaultFontFamily = 'GoogleSansFlex';
   static const List<String> allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
   static const List<String> imageExtensions = ['png', 'jpg', 'jpeg'];
   static const String unsupportedLocalModelFile =
@@ -21,6 +19,7 @@ class AppVariables {
   static const tabletMaxHeight = 400.0;
   static const mobileChartMaxHeight = 340.0;
   static const webChartMaxHeight = 480.0;
+  static const modalBottomSheetMaxHeightPct = 0.72;
 
   static const animationDuration = Duration(milliseconds: 400);
   static const snackBarDuration = Duration(seconds: 5);
@@ -85,43 +84,9 @@ class AppVariables {
     'youtube',
   ];
 
-  static Map<String, String> availableFonts = getAvailableFonts();
-
-  static Map<String, String> getAvailableFonts() {
-    return {
-      'Google Sans Flex': 'GoogleSansFlex',
-      'Merriweather': 'Merriweather',
-      'Montserrat': 'Montserrat',
-      'Nunito': 'Nunito',
-      'Open Sans': 'OpenSans',
-      'Orbitron': 'Orbitron',
-      'Playfair Display': 'PlayfairDisplay',
-      'Roboto': 'Roboto',
-      'Source Code Pro': 'SourceCodePro',
-    };
-  }
-
   static const categoriesCollection = 'categories';
   static const movementsCollection = 'movements';
   static const usersCollection = 'users';
-
-  static const List<Locale> supportedLocales = [
-    Locale('en', 'US'),
-    Locale('es', 'ES'),
-    Locale('it', 'IT'),
-    Locale('fr', 'FR'),
-    Locale('de', 'DE'),
-    Locale('pt', 'PT'),
-  ];
-
-  static const Map<String, Locale> deviceLanguageMap = {
-    'en': Locale('en', 'US'),
-    'es': Locale('es', 'ES'),
-    'it': Locale('it', 'IT'),
-    'fr': Locale('fr', 'FR'),
-    'de': Locale('de', 'DE'),
-    'pt': Locale('pt', 'PT'),
-  };
 }
 
 enum SnackBarType {

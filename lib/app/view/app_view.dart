@@ -53,15 +53,16 @@ class _AppViewState extends State<AppView> {
           },
           localizationsDelegates: const [
             AppLocalizations.delegate,
+            ExpressiveLocalizations.delegate,
             ...GlobalMaterialLocalizations.delegates,
           ],
-          supportedLocales: AppVariables.supportedLocales,
+          supportedLocales: ExpressiveLanguages.supportedLocales,
           locale: state.language,
-          theme: AppThemes.lightTheme(
+          theme: ExpressiveTheme.light(
             baseColor: state.baseColor,
             fontFamily: state.fontFamily,
           ),
-          darkTheme: AppThemes.darkTheme(
+          darkTheme: ExpressiveTheme.dark(
             baseColor: state.baseColor,
             fontFamily: state.fontFamily,
           ),

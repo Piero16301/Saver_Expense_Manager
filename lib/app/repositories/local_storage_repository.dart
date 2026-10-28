@@ -113,7 +113,7 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
     _prefs
         ?.setString(
           LocalStorageRepository.kUserTheme,
-          ThemeHelper.getThemeName(theme),
+          ExpressiveTheme.toKey(theme),
         )
         .ignore();
   }
@@ -124,7 +124,7 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
     if (themeString == null) {
       return null;
     }
-    return ThemeHelper.getThemeByName(themeString);
+    return ExpressiveTheme.fromKey(themeString);
   }
 
   @override
@@ -132,7 +132,7 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
     _prefs
         ?.setString(
           LocalStorageRepository.kUserBaseColor,
-          ColorHelper.getColorName(baseColor),
+          ExpressiveColors.toKey(baseColor),
         )
         .ignore();
   }
@@ -145,7 +145,7 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
     if (baseColorString == null) {
       return null;
     }
-    return ColorHelper.getColorByName(baseColorString);
+    return ExpressiveColors.fromKey(baseColorString);
   }
 
   @override
