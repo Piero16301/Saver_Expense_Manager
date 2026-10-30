@@ -25,21 +25,10 @@ class MovementView extends StatelessWidget {
 
     return BlocBuilder<MovementCubit, MovementState>(
       builder: (context, state) => Scaffold(
-        appBar: AppBar(
-          title: Text(
-            _appBarTitle(l10n),
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontVariations: <FontVariation>[
-                ...(Theme.of(context).textTheme.titleLarge?.fontVariations ??
-                        const <FontVariation>[])
-                    .where((v) => v.axis != 'wght'),
-                const FontVariation('wght', 700),
-              ],
-            ),
-          ),
-          notificationPredicate: (notification) => false,
-          actions: _appBarActions(context, l10n),
-          leading: Center(
+        appBar: ExpressiveTopAppBar(
+          centerTitle: false,
+          leading: Padding(
+            padding: const EdgeInsets.all(8),
             child: ExpressiveIconButton.circle(
               onPressed: () => context.pop(),
               icon: const HugeIcon(
@@ -48,6 +37,19 @@ class MovementView extends StatelessWidget {
               ),
             ),
           ),
+          title: Text(
+            _appBarTitle(l10n),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+              fontVariations: <FontVariation>[
+                ...(Theme.of(context).textTheme.titleLarge?.fontVariations ??
+                        const <FontVariation>[])
+                    .where((v) => v.axis != 'wght'),
+                const FontVariation('wght', 700),
+              ],
+            ),
+          ),
+          actions: _appBarActions(context, l10n),
         ),
         body: Padding(
           padding: const EdgeInsets.only(
@@ -67,118 +69,140 @@ class MovementView extends StatelessWidget {
                     maxWidth: AppVariables.tabletMaxWidth,
                   ),
                   child: Column(
+                    spacing: 16,
                     children: [
-                      const SizedBox(height: 5),
-                      AppTextField(
-                        label: l10n.movementTitle,
-                        hintText: l10n.movementTitleHint,
-                        errorText: l10n.movementTitleError,
-                        onChanged: context.read<MovementCubit>().titleChanged,
-                        prefix: const HugeIcon(
-                          icon: HugeIcons.strokeRoundedTextFont,
-                        ),
-                        initialValue: state.title,
-                        maxLength: 50,
-                      ),
-                      const SizedBox(height: 20),
-                      AppTextField(
-                        label: l10n.movementDescription,
-                        hintText: l10n.movementDescriptionHint,
-                        errorText: l10n.movementDescriptionError,
-                        onChanged: context
-                            .read<MovementCubit>()
-                            .descriptionChanged,
-                        prefix: const HugeIcon(
-                          icon: HugeIcons.strokeRoundedNote,
-                        ),
-                        initialValue: state.description,
-                        maxLines: 7,
-                        maxLength: 300,
-                      ),
-                      const SizedBox(height: 20),
-                      AppDateField(
-                        label: l10n.movementDate,
-                        initialDate: state.date!,
-                        onDateChanged: context
-                            .read<MovementCubit>()
-                            .dateChanged,
-                      ),
-                      const SizedBox(height: 20),
-                      AppDropdownField<Category>(
-                        label: l10n.movementCategory,
-                        options: state.categories
-                            .map(
-                              (category) => DropdownMenuItem<Category>(
-                                value: category,
-                                child: Row(
-                                  spacing: 12,
-                                  children: [
-                                    HugeIcon(
-                                      icon: AppFunctions.getCategoryIcon(
-                                        category.icon,
-                                      ),
-                                    ),
-                                    Text(
-                                      AppFunctions.getCategoryName(
-                                        category.name,
-                                        l10n,
-                                      ),
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyLarge,
-                                    ),
-                                  ],
-                                ),
+                      ExpressiveCard(
+                        margin: EdgeInsets.zero,
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          spacing: 20,
+                          children: [
+                            AppTextField(
+                              label: l10n.movementTitle,
+                              hintText: l10n.movementTitleHint,
+                              errorText: l10n.movementTitleError,
+                              onChanged: context
+                                  .read<MovementCubit>()
+                                  .titleChanged,
+                              prefix: const HugeIcon(
+                                icon: HugeIcons.strokeRoundedTextFont,
                               ),
-                            )
-                            .toList(),
-                        selected: state.category,
-                        leadingIcon: AppFunctions.getCategoryIcon(
-                          state.category!.icon,
+                              initialValue: state.title,
+                              maxLength: 50,
+                            ),
+                            AppTextField(
+                              label: l10n.movementDescription,
+                              hintText: l10n.movementDescriptionHint,
+                              errorText: l10n.movementDescriptionError,
+                              onChanged: context
+                                  .read<MovementCubit>()
+                                  .descriptionChanged,
+                              prefix: const HugeIcon(
+                                icon: HugeIcons.strokeRoundedNote,
+                              ),
+                              initialValue: state.description,
+                              maxLines: 7,
+                              maxLength: 300,
+                            ),
+                            AppDateField(
+                              label: l10n.movementDate,
+                              initialDate: state.date!,
+                              onDateChanged: context
+                                  .read<MovementCubit>()
+                                  .dateChanged,
+                            ),
+                          ],
                         ),
-                        onChanged: context
-                            .read<MovementCubit>()
-                            .categoryChanged,
                       ),
-                      const SizedBox(height: 20),
-                      AppTextField(
-                        label: l10n.movementAmount,
-                        hintText: l10n.movementAmountHint,
-                        errorText: l10n.movementAmountError,
-                        onChanged: context.read<MovementCubit>().priceChanged,
-                        prefix: const HugeIcon(
-                          icon: HugeIcons.strokeRoundedMoney01,
+                      ExpressiveCard(
+                        margin: EdgeInsets.zero,
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          spacing: 20,
+                          children: [
+                            AppDropdownField<Category>(
+                              label: l10n.movementCategory,
+                              options: state.categories
+                                  .map(
+                                    (category) => DropdownMenuItem<Category>(
+                                      value: category,
+                                      child: Row(
+                                        spacing: 12,
+                                        children: [
+                                          HugeIcon(
+                                            icon: AppFunctions.getCategoryIcon(
+                                              category.icon,
+                                            ),
+                                          ),
+                                          Text(
+                                            AppFunctions.getCategoryName(
+                                              category.name,
+                                              l10n,
+                                            ),
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodyLarge,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                              selected: state.category,
+                              leadingIcon: AppFunctions.getCategoryIcon(
+                                state.category!.icon,
+                              ),
+                              onChanged: context
+                                  .read<MovementCubit>()
+                                  .categoryChanged,
+                            ),
+                            AppTextField(
+                              label: l10n.movementAmount,
+                              hintText: l10n.movementAmountHint,
+                              errorText: l10n.movementAmountError,
+                              onChanged: context
+                                  .read<MovementCubit>()
+                                  .priceChanged,
+                              prefix: const HugeIcon(
+                                icon: HugeIcons.strokeRoundedMoney01,
+                              ),
+                              initialValue: state.price == 0
+                                  ? ''
+                                  : state.price.toStringAsFixed(2),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,2}'),
+                                ),
+                              ],
+                            ),
+                            AppTextField(
+                              label: l10n.movementCompany,
+                              hintText: l10n.movementCompanyHint,
+                              errorText: l10n.movementCompanyError,
+                              onChanged: context
+                                  .read<MovementCubit>()
+                                  .companyChanged,
+                              prefix: const HugeIcon(
+                                icon: HugeIcons.strokeRoundedBuilding01,
+                              ),
+                              initialValue: state.company,
+                              maxLength: 50,
+                            ),
+                          ],
                         ),
-                        initialValue: state.price == 0
-                            ? ''
-                            : state.price.toStringAsFixed(2),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}'),
-                          ),
-                        ],
                       ),
-                      const SizedBox(height: 20),
-                      AppTextField(
-                        label: l10n.movementCompany,
-                        hintText: l10n.movementCompanyHint,
-                        errorText: l10n.movementCompanyError,
-                        onChanged: context.read<MovementCubit>().companyChanged,
-                        prefix: const HugeIcon(
-                          icon: HugeIcons.strokeRoundedBuilding01,
+                      ExpressiveCard(
+                        margin: EdgeInsets.zero,
+                        padding: const EdgeInsets.all(20),
+                        child: AppFileField(
+                          label: l10n.movementAttachments,
+                          labelAdd: l10n.movementAddAttachment,
+                          onAdd: context.read<MovementCubit>().attachAdd,
+                          onRemove: context.read<MovementCubit>().attachRemove,
+                          openFile: context.read<MovementCubit>().attachOpen,
+                          attachments: state.attachments,
                         ),
-                        initialValue: state.company,
-                        maxLength: 50,
-                      ),
-                      const SizedBox(height: 20),
-                      AppFileField(
-                        label: l10n.movementAttachments,
-                        labelAdd: l10n.movementAddAttachment,
-                        onAdd: context.read<MovementCubit>().attachAdd,
-                        onRemove: context.read<MovementCubit>().attachRemove,
-                        openFile: context.read<MovementCubit>().attachOpen,
-                        attachments: state.attachments,
                       ),
                       if (kDebugMode) MovementMetadata(id: state.id),
                     ],
@@ -326,34 +350,29 @@ class MovementMetadata extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 20),
-        SizedBox(
-          width: double.infinity,
-          child: RichText(
-            text: TextSpan(
-              text: 'ID: ',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.primary,
-                fontVariations: <FontVariation>[
-                  ...(Theme.of(context).textTheme.bodyMedium?.fontVariations ??
-                          const <FontVariation>[])
-                      .where((v) => v.axis != 'wght'),
-                  const FontVariation('wght', 700),
-                ],
-              ),
-              children: [
-                TextSpan(
-                  text: id,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+    return ExpressiveCard(
+      margin: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: SizedBox(
+        width: double.infinity,
+        child: RichText(
+          text: TextSpan(
+            text: 'ID: ',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontVariations: <FontVariation>[
+                ...(Theme.of(context).textTheme.bodyMedium?.fontVariations ??
+                        const <FontVariation>[])
+                    .where((v) => v.axis != 'wght'),
+                const FontVariation('wght', 700),
               ],
             ),
+            children: [
+              TextSpan(text: id, style: Theme.of(context).textTheme.bodyMedium),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

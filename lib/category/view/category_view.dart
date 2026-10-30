@@ -78,17 +78,21 @@ class CategoryIcon extends StatelessWidget {
     final category = context.select<CategoryCubit, Category>(
       (cubit) => cubit.state.category,
     );
+    final categoryColor = HexColor.fromHex(category.color);
 
-    return SizedBox.square(
-      dimension: 200,
-      child:
-          AppFunctions.getCategoryAnimatedIcon(category, 90) ??
-          HugeIcon(
-            icon: AppFunctions.getCategoryIcon(category.icon),
-            size: 70,
-            color: HexColor.fromHex(category.color),
-            strokeWidth: 2,
-          ),
+    return SizedBox(
+      height: 150,
+      width: 150,
+      child: Center(
+        child:
+            AppFunctions.getCategoryAnimatedIcon(category, 150) ??
+            HugeIcon(
+              icon: AppFunctions.getCategoryIcon(category.icon),
+              size: 70,
+              color: categoryColor,
+              strokeWidth: 2,
+            ),
+      ),
     );
   }
 }
@@ -125,20 +129,30 @@ class _CategoryTabBarState extends State<CategoryTabBar>
     return Expanded(
       child: Column(
         children: [
-          TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(
-                text: l10n.categoryTabTrend,
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedChartLineData01,
+          ListenableBuilder(
+            listenable: _tabController,
+            builder: (context, _) => ExpressiveButtonGroup<int>(
+              selectedValue: _tabController.index,
+              onSelected: _tabController.animateTo,
+              items: [
+                ExpressiveButtonGroupItem(
+                  value: 0,
+                  label: l10n.categoryTabTrend,
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedChartLineData01,
+                    size: 18,
+                  ),
                 ),
-              ),
-              Tab(
-                text: l10n.categoryTabMovements,
-                icon: const HugeIcon(icon: HugeIcons.strokeRoundedListView),
-              ),
-            ],
+                ExpressiveButtonGroupItem(
+                  value: 1,
+                  label: l10n.categoryTabMovements,
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedListView,
+                    size: 18,
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: TabBarView(
@@ -227,7 +241,11 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
 
             if (snapshot.data!.isEmpty) {
               return Expanded(
-                child: Center(child: Text(l10n.categoryNoTrendData)),
+                child: ExpressiveCard(
+                  margin: EdgeInsets.zero,
+                  padding: const EdgeInsets.all(24),
+                  child: Center(child: Text(l10n.categoryNoTrendData)),
+                ),
               );
             }
 

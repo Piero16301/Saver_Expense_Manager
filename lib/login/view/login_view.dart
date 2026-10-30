@@ -61,100 +61,110 @@ class LoginView extends StatelessWidget {
                           children: [
                             // Logo
                             const AppLogo(),
-                            const SizedBox(height: 48),
+                            const SizedBox(height: 32),
 
                             // Title
                             Text(
                               l10n.loginTitle,
-                              style: Theme.of(context).textTheme.headlineMedium,
+                              style: Theme.of(context).textTheme.headlineMedium
+                                  ?.copyWith(fontWeight: FontWeight.w800),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 24),
 
-                            // Email Field
-                            AppTextField(
-                              enabled: !state.status.isLoading,
-                              label: l10n.emailLabel,
-                              hintText: l10n.emailHint,
-                              keyboardType: TextInputType.emailAddress,
-                              prefix: const HugeIcon(
-                                icon: HugeIcons.strokeRoundedMail01,
-                              ),
-                              onChanged: (value) => context
-                                  .read<LoginCubit>()
-                                  .emailChanged(value),
-                              errorText: l10n.emailRequired,
-                              overrideErrorText: !state.isEmailValid
-                                  ? l10n.invalidEmailFormat
-                                  : null,
-                            ),
-                            const SizedBox(height: 24),
-
-                            // Password Field
-                            AppTextField(
-                              enabled: !state.status.isLoading,
-                              label: l10n.passwordLabel,
-                              hintText: l10n.passwordHint,
-                              obscureText: !state.isPasswordVisible,
-                              prefix: const HugeIcon(
-                                icon: HugeIcons.strokeRoundedLockPassword,
-                              ),
-                              suffix: ExpressiveIconButton.circle(
-                                size: ExpressiveIconButtonSize.small,
-                                onPressed: state.status.isLoading
-                                    ? null
-                                    : () => context
-                                          .read<LoginCubit>()
-                                          .togglePasswordVisibility(),
-                                icon: HugeIcon(
-                                  icon: state.isPasswordVisible
-                                      ? HugeIcons.strokeRoundedView
-                                      : HugeIcons.strokeRoundedViewOff,
-                                  size: 20,
-                                ),
-                              ),
-                              onChanged: (value) => context
-                                  .read<LoginCubit>()
-                                  .passwordChanged(value),
-                              errorText: l10n.passwordRequired,
-                              overrideErrorText: !state.isPasswordValid
-                                  ? l10n.invalidPasswordFormat
-                                  : null,
-                            ),
-                            const SizedBox(height: 48),
-
-                            // Login Button
-                            ExpressiveButton.filled(
-                              isExpanded: true,
-                              isLoading: state.status.isLoading,
-                              onPressed: state.status.isLoading
-                                  ? null
-                                  : () => context
+                            ExpressiveCard(
+                              margin: EdgeInsets.zero,
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  // Email Field
+                                  AppTextField(
+                                    enabled: !state.status.isLoading,
+                                    label: l10n.emailLabel,
+                                    hintText: l10n.emailHint,
+                                    keyboardType: TextInputType.emailAddress,
+                                    prefix: const HugeIcon(
+                                      icon: HugeIcons.strokeRoundedMail01,
+                                    ),
+                                    onChanged: (value) => context
                                         .read<LoginCubit>()
-                                        .loginWithEmail(l10n),
-                              icon: const HugeIcon(
-                                icon: HugeIcons.strokeRoundedLogin01,
-                                size: 20,
-                              ),
-                              label: state.status.isLoading
-                                  ? l10n.loginLoading
-                                  : l10n.loginButton,
-                            ),
-                            const SizedBox(height: 16),
+                                        .emailChanged(value),
+                                    errorText: l10n.emailRequired,
+                                    overrideErrorText: !state.isEmailValid
+                                        ? l10n.invalidEmailFormat
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 20),
 
-                            // Google Login Button
-                            ExpressiveButton.outlined(
-                              isExpanded: true,
-                              onPressed: state.status.isLoading
-                                  ? null
-                                  : () => context
+                                  // Password Field
+                                  AppTextField(
+                                    enabled: !state.status.isLoading,
+                                    label: l10n.passwordLabel,
+                                    hintText: l10n.passwordHint,
+                                    obscureText: !state.isPasswordVisible,
+                                    prefix: const HugeIcon(
+                                      icon: HugeIcons.strokeRoundedLockPassword,
+                                    ),
+                                    suffix: ExpressiveIconButton.circle(
+                                      size: ExpressiveIconButtonSize.small,
+                                      onPressed: state.status.isLoading
+                                          ? null
+                                          : () => context
+                                                .read<LoginCubit>()
+                                                .togglePasswordVisibility(),
+                                      icon: HugeIcon(
+                                        icon: state.isPasswordVisible
+                                            ? HugeIcons.strokeRoundedView
+                                            : HugeIcons.strokeRoundedViewOff,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    onChanged: (value) => context
                                         .read<LoginCubit>()
-                                        .loginWithGoogle(l10n),
-                              icon: const HugeIcon(
-                                icon: HugeIcons.strokeRoundedGoogle,
-                                size: 20,
+                                        .passwordChanged(value),
+                                    errorText: l10n.passwordRequired,
+                                    overrideErrorText: !state.isPasswordValid
+                                        ? l10n.invalidPasswordFormat
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 32),
+
+                                  // Login Button
+                                  ExpressiveButton.filled(
+                                    isExpanded: true,
+                                    isLoading: state.status.isLoading,
+                                    onPressed: state.status.isLoading
+                                        ? null
+                                        : () => context
+                                              .read<LoginCubit>()
+                                              .loginWithEmail(l10n),
+                                    icon: const HugeIcon(
+                                      icon: HugeIcons.strokeRoundedLogin01,
+                                      size: 20,
+                                    ),
+                                    label: state.status.isLoading
+                                        ? l10n.loginLoading
+                                        : l10n.loginButton,
+                                  ),
+                                  const SizedBox(height: 16),
+
+                                  // Google Login Button
+                                  ExpressiveButton.outlined(
+                                    isExpanded: true,
+                                    onPressed: state.status.isLoading
+                                        ? null
+                                        : () => context
+                                              .read<LoginCubit>()
+                                              .loginWithGoogle(l10n),
+                                    icon: const HugeIcon(
+                                      icon: HugeIcons.strokeRoundedGoogle,
+                                      size: 20,
+                                    ),
+                                    label: l10n.googleLoginButton,
+                                  ),
+                                ],
                               ),
-                              label: l10n.googleLoginButton,
                             ),
                             const SizedBox(height: 24),
 
