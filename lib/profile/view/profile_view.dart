@@ -79,144 +79,168 @@ class ProfileView extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      // User Avatar
-                      CircleAvatar(
-                        radius: 80,
-                        backgroundColor: Theme.of(
-                          context,
-                        ).primaryColor.withValues(alpha: 0.1),
-                        child: user.photoURL == null
-                            ? Container(
-                                width: 160,
-                                height: 160,
-                                foregroundDecoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    width: 5,
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(18),
-                                child: HugeIcon(
-                                  icon: HugeIcons.strokeRoundedUser,
-                                  strokeWidth: 2,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              )
-                            : Container(
-                                width: 160,
-                                height: 160,
-                                foregroundDecoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    width: 5,
-                                  ),
-                                ),
-                                padding: const EdgeInsets.all(4),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(80),
-                                  child: Image.network(
-                                    AppFunctions.highResPicture(
-                                      url: user.photoURL,
-                                      resolution: ImageResolutionType.high,
-                                    ),
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) => Padding(
-                                          padding: const EdgeInsets.all(14),
-                                          child: HugeIcon(
-                                            icon: HugeIcons.strokeRoundedUser,
-                                            strokeWidth: 2,
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.primary,
-                                          ),
+                      ExpressiveCard(
+                        margin: EdgeInsets.zero,
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          children: [
+                            // User Avatar
+                            CircleAvatar(
+                              radius: 80,
+                              backgroundColor: Theme.of(
+                                context,
+                              ).primaryColor.withValues(alpha: 0.1),
+                              child: user.photoURL == null
+                                  ? Container(
+                                      width: 160,
+                                      height: 160,
+                                      foregroundDecoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                          width: 5,
                                         ),
+                                      ),
+                                      padding: const EdgeInsets.all(18),
+                                      child: HugeIcon(
+                                        icon: HugeIcons.strokeRoundedUser,
+                                        strokeWidth: 2,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 160,
+                                      height: 160,
+                                      foregroundDecoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                          width: 5,
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(80),
+                                        child: Image.network(
+                                          AppFunctions.highResPicture(
+                                            url: user.photoURL,
+                                            resolution:
+                                                ImageResolutionType.high,
+                                          ),
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                          14,
+                                                        ),
+                                                    child: HugeIcon(
+                                                      icon: HugeIcons
+                                                          .strokeRoundedUser,
+                                                      strokeWidth: 2,
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.primary,
+                                                    ),
+                                                  ),
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                            const SizedBox(height: 20),
+
+                            // Name Section
+                            Row(
+                              spacing: 10,
+                              children: [
+                                if (state.isEditingName)
+                                  Expanded(
+                                    child: AppTextField(
+                                      key: ValueKey(state.isEditingName),
+                                      label: l10n.nameLabel,
+                                      initialValue: state.userName.isEmpty
+                                          ? user.displayName
+                                          : state.userName,
+                                      hintText: l10n.enterNameHint,
+                                      onChanged: (value) => context
+                                          .read<ProfileCubit>()
+                                          .nameChanged(value),
+                                    ),
+                                  )
+                                else
+                                  Expanded(
+                                    child: Text(
+                                      user.displayName ?? l10n.noName,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleLarge,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                              ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Name Section
-                      Row(
-                        spacing: 10,
-                        children: [
-                          if (state.isEditingName)
-                            Expanded(
-                              child: AppTextField(
-                                key: ValueKey(state.isEditingName),
-                                label: l10n.nameLabel,
-                                initialValue: state.userName.isEmpty
-                                    ? user.displayName
-                                    : state.userName,
-                                hintText: l10n.enterNameHint,
-                                onChanged: (value) => context
-                                    .read<ProfileCubit>()
-                                    .nameChanged(value),
-                              ),
-                            )
-                          else
-                            Expanded(
-                              child: Text(
-                                user.displayName ?? l10n.noName,
-                                style: Theme.of(context).textTheme.titleLarge,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                                if (state.isEditingName) ...[
+                                  ExpressiveIconButton.circle(
+                                    size: ExpressiveIconButtonSize.small,
+                                    onPressed: () => context
+                                        .read<ProfileCubit>()
+                                        .saveName(l10n),
+                                    icon: HugeIcon(
+                                      icon: HugeIcons
+                                          .strokeRoundedCheckmarkCircle01,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  ExpressiveIconButton.circle(
+                                    size: ExpressiveIconButtonSize.small,
+                                    onPressed: () => context
+                                        .read<ProfileCubit>()
+                                        .toggleEditingName(),
+                                    icon: HugeIcon(
+                                      icon: HugeIcons.strokeRoundedCancelCircle,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ] else
+                                  ExpressiveIconButton.circle(
+                                    size: ExpressiveIconButtonSize.small,
+                                    onPressed: () => context
+                                        .read<ProfileCubit>()
+                                        .toggleEditingName(),
+                                    icon: HugeIcon(
+                                      icon: HugeIcons.strokeRoundedEdit01,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      size: 20,
+                                    ),
+                                  ),
+                              ],
                             ),
-                          if (state.isEditingName) ...[
-                            ExpressiveIconButton.circle(
-                              size: ExpressiveIconButtonSize.small,
-                              onPressed: () =>
-                                  context.read<ProfileCubit>().saveName(l10n),
-                              icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedCheckmarkCircle01,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 20,
-                              ),
-                            ),
-                            ExpressiveIconButton.circle(
-                              size: ExpressiveIconButtonSize.small,
-                              onPressed: () => context
-                                  .read<ProfileCubit>()
-                                  .toggleEditingName(),
-                              icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedCancelCircle,
-                                color: Theme.of(context).colorScheme.error,
-                                size: 20,
-                              ),
-                            ),
-                          ] else
-                            ExpressiveIconButton.circle(
-                              size: ExpressiveIconButtonSize.small,
-                              onPressed: () => context
-                                  .read<ProfileCubit>()
-                                  .toggleEditingName(),
-                              icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedEdit01,
-                                color: Theme.of(context).colorScheme.primary,
-                                size: 20,
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Linked Accounts Section
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          l10n.linkedAccountsTitle,
-                          style: Theme.of(context).textTheme.titleMedium,
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 16),
+
+                      // Linked Accounts Section
                       ExpressiveCardGroup(
+                        title: l10n.linkedAccountsTitle,
+                        titlePadding: const EdgeInsets.only(
+                          left: 8,
+                          top: 8,
+                          bottom: 8,
+                        ),
                         margin: EdgeInsets.zero,
                         children: [
                           // Google Provider
@@ -483,10 +507,14 @@ class _ProviderListTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return ExpressiveListTile(
-      leading: HugeIcon(
-        icon: icon,
-        color: Theme.of(context).colorScheme.primary,
-        strokeWidth: 2,
+      leading: ExpressiveBadge(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        icon: HugeIcon(
+          icon: icon,
+          color: Theme.of(context).colorScheme.onPrimaryContainer,
+          strokeWidth: 2,
+        ),
       ),
       title: Text(
         title,

@@ -224,11 +224,29 @@ void main() {
     testWidgets('renders FilterMovementsAntResumeHome when movements present', (
       tester,
     ) async {
-      final movement = Movement(
+      final movement1 = Movement(
         id: '1',
         title: 'Lunch',
         description: 'Subway',
         price: 10,
+        date: DateTime(2024, 3, 2),
+        category: _testCategories.first,
+        user: 'user123',
+      );
+      final movement2 = Movement(
+        id: '2',
+        title: 'Coffee',
+        description: 'Starbucks',
+        price: 5,
+        date: DateTime(2024, 3, 2),
+        category: _testCategories.first,
+        user: 'user123',
+      );
+      final movement3 = Movement(
+        id: '3',
+        title: 'Dinner',
+        description: 'Pizza',
+        price: 20,
         date: DateTime(2024, 3),
         category: _testCategories.first,
         user: 'user123',
@@ -243,13 +261,14 @@ void main() {
           limit: any(named: 'limit'),
           orderByDate: any(named: 'orderByDate'),
         ),
-      ).thenAnswer((_) => Stream.value([movement]));
+      ).thenAnswer((_) => Stream.value([movement1, movement2, movement3]));
 
       await tester.pumpWidget(buildView());
       await tester.pump();
       await tester.pump();
 
       expect(find.byType(FilterMovementsAntResumeHome), findsOneWidget);
+      expect(find.byType(ListMovementsItemHome), findsNWidgets(3));
     });
 
     testWidgets(
