@@ -39,8 +39,8 @@ void main() {
       );
 
       expect(find.textContaining('Jan 2024'), findsOneWidget);
+      expect(find.text('-'), findsOneWidget);
       expect(find.textContaining('Mar 2024'), findsOneWidget);
-      expect(find.byType(IconButton), findsOneWidget);
     });
 
     testWidgets('triggers onChangeStartMonth when tapping start month', (
@@ -65,7 +65,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(IconButton));
+      await tester.tap(find.byType(MonthRangeSelector));
       await tester.pumpAndSettle();
 
       expect(find.byType(MonthPickerDialog), findsOneWidget);
@@ -114,7 +114,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(IconButton));
+      await tester.tap(find.byType(MonthRangeSelector));
       await tester.pumpAndSettle();
 
       expect(find.byType(MonthPickerDialog), findsOneWidget);

@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -37,7 +38,12 @@ class MovementPage extends StatelessWidget {
 
         if (!snapshot.hasData) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: ExpressiveCircularProgressIndicator(
+                size: 40,
+                strokeWidth: 4,
+              ),
+            ),
           );
         }
 

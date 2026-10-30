@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ class MonthSelector extends StatelessWidget {
     required this.onBack,
     required this.onForward,
     required this.onChangeMonth,
+    this.padding = EdgeInsets.zero,
     super.key,
   });
 
@@ -17,6 +19,7 @@ class MonthSelector extends StatelessWidget {
   final void Function() onBack;
   final void Function() onForward;
   final void Function(DateTime?) onChangeMonth;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
@@ -25,58 +28,61 @@ class MonthSelector extends StatelessWidget {
     );
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: SizedBox(
-        child: Card(
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: Row(
-            children: [
-              SizedBox.square(
-                dimension: 50,
-                child: IconButton(
-                  icon: const HugeIcon(
-                    icon: HugeIcons.strokeRoundedArrowLeft01,
-                    size: 20,
-                  ),
-                  onPressed: backEnabled ? onBack : null,
+      padding: padding,
+      child: Card(
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: ExpressiveIconButton.circle(
+                size: ExpressiveIconButtonSize.small,
+                icon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedArrowLeft01,
+                  size: 20,
                 ),
+                onPressed: backEnabled ? onBack : null,
               ),
-              Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () async {
-                    await MonthPicker.showSingleMonthPicker(
-                      context: context,
-                      initialDate: monthSelected,
-                      firstDate: AppVariables.minDate,
-                      lastDate: DateTime.now(),
-                    ).then(onChangeMonth);
-                  },
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () async {
+                await MonthPicker.showSingleMonthPicker(
+                  context: context,
+                  initialDate: monthSelected,
+                  firstDate: AppVariables.minDate,
+                  lastDate: DateTime.now(),
+                ).then(onChangeMonth);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
                   child: Text(
                     DateFormat(
-                      'MMMM yyyy',
+                      'MMM yyyy',
                       language.toString(),
-                    ).format(monthSelected).toUpperCase(),
+                    ).format(monthSelected).capitalize(),
                     style: Theme.of(context).textTheme.titleMedium,
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
-              SizedBox.square(
-                dimension: 50,
-                child: IconButton(
-                  icon: const HugeIcon(
-                    icon: HugeIcons.strokeRoundedArrowRight01,
-                    size: 20,
-                  ),
-                  onPressed: forwardEnabled ? onForward : null,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: ExpressiveIconButton.circle(
+                size: ExpressiveIconButtonSize.small,
+                icon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedArrowRight01,
+                  size: 20,
                 ),
+                onPressed: forwardEnabled ? onForward : null,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

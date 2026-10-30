@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -36,6 +37,7 @@ void main() {
     mockAuthService = MockAuthService();
     mockRemoteConfigService = MockRemoteConfigService();
     when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
+    when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
     mockAppUser = MockAppUser();
     mockAppCubit = MockAppCubit();
 
@@ -82,7 +84,7 @@ void main() {
 
       await tester.pumpApp(buildSubject(const HomePage()));
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders no categories found message when list is empty', (
@@ -129,7 +131,7 @@ void main() {
       await tester.pumpApp(buildSubject(const HomePage()));
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
     });
   });
 }

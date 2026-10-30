@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -17,25 +18,23 @@ class CategoryView extends StatelessWidget {
 
     return BlocBuilder<CategoryCubit, CategoryState>(
       builder: (context, state) => Scaffold(
-        appBar: AppBar(
-          title: Text(
-            AppFunctions.getCategoryName(state.category.name, l10n),
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontVariations: <FontVariation>[
-                ...(Theme.of(context).textTheme.titleLarge?.fontVariations ??
-                        const <FontVariation>[])
-                    .where((v) => v.axis != 'wght'),
-                const FontVariation('wght', 700),
-              ],
+        appBar: ExpressiveTopAppBar(
+          centerTitle: false,
+          leading: Padding(
+            padding: const EdgeInsets.all(8),
+            child: ExpressiveIconButton.circle(
+              icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedArrowLeft01,
+                strokeWidth: 2,
+              ),
+              onPressed: () => context.pop(),
             ),
           ),
-          notificationPredicate: (notification) => false,
-          leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedArrowLeft01,
-              strokeWidth: 2,
-            ),
+          title: Text(
+            AppFunctions.getCategoryName(state.category.name, l10n),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
         body: Padding(
@@ -217,7 +216,12 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               return const Expanded(
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(
+                  child: ExpressiveCircularProgressIndicator(
+                    size: 40,
+                    strokeWidth: 4,
+                  ),
+                ),
               );
             }
 

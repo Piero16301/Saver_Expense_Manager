@@ -28,3 +28,9 @@ class AppExtensions {
     return DateFormat('EEE dd', language);
   }
 }
+
+extension CapitalizeString on String {
+  String capitalize() {
+    return isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
+  }
+}

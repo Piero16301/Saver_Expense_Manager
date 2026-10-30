@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -84,11 +85,17 @@ void main() {
 
   group('SummaryHomePage', () {
     Widget buildPage() {
+      when(
+        () => mockSummaryHomeCubit.state,
+      ).thenReturn(SummaryHomeState.initial());
       return MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: BlocProvider<AppCubit>.value(
-          value: mockAppCubit,
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider<AppCubit>.value(value: mockAppCubit),
+            BlocProvider<SummaryHomeCubit>.value(value: mockSummaryHomeCubit),
+          ],
           child: const SummaryHomePage(),
         ),
       );
@@ -103,7 +110,7 @@ void main() {
 
       await tester.pumpWidget(buildPage());
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders error message when category stream fails', (
@@ -208,7 +215,7 @@ void main() {
 
       await tester.pumpWidget(buildView());
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders no movements message when list is empty', (
@@ -262,7 +269,6 @@ void main() {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
-      expect(find.byType(MonthRangeSelector), findsOneWidget);
       expect(find.byType(ResumeMovementsChart), findsOneWidget);
       expect(find.byType(IncomesAndExpensesChart), findsOneWidget);
       expect(find.byType(CategoriesResumeCards), findsOneWidget);
@@ -298,7 +304,6 @@ void main() {
       await tester.pumpWidget(buildView(size: const Size(800, 400)));
       await tester.pumpAndSettle();
 
-      expect(find.byType(MonthRangeSelector), findsOneWidget);
       expect(find.byType(ResumeMovementsChart), findsOneWidget);
       expect(find.byType(IncomesAndExpensesChart), findsOneWidget);
       expect(find.byType(CategoriesResumeCards), findsOneWidget);
@@ -341,47 +346,6 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(() => mockSummaryHomeCubit.toggleResumeItem(any())).called(1);
-    });
-
-    testWidgets('can change month range', (tester) async {
-      final movements = <Movement>[
-        Movement(
-          id: '1',
-          title: 'Lunch',
-          description: 'Subway',
-          price: 15,
-          date: DateTime.now(),
-          category: testCategories.first,
-          user: 'user123',
-        ),
-      ];
-
-      when(
-        () => mockDatabaseService.getMovementsStream(
-          userId: any(named: 'userId'),
-          startDate: any(named: 'startDate'),
-          endDate: any(named: 'endDate'),
-          type: any(named: 'type'),
-          categoryId: any(named: 'categoryId'),
-          limit: any(named: 'limit'),
-          orderByDate: any(named: 'orderByDate'),
-        ),
-      ).thenAnswer((_) => Stream.value(movements));
-
-      await tester.pumpWidget(buildView());
-      await tester.pumpAndSettle();
-
-      final calendarButton = find
-          .descendant(
-            of: find.byType(MonthRangeSelector),
-            matching: find.byType(IconButton),
-          )
-          .first;
-
-      await tester.tap(calendarButton);
-      await tester.pumpAndSettle();
-
-      expect(find.byType(MonthPickerDialog), findsOneWidget);
     });
 
     testWidgets(

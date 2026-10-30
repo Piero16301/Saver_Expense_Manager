@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -29,32 +30,35 @@ class ProfileView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            l10n.profileTitle,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontVariations: <FontVariation>[
-                ...(Theme.of(context).textTheme.titleLarge?.fontVariations ??
-                        const <FontVariation>[])
-                    .where((v) => v.axis != 'wght'),
-                const FontVariation('wght', 700),
-              ],
+        appBar: ExpressiveTopAppBar(
+          centerTitle: false,
+          leading: Padding(
+            padding: const EdgeInsets.all(8),
+            child: ExpressiveIconButton.circle(
+              icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedArrowLeft01,
+                strokeWidth: 2,
+              ),
+              onPressed: () => context.pop(),
             ),
           ),
-          notificationPredicate: (notification) => false,
-          leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedArrowLeft01,
-              strokeWidth: 2,
-            ),
+          title: Text(
+            l10n.profileTitle,
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
         body: BlocBuilder<ProfileCubit, ProfileState>(
           builder: (context, state) {
             final user = state.user;
             if (user == null) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                child: ExpressiveCircularProgressIndicator(
+                  size: 40,
+                  strokeWidth: 4,
+                ),
+              );
             }
 
             final providers = user.providerData;
@@ -166,34 +170,37 @@ class ProfileView extends StatelessWidget {
                               ),
                             ),
                           if (state.isEditingName) ...[
-                            IconButton(
+                            ExpressiveIconButton.circle(
+                              size: ExpressiveIconButtonSize.small,
                               onPressed: () =>
                                   context.read<ProfileCubit>().saveName(l10n),
                               icon: HugeIcon(
                                 icon: HugeIcons.strokeRoundedCheckmarkCircle01,
                                 color: Theme.of(context).colorScheme.primary,
-                                size: 28,
+                                size: 20,
                               ),
                             ),
-                            IconButton(
+                            ExpressiveIconButton.circle(
+                              size: ExpressiveIconButtonSize.small,
                               onPressed: () => context
                                   .read<ProfileCubit>()
                                   .toggleEditingName(),
                               icon: HugeIcon(
                                 icon: HugeIcons.strokeRoundedCancelCircle,
                                 color: Theme.of(context).colorScheme.error,
-                                size: 28,
+                                size: 20,
                               ),
                             ),
                           ] else
-                            IconButton(
+                            ExpressiveIconButton.circle(
+                              size: ExpressiveIconButtonSize.small,
                               onPressed: () => context
                                   .read<ProfileCubit>()
                                   .toggleEditingName(),
                               icon: HugeIcon(
                                 icon: HugeIcons.strokeRoundedEdit01,
                                 color: Theme.of(context).colorScheme.primary,
-                                size: 28,
+                                size: 20,
                               ),
                             ),
                         ],
@@ -209,64 +216,63 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 10),
-                      Card(
-                        child: Column(
-                          children: [
-                            // Google Provider
-                            _ProviderListTile(
-                              icon: HugeIcons.strokeRoundedGoogle,
-                              title: l10n.googleProvider,
-                              isConnected: isGoogleLinked,
-                              subtitle: isGoogleLinked
-                                  ? providers
-                                        .firstWhere(
-                                          (p) =>
-                                              p.providerId ==
-                                              AppVariables.googleProvider,
-                                        )
-                                        .email!
-                                  : null,
-                              onLink: () =>
-                                  context.read<ProfileCubit>().linkGoogle(l10n),
-                              onUnlink: () => _unlinkProvider(
-                                context,
-                                AppVariables.googleProvider,
-                                providers,
-                              ),
+                      ExpressiveCardGroup(
+                        margin: EdgeInsets.zero,
+                        children: [
+                          // Google Provider
+                          _ProviderListTile(
+                            icon: HugeIcons.strokeRoundedGoogle,
+                            title: l10n.googleProvider,
+                            isConnected: isGoogleLinked,
+                            subtitle: isGoogleLinked
+                                ? providers
+                                      .firstWhere(
+                                        (p) =>
+                                            p.providerId ==
+                                            AppVariables.googleProvider,
+                                      )
+                                      .email!
+                                : null,
+                            onLink: () =>
+                                context.read<ProfileCubit>().linkGoogle(l10n),
+                            onUnlink: () => _unlinkProvider(
+                              context,
+                              AppVariables.googleProvider,
+                              providers,
                             ),
-                            const Divider(height: 1),
-                            // Email Provider
-                            _ProviderListTile(
-                              icon: HugeIcons.strokeRoundedMail01,
-                              title: l10n.emailProvider,
-                              isConnected: isEmailLinked,
-                              subtitle: isEmailLinked
-                                  ? providers
-                                        .firstWhere(
-                                          (p) =>
-                                              p.providerId ==
-                                              AppVariables.emailProvider,
-                                        )
-                                        .email!
-                                  : null,
-                              onLink: () => _showLinkEmailDialog(context),
-                              onUnlink: () => _unlinkProvider(
-                                context,
-                                AppVariables.emailProvider,
-                                providers,
-                              ),
+                          ),
+                          // Email Provider
+                          _ProviderListTile(
+                            icon: HugeIcons.strokeRoundedMail01,
+                            title: l10n.emailProvider,
+                            isConnected: isEmailLinked,
+                            subtitle: isEmailLinked
+                                ? providers
+                                      .firstWhere(
+                                        (p) =>
+                                            p.providerId ==
+                                            AppVariables.emailProvider,
+                                      )
+                                      .email!
+                                : null,
+                            onLink: () => _showLinkEmailDialog(context),
+                            onUnlink: () => _unlinkProvider(
+                              context,
+                              AppVariables.emailProvider,
+                              providers,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
-                        child: AppFilledButton(
+                        child: ExpressiveButton.filled(
+                          isExpanded: true,
                           onPressed: () => _logout(context),
                           icon: const HugeIcon(
                             icon: HugeIcons.strokeRoundedLogout01,
-                            strokeWidth: 2,
+                            size: 20,
                           ),
                           label: l10n.logoutConfirm,
                         ),
@@ -395,7 +401,8 @@ class ProfileView extends StatelessWidget {
                   prefix: const HugeIcon(
                     icon: HugeIcons.strokeRoundedLockPassword,
                   ),
-                  suffix: IconButton(
+                  suffix: ExpressiveIconButton.circle(
+                    size: ExpressiveIconButtonSize.small,
                     onPressed: () => setState(() {
                       isPasswordVisible = !isPasswordVisible;
                     }),
@@ -403,6 +410,7 @@ class ProfileView extends StatelessWidget {
                       icon: isPasswordVisible
                           ? HugeIcons.strokeRoundedView
                           : HugeIcons.strokeRoundedViewOff,
+                      size: 20,
                     ),
                   ),
                   validator: (value) {
@@ -425,7 +433,8 @@ class ProfileView extends StatelessWidget {
                   prefix: const HugeIcon(
                     icon: HugeIcons.strokeRoundedLockPassword,
                   ),
-                  suffix: IconButton(
+                  suffix: ExpressiveIconButton.circle(
+                    size: ExpressiveIconButtonSize.small,
                     onPressed: () => setState(() {
                       isConfirmPasswordVisible = !isConfirmPasswordVisible;
                     }),
@@ -433,6 +442,7 @@ class ProfileView extends StatelessWidget {
                       icon: isConfirmPasswordVisible
                           ? HugeIcons.strokeRoundedView
                           : HugeIcons.strokeRoundedViewOff,
+                      size: 20,
                     ),
                   ),
                   validator: (value) {
@@ -472,12 +482,10 @@ class _ProviderListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return ListTile(
-      minTileHeight: 70,
+    return ExpressiveListTile(
       leading: HugeIcon(
         icon: icon,
         color: Theme.of(context).colorScheme.primary,
-        size: 28,
         strokeWidth: 2,
       ),
       title: Text(
@@ -495,7 +503,8 @@ class _ProviderListTile extends StatelessWidget {
           ? Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium)
           : null,
       trailing: isConnected
-          ? IconButton(
+          ? ExpressiveIconButton.circle(
+              size: ExpressiveIconButtonSize.small,
               icon: HugeIcon(
                 icon: HugeIcons.strokeRoundedDelete01,
                 color: Theme.of(context).colorScheme.error,
@@ -503,7 +512,11 @@ class _ProviderListTile extends StatelessWidget {
               ),
               onPressed: onUnlink,
             )
-          : AppOutlinedButton(onPressed: onLink, label: l10n.connectButton),
+          : ExpressiveButton.outlined(
+              size: ExpressiveButtonSize.small,
+              onPressed: onLink,
+              label: l10n.connectButton,
+            ),
     );
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -26,71 +25,54 @@ class MonthRangeSelector extends StatelessWidget {
       (cubit) => cubit.state.language,
     );
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(
-          padding: const EdgeInsets.only(left: 10),
-          height: 40,
-          width: 110,
-          child: Align(
-            alignment: AlignmentGeometry.centerLeft,
-            child: Text(
-              _capitalizeFirst(
-                DateFormat('MMM yyyy', language.toString()).format(startMonth),
-              ),
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Card(
+        margin: EdgeInsets.zero,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(25),
+          onTap: () async {
+            await MonthPicker.showRangeMonthPicker(
+              context: context,
+              initialStartDate: startMonth,
+              initialEndDate: endMonth,
+              firstDate: AppVariables.minDate,
+              lastDate: DateTime.now(),
+            ).then((value) {
+              if (value != null) {
+                onChangeStartMonth(value.start);
+                onChangeEndMonth(value.end);
+              }
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 8,
+              children: [
+                Text(
+                  DateFormat(
+                    'MMM yyyy',
+                    language.toString(),
+                  ).format(startMonth).capitalize(),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text('-', style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  DateFormat(
+                    'MMM yyyy',
+                    language.toString(),
+                  ).format(endMonth).capitalize(),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
             ),
           ),
         ),
-        Card(
-          margin: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: IconButton(
-            padding: EdgeInsets.zero,
-            onPressed: () async {
-              await MonthPicker.showRangeMonthPicker(
-                context: context,
-                initialStartDate: startMonth,
-                initialEndDate: endMonth,
-                firstDate: AppVariables.minDate,
-                lastDate: DateTime.now(),
-              ).then((value) {
-                if (value != null) {
-                  onChangeStartMonth(value.start);
-                  onChangeEndMonth(value.end);
-                }
-              });
-            },
-            icon: const HugeIcon(icon: HugeIcons.strokeRoundedCalendar03),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.only(right: 10),
-          height: 40,
-          width: 110,
-          child: Align(
-            alignment: AlignmentGeometry.centerRight,
-            child: Text(
-              _capitalizeFirst(
-                DateFormat('MMM yyyy', language.toString()).format(endMonth),
-              ),
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
-  }
-
-  String _capitalizeFirst(String text) {
-    if (text.isEmpty) return text;
-    return '${text[0].toUpperCase()}${text.substring(1)}';
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -67,7 +68,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
-      await tester.tap(find.byType(ListTile));
+      await tester.tap(find.byType(ExpressiveCard));
       await tester.pumpAndSettle();
 
       expect(find.text('Movement Page'), findsOneWidget);

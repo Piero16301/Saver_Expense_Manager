@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -35,7 +36,7 @@ class MovementsList extends StatelessWidget {
         itemBuilder: (context, docs, index) {
           final movement = docs[index];
 
-          return ListTile(
+          return ExpressiveListTile(
             onTap: () => context.pushNamed(
               AppRoute.movement.name,
               pathParameters: {
@@ -46,7 +47,10 @@ class MovementsList extends StatelessWidget {
               },
               extra: movement,
             ),
-            contentPadding: const EdgeInsets.only(left: 8, right: 8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 8,
+            ),
             title: Text(
               movement.title,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(

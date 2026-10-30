@@ -23,6 +23,9 @@ subprojects {
                 targetCompatibility = JavaVersion.VERSION_17
             }
         }
+        dependencies {
+            add("compileOnly", "org.checkerframework:checker-qual:3.49.5")
+        }
     }
     
     pluginManager.withPlugin("com.android.application") {

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -133,7 +134,7 @@ void main() {
       await tester.pumpWidget(buildPage());
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
       await controller.close();
     });
 
@@ -148,7 +149,7 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsNothing);
     });
 
     testWidgets('shows MovementsHomeView when categories are present', (
@@ -360,7 +361,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        expect(find.byType(PageView), findsOneWidget);
+        expect(find.byType(ExpressiveCarousel), findsOneWidget);
       },
     );
 
@@ -390,7 +391,7 @@ void main() {
         );
         await tester.pump();
 
-        expect(find.byType(PageView), findsNothing);
+        expect(find.byType(ExpressiveCarousel), findsNothing);
       },
     );
 
@@ -431,8 +432,8 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      final buttons = tester.widgetList<AppFilledButton>(
-        find.byType(AppFilledButton),
+      final buttons = tester.widgetList<ExpressiveIconButton>(
+        find.byType(ExpressiveIconButton),
       );
       final aiButton = buttons.first;
       expect(aiButton.onPressed, isNull);

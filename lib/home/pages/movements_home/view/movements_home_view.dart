@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -104,28 +105,27 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
           children: [
             BlocBuilder<MovementsHomeCubit, MovementsHomeState>(
               builder: (context, state) {
-                return SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: AppFilledButton(
-                    icon: state.recommendationsStatus.isLoading
-                        ? Image.asset('assets/animations/gemini-loading.gif')
-                        : const HugeIcon(
-                            icon: HugeIcons.strokeRoundedAiIdea,
-                            strokeWidth: 2,
-                          ),
-                    onPressed: state.recommendationsStatus.isLoading
-                        ? null
-                        : state.recommendationsStatus.isSuccess
-                        ? () => context
-                              .read<MovementsHomeCubit>()
-                              .changeShowRecommendations()
-                        : () => context
-                              .read<MovementsHomeCubit>()
-                              .getRecommendations(l10n: l10n),
-                    isOnlyIcon: true,
-                    innerPadding: const EdgeInsets.all(6),
-                  ),
+                return ExpressiveIconButton.squircle(
+                  variant: ExpressiveIconButtonVariant.filled,
+                  icon: state.recommendationsStatus.isLoading
+                      ? Image.asset(
+                          'assets/animations/gemini-loading.gif',
+                          height: 34,
+                          width: 34,
+                        )
+                      : const HugeIcon(
+                          icon: HugeIcons.strokeRoundedAiIdea,
+                          strokeWidth: 2,
+                        ),
+                  onPressed: state.recommendationsStatus.isLoading
+                      ? null
+                      : state.recommendationsStatus.isSuccess
+                      ? () => context
+                            .read<MovementsHomeCubit>()
+                            .changeShowRecommendations()
+                      : () => context
+                            .read<MovementsHomeCubit>()
+                            .getRecommendations(l10n: l10n),
                 );
               },
             ),
@@ -435,36 +435,29 @@ class AntRecommendationsWidget extends StatelessWidget {
                   state.recommendations!.isEmpty ||
                   !state.showRecommendations)
               ? const SizedBox.shrink(key: ValueKey('empty'))
-              : SizedBox(
+              : Padding(
                   key: const ValueKey('recommendations'),
-                  height: 160,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: PageView.builder(
-                      controller: PageController(viewportFraction: 0.93),
-                      itemCount: state.recommendations!.length,
-                      itemBuilder: (context, index) {
-                        final recommendation = state.recommendations![index];
-                        return Card(
-                          elevation: 2,
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 4,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: SingleChildScrollView(
-                              physics: const BouncingScrollPhysics(),
-                              // Use until flutter_markdown_plus 2.0.0 release
-                              // ignore: deprecated_member_use
-                              child: MaterialUiCompatibilityBridge(
-                                child: MarkdownBody(data: recommendation),
-                              ),
+                  padding: const EdgeInsets.only(top: 8),
+                  child: ExpressiveCarousel(
+                    height: 160,
+                    itemExtent: MediaQuery.of(context).size.width * 0.9,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    items: state.recommendations!.map((recommendation) {
+                      return ExpressiveCarouselItem(
+                        child: ExpressiveCard(
+                          margin: EdgeInsets.zero,
+                          padding: const EdgeInsets.all(12),
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            // Use until flutter_markdown_plus 2.0.0 release
+                            // ignore: deprecated_member_use
+                            child: MaterialUiCompatibilityBridge(
+                              child: MarkdownBody(data: recommendation),
                             ),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
         );

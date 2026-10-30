@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -19,19 +19,8 @@ class IncomeHomeView extends StatelessWidget {
 
     return BlocBuilder<IncomeHomeCubit, IncomeHomeState>(
       builder: (context, state) => Column(
-        spacing: 8,
         children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppVariables.tabletMaxWidth,
-            ),
-            child: MonthSelector(
-              monthSelected: state.monthSelected!,
-              onBack: () => context.read<IncomeHomeCubit>().previousMonth(),
-              onForward: () => context.read<IncomeHomeCubit>().nextMonth(),
-              onChangeMonth: context.read<IncomeHomeCubit>().changeMonth,
-            ),
-          ),
+          const SizedBox(height: 12),
           StreamBuilder<List<Movement>>(
             stream: database.getMovementsStream(
               userId: user!.uid,
@@ -49,7 +38,12 @@ class IncomeHomeView extends StatelessWidget {
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(
+                    child: ExpressiveCircularProgressIndicator(
+                      size: 40,
+                      strokeWidth: 4,
+                    ),
+                  ),
                 );
               }
 
@@ -59,7 +53,7 @@ class IncomeHomeView extends StatelessWidget {
 
               final data = AppFunctions.buildChartData(
                 movements: snapshot.data!,
-              );
+              )..sort((a, b) => b.value.compareTo(a.value));
 
               return Expanded(
                 child: isLandscape
@@ -97,24 +91,13 @@ class IncomeHomeMobileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 16,
       children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TotalSpentChart(data: data),
-            ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxHeight: AppVariables.mobileChartMaxHeight,
-              ),
-              child: DoughnutCircularChart(
-                data: data,
-                selectedIndex: selectedIndex,
-                onPointTap: (p0) => context
-                    .read<IncomeHomeCubit>()
-                    .changeExplodeIndex(p0.pointIndex),
-              ),
-            ),
-          ],
+        CategorySummaryCard(
+          data: data,
+          selectedIndex: selectedIndex,
+          onCategorySelected: (index) =>
+              context.read<IncomeHomeCubit>().changeExplodeIndex(index),
         ),
         MovementsListChart(
           expenseType: CategoryType.income,
@@ -141,33 +124,17 @@ class IncomeHomeWebView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: 16,
+      spacing: 20,
       children: [
         Expanded(
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: kIsWeb
-                  ? ClampingScrollPhysics()
-                  : BouncingScrollPhysics(),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 16,
-              children: [
-                TotalSpentChart(data: data),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxHeight: AppVariables.webChartMaxHeight,
-                  ),
-                  child: DoughnutCircularChart(
-                    data: data,
-                    selectedIndex: selectedIndex,
-                    onPointTap: (p0) => context
-                        .read<IncomeHomeCubit>()
-                        .changeExplodeIndex(p0.pointIndex),
-                  ),
-                ),
-              ],
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: CategorySummaryCard(
+              data: data,
+              selectedIndex: selectedIndex,
+              isExpanded: true,
+              onCategorySelected: (index) =>
+                  context.read<IncomeHomeCubit>().changeExplodeIndex(index),
             ),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -85,8 +86,8 @@ void main() {
       expect(find.byType(AppLogo), findsOneWidget);
       expect(find.text(l10n.emailLabel), findsOneWidget);
       expect(find.text(l10n.passwordLabel), findsOneWidget);
-      expect(find.byType(AppFilledButton), findsOneWidget);
-      expect(find.byType(AppOutlinedButton), findsOneWidget);
+      expect(find.text(l10n.loginButton), findsWidgets);
+      expect(find.text(l10n.googleLoginButton), findsOneWidget);
       expect(find.byType(AppChangeTheme), findsOneWidget);
       expect(find.byType(AppChangeLanguage), findsOneWidget);
     });
@@ -133,7 +134,8 @@ void main() {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(AppFilledButton));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.tap(find.widgetWithText(ExpressiveButton, l10n.loginButton));
       verify(() => mockLoginCubit.loginWithEmail(any())).called(1);
     });
 
@@ -143,7 +145,8 @@ void main() {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(AppOutlinedButton));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.tap(find.text(l10n.googleLoginButton));
       verify(() => mockLoginCubit.loginWithGoogle(any())).called(1);
     });
 
@@ -209,7 +212,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final registerButton = find.widgetWithText(
-        TextButton,
+        ExpressiveButton,
         l10n.registerButton,
       );
       expect(registerButton, findsOneWidget);

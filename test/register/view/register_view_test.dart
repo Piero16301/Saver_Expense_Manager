@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -87,7 +88,7 @@ void main() {
       expect(find.text(l10n.emailLabel), findsOneWidget);
       expect(find.text(l10n.passwordLabel), findsOneWidget);
       expect(find.text(l10n.confirmPasswordLabel), findsOneWidget);
-      expect(find.byType(AppFilledButton), findsOneWidget);
+      expect(find.byType(ExpressiveButton), findsWidgets);
       expect(find.text(l10n.registerButton), findsWidgets);
       expect(find.text(l10n.haveAccount), findsOneWidget);
       expect(find.text(l10n.loginButton), findsOneWidget);
@@ -209,7 +210,7 @@ void main() {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
-      final button = find.byType(AppFilledButton);
+      final button = find.byType(ExpressiveButton).first;
       await tester.ensureVisible(button);
       await tester.tap(button);
       verify(() => mockRegisterCubit.register(any())).called(1);
@@ -276,7 +277,10 @@ void main() {
       await tester.pumpWidget(buildView());
       await tester.pumpAndSettle();
 
-      final loginButton = find.widgetWithText(TextButton, l10n.loginButton);
+      final loginButton = find.widgetWithText(
+        ExpressiveButton,
+        l10n.loginButton,
+      );
       expect(loginButton, findsOneWidget);
 
       await tester.ensureVisible(loginButton);

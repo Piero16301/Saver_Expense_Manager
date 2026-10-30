@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -29,7 +30,12 @@ class SummaryHomeView extends StatelessWidget {
         ),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: ExpressiveCircularProgressIndicator(
+                size: 40,
+                strokeWidth: 4,
+              ),
+            );
           }
 
           if (snapshot.data!.isEmpty) {
@@ -37,20 +43,6 @@ class SummaryHomeView extends StatelessWidget {
           }
 
           final movements = snapshot.data!;
-
-          final monthSelector = ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppVariables.tabletMaxWidth,
-            ),
-            child: MonthRangeSelector(
-              startMonth: state.startMonth!,
-              endMonth: state.endMonth!,
-              onChangeStartMonth: (date) =>
-                  context.read<SummaryHomeCubit>().changeStartMonth(date),
-              onChangeEndMonth: (date) =>
-                  context.read<SummaryHomeCubit>().changeEndMonth(date),
-            ),
-          );
 
           final resumeMovementsChart = ResumeMovementsChart(
             movements: movements,
@@ -95,7 +87,6 @@ class SummaryHomeView extends StatelessWidget {
           return Column(
             spacing: 12,
             children: [
-              monthSelector,
               Expanded(
                 child: isLandscape
                     ? Row(
@@ -730,14 +721,13 @@ class CategoryExpenseCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: percentage / 100,
-                      backgroundColor: categoryColor.withValues(alpha: 0.2),
-                      valueColor: AlwaysStoppedAnimation<Color>(categoryColor),
-                      minHeight: 6,
-                    ),
+                  ExpressiveLinearProgressIndicator(
+                    value: percentage / 100,
+                    backgroundColor: categoryColor.withValues(alpha: 0.2),
+                    color: categoryColor,
+                    height: 12,
+                    strokeWidth: 6,
+                    borderRadius: BorderRadius.circular(6),
                   ),
                   const SizedBox(height: 8),
                   Text(

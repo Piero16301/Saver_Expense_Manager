@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter/foundation.dart' hide Category;
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,11 +39,13 @@ class MovementView extends StatelessWidget {
           ),
           notificationPredicate: (notification) => false,
           actions: _appBarActions(context, l10n),
-          leading: IconButton(
-            onPressed: () => context.pop(),
-            icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedArrowLeft01,
-              strokeWidth: 2,
+          leading: Center(
+            child: ExpressiveIconButton.circle(
+              onPressed: () => context.pop(),
+              icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedArrowLeft01,
+                strokeWidth: 2,
+              ),
             ),
           ),
         ),
@@ -185,10 +188,10 @@ class MovementView extends StatelessWidget {
             ),
           ),
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: ExpressiveFab(
           onPressed: () =>
               _onSaveButtonPressed(context, state.date!, user.uid, l10n),
-          child: const HugeIcon(
+          icon: const HugeIcon(
             icon: HugeIcons.strokeRoundedFloppyDisk,
             strokeWidth: 2,
           ),
@@ -269,12 +272,15 @@ class MovementView extends StatelessWidget {
         return null;
       case MovementScreenType.edit:
         return [
-          IconButton(
-            onPressed: () => _showDeleteDialog(context, l10n),
-            icon: HugeIcon(
-              icon: HugeIcons.strokeRoundedDelete02,
-              strokeWidth: 2,
-              color: Theme.of(context).colorScheme.error,
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: ExpressiveIconButton.circle(
+              onPressed: () => _showDeleteDialog(context, l10n),
+              icon: HugeIcon(
+                icon: HugeIcons.strokeRoundedDelete02,
+                strokeWidth: 2,
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
           ),
         ];

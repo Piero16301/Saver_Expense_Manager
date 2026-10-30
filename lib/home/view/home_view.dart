@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,94 +35,103 @@ class HomeView extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) => Scaffold(
-            appBar: AppBar(
-              title: Image.asset(
-                darkTheme
-                    ? 'assets/images/logo-no-bg-dark.png'
-                    : 'assets/images/logo-no-bg-light.png',
-                height: 35,
-              ),
-              notificationPredicate: (notification) => false,
-              leading: IconButton(
-                padding: EdgeInsets.zero,
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedSettings02,
-                  strokeWidth: 2,
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => ExpensesHomeCubit()..init()),
+            BlocProvider(create: (_) => SummaryHomeCubit()),
+            BlocProvider(create: (_) => IncomeHomeCubit()..init()),
+          ],
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) => Scaffold(
+              appBar: ExpressiveTopAppBar(
+                showBackButton: false,
+                title: _getAppBarTitle(
+                  context,
+                  selectedIndex: state.selectedIndex,
+                  darkTheme: darkTheme,
                 ),
-                onPressed: () => context.pushNamed(AppRoute.settings.name),
-              ),
-              actions: [
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  icon: snapshot.data?.photoURL == null
-                      ? Container(
-                          width: 34,
-                          height: 34,
-                          foregroundDecoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 2,
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(2),
-                          child: HugeIcon(
-                            icon: HugeIcons.strokeRoundedUser,
-                            strokeWidth: 2,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        )
-                      : Container(
-                          width: 34,
-                          height: 34,
-                          foregroundDecoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 2,
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(2),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(17),
-                            child: Image.network(
-                              AppFunctions.highResPicture(
-                                url: snapshot.data!.photoURL,
+                leading: Center(
+                  child: ExpressiveIconButton.circle(
+                    icon: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedSettings02,
+                      strokeWidth: 2,
+                    ),
+                    onPressed: () => context.pushNamed(AppRoute.settings.name),
+                  ),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: snapshot.data?.photoURL == null
+                          ? Container(
+                              width: 34,
+                              height: 34,
+                              foregroundDecoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2,
+                                ),
                               ),
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  HugeIcon(
-                                    icon: HugeIcons.strokeRoundedUser,
-                                    strokeWidth: 2,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                              padding: const EdgeInsets.all(2),
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedUser,
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            )
+                          : Container(
+                              width: 34,
+                              height: 34,
+                              foregroundDecoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 2,
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(2),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(17),
+                                child: Image.network(
+                                  AppFunctions.highResPicture(
+                                    url: snapshot.data!.photoURL,
                                   ),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      HugeIcon(
+                                        icon: HugeIcons.strokeRoundedUser,
+                                        strokeWidth: 2,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                  onPressed: () => context.pushNamed(AppRoute.profile.name),
-                ),
-              ],
-              actionsPadding: const EdgeInsets.only(right: 8),
-            ),
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: AnimatedSwitcher(
-                  duration: AppVariables.animationDuration,
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
-                  child: _getSelectedBody(state.selectedIndex),
+                      onPressed: () => context.pushNamed(AppRoute.profile.name),
+                    ),
+                  ),
+                ],
+              ),
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: AnimatedSwitcher(
+                    duration: AppVariables.animationDuration,
+                    transitionBuilder: (child, animation) =>
+                        FadeTransition(opacity: animation, child: child),
+                    child: _getSelectedBody(state.selectedIndex),
+                  ),
                 ),
               ),
-            ),
-            bottomNavigationBar: const BottomNavigationBarHome(),
-            floatingActionButton: _getFloatingActionButton(
-              context,
-              state.selectedIndex,
+              bottomNavigationBar: const BottomNavigationBarHome(),
+              floatingActionButton: _getFloatingActionButton(
+                context,
+                state.selectedIndex,
+              ),
             ),
           ),
         );
@@ -129,10 +139,71 @@ class HomeView extends StatelessWidget {
     );
   }
 
+  Widget _getAppBarTitle(
+    BuildContext context, {
+    required int selectedIndex,
+    required bool darkTheme,
+  }) {
+    switch (selectedIndex) {
+      case 0:
+        return BlocBuilder<ExpensesHomeCubit, ExpensesHomeState>(
+          builder: (context, expensesState) {
+            if (expensesState.monthSelected == null) {
+              return const SizedBox.shrink();
+            }
+            return MonthSelector(
+              monthSelected: expensesState.monthSelected!,
+              onBack: () => context.read<ExpensesHomeCubit>().previousMonth(),
+              onForward: () => context.read<ExpensesHomeCubit>().nextMonth(),
+              onChangeMonth: context.read<ExpensesHomeCubit>().changeMonth,
+            );
+          },
+        );
+      case 2:
+        return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
+          builder: (context, summaryState) {
+            if (summaryState.startMonth == null ||
+                summaryState.endMonth == null) {
+              return const SizedBox.shrink();
+            }
+            return MonthRangeSelector(
+              startMonth: summaryState.startMonth!,
+              endMonth: summaryState.endMonth!,
+              onChangeStartMonth: (date) =>
+                  context.read<SummaryHomeCubit>().changeStartMonth(date),
+              onChangeEndMonth: (date) =>
+                  context.read<SummaryHomeCubit>().changeEndMonth(date),
+            );
+          },
+        );
+      case 3:
+        return BlocBuilder<IncomeHomeCubit, IncomeHomeState>(
+          builder: (context, incomeState) {
+            if (incomeState.monthSelected == null) {
+              return const SizedBox.shrink();
+            }
+            return MonthSelector(
+              monthSelected: incomeState.monthSelected!,
+              onBack: () => context.read<IncomeHomeCubit>().previousMonth(),
+              onForward: () => context.read<IncomeHomeCubit>().nextMonth(),
+              onChangeMonth: context.read<IncomeHomeCubit>().changeMonth,
+            );
+          },
+        );
+      default:
+        return Image.asset(
+          darkTheme
+              ? 'assets/images/logo-no-bg-dark.png'
+              : 'assets/images/logo-no-bg-light.png',
+          height: 35,
+        );
+    }
+  }
+
   Widget? _getFloatingActionButton(BuildContext context, int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return FloatingActionButton(
+        return ExpressiveFab(
           onPressed: () => showModalBottomSheet<void>(
             context: context,
             builder: (context) => AddMovementBottomSheet(
@@ -140,13 +211,13 @@ class HomeView extends StatelessWidget {
               movementType: CategoryType.expense,
             ),
           ),
-          child: const HugeIcon(
+          icon: const HugeIcon(
             icon: HugeIcons.strokeRoundedAdd01,
             strokeWidth: 2,
           ),
         );
       case 3:
-        return FloatingActionButton(
+        return ExpressiveFab(
           onPressed: () => showModalBottomSheet<void>(
             context: context,
             builder: (context) => AddMovementBottomSheet(
@@ -154,7 +225,7 @@ class HomeView extends StatelessWidget {
               movementType: CategoryType.income,
             ),
           ),
-          child: const HugeIcon(
+          icon: const HugeIcon(
             icon: HugeIcons.strokeRoundedAdd01,
             strokeWidth: 2,
           ),
@@ -188,33 +259,33 @@ class BottomNavigationBarHome extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) => NavigationBar(
+      builder: (context, state) => ExpressiveNavigationBar(
         selectedIndex: state.selectedIndex,
         onDestinationSelected: (index) =>
             context.read<HomeCubit>().toggleSelectedIndex(index),
         destinations: [
-          NavigationDestination(
+          ExpressiveNavigationDestination(
             icon: const HugeIcon(
               icon: HugeIcons.strokeRoundedMoneyRemove01,
               strokeWidth: 2,
             ),
             label: l10n.homeExpensesTitle,
           ),
-          NavigationDestination(
+          ExpressiveNavigationDestination(
             icon: const HugeIcon(
               icon: HugeIcons.strokeRoundedTaskDaily01,
               strokeWidth: 2,
             ),
             label: l10n.homeMovementsTitle,
           ),
-          NavigationDestination(
+          ExpressiveNavigationDestination(
             icon: const HugeIcon(
               icon: HugeIcons.strokeRoundedChart02,
               strokeWidth: 2,
             ),
             label: l10n.homeSummaryTitle,
           ),
-          NavigationDestination(
+          ExpressiveNavigationDestination(
             icon: const HugeIcon(
               icon: HugeIcons.strokeRoundedMoneyAdd01,
               strokeWidth: 2,
