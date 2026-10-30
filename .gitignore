@@ -116,8 +116,9 @@ pubspec.lock
 .firebase/
 file1
 
-# Generated l10n files
+# Generated files
 lib/l10n/gen/
+graphify-out/
 
 # Env file
 .env

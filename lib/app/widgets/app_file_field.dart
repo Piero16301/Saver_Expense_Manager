@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:material_ui/material_ui.dart';
@@ -77,25 +78,13 @@ class AppFileField extends StatelessWidget {
                       ),
                     ),
                   Center(
-                    child: ElevatedButton.icon(
+                    child: ExpressiveButton(
                       onPressed: () => _handleUpload(context, appLoader),
                       icon: const HugeIcon(
                         icon: HugeIcons.strokeRoundedUpload04,
-                        strokeWidth: 2,
+                        size: 20,
                       ),
-                      label: Text(
-                        labelAdd,
-                        style: TextStyle(
-                          fontVariations: <FontVariation>[
-                            ...(Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium?.fontVariations ??
-                                    const <FontVariation>[])
-                                .where((v) => v.axis != 'wght'),
-                            const FontVariation('wght', 700),
-                          ],
-                        ),
-                      ),
+                      label: labelAdd,
                     ),
                   ),
                 ],

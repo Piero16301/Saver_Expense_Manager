@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -80,15 +81,18 @@ void main() {
 
     tearDown(getIt.reset);
 
-    testWidgets('renders IncomeHomeView and provides IncomeHomeCubit', (
-      tester,
-    ) async {
+    testWidgets('renders IncomeHomeView', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: BlocProvider<AppCubit>.value(
-            value: mockAppCubit,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<AppCubit>.value(value: mockAppCubit),
+              BlocProvider<IncomeHomeCubit>(
+                create: (_) => IncomeHomeCubit()..init(),
+              ),
+            ],
             child: const MediaQuery(
               data: MediaQueryData(size: Size(400, 800)),
               child: IncomeHomePage(),
@@ -98,7 +102,6 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byType(BlocProvider<IncomeHomeCubit>), findsOneWidget);
       expect(find.byType(IncomeHomeView), findsOneWidget);
     });
   });
@@ -191,9 +194,7 @@ void main() {
       );
     }
 
-    testWidgets('renders MonthSelector and loading indicator initially', (
-      tester,
-    ) async {
+    testWidgets('renders loading indicator initially', (tester) async {
       final controller = StreamController<List<Movement>>();
       when(
         () => mockDatabase.getMovementsStream(
@@ -210,8 +211,7 @@ void main() {
       await tester.pumpWidget(buildSubject());
       await tester.pump();
 
-      expect(find.byType(MonthSelector), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
 
       await controller.close();
     });
@@ -235,7 +235,6 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(find.byType(MonthSelector), findsOneWidget);
       expect(find.textContaining('income'), findsWidgets);
     });
 
@@ -274,9 +273,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.byType(MonthSelector), findsOneWidget);
-      expect(find.byType(DoughnutCircularChart), findsOneWidget);
-      expect(find.byType(TotalSpentChart), findsOneWidget);
+      expect(find.byType(CategorySummaryCard), findsOneWidget);
       expect(find.byType(IncomeHomeMobileView), findsOneWidget);
       expect(find.byType(IncomeHomeWebView), findsNothing);
     });
@@ -317,57 +314,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.byType(Row), findsWidgets);
-      expect(find.byType(MonthSelector), findsOneWidget);
       expect(find.byType(IncomeHomeWebView), findsOneWidget);
       expect(find.byType(IncomeHomeMobileView), findsNothing);
-    });
-
-    testWidgets('tapping back on MonthSelector calls previousMonth', (
-      tester,
-    ) async {
-      when(
-        () => mockDatabase.getMovementsStream(
-          userId: any(named: 'userId'),
-          startDate: any<DateTime?>(named: 'startDate'),
-          endDate: any<DateTime?>(named: 'endDate'),
-          type: any<CategoryType?>(named: 'type'),
-          categoryId: any<String?>(named: 'categoryId'),
-          limit: any<int>(named: 'limit'),
-          orderByDate: any<bool>(named: 'orderByDate'),
-        ),
-      ).thenAnswer((_) => Stream.value([]));
-
-      await tester.pumpWidget(buildSubject());
-      await tester.pump();
-
-      final backButton = find.byType(IconButton).first;
-      await tester.tap(backButton);
-
-      verify(() => mockCubit.previousMonth()).called(1);
-    });
-
-    testWidgets('tapping forward on MonthSelector calls nextMonth', (
-      tester,
-    ) async {
-      when(
-        () => mockDatabase.getMovementsStream(
-          userId: any(named: 'userId'),
-          startDate: any<DateTime?>(named: 'startDate'),
-          endDate: any<DateTime?>(named: 'endDate'),
-          type: any<CategoryType?>(named: 'type'),
-          categoryId: any<String?>(named: 'categoryId'),
-          limit: any<int>(named: 'limit'),
-          orderByDate: any<bool>(named: 'orderByDate'),
-        ),
-      ).thenAnswer((_) => Stream.value([]));
-
-      await tester.pumpWidget(buildSubject());
-      await tester.pump();
-
-      final forwardButton = find.byType(IconButton).at(1);
-      await tester.tap(forwardButton);
-
-      verify(() => mockCubit.nextMonth()).called(1);
     });
   });
 }

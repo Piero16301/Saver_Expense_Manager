@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
@@ -65,7 +66,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
       final auth = getIt<AuthService>();
       final language =
           getIt<LocalStorageService>().getLanguage() ??
-          AppVariables.supportedLocales.first;
+          ExpressiveLanguages.defaultLocale;
       final recommendations = await AppFunctions.getAntRecommendations(
         userId: auth.currentUser!.uid,
         language: '${language.languageCode}-${language.countryCode}',

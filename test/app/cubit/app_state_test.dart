@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -12,10 +13,10 @@ void main() {
       expect(
         const AppState().props,
         equals(<Object?>[
-          const Locale('en', 'US'),
-          ThemeMode.system,
-          Colors.green,
-          'GoogleSansFlex',
+          ExpressiveLanguages.defaultLocale,
+          ExpressiveTheme.defaultTheme,
+          ExpressiveColors.defaultColor,
+          ExpressiveFonts.defaultFont,
         ]),
       );
     });

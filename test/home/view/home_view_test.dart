@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/services.dart';
@@ -146,6 +147,8 @@ void main() {
     when(
       () => mockRemoteConfigService.geminiPromptExtractReceiptData,
     ).thenReturn('prompt');
+    when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
+    when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
     when(() => mockAiService.isLocalModelAvailable).thenReturn(true);
     when(
       () => mockAiService.generateContentRemote(
@@ -248,7 +251,7 @@ void main() {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
         expect(find.byType(BottomNavigationBarHome), findsOneWidget);
-        expect(find.byType(FloatingActionButton), findsOneWidget);
+        expect(find.byType(ExpressiveFab), findsOneWidget);
       });
     });
 
@@ -334,7 +337,7 @@ void main() {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
         expect(find.byType(ExpensesHomePage), findsOneWidget);
-        expect(find.byType(FloatingActionButton), findsOneWidget);
+        expect(find.byType(ExpressiveFab), findsOneWidget);
       });
     });
 
@@ -347,7 +350,7 @@ void main() {
         await mockNetworkImagesFor(() async {
           await pumpSubject(tester);
           await tester.pumpAndSettle();
-          await tester.tap(find.byType(FloatingActionButton));
+          await tester.tap(find.byType(ExpressiveFab));
           await tester.pumpAndSettle();
           final bottomSheet = tester.widget<AddMovementBottomSheet>(
             find.byType(AddMovementBottomSheet),
@@ -401,7 +404,7 @@ void main() {
           await pumpRouterSubject(tester, categories: testCategories);
           await tester.pumpAndSettle();
 
-          await tester.tap(find.byType(FloatingActionButton));
+          await tester.tap(find.byType(ExpressiveFab));
           await tester.pumpAndSettle();
 
           await tester.tap(find.text('File'));
@@ -423,7 +426,7 @@ void main() {
           await pumpRouterSubject(tester);
           await tester.pumpAndSettle();
 
-          await tester.tap(find.byType(FloatingActionButton));
+          await tester.tap(find.byType(ExpressiveFab));
           await tester.pumpAndSettle();
 
           await tester.tap(find.text('Enter'));
@@ -445,7 +448,7 @@ void main() {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
 
-        await tester.tap(find.byType(FloatingActionButton));
+        await tester.tap(find.byType(ExpressiveFab));
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('File'));
@@ -465,7 +468,7 @@ void main() {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
 
-        await tester.tap(find.byType(FloatingActionButton));
+        await tester.tap(find.byType(ExpressiveFab));
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('File'));
@@ -499,7 +502,7 @@ void main() {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
 
-        await tester.tap(find.byType(FloatingActionButton));
+        await tester.tap(find.byType(ExpressiveFab));
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('File'));
@@ -544,7 +547,7 @@ void main() {
           await pumpRouterSubject(tester);
           await tester.pumpAndSettle();
 
-          await tester.tap(find.byType(FloatingActionButton));
+          await tester.tap(find.byType(ExpressiveFab));
           await tester.pumpAndSettle();
 
           await tester.tap(find.text('Scan'));
@@ -575,7 +578,7 @@ void main() {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
 
-        await tester.tap(find.byType(FloatingActionButton));
+        await tester.tap(find.byType(ExpressiveFab));
         await tester.pumpAndSettle();
 
         await tester.tap(find.text('Scan'));
@@ -601,7 +604,7 @@ void main() {
           await pumpSubject(tester);
           await tester.pumpAndSettle();
 
-          await tester.tap(find.byType(FloatingActionButton));
+          await tester.tap(find.byType(ExpressiveFab));
           await tester.pumpAndSettle();
 
           await tester.tap(find.text('Scan'));
@@ -636,7 +639,7 @@ void main() {
             await pumpSubject(tester);
             await tester.pumpAndSettle();
 
-            await tester.tap(find.byType(FloatingActionButton));
+            await tester.tap(find.byType(ExpressiveFab));
             await tester.pumpAndSettle();
 
             await tester.tap(find.text('Scan'));

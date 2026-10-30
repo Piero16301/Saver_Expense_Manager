@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -98,7 +99,8 @@ class LoginView extends StatelessWidget {
                               prefix: const HugeIcon(
                                 icon: HugeIcons.strokeRoundedLockPassword,
                               ),
-                              suffix: IconButton(
+                              suffix: ExpressiveIconButton.circle(
+                                size: ExpressiveIconButtonSize.small,
                                 onPressed: state.status.isLoading
                                     ? null
                                     : () => context
@@ -108,6 +110,7 @@ class LoginView extends StatelessWidget {
                                   icon: state.isPasswordVisible
                                       ? HugeIcons.strokeRoundedView
                                       : HugeIcons.strokeRoundedViewOff,
+                                  size: 20,
                                 ),
                               ),
                               onChanged: (value) => context
@@ -121,7 +124,9 @@ class LoginView extends StatelessWidget {
                             const SizedBox(height: 48),
 
                             // Login Button
-                            AppFilledButton(
+                            ExpressiveButton.filled(
+                              isExpanded: true,
+                              isLoading: state.status.isLoading,
                               onPressed: state.status.isLoading
                                   ? null
                                   : () => context
@@ -129,22 +134,26 @@ class LoginView extends StatelessWidget {
                                         .loginWithEmail(l10n),
                               icon: const HugeIcon(
                                 icon: HugeIcons.strokeRoundedLogin01,
-                                strokeWidth: 2,
+                                size: 20,
                               ),
                               label: state.status.isLoading
                                   ? l10n.loginLoading
                                   : l10n.loginButton,
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 16),
 
                             // Google Login Button
-                            AppOutlinedButton(
+                            ExpressiveButton.outlined(
+                              isExpanded: true,
                               onPressed: state.status.isLoading
                                   ? null
                                   : () => context
                                         .read<LoginCubit>()
                                         .loginWithGoogle(l10n),
-                              icon: HugeIcons.strokeRoundedGoogle,
+                              icon: const HugeIcon(
+                                icon: HugeIcons.strokeRoundedGoogle,
+                                size: 20,
+                              ),
                               label: l10n.googleLoginButton,
                             ),
                             const SizedBox(height: 24),
@@ -157,26 +166,15 @@ class LoginView extends StatelessWidget {
                                   l10n.noAccount,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
-                                TextButton(
+                                const SizedBox(width: 4),
+                                ExpressiveButton.text(
+                                  size: ExpressiveButtonSize.small,
                                   onPressed: state.status.isLoading
                                       ? null
                                       : () => context.push(
                                           AppRoute.register.path,
                                         ),
-                                  child: Text(
-                                    l10n.registerButton,
-                                    style: TextStyle(
-                                      fontVariations: <FontVariation>[
-                                        ...(Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.fontVariations ??
-                                                const <FontVariation>[])
-                                            .where((v) => v.axis != 'wght'),
-                                        const FontVariation('wght', 700),
-                                      ],
-                                    ),
-                                  ),
+                                  label: l10n.registerButton,
                                 ),
                               ],
                             ),

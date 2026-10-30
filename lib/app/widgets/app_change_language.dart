@@ -1,4 +1,5 @@
 import 'package:country_flags/country_flags.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -12,7 +13,7 @@ class AppChangeLanguage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    const languages = AppVariables.supportedLocales;
+    const languages = ExpressiveLanguages.supportedLocales;
 
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) => Padding(

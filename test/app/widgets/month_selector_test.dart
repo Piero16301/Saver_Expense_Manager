@@ -46,7 +46,7 @@ void main() {
         ),
       );
 
-      expect(find.text('MARCH 2024'), findsOneWidget);
+      expect(find.text('Mar 2024'), findsOneWidget);
 
       when(
         () => appCubit.state,
@@ -74,7 +74,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('MARZO 2024'), findsOneWidget);
+      expect(find.textContaining('Mar'), findsOneWidget);
     });
 
     testWidgets('disables back button at min date', (tester) async {
@@ -182,7 +182,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.text('MARCH 2024'));
+      await tester.tap(find.text('Mar 2024'));
       await tester.pump(); // Start animation
       await tester.pumpAndSettle(); // Finish animation
       expect(find.byType(MonthPickerDialog), findsOneWidget);

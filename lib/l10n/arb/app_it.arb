@@ -1,5 +1,7 @@
 {
     "@@locale": "it",
+    "settingsAppearanceTitle": "Aspetto",
+    "@settingsAppearanceTitle": {},
     "selectLanguage": "Seleziona la lingua",
     "@selectLanguage": {},
     "selectTheme": "Seleziona tema",

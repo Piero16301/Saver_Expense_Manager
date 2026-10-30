@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -70,7 +71,7 @@ void main() {
       verify(
         () => mockPrefs.setString(
           LocalStorageRepository.kUserTheme,
-          ThemeHelper.getThemeName(ThemeMode.dark),
+          ExpressiveTheme.toKey(ThemeMode.dark),
         ),
       ).called(1);
     });
@@ -78,7 +79,7 @@ void main() {
     test('getTheme returns correctly parsed ThemeMode', () {
       when(
         () => mockPrefs.getString(LocalStorageRepository.kUserTheme),
-      ).thenReturn(ThemeHelper.getThemeName(ThemeMode.dark));
+      ).thenReturn(ExpressiveTheme.toKey(ThemeMode.dark));
       final result = repository.getTheme();
       expect(result, equals(ThemeMode.dark));
     });
@@ -91,7 +92,7 @@ void main() {
       verify(
         () => mockPrefs.setString(
           LocalStorageRepository.kUserBaseColor,
-          ColorHelper.getColorName(Colors.blue),
+          ExpressiveColors.toKey(Colors.blue),
         ),
       ).called(1);
     });
@@ -99,7 +100,7 @@ void main() {
     test('getBaseColor returns correctly parsed Color', () {
       when(
         () => mockPrefs.getString(LocalStorageRepository.kUserBaseColor),
-      ).thenReturn(ColorHelper.getColorName(Colors.blue));
+      ).thenReturn(ExpressiveColors.toKey(Colors.blue));
       final result = repository.getBaseColor();
       expect(result, equals(Colors.blue));
     });

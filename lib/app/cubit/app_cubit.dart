@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -21,34 +22,30 @@ class AppCubit extends Cubit<AppState> {
       final deviceLocale = kIsWeb
           ? PlatformDispatcher.instance.locale.languageCode
           : Platform.localeName.split('_').first;
-      final deviceLanguage =
-          AppVariables.deviceLanguageMap[deviceLocale] ??
-          AppVariables.supportedLocales.first;
+      final deviceLanguage = ExpressiveLanguages.fromLanguageCode(deviceLocale);
       localStorage.saveLanguage(language: deviceLanguage);
     }
 
     // Setting the theme to the device theme if it's not set
     final theme = localStorage.getTheme();
     if (theme == null) {
-      localStorage.saveTheme(theme: ThemeMode.system);
+      localStorage.saveTheme(theme: ExpressiveTheme.defaultTheme);
     }
 
-    // Setting the base color to GREEN if it's not set
+    // Setting the base color to default color if it's not set
     final baseColor = localStorage.getBaseColor();
     if (baseColor == null) {
-      localStorage.saveBaseColor(baseColor: AppVariables.defaultBaseColor);
+      localStorage.saveBaseColor(baseColor: ExpressiveColors.defaultColor);
     }
 
-    // Setting the font family to Popping if it's not set
+    // Setting the font family to default font if it's not set
     var fontFamily = localStorage.getFontFamily();
     final isFontSupported =
         fontFamily != null &&
-        AppVariables.availableFonts.containsValue(fontFamily);
+        ExpressiveFonts.availableFonts.containsValue(fontFamily);
 
     if (!isFontSupported) {
-      final defaultFont =
-          AppVariables.availableFonts[AppVariables.defaultFontFamily] ??
-          AppVariables.defaultFontFamily;
+      const defaultFont = ExpressiveFonts.defaultFont;
       localStorage.saveFontFamily(fontFamily: defaultFont);
       fontFamily = defaultFont;
     }
@@ -85,11 +82,7 @@ class AppCubit extends Cubit<AppState> {
     localStorage.saveBaseColor(baseColor: baseColor);
     getIt<AnalyticsService>().logEvent(
       name: 'change_base_color',
-      parameters: {
-        'color': ColorHelper.colorMap.containsValue(baseColor)
-            ? ColorHelper.getColorName(baseColor)
-            : baseColor.toARGB32().toRadixString(16),
-      },
+      parameters: {'color': ExpressiveColors.toKey(baseColor)},
     );
     emit(state.copyWith(baseColor: baseColor));
   }

@@ -1,6 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -22,8 +20,6 @@ void main() {
     late DatabaseService mockDatabase;
     late MockRemoteConfigService mockRemoteConfig;
     late AppCubit appCubit;
-    late FakeFirebaseFirestore fakeFirestore;
-    late Query<Map<String, dynamic>> query;
 
     setUpAll(() {
       registerFallbackValue(DateTime.now());
@@ -37,11 +33,6 @@ void main() {
       appCubit = MockAppCubit();
 
       when(() => appCubit.state).thenReturn(const AppState());
-
-      fakeFirestore = FakeFirebaseFirestore();
-      query = fakeFirestore
-          .collection('movements')
-          .where('user', isEqualTo: 'user1');
 
       if (getIt.isRegistered<AuthService>()) {
         await getIt.unregister<AuthService>();
@@ -59,8 +50,10 @@ void main() {
         ..registerSingleton<RemoteConfigService>(mockRemoteConfig);
 
       when(() => mockRemoteConfig.paginationLimit).thenReturn(10);
-
       when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user1'));
+    });
+
+    testWidgets('renders empty state when no data', (tester) async {
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),
@@ -71,16 +64,8 @@ void main() {
           limit: any<int>(named: 'limit'),
           orderByDate: any<bool>(named: 'orderByDate'),
         ),
-      ).thenAnswer(
-        (_) => query.snapshots().map(
-          (snapshot) => snapshot.docs
-              .map((doc) => Movement.fromJson(doc.data()))
-              .toList(),
-        ),
-      );
-    });
+      ).thenAnswer((_) => Stream.value(<Movement>[]));
 
-    testWidgets('renders empty state when no data', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -122,7 +107,17 @@ void main() {
         user: 'user1',
       );
 
-      await fakeFirestore.collection('movements').add(movement.toJson());
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value([movement]));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -155,6 +150,18 @@ void main() {
     testWidgets('calls DatabaseService with correct parameters', (
       tester,
     ) async {
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any<DateTime?>(named: 'startDate'),
+          endDate: any<DateTime?>(named: 'endDate'),
+          type: any<CategoryType?>(named: 'type'),
+          categoryId: any<String?>(named: 'categoryId'),
+          limit: any<int>(named: 'limit'),
+          orderByDate: any<bool>(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value(<Movement>[]));
+
       final month = DateTime(2024, 3);
       await tester.pumpWidget(
         MaterialApp(

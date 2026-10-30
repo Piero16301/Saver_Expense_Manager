@@ -1,3 +1,4 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -81,7 +82,12 @@ class _AppStreamPaginatedState<T> extends State<AppStreamPaginated<T>> {
           );
         }
         if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: ExpressiveCircularProgressIndicator(
+              size: 40,
+              strokeWidth: 4,
+            ),
+          );
         }
 
         final data = snapshot.data!;

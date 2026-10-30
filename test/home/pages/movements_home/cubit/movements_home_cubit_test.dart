@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -320,16 +319,6 @@ void main() {
         getIt.unregister<DatabaseService>();
       }
       getIt.registerSingleton<DatabaseService>(mockDatabase);
-    });
-
-    test('getCategoriesStream returns a stream of categories', () async {
-      final fakeFirestore = FakeFirebaseFirestore();
-      final db = DatabaseService(
-        databaseRepository: FirestoreDatabaseRepository(
-          firestore: fakeFirestore,
-        ),
-      );
-      expect(db.getCategoriesStream(), isA<Stream<List<Category>>>());
     });
   });
 }

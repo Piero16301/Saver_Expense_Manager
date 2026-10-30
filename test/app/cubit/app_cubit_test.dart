@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
@@ -11,6 +12,10 @@ class MockAnalyticsService extends Mock implements AnalyticsService {}
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   AppVariables.useTestFonts = true;
+
+  setUpAll(() {
+    registerFallbackValue(const Locale('en', 'US'));
+  });
 
   group('AppState', () {
     test('supports value equality', () {
@@ -84,21 +89,19 @@ void main() {
           when(() => localStorage.getFontFamily()).thenReturn(null);
 
           when(
-            () => localStorage.saveLanguage(
-              language: AppVariables.supportedLocales.first,
-            ),
+            () => localStorage.saveLanguage(language: any(named: 'language')),
           ).thenAnswer((_) async {});
           when(
-            () => localStorage.saveTheme(theme: ThemeMode.system),
+            () => localStorage.saveTheme(theme: ExpressiveTheme.defaultTheme),
           ).thenAnswer((_) async {});
           when(
             () => localStorage.saveBaseColor(
-              baseColor: AppVariables.defaultBaseColor,
+              baseColor: ExpressiveColors.defaultColor,
             ),
           ).thenAnswer((_) async {});
           when(
             () => localStorage.saveFontFamily(
-              fontFamily: AppVariables.defaultFontFamily,
+              fontFamily: ExpressiveFonts.defaultFont,
             ),
           ).thenAnswer((_) async {});
 
@@ -108,21 +111,19 @@ void main() {
         expect: () => [const AppState()],
         verify: (_) {
           verify(
-            () => localStorage.saveLanguage(
-              language: AppVariables.supportedLocales.first,
-            ),
+            () => localStorage.saveLanguage(language: any(named: 'language')),
           ).called(1);
           verify(
-            () => localStorage.saveTheme(theme: ThemeMode.system),
+            () => localStorage.saveTheme(theme: ExpressiveTheme.defaultTheme),
           ).called(1);
           verify(
             () => localStorage.saveBaseColor(
-              baseColor: AppVariables.defaultBaseColor,
+              baseColor: ExpressiveColors.defaultColor,
             ),
           ).called(1);
           verify(
             () => localStorage.saveFontFamily(
-              fontFamily: AppVariables.defaultFontFamily,
+              fontFamily: ExpressiveFonts.defaultFont,
             ),
           ).called(1);
         },

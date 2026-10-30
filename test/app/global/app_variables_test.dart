@@ -15,12 +15,6 @@ void main() {
       expect(AppVariables.formatDate.format(date), equals('05/10/2023'));
     });
 
-    test('getAvailableFonts returns a non-empty string map', () {
-      final fonts = AppVariables.getAvailableFonts();
-      expect(fonts.isNotEmpty, isTrue);
-      expect(fonts.containsKey('Roboto'), isTrue);
-    });
-
     test('chart dimensions are properly configured', () {
       expect(AppVariables.mobileChartMaxHeight, equals(340.0));
       expect(AppVariables.webChartMaxHeight, equals(480.0));

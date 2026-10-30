@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -66,7 +67,7 @@ void main() {
       tester,
     ) async {
       await pumpProfilePage(tester);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders ProfileView inside BlocProvider', (tester) async {

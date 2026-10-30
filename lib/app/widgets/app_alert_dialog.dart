@@ -1,5 +1,5 @@
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:saver_expense_manager/app/app.dart';
 
 class AppAlertDialog extends StatelessWidget {
   const AppAlertDialog({
@@ -41,10 +41,16 @@ class AppAlertDialog extends StatelessWidget {
           spacing: 10,
           children: [
             Expanded(
-              child: AppOutlinedButton(onPressed: onCancel, label: cancelLabel),
+              child: ExpressiveButton.outlined(
+                onPressed: onCancel,
+                label: cancelLabel,
+              ),
             ),
             Expanded(
-              child: AppFilledButton(onPressed: onConfirm, label: confirmLabel),
+              child: ExpressiveButton.filled(
+                onPressed: onConfirm,
+                label: confirmLabel,
+              ),
             ),
           ],
         ),

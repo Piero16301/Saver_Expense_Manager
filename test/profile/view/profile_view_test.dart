@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -90,7 +91,7 @@ void main() {
       tester,
     ) async {
       await pumpProfileView(tester, state: const ProfileState());
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('shows user display name when loaded', (tester) async {
@@ -272,7 +273,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(AppFilledButton));
+      await tester.tap(find.byType(ExpressiveButton).last);
       await tester.pumpAndSettle();
 
       expect(find.byType(AppAlertDialog), findsOneWidget);
@@ -289,7 +290,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(AppFilledButton));
+      await tester.tap(find.byType(ExpressiveButton).last);
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
@@ -312,7 +313,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(AppFilledButton));
+      await tester.tap(find.byType(ExpressiveButton).last);
       await tester.pumpAndSettle();
       expect(find.byType(AppAlertDialog), findsOneWidget);
 

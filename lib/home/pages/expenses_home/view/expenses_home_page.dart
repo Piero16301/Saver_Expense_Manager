@@ -1,4 +1,3 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/home/home.dart';
 
@@ -7,9 +6,6 @@ class ExpensesHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => ExpensesHomeCubit()..init(),
-      child: const ExpensesHomeView(),
-    );
+    return const ExpensesHomeView();
   }
 }

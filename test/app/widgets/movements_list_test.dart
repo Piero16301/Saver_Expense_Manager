@@ -1,6 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -24,8 +22,6 @@ void main() {
     late AuthService mockAuth;
     late DatabaseService mockDatabase;
     late MockRemoteConfigService mockRemoteConfig;
-    late FakeFirebaseFirestore fakeFirestore;
-    late Query<Map<String, dynamic>> query;
 
     const testCategory = Category(
       id: '1',
@@ -45,11 +41,6 @@ void main() {
       mockAuth = MockAuthService();
       mockDatabase = MockDatabaseService();
       mockRemoteConfig = MockRemoteConfigService();
-      fakeFirestore = FakeFirebaseFirestore();
-
-      query = fakeFirestore
-          .collection(AppVariables.movementsCollection)
-          .where('user', isEqualTo: 'user1');
 
       when(() => appCubit.state).thenReturn(const AppState());
 
@@ -70,25 +61,7 @@ void main() {
         ..registerSingleton<RemoteConfigService>(mockRemoteConfig);
 
       when(() => mockRemoteConfig.paginationLimit).thenReturn(10);
-
       when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user1'));
-      when(
-        () => mockDatabase.getMovementsStream(
-          userId: any(named: 'userId'),
-          startDate: any(named: 'startDate'),
-          endDate: any(named: 'endDate'),
-          type: any(named: 'type'),
-          categoryId: any(named: 'categoryId'),
-          limit: any(named: 'limit'),
-          orderByDate: any(named: 'orderByDate'),
-        ),
-      ).thenAnswer(
-        (_) => query.snapshots().map(
-          (snapshot) => snapshot.docs
-              .map((doc) => Movement.fromJson(doc.data()))
-              .toList(),
-        ),
-      );
     });
 
     Widget createWidgetUnderTest({DateTime? monthSelected}) {
@@ -127,6 +100,18 @@ void main() {
     }
 
     testWidgets('renders normally and shows empty message', (tester) async {
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value(<Movement>[]));
+
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -146,9 +131,17 @@ void main() {
         user: 'user1',
       );
 
-      await fakeFirestore
-          .collection(AppVariables.movementsCollection)
-          .add(movement.toJson());
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value([movement]));
 
       await tester.pumpWidget(createWidgetUnderTest(monthSelected: date));
       await tester.pumpAndSettle();

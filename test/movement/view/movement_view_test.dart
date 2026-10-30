@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -139,7 +140,7 @@ void main() {
       ).thenAnswer((_) async => true);
 
       await pumpMovementView(tester);
-      await tester.tap(find.byType(FloatingActionButton));
+      await tester.tap(find.byType(ExpressiveFab));
       await tester.pumpAndSettle();
 
       verify(() => movementCubit.saveMovement('uid', any())).called(1);
@@ -198,7 +199,7 @@ void main() {
       when(() => movementCubit.state).thenReturn(oldDateState);
 
       await pumpMovementView(tester);
-      await tester.tap(find.byType(FloatingActionButton));
+      await tester.tap(find.byType(ExpressiveFab));
       await tester.pumpAndSettle();
 
       expect(find.byType(AppAlertDialog), findsOneWidget);
@@ -229,7 +230,7 @@ void main() {
       when(() => movementCubit.state).thenReturn(oldDateState);
 
       await pumpMovementView(tester);
-      await tester.tap(find.byType(FloatingActionButton));
+      await tester.tap(find.byType(ExpressiveFab));
       await tester.pumpAndSettle();
 
       expect(find.byType(AppAlertDialog), findsOneWidget);
