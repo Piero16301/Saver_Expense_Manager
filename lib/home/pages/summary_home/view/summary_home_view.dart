@@ -262,85 +262,83 @@ class ResumeItemCardMovements extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     final card = Opacity(
       opacity: isSelected ? 1.0 : 0.5,
-      child: Card(
-        margin: EdgeInsets.zero,
-        elevation: isSelected ? 2 : 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
             color: isSelected
                 ? color.withValues(alpha: 0.5)
                 : Colors.transparent,
             width: 2,
           ),
         ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+        child: ExpressiveCard(
+          margin: EdgeInsets.zero,
+          padding: const EdgeInsets.all(12),
+          borderRadius: BorderRadius.circular(18),
+          backgroundColor: isSelected
+              ? color.withValues(alpha: 0.12)
+              : theme.colorScheme.surfaceContainerLow,
           onTap: onTap != null ? () => onTap!(type) : null,
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              spacing: 8,
-              children: [
-                Row(
-                  spacing: 8,
-                  children: [
-                    HugeIcon(icon: _icon, size: 18, color: color),
-                    Text(
-                      _title(context),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            spacing: 8,
+            children: [
+              Row(
+                spacing: 8,
+                children: [
+                  HugeIcon(icon: _icon, size: 18, color: color),
+                  Text(
+                    _title(context),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
-                  ],
-                ),
-                Text(
-                  _valueFormatted(),
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontVariations: <FontVariation>[
-                      ...(Theme.of(
-                                context,
-                              ).textTheme.bodyLarge?.fontVariations ??
-                              const <FontVariation>[])
-                          .where((v) => v.axis != 'wght'),
-                      const FontVariation('wght', 700),
-                    ],
-                    color: color,
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  spacing: 4,
-                  children: [
-                    HugeIcon(
-                      icon: difference >= 0
-                          ? HugeIcons.strokeRoundedArrowUpDouble
-                          : HugeIcons.strokeRoundedArrowDownDouble,
-                      size: 16,
-                      color: _differenceColor,
-                    ),
-                    Text(
-                      '${difference >= 0 ? '+' : ''}'
-                      '${difference.abs().toInt()}%',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: _differenceColor,
-                        fontVariations: <FontVariation>[
-                          ...(Theme.of(
-                                    context,
-                                  ).textTheme.bodyMedium?.fontVariations ??
-                                  const <FontVariation>[])
-                              .where((v) => v.axis != 'wght'),
-                          const FontVariation('wght', 700),
-                        ],
-                      ),
-                    ),
+                ],
+              ),
+              Text(
+                _valueFormatted(),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontVariations: <FontVariation>[
+                    ...(theme.textTheme.bodyLarge?.fontVariations ??
+                            const <FontVariation>[])
+                        .where((v) => v.axis != 'wght'),
+                    const FontVariation('wght', 700),
                   ],
+                  color: color,
                 ),
-              ],
-            ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 4,
+                children: [
+                  HugeIcon(
+                    icon: difference >= 0
+                        ? HugeIcons.strokeRoundedArrowUpDouble
+                        : HugeIcons.strokeRoundedArrowDownDouble,
+                    size: 16,
+                    color: _differenceColor,
+                  ),
+                  Text(
+                    '${difference >= 0 ? '+' : ''}'
+                    '${difference.abs().toInt()}%',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: _differenceColor,
+                      fontVariations: <FontVariation>[
+                        ...(theme.textTheme.bodyMedium?.fontVariations ??
+                                const <FontVariation>[])
+                            .where((v) => v.axis != 'wght'),
+                        const FontVariation('wght', 700),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -455,17 +453,14 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
             : 0.0;
         final ranking = index + 1;
 
-        return InkWell(
-          borderRadius: BorderRadius.circular(16),
+        return CategoryExpenseCard(
+          category: categoryData.category,
+          amount: categoryData.totalExpense,
+          percentage: percentage,
+          ranking: ranking,
           onTap: () => context.pushNamed(
             AppRoute.category.name,
             extra: categoryData.category,
-          ),
-          child: CategoryExpenseCard(
-            category: categoryData.category,
-            amount: categoryData.totalExpense,
-            percentage: percentage,
-            ranking: ranking,
           ),
         );
       },
@@ -508,13 +503,23 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
                         selectedFilter = newSelection.first;
                       });
                     },
-                    style: const ButtonStyle(
+                    style: ButtonStyle(
                       visualDensity: VisualDensity.compact,
-                      shape: WidgetStatePropertyAll(
+                      shape: const WidgetStatePropertyAll(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
                       ),
+                      backgroundColor: WidgetStateProperty.resolveWith((
+                        states,
+                      ) {
+                        if (states.contains(WidgetState.selected)) {
+                          return Theme.of(
+                            context,
+                          ).colorScheme.secondaryContainer;
+                        }
+                        return Theme.of(context).colorScheme.surfaceContainer;
+                      }),
                     ),
                   ),
                 ),
@@ -560,15 +565,27 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
                             selectedFilter = newSelection.first;
                           });
                         },
-                        style: const ButtonStyle(
+                        style: ButtonStyle(
                           visualDensity: VisualDensity.compact,
-                          shape: WidgetStatePropertyAll(
+                          shape: const WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
-                                Radius.circular(16),
+                                Radius.circular(20),
                               ),
                             ),
                           ),
+                          backgroundColor: WidgetStateProperty.resolveWith((
+                            states,
+                          ) {
+                            if (states.contains(WidgetState.selected)) {
+                              return Theme.of(
+                                context,
+                              ).colorScheme.secondaryContainer;
+                            }
+                            return Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainer;
+                          }),
                         ),
                       ),
                     ),
@@ -594,6 +611,7 @@ class CategoryExpenseCard extends StatelessWidget {
     required this.amount,
     required this.percentage,
     required this.ranking,
+    this.onTap,
     super.key,
   });
 
@@ -601,6 +619,7 @@ class CategoryExpenseCard extends StatelessWidget {
   final double amount;
   final double percentage;
   final int ranking;
+  final VoidCallback? onTap;
 
   String _getRankingText() {
     return '#$ranking';
@@ -635,6 +654,7 @@ class CategoryExpenseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final categoryColor = HexColor.fromHex(category.color);
 
     final isLandscape =
@@ -643,106 +663,102 @@ class CategoryExpenseCard extends StatelessWidget {
     return SizedBox(
       width: isLandscape ? double.infinity : 180,
       height: 180,
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: categoryColor.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: HugeIcon(
-                      icon: AppFunctions.getCategoryIcon(category.icon),
-                      color: categoryColor,
-                      strokeWidth: 2,
-                    ),
+      child: ExpressiveCard(
+        margin: EdgeInsets.zero,
+        padding: const EdgeInsets.all(14),
+        borderRadius: BorderRadius.circular(20),
+        backgroundColor: theme.colorScheme.surfaceContainerLow,
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: categoryColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: _rankingBackgroundColor,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      _getRankingText(),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: _rankingColor,
-                        fontVariations: <FontVariation>[
-                          ...(Theme.of(
-                                    context,
-                                  ).textTheme.bodyMedium?.fontVariations ??
-                                  const <FontVariation>[])
-                              .where((v) => v.axis != 'wght'),
-                          const FontVariation('wght', 700),
-                        ],
-                      ),
-                    ),
+                  child: HugeIcon(
+                    icon: AppFunctions.getCategoryIcon(category.icon),
+                    color: categoryColor,
+                    strokeWidth: 2,
                   ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppFunctions.getCategoryName(category.name, l10n),
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w400,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    AppExtensions.moneyFormat.format(amount),
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  decoration: BoxDecoration(
+                    color: _rankingBackgroundColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _getRankingText(),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: _rankingColor,
                       fontVariations: <FontVariation>[
-                        ...(Theme.of(
-                                  context,
-                                ).textTheme.titleLarge?.fontVariations ??
+                        ...(theme.textTheme.bodyMedium?.fontVariations ??
                                 const <FontVariation>[])
                             .where((v) => v.axis != 'wght'),
                         const FontVariation('wght', 700),
                       ],
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
-                  ExpressiveLinearProgressIndicator(
-                    value: percentage / 100,
-                    backgroundColor: categoryColor.withValues(alpha: 0.2),
-                    color: categoryColor,
-                    height: 12,
-                    strokeWidth: 6,
-                    borderRadius: BorderRadius.circular(6),
+                ),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppFunctions.getCategoryName(category.name, l10n),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w500,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.summaryPercentageOfTotal(percentage.toInt()),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
-                      fontWeight: FontWeight.w500,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  AppExtensions.moneyFormat.format(amount),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontVariations: <FontVariation>[
+                      ...(theme.textTheme.titleLarge?.fontVariations ??
+                              const <FontVariation>[])
+                          .where((v) => v.axis != 'wght'),
+                      const FontVariation('wght', 700),
+                    ],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                ExpressiveLinearProgressIndicator(
+                  value: percentage / 100,
+                  backgroundColor: categoryColor.withValues(alpha: 0.2),
+                  color: categoryColor,
+                  height: 12,
+                  strokeWidth: 6,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.summaryPercentageOfTotal(percentage.toInt()),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.textTheme.bodySmall?.color?.withValues(
+                      alpha: 0.6,
                     ),
+                    fontWeight: FontWeight.w500,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

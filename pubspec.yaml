@@ -14,7 +14,7 @@ dependencies:
   cunning_document_scanner: ^3.0.4
   equatable: ^3.0.0
   expressive_kit: ^0.0.8
-  file_picker: ^13.3.0
+  file_picker: ^13.3.1
   firebase_ai: ^5.1.0
   firebase_analytics: ^13.0.1
   firebase_app_check: ^0.5.1
