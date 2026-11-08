@@ -43,6 +43,7 @@ void main() {
     mockAuth = MockFirebaseAuth();
     mockGoogleSignIn = MockGoogleSignIn();
     mockUser = MockUser();
+    when(() => mockUser.uid).thenReturn('user123');
     mockPerformanceService = MockPerformanceService();
     mockCrashService = MockCrashService();
 
@@ -413,5 +414,25 @@ void main() {
         }
       },
     );
+
+    test('deleteAccount calls currentUser.delete', () async {
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockUser.delete()).thenAnswer((_) async {});
+      expect(await repository.deleteAccount(), isTrue);
+      verify(() => mockUser.delete()).called(1);
+    });
+
+    test('deleteAccount records error on exception', () async {
+      when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockUser.delete()).thenThrow(Exception('Delete failed'));
+      expect(await repository.deleteAccount(), isFalse);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'AuthService deleteAccount error',
+        ),
+      ).called(1);
+    });
   });
 }

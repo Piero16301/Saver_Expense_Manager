@@ -1,0 +1,15 @@
+{
+  "name": "saver-storage-cleanup",
+  "version": "1.0.0",
+  "description": "Script de limpieza de archivos huérfanos y migración de Firebase Storage",
+  "main": "cleanup_storage.js",
+  "scripts": {
+    "clean": "node cleanup_storage.js",
+    "clean:delete": "node cleanup_storage.js --delete",
+    "clean:migrate": "node cleanup_storage.js --migrate",
+    "clean:all": "node cleanup_storage.js --delete --migrate"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.5.0"
+  }
+}

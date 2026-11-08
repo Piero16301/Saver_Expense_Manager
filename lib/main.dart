@@ -1,7 +1,6 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/bootstrap.dart';
@@ -18,9 +17,8 @@ Future<void> main() async {
   // Setup service locator
   setupServiceLocator(currentEnv);
 
-  if (kDebugMode) {
-    await dotenv.load();
-  }
+  const appCheckDebugToken = String.fromEnvironment('APP_CHECK_DEBUG_TOKEN');
+  final debugToken = appCheckDebugToken.isEmpty ? null : appCheckDebugToken;
 
   // Initialize services and plugins in parallel
   final performance = getIt<PerformanceService>();
@@ -28,17 +26,15 @@ Future<void> main() async {
   await Future.wait([
     FirebaseAppCheck.instance.activate(
       providerWeb: kDebugMode
-          ? WebDebugProvider(debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'])
+          ? WebDebugProvider(debugToken: debugToken)
           : ReCaptchaEnterpriseProvider(
               DefaultFirebaseOptions.recaptchaEnterpriseSiteKey,
             ),
       providerAndroid: kDebugMode
-          ? AndroidDebugProvider(
-              debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'],
-            )
+          ? AndroidDebugProvider(debugToken: debugToken)
           : const AndroidPlayIntegrityProvider(),
       providerApple: kDebugMode
-          ? AppleDebugProvider(debugToken: dotenv.env['APP_CHECK_DEBUG_TOKEN'])
+          ? AppleDebugProvider(debugToken: debugToken)
           : const AppleDeviceCheckProvider(),
     ),
     getIt<AuthService>().initialize(),

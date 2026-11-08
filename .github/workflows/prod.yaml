@@ -12,6 +12,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'web/**'
+      - 'assets/**'
+      - 'whatsnew/**'
+      - 'pubspec.yaml'
+      - 'analysis_options.yaml'
+      - 'l10n.yaml'
+      - '.github/workflows/prod.yaml'
 
 jobs:
   check-commit-type:
@@ -77,8 +89,6 @@ jobs:
       - name: 📦 Install Dependencies
         run: |
           flutter pub get
-      - name: 📄 Create dummy .env file
-        run: touch .env
       - name: ✨ Format Check
         run: |
           dart format --set-exit-if-changed .

@@ -10,7 +10,8 @@ Future<void> openAttachment(
   Future<String?> Function()? getDownloadURL,
 }) async {
   final appTemDir = await getApplicationCacheDirectory();
-  final filePath = '${appTemDir.path}/$fileName';
+  final baseName = fileName.split('/').last;
+  final filePath = '${appTemDir.path}/$baseName';
   final file = File(filePath);
 
   final data = await getData() ?? Uint8List(0);

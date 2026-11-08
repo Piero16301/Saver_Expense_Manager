@@ -42,4 +42,6 @@ class AuthService {
 
   Future<bool> updateUserName(String newName) =>
       _authRepository.updateUserName(newName);
+
+  Future<bool> deleteAccount() => _authRepository.deleteAccount();
 }

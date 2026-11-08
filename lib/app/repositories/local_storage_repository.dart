@@ -20,10 +20,14 @@ abstract class LocalStorageRepository {
   Color? getBaseColor();
   void saveFontFamily({required String fontFamily});
   String? getFontFamily();
-  void saveRecommendationsDate({required DateTime date});
-  DateTime? getRecommendationsDate();
-  void saveRecommendations({required List<String> recommendations});
-  List<String>? getRecommendations();
+  void saveRecommendationsDate({required DateTime date, String? userId});
+  DateTime? getRecommendationsDate({String? userId});
+  void saveRecommendations({
+    required List<String> recommendations,
+    String? userId,
+  });
+  List<String>? getRecommendations({String? userId});
+  void clearRecommendations({String? userId});
 }
 
 class MockLocalStorageRepository implements LocalStorageRepository {
@@ -63,20 +67,26 @@ class MockLocalStorageRepository implements LocalStorageRepository {
   }
 
   @override
-  void saveRecommendationsDate({required DateTime date}) {}
+  void saveRecommendationsDate({required DateTime date, String? userId}) {}
 
   @override
-  DateTime? getRecommendationsDate() {
+  DateTime? getRecommendationsDate({String? userId}) {
     return DateTime.now();
   }
 
   @override
-  void saveRecommendations({required List<String> recommendations}) {}
+  void saveRecommendations({
+    required List<String> recommendations,
+    String? userId,
+  }) {}
 
   @override
-  List<String>? getRecommendations() {
+  List<String>? getRecommendations({String? userId}) {
     return [];
   }
+
+  @override
+  void clearRecommendations({String? userId}) {}
 }
 
 class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
@@ -161,21 +171,24 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
     return _prefs?.getString(LocalStorageRepository.kUserFontFamily);
   }
 
+  String _recDateKey(String? userId) => userId != null && userId.isNotEmpty
+      ? '${LocalStorageRepository.kUserRecommendationsDate}_$userId'
+      : LocalStorageRepository.kUserRecommendationsDate;
+
+  String _recKey(String? userId) => userId != null && userId.isNotEmpty
+      ? '${LocalStorageRepository.kUserRecommendations}_$userId'
+      : LocalStorageRepository.kUserRecommendations;
+
   @override
-  void saveRecommendationsDate({required DateTime date}) {
+  void saveRecommendationsDate({required DateTime date, String? userId}) {
     _prefs
-        ?.setString(
-          LocalStorageRepository.kUserRecommendationsDate,
-          AppVariables.formatDate.format(date),
-        )
+        ?.setString(_recDateKey(userId), AppVariables.formatDate.format(date))
         .ignore();
   }
 
   @override
-  DateTime? getRecommendationsDate() {
-    final dateString = _prefs?.getString(
-      LocalStorageRepository.kUserRecommendationsDate,
-    );
+  DateTime? getRecommendationsDate({String? userId}) {
+    final dateString = _prefs?.getString(_recDateKey(userId));
     if (dateString == null) {
       return null;
     }
@@ -183,17 +196,25 @@ class SharedPrefsLocalStorageRepository implements LocalStorageRepository {
   }
 
   @override
-  void saveRecommendations({required List<String> recommendations}) {
-    _prefs
-        ?.setStringList(
-          LocalStorageRepository.kUserRecommendations,
-          recommendations,
-        )
-        .ignore();
+  void saveRecommendations({
+    required List<String> recommendations,
+    String? userId,
+  }) {
+    _prefs?.setStringList(_recKey(userId), recommendations).ignore();
   }
 
   @override
-  List<String>? getRecommendations() {
-    return _prefs?.getStringList(LocalStorageRepository.kUserRecommendations);
+  List<String>? getRecommendations({String? userId}) {
+    return _prefs?.getStringList(_recKey(userId));
+  }
+
+  @override
+  void clearRecommendations({String? userId}) {
+    _prefs?.remove(_recKey(userId)).ignore();
+    _prefs?.remove(_recDateKey(userId)).ignore();
+    if (userId == null) {
+      _prefs?.remove(LocalStorageRepository.kUserRecommendations).ignore();
+      _prefs?.remove(LocalStorageRepository.kUserRecommendationsDate).ignore();
+    }
   }
 }

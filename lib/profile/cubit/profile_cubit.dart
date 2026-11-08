@@ -132,6 +132,23 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  Future<void> deleteAccount(AppLocalizations l10n) async {
+    emit(state.copyWith(status: ProfileStatus.loading));
+    final success = await _authService.deleteAccount();
+    if (success) {
+      getIt<AnalyticsService>().logEvent(name: 'delete_account');
+      emit(state.copyWith(status: ProfileStatus.success));
+    } else {
+      emit(
+        state.copyWith(
+          status: ProfileStatus.failure,
+          errorMessage: l10n.genericError,
+        ),
+      );
+      emit(state.copyWith(status: ProfileStatus.initial));
+    }
+  }
+
   @override
   Future<void> close() async {
     await _userSubscription?.cancel();

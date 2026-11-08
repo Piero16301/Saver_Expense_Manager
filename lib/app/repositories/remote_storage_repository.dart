@@ -66,7 +66,7 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
           ? SettableMetadata(contentType: mimeType)
           : null;
       await ref.putData(bytes, metadata);
-      return ref.name;
+      return ref.fullPath;
     } on Exception catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,

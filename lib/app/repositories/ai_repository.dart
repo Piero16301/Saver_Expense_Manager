@@ -110,7 +110,9 @@ class FirebaseAiRepository implements AiRepository {
         return null;
       }
 
-      final response = await genModel.generateContent([Content.multi(parts)]);
+      final response = await genModel
+          .generateContent([Content.multi(parts)])
+          .timeout(AppVariables.aiTimeoutDuration);
 
       return response.text;
     } catch (e, stackTrace) {
@@ -151,10 +153,9 @@ class FirebaseAiRepository implements AiRepository {
         return null;
       }
 
-      final response = await _localModel.generate(
-        prompt: textPrompt.text ?? '',
-        image: imagePrompt?.bytes,
-      );
+      final response = await _localModel
+          .generate(prompt: textPrompt.text ?? '', image: imagePrompt?.bytes)
+          .timeout(AppVariables.aiTimeoutDuration);
 
       return response.isEmpty || response.first.isEmpty ? null : response.first;
     } catch (e, stackTrace) {

@@ -95,23 +95,22 @@ class MovementCubit extends Cubit<MovementState> {
 
     // Save movement in Firebase Firestore
     final docId = state.id.isEmpty ? getIt<DatabaseService>().newId : state.id;
-    getIt<DatabaseService>().saveMovement(
-      movement: Movement(
-        id: docId,
-        title: state.title,
-        description: state.description,
-        date: state.date!.copyWith(
-          hour: nowDate.hour,
-          minute: nowDate.minute,
-          second: nowDate.second,
-        ),
-        category: state.category!,
-        price: state.price,
-        company: state.company,
-        attachments: state.attachments,
-        user: userId,
+    final movement = Movement(
+      id: docId,
+      title: state.title,
+      description: state.description,
+      date: state.date!.copyWith(
+        hour: nowDate.hour,
+        minute: nowDate.minute,
+        second: nowDate.second,
       ),
+      category: state.category!,
+      price: state.price,
+      company: state.company,
+      attachments: state.attachments,
+      user: userId,
     );
+    getIt<DatabaseService>().saveMovement(movement: movement);
 
     getIt<AnalyticsService>().logEvent(
       name: state.id.isEmpty ? 'add_movement' : 'edit_movement',
@@ -121,10 +120,7 @@ class MovementCubit extends Cubit<MovementState> {
         'amount': state.price,
       },
     );
-    getIt<CrashService>().log(
-      'Saved movement: title=${state.title}, price=${state.price}, '
-      'category=${state.category?.name}',
-    );
+    getIt<CrashService>().log('Saved movement: id=${movement.id}');
   }
 
   void removeMovement() {

@@ -11,7 +11,8 @@
         "--flavor",
         "production",
         "--target",
-        "lib/main.dart"
+        "lib/main.dart",
+        "--dart-define-from-file=.env"
       ]
     },
     {
@@ -23,7 +24,8 @@
         "--web-hostname",
         "localhost",
         "--target",
-        "lib/main.dart"
+        "lib/main.dart",
+        "--dart-define-from-file=.env"
       ]
     }
   ]

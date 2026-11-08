@@ -11,6 +11,9 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+node_modules/
+service-account*.json
+serviceAccountKey*.json
 
 # IntelliJ related
 *.iml
@@ -122,3 +125,9 @@ graphify-out/
 
 # Env file
 .env
+
+# Functions & Python
+functions/venv/
+functions/.venv/
+__pycache__/
+*.pyc
