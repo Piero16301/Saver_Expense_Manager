@@ -458,8 +458,10 @@ class AddMovementBottomSheet extends StatelessWidget {
     final loader = AppLoader(context);
 
     try {
-      final files =
-          await CunningDocumentScanner.getPictures(noOfPages: 1) ?? [];
+      final scanResult = await CunningDocumentScanner.scanDocuments(
+        noOfPages: 1,
+      );
+      final files = scanResult?.images ?? [];
 
       if (files.isEmpty) {
         return;
