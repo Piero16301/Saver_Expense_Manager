@@ -33,10 +33,7 @@
             "source": "functions",
             "codebase": "default",
             "ignore": [
-                "venv",
-                ".venv",
-                "__pycache__",
-                "*.pyc",
+                "node_modules",
                 ".git",
                 "firebase-debug.log",
                 "firebase-debug.*.log",

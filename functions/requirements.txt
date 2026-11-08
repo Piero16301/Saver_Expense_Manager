@@ -1,6 +1,0 @@
-# Dependencias de Cloud Functions (Python 3.10+)
-firebase-functions>=0.1.0
-firebase-admin>=6.4.0
-google-cloud-firestore>=2.14.0
-google-cloud-storage>=2.14.0
-

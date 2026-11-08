@@ -1,14 +1,7 @@
-venv/
-.venv/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.pytest_cache/
-.coverage
-htmlcov/
+node_modules/
 .env
-*.log
+.env.*
+*-debug.log
 firebase-debug.log
 firebase-debug.*.log
 service-account.json

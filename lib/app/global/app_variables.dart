@@ -11,6 +11,8 @@ class AppVariables {
   static const List<String> imageExtensions = ['png', 'jpg', 'jpeg'];
   static const String unsupportedLocalModelFile =
       'UNSUPPORTED_LOCAL_MODEL_FILE';
+  static const String deleteUserAccountFunctionUrl =
+      'https://deleteuseraccount-hneydkufsa-uc.a.run.app';
 
   static final minDate = DateTime(2020);
   static const deafultMonthsTrend = 10;

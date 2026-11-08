@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/firebase_options.dart';
 
@@ -87,12 +88,17 @@ class MockAuthRepository implements AuthRepository {
 }
 
 class FirebaseAuthRepository implements AuthRepository {
-  FirebaseAuthRepository({FirebaseAuth? auth, GoogleSignIn? googleSignIn})
-    : _auth = auth ?? FirebaseAuth.instance,
-      _googleSignIn = googleSignIn ?? GoogleSignIn.instance;
+  FirebaseAuthRepository({
+    FirebaseAuth? auth,
+    GoogleSignIn? googleSignIn,
+    http.Client? httpClient,
+  }) : _auth = auth ?? FirebaseAuth.instance,
+       _googleSignIn = googleSignIn ?? GoogleSignIn.instance,
+       _httpClient = httpClient ?? http.Client();
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
+  final http.Client _httpClient;
 
   @override
   Future<void> initialize() async {
@@ -341,12 +347,41 @@ class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<bool> deleteAccount() async {
     try {
-      try {
-        final currentUid = _auth.currentUser?.uid;
-        if (currentUid != null && getIt.isRegistered<LocalStorageService>()) {
+      final user = _auth.currentUser;
+      final currentUid = user?.uid;
+      if (currentUid != null && getIt.isRegistered<LocalStorageService>()) {
+        try {
           getIt<LocalStorageService>().clearRecommendations(userId: currentUid);
+        } on Object catch (_) {}
+      }
+
+      // 1. Invocar Cloud Function (2ª Gen)
+      if (user != null) {
+        try {
+          final idToken = await user.getIdToken();
+          if (idToken != null) {
+            final response = await _httpClient
+                .post(
+                  Uri.parse(AppVariables.deleteUserAccountFunctionUrl),
+                  headers: {
+                    'Authorization': 'Bearer $idToken',
+                    'Content-Type': 'application/json',
+                  },
+                )
+                .timeout(AppVariables.timeoutDuration);
+
+            if (response.statusCode == 200) {
+              await _auth.signOut();
+              return true;
+            }
+          }
+        } on Object catch (_) {
+          // Si la Cloud Function aún no está disponible o falla por red,
+          // se procede al borrado directo de cuenta en Firebase Auth como
+          // fallback.
         }
-      } on Object catch (_) {}
+      }
+
       await _auth.currentUser?.delete();
       return true;
     } on Exception catch (e, stackTrace) {

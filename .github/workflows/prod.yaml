@@ -12,6 +12,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'lib/**'
+      - 'test/**'
+      - 'android/**'
+      - 'ios/**'
+      - 'web/**'
+      - 'assets/**'
+      - 'whatsnew/**'
+      - 'pubspec.yaml'
+      - 'analysis_options.yaml'
+      - 'l10n.yaml'
+      - '.github/workflows/prod.yaml'
 
 jobs:
   check-commit-type:

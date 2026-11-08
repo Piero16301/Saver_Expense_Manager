@@ -10,6 +10,6 @@
     "clean:all": "node cleanup_storage.js --delete --migrate"
   },
   "dependencies": {
-    "firebase-admin": "^13.10.0"
+    "firebase-admin": "^14.5.0"
   }
 }
