@@ -13,6 +13,8 @@ import '../../helpers/helpers.dart';
 
 class MockRemoteStorageService extends Mock implements RemoteStorageService {}
 
+class MockAuthService extends Mock implements AuthService {}
+
 void main() {
   late RemoteStorageService remoteStorageService;
   late MockFilePicker mockFilePicker;
@@ -34,6 +36,13 @@ void main() {
     getIt.registerLazySingleton<RemoteStorageService>(
       () => remoteStorageService,
     );
+
+    final mockAuth = MockAuthService();
+    when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user123'));
+    if (getIt.isRegistered<AuthService>()) {
+      await getIt.unregister<AuthService>();
+    }
+    getIt.registerLazySingleton<AuthService>(() => mockAuth);
   });
 
   group('AppFileField', () {

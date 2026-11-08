@@ -44,16 +44,20 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
 
   Future<void> getRecommendations({required AppLocalizations l10n}) async {
     final localStorage = getIt<LocalStorageService>();
+    final auth = getIt<AuthService>();
+    final userId = auth.currentUser?.uid;
     var nowDate = DateTime.now();
     nowDate = DateTime(nowDate.year, nowDate.month, nowDate.day);
-    final recommendationsDate = localStorage.getRecommendationsDate();
+    final recommendationsDate = localStorage.getRecommendationsDate(
+      userId: userId,
+    );
 
     if (recommendationsDate != null &&
         recommendationsDate.isAtSameMomentAs(nowDate)) {
       emit(
         state.copyWith(
           recommendationsStatus: RecommendationsStatus.success,
-          recommendations: localStorage.getRecommendations(),
+          recommendations: localStorage.getRecommendations(userId: userId),
           showRecommendations: false,
         ),
       );
@@ -63,7 +67,6 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
     emit(state.copyWith(recommendationsStatus: RecommendationsStatus.loading));
 
     try {
-      final auth = getIt<AuthService>();
       final language =
           getIt<LocalStorageService>().getLanguage() ??
           ExpressiveLanguages.defaultLocale;
@@ -74,8 +77,11 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
       );
       if (recommendations != null) {
         localStorage
-          ..saveRecommendations(recommendations: recommendations)
-          ..saveRecommendationsDate(date: nowDate);
+          ..saveRecommendations(
+            recommendations: recommendations,
+            userId: userId,
+          )
+          ..saveRecommendationsDate(date: nowDate, userId: userId);
       }
       if (!isClosed) {
         emit(

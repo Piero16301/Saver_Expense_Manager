@@ -158,7 +158,10 @@ class AppFileField extends StatelessWidget {
       if (file != null) {
         unawaited(appLoader.showLoading());
         final ext = file.name.split('.').last;
-        final path = '${const Uuid().v4()}.$ext';
+        final userId = getIt.isRegistered<AuthService>()
+            ? getIt<AuthService>().currentUser?.uid ?? 'anonymous'
+            : 'anonymous';
+        final path = 'users/$userId/attachments/${const Uuid().v4()}.$ext';
         final bytes = await file.readAsBytes();
         final name = await getIt<RemoteStorageService>().uploadFile(
           bytes,

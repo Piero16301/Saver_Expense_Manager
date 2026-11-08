@@ -353,7 +353,8 @@ class AddMovementBottomSheet extends StatelessWidget {
       }
 
       final ext = file.name.split('.').last;
-      final path = '${const Uuid().v4()}.$ext';
+      final userId = getIt<AuthService>().currentUser?.uid ?? 'anonymous';
+      final path = 'users/$userId/attachments/${const Uuid().v4()}.$ext';
       final bytes = await file.readAsBytes();
       final mimeType =
           lookupMimeType(file.name, headerBytes: bytes) ??
@@ -389,7 +390,21 @@ class AddMovementBottomSheet extends StatelessWidget {
         }
       }();
 
-      final (uploadName, movement) = await (uploadFuture, aiFuture).wait;
+      String? uploadName;
+      Movement? movement;
+      try {
+        final result = await (uploadFuture, aiFuture).wait;
+        uploadName = result.$1;
+        movement = result.$2;
+      } on Object catch (_) {
+        try {
+          final uploaded = await uploadFuture;
+          if (uploaded != null) {
+            unawaited(getIt<RemoteStorageService>().deleteFile(path));
+          }
+        } on Object catch (_) {}
+        rethrow;
+      }
       performance.stopTrace(trace);
 
       if (loader.isLoading) {
@@ -479,7 +494,8 @@ class AddMovementBottomSheet extends StatelessWidget {
       }
 
       final ext = files.first.split('.').last;
-      final path = '${const Uuid().v4()}.$ext';
+      final userId = getIt<AuthService>().currentUser?.uid ?? 'anonymous';
+      final path = 'users/$userId/attachments/${const Uuid().v4()}.$ext';
       final bytes = await File(files.first).readAsBytes();
       final mimeType =
           lookupMimeType(files.first, headerBytes: bytes) ??
@@ -515,7 +531,21 @@ class AddMovementBottomSheet extends StatelessWidget {
         }
       }();
 
-      final (uploadName, movement) = await (uploadFuture, aiFuture).wait;
+      String? uploadName;
+      Movement? movement;
+      try {
+        final result = await (uploadFuture, aiFuture).wait;
+        uploadName = result.$1;
+        movement = result.$2;
+      } on Object catch (_) {
+        try {
+          final uploaded = await uploadFuture;
+          if (uploaded != null) {
+            unawaited(getIt<RemoteStorageService>().deleteFile(path));
+          }
+        } on Object catch (_) {}
+        rethrow;
+      }
       performance.stopTrace(trace);
 
       if (loader.isLoading) {

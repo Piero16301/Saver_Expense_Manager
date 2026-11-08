@@ -147,5 +147,12 @@ void main() {
       expect(result, isTrue);
       verify(() => mockRepository.updateUserName('name')).called(1);
     });
+
+    test('deleteAccount calls repository', () async {
+      when(() => mockRepository.deleteAccount()).thenAnswer((_) async => true);
+      final result = await service.deleteAccount();
+      expect(result, isTrue);
+      verify(() => mockRepository.deleteAccount()).called(1);
+    });
   });
 }

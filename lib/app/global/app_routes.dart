@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' hide Category;
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -91,7 +92,7 @@ class AppRoutes {
           ],
         ),
       ],
-      debugLogDiagnostics: true,
+      debugLogDiagnostics: kDebugMode,
     );
   }
 

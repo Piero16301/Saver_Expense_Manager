@@ -42,21 +42,29 @@ class LocalStorageService {
     return _localStorageRepository.getFontFamily();
   }
 
-  void saveRecommendationsDate({required DateTime date}) {
-    _localStorageRepository.saveRecommendationsDate(date: date);
+  void saveRecommendationsDate({required DateTime date, String? userId}) {
+    _localStorageRepository.saveRecommendationsDate(date: date, userId: userId);
   }
 
-  DateTime? getRecommendationsDate() {
-    return _localStorageRepository.getRecommendationsDate();
+  DateTime? getRecommendationsDate({String? userId}) {
+    return _localStorageRepository.getRecommendationsDate(userId: userId);
   }
 
-  void saveRecommendations({required List<String> recommendations}) {
+  void saveRecommendations({
+    required List<String> recommendations,
+    String? userId,
+  }) {
     _localStorageRepository.saveRecommendations(
       recommendations: recommendations,
+      userId: userId,
     );
   }
 
-  List<String>? getRecommendations() {
-    return _localStorageRepository.getRecommendations();
+  List<String>? getRecommendations({String? userId}) {
+    return _localStorageRepository.getRecommendations(userId: userId);
+  }
+
+  void clearRecommendations({String? userId}) {
+    _localStorageRepository.clearRecommendations(userId: userId);
   }
 }

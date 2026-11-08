@@ -301,6 +301,20 @@ class ProfileView extends StatelessWidget {
                           label: l10n.logoutConfirm,
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ExpressiveButton.text(
+                          isExpanded: true,
+                          onPressed: () => _deleteAccount(context),
+                          icon: const HugeIcon(
+                            icon: HugeIcons.strokeRoundedDelete02,
+                            size: 20,
+                            color: Colors.redAccent,
+                          ),
+                          label: l10n.deleteAccountButton,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -328,6 +342,25 @@ class ProfileView extends StatelessWidget {
 
     if ((shouldLogout ?? false) && context.mounted) {
       await context.read<ProfileCubit>().logout(l10n);
+    }
+  }
+
+  Future<void> _deleteAccount(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AppAlertDialog(
+        title: l10n.confirmDeleteAccountTitle,
+        content: l10n.confirmDeleteAccountMessage,
+        onConfirm: () => Navigator.of(context).pop(true),
+        onCancel: () => Navigator.of(context).pop(false),
+        confirmLabel: l10n.deleteAccountConfirm,
+        cancelLabel: l10n.deleteAccountCancel,
+      ),
+    );
+
+    if ((shouldDelete ?? false) && context.mounted) {
+      await context.read<ProfileCubit>().deleteAccount(l10n);
     }
   }
 

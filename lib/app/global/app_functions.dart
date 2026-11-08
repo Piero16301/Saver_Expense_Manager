@@ -373,12 +373,13 @@ class AppFunctions {
         .replaceAll('```', '')
         .trim();
     var responseJson = <String, dynamic>{};
-    if (responseClean?[0] == '[') {
-      final responseList = jsonDecode(responseClean ?? '') as List<dynamic>;
-      responseJson = responseList.first as Map<String, dynamic>? ?? {};
-    } else {
-      responseJson =
-          jsonDecode(responseClean ?? '') as Map<String, dynamic>? ?? {};
+    if (responseClean != null && responseClean.isNotEmpty) {
+      if (responseClean.startsWith('[')) {
+        final responseList = jsonDecode(responseClean) as List<dynamic>;
+        responseJson = responseList.first as Map<String, dynamic>? ?? {};
+      } else {
+        responseJson = jsonDecode(responseClean) as Map<String, dynamic>? ?? {};
+      }
     }
 
     final movement = Movement.fromAiService(responseJson, categories);

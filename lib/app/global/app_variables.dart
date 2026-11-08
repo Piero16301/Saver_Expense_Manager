@@ -24,6 +24,7 @@ class AppVariables {
   static const animationDuration = Duration(milliseconds: 400);
   static const snackBarDuration = Duration(seconds: 5);
   static const timeoutDuration = Duration(seconds: 5);
+  static const aiTimeoutDuration = Duration(seconds: 10);
   static const remoteConfigFetchTimeout = Duration(minutes: 1);
   static const remoteConfigMinimumFetchInterval = Duration(hours: 1);
 
@@ -54,6 +55,8 @@ class AppVariables {
     'amazon',
     'bcp',
     'bravazo',
+    'capriccio',
+    'casaideas',
     'cinemark',
     'cineplanet',
     'cinepolis',
@@ -61,12 +64,16 @@ class AppVariables {
     'crisol',
     'directv',
     'disney',
+    'emtrafesa',
     'falabella',
+    'fexpress',
     'google',
     'hbo',
     'hidrandina',
     'indrive',
     'inkafarma',
+    'linea',
+    'luxfarma',
     'mass',
     'mercadolibre',
     'microsoft',
@@ -82,6 +89,7 @@ class AppVariables {
     'prime',
     'sanna',
     'sedalib',
+    'sodimac',
     'spotify',
     'starbucks',
     'tottus',

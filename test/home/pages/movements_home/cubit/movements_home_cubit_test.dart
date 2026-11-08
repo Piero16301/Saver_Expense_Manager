@@ -60,16 +60,23 @@ void main() {
 
     when(() => mockLocalStorage.getLanguage()).thenReturn(null);
     when(
-      () => mockLocalStorage.getRecommendationsDate(),
+      () =>
+          mockLocalStorage.getRecommendationsDate(userId: any(named: 'userId')),
     ).thenReturn(_todayDate);
-    when(() => mockLocalStorage.getRecommendations()).thenReturn(['Tip A']);
+    when(
+      () => mockLocalStorage.getRecommendations(userId: any(named: 'userId')),
+    ).thenReturn(['Tip A']);
     when(
       () => mockLocalStorage.saveRecommendations(
         recommendations: any(named: 'recommendations'),
+        userId: any(named: 'userId'),
       ),
     ).thenReturn(null);
     when(
-      () => mockLocalStorage.saveRecommendationsDate(date: any(named: 'date')),
+      () => mockLocalStorage.saveRecommendationsDate(
+        date: any(named: 'date'),
+        userId: any(named: 'userId'),
+      ),
     ).thenReturn(null);
 
     if (getIt.isRegistered<LocalStorageService>()) {
@@ -189,7 +196,8 @@ void main() {
       'constructor uses cached recommendations when date matches today',
       () async {
         when(
-          () => mockLocalStorage.getRecommendations(),
+          () =>
+              mockLocalStorage.getRecommendations(userId: any(named: 'userId')),
         ).thenReturn(['Tip 1', 'Tip 2']);
         final cubit = await buildCubit();
         expect(
@@ -203,7 +211,9 @@ void main() {
 
     test('getRecommendations fetches from remote if date is old', () async {
       when(
-        () => mockLocalStorage.getRecommendationsDate(),
+        () => mockLocalStorage.getRecommendationsDate(
+          userId: any(named: 'userId'),
+        ),
       ).thenReturn(DateTime(2020));
       when(
         () => mockRemoteConfig.geminiPromptDetectAntExpense,
@@ -237,6 +247,7 @@ void main() {
       verify(
         () => mockLocalStorage.saveRecommendations(
           recommendations: ['Tip 3', 'Tip 4'],
+          userId: any(named: 'userId'),
         ),
       ).called(1);
       await cubit.close();
@@ -244,7 +255,9 @@ void main() {
 
     test('getRecommendations sets failure state on Exception', () async {
       when(
-        () => mockLocalStorage.getRecommendationsDate(),
+        () => mockLocalStorage.getRecommendationsDate(
+          userId: any(named: 'userId'),
+        ),
       ).thenReturn(DateTime(2020));
       when(
         () => mockRemoteConfig.geminiPromptDetectAntExpense,

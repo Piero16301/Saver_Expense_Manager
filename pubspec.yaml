@@ -27,7 +27,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^9.1.1
-  flutter_dotenv: ^6.0.1
   flutter_localizations:
     sdk: flutter
   flutter_markdown_plus: ^1.0.12
@@ -85,4 +84,3 @@ flutter:
     - assets/animations/
     - assets/images/
     - assets/logos/
-    - .env

@@ -97,16 +97,16 @@ void main() {
       verify(() => mockReference.getData(any<int>())).called(1);
     });
 
-    test('uploadFile calls ref.putData and returns ref.name', () async {
+    test('uploadFile calls ref.putData and returns ref.fullPath', () async {
       final fakeTask = FakeUploadTask();
       when(
         () => mockReference.putData(any<Uint8List>(), any()),
       ).thenAnswer((_) => fakeTask);
-      when(() => mockReference.name).thenReturn('uploaded_file');
+      when(() => mockReference.fullPath).thenReturn('remote_path');
 
       final result = await repository.uploadFile(Uint8List(0), 'remote_path');
 
-      expect(result, equals('uploaded_file'));
+      expect(result, equals('remote_path'));
       verify(() => mockReference.putData(any<Uint8List>(), any())).called(1);
     });
 
@@ -183,14 +183,14 @@ void main() {
       when(
         () => mockReference.putData(any<Uint8List>(), any<SettableMetadata>()),
       ).thenAnswer((_) => fakeTask);
-      when(() => mockReference.name).thenReturn('image.png');
+      when(() => mockReference.fullPath).thenReturn('folder/image.png');
 
       final result = await repository.uploadFile(
         Uint8List(5),
         'folder/image.png',
       );
 
-      expect(result, equals('image.png'));
+      expect(result, equals('folder/image.png'));
       verify(
         () => mockReference.putData(any<Uint8List>(), any<SettableMetadata>()),
       ).called(1);

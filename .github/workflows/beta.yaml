@@ -54,8 +54,6 @@ jobs:
       - name: 📦 Install Dependencies
         run: |
           flutter pub get
-      - name: 📄 Create dummy .env file
-        run: touch .env
       - name: ✨ Format Check
         run: |
           dart format --set-exit-if-changed .
@@ -103,8 +101,6 @@ jobs:
 
       - name: 📦 Install Dependencies
         run: flutter pub get
-      - name: 📄 Create dummy .env file
-        run: touch .env
       - name: 🔢 Compute build name
         id: build_name
         run: |
@@ -177,8 +173,6 @@ jobs:
           channel: "stable"
       - name: 📦 Install Dependencies
         run: flutter pub get
-      - name: 📄 Create dummy .env file
-        run: touch .env
       - name: 🔢 Compute build name
         id: build_name
         run: |

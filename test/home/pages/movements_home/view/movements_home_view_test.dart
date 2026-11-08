@@ -70,10 +70,15 @@ void main() {
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockCubit.state).thenReturn(const MovementsHomeState());
     when(() => mockLocalStorage.getLanguage()).thenReturn(null);
-    when(() => mockLocalStorage.getRecommendationsDate()).thenReturn(
+    when(
+      () =>
+          mockLocalStorage.getRecommendationsDate(userId: any(named: 'userId')),
+    ).thenReturn(
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
     );
-    when(() => mockLocalStorage.getRecommendations()).thenReturn([]);
+    when(
+      () => mockLocalStorage.getRecommendations(userId: any(named: 'userId')),
+    ).thenReturn([]);
 
     when(
       () => mockDatabase.getCategoriesStream(),

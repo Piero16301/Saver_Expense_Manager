@@ -273,7 +273,14 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(ExpressiveButton).last);
+      final logoutButton = find.ancestor(
+        of: find.byWidgetPredicate(
+          (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedLogout01,
+        ),
+        matching: find.byType(ExpressiveButton),
+      );
+      await tester.ensureVisible(logoutButton);
+      await tester.tap(logoutButton);
       await tester.pumpAndSettle();
 
       expect(find.byType(AppAlertDialog), findsOneWidget);
@@ -290,7 +297,14 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(ExpressiveButton).last);
+      final logoutButton = find.ancestor(
+        of: find.byWidgetPredicate(
+          (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedLogout01,
+        ),
+        matching: find.byType(ExpressiveButton),
+      );
+      await tester.ensureVisible(logoutButton);
+      await tester.tap(logoutButton);
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
@@ -313,7 +327,14 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byType(ExpressiveButton).last);
+      final logoutButton = find.ancestor(
+        of: find.byWidgetPredicate(
+          (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedLogout01,
+        ),
+        matching: find.byType(ExpressiveButton),
+      );
+      await tester.ensureVisible(logoutButton);
+      await tester.tap(logoutButton);
       await tester.pumpAndSettle();
       expect(find.byType(AppAlertDialog), findsOneWidget);
 
@@ -325,6 +346,60 @@ void main() {
 
       expect(find.byType(AppAlertDialog), findsNothing);
       verifyNever(() => profileCubit.logout(any()));
+    });
+
+    testWidgets('shows delete account dialog when delete button is tapped', (
+      tester,
+    ) async {
+      await pumpProfileView(
+        tester,
+        state: const ProfileState(
+          status: ProfileStatus.success,
+          user: _userNoProviders,
+        ),
+      );
+
+      final deleteButton = find.ancestor(
+        of: find.byWidgetPredicate(
+          (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedDelete02,
+        ),
+        matching: find.byType(ExpressiveButton),
+      );
+      await tester.ensureVisible(deleteButton);
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AppAlertDialog), findsOneWidget);
+    });
+
+    testWidgets('calls deleteAccount when dialog is confirmed', (tester) async {
+      when(() => profileCubit.deleteAccount(any())).thenAnswer((_) async {});
+
+      await pumpProfileView(
+        tester,
+        state: const ProfileState(
+          status: ProfileStatus.success,
+          user: _userNoProviders,
+        ),
+      );
+
+      final deleteButton = find.ancestor(
+        of: find.byWidgetPredicate(
+          (w) => w is HugeIcon && w.icon == HugeIcons.strokeRoundedDelete02,
+        ),
+        matching: find.byType(ExpressiveButton),
+      );
+      await tester.ensureVisible(deleteButton);
+      await tester.tap(deleteButton);
+      await tester.pumpAndSettle();
+
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(AppAlertDialog)),
+      );
+      await tester.tap(find.text(l10n.deleteAccountConfirm));
+      await tester.pumpAndSettle();
+
+      verify(() => profileCubit.deleteAccount(any())).called(1);
     });
 
     testWidgets('shows error snackbar on failure status', (tester) async {

@@ -334,5 +334,42 @@ void main() {
         ProfileState(user: mockUser),
       );
     });
+
+    blocTest<ProfileCubit, ProfileState>(
+      'deleteAccount emits loading and success when deleteAccount succeeds',
+      build: () {
+        when(
+          () => mockAuthService.deleteAccount(),
+        ).thenAnswer((_) async => true);
+        return profileCubit;
+      },
+      act: (cubit) => cubit.deleteAccount(mockAppLocalizations),
+      expect: () => const [
+        ProfileState(status: ProfileStatus.loading),
+        ProfileState(status: ProfileStatus.success),
+      ],
+      verify: (_) {
+        verify(
+          () => mockAnalyticsService.logEvent(name: 'delete_account'),
+        ).called(1);
+      },
+    );
+
+    blocTest<ProfileCubit, ProfileState>(
+      'deleteAccount emits loading, failure and initial when deleteAccount '
+      'fails',
+      build: () {
+        when(
+          () => mockAuthService.deleteAccount(),
+        ).thenAnswer((_) async => false);
+        return profileCubit;
+      },
+      act: (cubit) => cubit.deleteAccount(mockAppLocalizations),
+      expect: () => const [
+        ProfileState(status: ProfileStatus.loading),
+        ProfileState(status: ProfileStatus.failure, errorMessage: 'Error'),
+        ProfileState(errorMessage: 'Error'),
+      ],
+    );
   });
 }

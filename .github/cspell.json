@@ -26,6 +26,8 @@
     "androidx",
     "profileinstaller",
     "Jetpack",
-    "sqflite"
+    "sqflite",
+    "subcollections",
+    "venv"
   ]
 }

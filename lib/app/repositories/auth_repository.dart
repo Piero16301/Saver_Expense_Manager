@@ -23,6 +23,7 @@ abstract class AuthRepository {
   Future<bool> signInWithEmailAndPassword(String email, String password);
   Future<bool> signUpWithEmailAndPassword(String email, String password);
   Future<bool> updateUserName(String newName);
+  Future<bool> deleteAccount();
 }
 
 class MockAuthRepository implements AuthRepository {
@@ -80,6 +81,9 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<bool> updateUserName(String newName) async => true;
+
+  @override
+  Future<bool> deleteAccount() async => true;
 }
 
 class FirebaseAuthRepository implements AuthRepository {
@@ -146,6 +150,12 @@ class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<bool> signOut() async {
     try {
+      try {
+        final currentUid = _auth.currentUser?.uid;
+        if (currentUid != null && getIt.isRegistered<LocalStorageService>()) {
+          getIt<LocalStorageService>().clearRecommendations(userId: currentUid);
+        }
+      } on Object catch (_) {}
       await _auth.signOut();
       return true;
     } on Exception catch (e, stackTrace) {
@@ -323,6 +333,27 @@ class FirebaseAuthRepository implements AuthRepository {
         e,
         stackTrace,
         reason: 'AuthService updateUserName error',
+      );
+      return false;
+    }
+  }
+
+  @override
+  Future<bool> deleteAccount() async {
+    try {
+      try {
+        final currentUid = _auth.currentUser?.uid;
+        if (currentUid != null && getIt.isRegistered<LocalStorageService>()) {
+          getIt<LocalStorageService>().clearRecommendations(userId: currentUid);
+        }
+      } on Object catch (_) {}
+      await _auth.currentUser?.delete();
+      return true;
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AuthService deleteAccount error',
       );
       return false;
     }
