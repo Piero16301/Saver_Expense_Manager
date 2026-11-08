@@ -527,8 +527,11 @@ void main() {
         tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
           const MethodChannel('cunning_document_scanner'),
           (message) async {
-            if (message.method == 'getPictures') {
-              return ['/tmp/test_scan.png'];
+            if (message.method == 'scanDocuments' ||
+                message.method == 'getPictures') {
+              return {
+                'images': ['/tmp/test_scan.png'],
+              };
             }
             return null;
           },
@@ -567,8 +570,9 @@ void main() {
       tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         const MethodChannel('cunning_document_scanner'),
         (message) async {
-          if (message.method == 'getPictures') {
-            return <String>[];
+          if (message.method == 'scanDocuments' ||
+              message.method == 'getPictures') {
+            return {'images': <String>[]};
           }
           return null;
         },
@@ -593,7 +597,8 @@ void main() {
         tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
           const MethodChannel('cunning_document_scanner'),
           (message) async {
-            if (message.method == 'getPictures') {
+            if (message.method == 'scanDocuments' ||
+                message.method == 'getPictures') {
               throw PlatformException(code: 'error', message: 'Test error');
             }
             return null;
@@ -626,8 +631,11 @@ void main() {
           tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
             const MethodChannel('cunning_document_scanner'),
             (message) async {
-              if (message.method == 'getPictures') {
-                return ['/tmp/test.pdf'];
+              if (message.method == 'scanDocuments' ||
+                  message.method == 'getPictures') {
+                return {
+                  'images': ['/tmp/test.pdf'],
+                };
               }
               return null;
             },
