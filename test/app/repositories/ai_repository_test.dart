@@ -125,6 +125,17 @@ void main() {
       expect(repository.isLocalModelAvailable, isTrue);
     });
 
+    test(
+      'initialize sets isLocalModelAvailable to false on exception',
+      () async {
+        when(
+          () => mockLocalModel.isAvailable(),
+        ).thenThrow(Exception('AICore error'));
+        await repository.initialize();
+        expect(repository.isLocalModelAvailable, isFalse);
+      },
+    );
+
     group('generateContentRemote', () {
       test('returns null if prompt is empty', () async {
         final result = await repository.generateContentRemote(prompt: []);

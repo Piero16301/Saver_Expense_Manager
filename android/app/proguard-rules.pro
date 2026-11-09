@@ -22,3 +22,9 @@
 -dontwarn com.google.android.play.core.splitcompat.**
 -dontwarn com.google.android.play.core.splitinstall.**
 -dontwarn com.google.android.play.core.tasks.**
+
+# Firebase App Check & Google Play Integrity
+-dontwarn com.google.android.play.core.integrity.**
+-keep class com.google.android.play.core.integrity.** { *; }
+-keep class com.google.firebase.appcheck.** { *; }
+-keep class com.google.android.gms.tasks.** { *; }

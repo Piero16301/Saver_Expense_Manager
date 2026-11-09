@@ -625,6 +625,69 @@ void main() {
     });
 
     testWidgets(
+      'handleFilePick catches ParallelWaitError and cleans up uploaded file',
+      (tester) async {
+        await tester.runAsync(() async {
+          final tempFile = File('/tmp/test_err.png');
+          if (!tempFile.existsSync()) {
+            tempFile
+              ..createSync(recursive: true)
+              ..writeAsBytesSync([1, 2, 3]);
+          }
+
+          final mockFilePicker = MockFilePicker();
+          FilePickerPlatform.instance = mockFilePicker;
+
+          final mockFile = FakePlatformFile(
+            name: 'test_err.png',
+            path: '/tmp/test_err.png',
+            bytes: Uint8List.fromList([1, 2, 3]),
+          );
+
+          whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
+
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => 'upload_name');
+          when(
+            () => mockRemoteStorageService.deleteFile(any<String>()),
+          ).thenAnswer((_) async => true);
+          when(
+            () => mockAiService.generateContentRemote(
+              prompt: any<List<PromptPart>>(named: 'prompt'),
+              responseMimeType: any<String>(named: 'responseMimeType'),
+            ),
+          ).thenThrow(Exception('AI failed'));
+
+          AppFunctions.internetConnectionTestValue = true;
+
+          await mockNetworkImagesFor(() async {
+            await pumpSubject(tester);
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.byType(ExpressiveFab));
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.text('File'));
+
+            for (var i = 0; i < 10; i++) {
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+              await tester.pump(const Duration(milliseconds: 500));
+            }
+
+            expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+            verify(
+              () => mockRemoteStorageService.deleteFile(any<String>()),
+            ).called(1);
+          });
+        });
+      },
+    );
+
+    testWidgets(
       'handleDocumentScan handles unsupported file exception locally',
       (tester) async {
         await tester.runAsync(() async {

@@ -24,19 +24,31 @@ Future<void> main() async {
   final performance = getIt<PerformanceService>();
   final trace = performance.startTrace('app_initialization');
   await Future.wait([
-    FirebaseAppCheck.instance.activate(
-      providerWeb: kDebugMode
-          ? WebDebugProvider(debugToken: debugToken)
-          : ReCaptchaEnterpriseProvider(
-              DefaultFirebaseOptions.recaptchaEnterpriseSiteKey,
-            ),
-      providerAndroid: kDebugMode
-          ? AndroidDebugProvider(debugToken: debugToken)
-          : const AndroidPlayIntegrityProvider(),
-      providerApple: kDebugMode
-          ? AppleDebugProvider(debugToken: debugToken)
-          : const AppleDeviceCheckProvider(),
-    ),
+    () async {
+      try {
+        await FirebaseAppCheck.instance
+            .activate(
+              providerWeb: kDebugMode
+                  ? WebDebugProvider(debugToken: debugToken)
+                  : ReCaptchaEnterpriseProvider(
+                      DefaultFirebaseOptions.recaptchaEnterpriseSiteKey,
+                    ),
+              providerAndroid: kDebugMode
+                  ? AndroidDebugProvider(debugToken: debugToken)
+                  : const AndroidPlayIntegrityProvider(),
+              providerApple: kDebugMode
+                  ? AppleDebugProvider(debugToken: debugToken)
+                  : const AppleDeviceCheckProvider(),
+            )
+            .timeout(AppVariables.timeoutDuration);
+      } on Object catch (e, stackTrace) {
+        getIt<CrashService>().recordError(
+          e,
+          stackTrace,
+          reason: 'FirebaseAppCheck activate error',
+        );
+      }
+    }(),
     getIt<AuthService>().initialize(),
     getIt<LocalStorageService>().initialize(),
     getIt<RemoteConfigService>().initialize(),

@@ -92,7 +92,7 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
           ),
         );
       }
-    } on Exception catch (_) {
+    } on Object catch (_) {
       if (!isClosed) {
         emit(
           state.copyWith(recommendationsStatus: RecommendationsStatus.failure),

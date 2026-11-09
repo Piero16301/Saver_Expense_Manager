@@ -1,5 +1,7 @@
 // Mocktail mocks sealed Firestore classes for repository unit testing.
 // ignore_for_file: subtype_of_sealed_class
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -325,6 +327,42 @@ void main() {
         ),
       ).called(1);
       verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
+    });
+
+    test('getMovements falls back to cache on TimeoutException', () async {
+      final date = DateTime(2023, 10, 15);
+      final movement = Movement.empty.copyWith(
+        id: '1',
+        user: 'user_1',
+        date: date,
+      );
+      final movementData = <String, dynamic>{
+        ...movement.toJson(),
+        'date': Timestamp.fromDate(movement.date),
+      };
+
+      when(
+        () => mockFirestore.collection(AppVariables.movementsCollection),
+      ).thenReturn(mockCollection);
+      when(
+        () => mockCollection.where(any(), isEqualTo: any(named: 'isEqualTo')),
+      ).thenReturn(mockQuery);
+      when(
+        () => mockQuery.get(),
+      ).thenThrow(TimeoutException('Firestore timeout'));
+      when(
+        () => mockQuery.get(const GetOptions(source: Source.cache)),
+      ).thenAnswer((_) async => mockQuerySnapshot);
+      when(() => mockQuerySnapshot.docs).thenReturn([mockDocSnapshot]);
+      when(() => mockDocSnapshot.data()).thenReturn(movementData);
+
+      final result = await repository.getMovements(userId: 'user_1');
+
+      expect(result.length, 1);
+      expect(result.first.id, equals('1'));
+      verify(
+        () => mockQuery.get(const GetOptions(source: Source.cache)),
+      ).called(1);
     });
   });
 }

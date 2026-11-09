@@ -210,7 +210,12 @@ class FirestoreDatabaseRepository implements DatabaseRepository {
         query = query.where('date', isLessThan: Timestamp.fromDate(to));
       }
 
-      final snapshot = await query.get();
+      QuerySnapshot<Map<String, dynamic>> snapshot;
+      try {
+        snapshot = await query.get().timeout(AppVariables.timeoutDuration);
+      } on TimeoutException {
+        snapshot = await query.get(const GetOptions(source: Source.cache));
+      }
       return snapshot.docs.map((doc) => Movement.fromJson(doc.data())).toList();
     } catch (e, stackTrace) {
       getIt<CrashService>().recordError(
