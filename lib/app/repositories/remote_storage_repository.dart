@@ -41,9 +41,13 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
   @override
   Future<bool> deleteFile(String path) async {
     try {
-      await _storage.ref().child(path).delete();
+      await _storage
+          .ref()
+          .child(path)
+          .delete()
+          .timeout(AppVariables.timeoutDuration);
       return true;
-    } on Exception catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
@@ -65,9 +69,18 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
       final metadata = mimeType != null
           ? SettableMetadata(contentType: mimeType)
           : null;
-      await ref.putData(bytes, metadata);
+      final uploadTask = ref.putData(bytes, metadata);
+      await (() async => await uploadTask)().timeout(
+        AppVariables.timeoutDuration,
+        onTimeout: () {
+          try {
+            unawaited(uploadTask.cancel());
+          } on Object catch (_) {}
+          throw TimeoutException('Upload timed out');
+        },
+      );
       return ref.fullPath;
-    } on Exception catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
@@ -80,8 +93,12 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
   @override
   Future<Uint8List?> getData(String path) async {
     try {
-      return await _storage.ref().child(path).getData();
-    } on Exception catch (e, stackTrace) {
+      return await _storage
+          .ref()
+          .child(path)
+          .getData()
+          .timeout(AppVariables.timeoutDuration);
+    } on Object catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
@@ -98,17 +115,21 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
       final mimeType = lookupMimeType(path);
       if (mimeType != null) {
         try {
-          final meta = await ref.getMetadata();
+          final meta = await ref.getMetadata().timeout(
+            AppVariables.timeoutDuration,
+          );
           if (meta.contentType == null ||
               meta.contentType == 'application/octet-stream') {
-            await ref.updateMetadata(SettableMetadata(contentType: mimeType));
+            await ref
+                .updateMetadata(SettableMetadata(contentType: mimeType))
+                .timeout(AppVariables.timeoutDuration);
           }
-        } on Exception catch (_) {
+        } on Object catch (_) {
           // Ignore metadata update error if any, proceed to get download URL
         }
       }
-      return await ref.getDownloadURL();
-    } on Exception catch (e, stackTrace) {
+      return await ref.getDownloadURL().timeout(AppVariables.timeoutDuration);
+    } on Object catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,

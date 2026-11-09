@@ -57,7 +57,14 @@ class FirebaseAiRepository implements AiRepository {
       _isLocalModelAvailable = false;
       return;
     }
-    _isLocalModelAvailable = await _localModel.isAvailable();
+    try {
+      _isLocalModelAvailable = await _localModel.isAvailable().timeout(
+        AppVariables.timeoutDuration,
+        onTimeout: () => false,
+      );
+    } on Object catch (_) {
+      _isLocalModelAvailable = false;
+    }
   }
 
   @override
@@ -79,9 +86,7 @@ class FirebaseAiRepository implements AiRepository {
       final remoteConfig = getIt<RemoteConfigService>();
       final model = remoteConfig.geminiModelName;
 
-      final ai =
-          _remoteAi ??
-          FirebaseAI.agentPlatform(useLimitedUseAppCheckTokens: true);
+      final ai = _remoteAi ?? FirebaseAI.agentPlatform();
 
       final genModel = ai.generativeModel(
         model: model,

@@ -397,12 +397,16 @@ class AddMovementBottomSheet extends StatelessWidget {
         uploadName = result.$1;
         movement = result.$2;
       } on Object catch (_) {
-        try {
-          final uploaded = await uploadFuture;
-          if (uploaded != null) {
-            unawaited(getIt<RemoteStorageService>().deleteFile(path));
-          }
-        } on Object catch (_) {}
+        unawaited(
+          uploadFuture
+              .timeout(AppVariables.timeoutDuration, onTimeout: () => null)
+              .then((uploaded) {
+                if (uploaded != null) {
+                  unawaited(getIt<RemoteStorageService>().deleteFile(path));
+                }
+              })
+              .catchError((Object _) {}),
+        );
         rethrow;
       }
       performance.stopTrace(trace);
@@ -423,7 +427,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           ),
         ),
       );
-    } on Exception catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
@@ -540,12 +544,16 @@ class AddMovementBottomSheet extends StatelessWidget {
         uploadName = result.$1;
         movement = result.$2;
       } on Object catch (_) {
-        try {
-          final uploaded = await uploadFuture;
-          if (uploaded != null) {
-            unawaited(getIt<RemoteStorageService>().deleteFile(path));
-          }
-        } on Object catch (_) {}
+        unawaited(
+          uploadFuture
+              .timeout(AppVariables.timeoutDuration, onTimeout: () => null)
+              .then((uploaded) {
+                if (uploaded != null) {
+                  unawaited(getIt<RemoteStorageService>().deleteFile(path));
+                }
+              })
+              .catchError((Object _) {}),
+        );
         rethrow;
       }
       performance.stopTrace(trace);
@@ -566,7 +574,7 @@ class AddMovementBottomSheet extends StatelessWidget {
           ),
         ),
       );
-    } on Exception catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,
         stackTrace,
