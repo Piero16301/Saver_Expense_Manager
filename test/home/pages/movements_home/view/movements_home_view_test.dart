@@ -99,13 +99,13 @@ void main() {
       await getIt.unregister<AuthService>();
     }
     if (getIt.isRegistered<DatabaseService>()) {
-      getIt.unregister<DatabaseService>();
+      await getIt.unregister<DatabaseService>();
     }
     if (getIt.isRegistered<LocalStorageService>()) {
-      getIt.unregister<LocalStorageService>();
+      await getIt.unregister<LocalStorageService>();
     }
     if (getIt.isRegistered<RemoteConfigService>()) {
-      getIt.unregister<RemoteConfigService>();
+      await getIt.unregister<RemoteConfigService>();
     }
     getIt
       ..registerSingleton<AuthService>(mockAuth)

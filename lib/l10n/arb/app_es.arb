@@ -467,5 +467,11 @@
                 "type": "int"
             }
         }
-    }
+    },
+    "summaryPeriodMonth": "Mes",
+    "@summaryPeriodMonth": {},
+    "summaryPeriodYear": "Año",
+    "@summaryPeriodYear": {},
+    "yearPickerSelectMultipleYears": "Selecciona un rango de años",
+    "@yearPickerSelectMultipleYears": {}
 }

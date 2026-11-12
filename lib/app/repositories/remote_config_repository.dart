@@ -13,6 +13,7 @@ abstract class RemoteConfigRepository {
       'config_gemini_prompt_extract_receipt_data';
   static const String configPaginationLimit = 'config_pagination_limit';
   static const String configSummaryLastMonths = 'config_summary_last_months';
+  static const String configSummaryLastYears = 'config_summary_last_years';
 
   /// UI
   static const String uiHomeInitialTab = 'ui_home_initial_tab';
@@ -25,6 +26,7 @@ abstract class RemoteConfigRepository {
   String get geminiPromptExtractReceiptData;
   int get paginationLimit;
   int get summaryLastMonths;
+  int get summaryLastYears;
 
   String get homeInitialTab;
 }
@@ -54,6 +56,9 @@ class MockRemoteConfigRepository implements RemoteConfigRepository {
   int get summaryLastMonths => 4;
 
   @override
+  int get summaryLastYears => 3;
+
+  @override
   String get homeInitialTab => 'movimientos';
 }
 
@@ -74,6 +79,7 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
           'config_gemini_prompt_extract_receipt_data',
       RemoteConfigRepository.configPaginationLimit: 10,
       RemoteConfigRepository.configSummaryLastMonths: 4,
+      RemoteConfigRepository.configSummaryLastYears: 3,
       RemoteConfigRepository.uiHomeInitialTab: 'movimientos',
     });
 
@@ -121,6 +127,10 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
   @override
   int get summaryLastMonths =>
       _remoteConfig.getInt(RemoteConfigRepository.configSummaryLastMonths);
+
+  @override
+  int get summaryLastYears =>
+      _remoteConfig.getInt(RemoteConfigRepository.configSummaryLastYears);
 
   @override
   String get homeInitialTab =>

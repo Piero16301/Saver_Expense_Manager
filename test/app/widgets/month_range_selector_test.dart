@@ -140,5 +140,56 @@ void main() {
 
       expect(changedDate?.month, DateTime.april);
     });
+
+    testWidgets('renders and selects years when isYear is true', (
+      tester,
+    ) async {
+      DateTime? changedStartYear;
+      DateTime? changedEndYear;
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: BlocProvider.value(
+            value: appCubit,
+            child: Scaffold(
+              body: MonthRangeSelector(
+                startMonth: DateTime(2023),
+                endMonth: DateTime(2024, 12, 31),
+                isYear: true,
+                onChangeStartMonth: (d) => changedStartYear = d,
+                onChangeEndMonth: (d) => changedEndYear = d,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('2023'), findsOneWidget);
+      expect(find.text('-'), findsOneWidget);
+      expect(find.text('2024'), findsOneWidget);
+
+      await tester.tap(find.byType(MonthRangeSelector));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MonthPickerDialog), findsOneWidget);
+
+      await tester.tap(find.text('2022').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('2025').first);
+      await tester.pumpAndSettle();
+
+      final okFinder = find
+          .descendant(
+            of: find.byType(MonthPickerDialog),
+            matching: find.byType(TextButton),
+          )
+          .last;
+      await tester.tap(okFinder);
+      await tester.pumpAndSettle();
+
+      expect(changedStartYear?.year, 2022);
+      expect(changedEndYear?.year, 2025);
+    });
   });
 }

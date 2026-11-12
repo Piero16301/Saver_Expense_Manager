@@ -95,13 +95,13 @@ void main() {
         await getIt.unregister<DatabaseService>();
       }
       if (getIt.isRegistered<RemoteStorageService>()) {
-        getIt.unregister<RemoteStorageService>();
+        await getIt.unregister<RemoteStorageService>();
       }
       if (getIt.isRegistered<CrashService>()) {
-        getIt.unregister<CrashService>();
+        await getIt.unregister<CrashService>();
       }
       if (getIt.isRegistered<AnalyticsService>()) {
-        getIt.unregister<AnalyticsService>();
+        await getIt.unregister<AnalyticsService>();
       }
 
       getIt

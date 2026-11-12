@@ -71,7 +71,7 @@ void main() {
         await getIt.unregister<AuthService>();
       }
       if (getIt.isRegistered<DatabaseService>()) {
-        getIt.unregister<DatabaseService>();
+        await getIt.unregister<DatabaseService>();
       }
       getIt
         ..registerSingleton<AuthService>(mockAuth)
@@ -162,7 +162,7 @@ void main() {
         await getIt.unregister<AuthService>();
       }
       if (getIt.isRegistered<DatabaseService>()) {
-        getIt.unregister<DatabaseService>();
+        await getIt.unregister<DatabaseService>();
       }
       getIt
         ..registerSingleton<AuthService>(mockAuth)

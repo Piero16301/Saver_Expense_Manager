@@ -263,6 +263,58 @@ void main() {
         expect(results.$3, equals(200));
         expect(results.$4, equals(75));
       });
+
+      test('calculates correct totals for year periodType', () {
+        final movements = <Movement>[
+          Movement(
+            id: '1',
+            title: 'desc',
+            description: 'desc',
+            price: 1200,
+            date: DateTime(testDate.year - 1, 5, 15),
+            category: categoryIncome,
+            user: 'user_1',
+          ),
+          Movement(
+            id: '2',
+            title: 'desc',
+            description: 'desc',
+            price: 600,
+            date: DateTime(testDate.year - 1, 8, 15),
+            category: categoryExpense,
+            user: 'user_1',
+          ),
+          Movement(
+            id: '3',
+            title: 'desc',
+            description: 'desc',
+            price: 2400,
+            date: DateTime(testDate.year, 3, 15),
+            category: categoryIncome,
+            user: 'user_1',
+          ),
+          Movement(
+            id: '4',
+            title: 'desc',
+            description: 'desc',
+            price: 900,
+            date: DateTime(testDate.year, 10, 15),
+            category: categoryExpense,
+            user: 'user_1',
+          ),
+        ];
+
+        final results = AppFunctions.calculateIncomesAndExpenses(
+          movements: movements,
+          endMonth: testDate,
+          periodType: SummaryPeriodType.year,
+        );
+
+        expect(results.$1, equals(1200));
+        expect(results.$2, equals(600));
+        expect(results.$3, equals(2400));
+        expect(results.$4, equals(900));
+      });
     });
 
     group('calculateCategoryAmounts', () {
@@ -693,6 +745,50 @@ void main() {
         expect(result[0][0].yValue, equals(100));
         expect(result[1][0].yValue, equals(50));
         expect(result[2][0].yValue, equals(50));
+      });
+
+      test('returns correct resume trend data for year periodType', () {
+        final movements = <Movement>[
+          Movement(
+            id: '1',
+            title: 'desc',
+            description: 'desc',
+            price: 1000,
+            date: DateTime(2023, 4, 15),
+            category: categoryIncome,
+            user: 'user_1',
+          ),
+          Movement(
+            id: '2',
+            title: 'desc',
+            description: 'desc',
+            price: 400,
+            date: DateTime(2024, 6, 10),
+            category: categoryExpense,
+            user: 'user_1',
+          ),
+        ];
+
+        final result = AppFunctions.buildResumeTrendData(
+          movements: movements,
+          startMonth: DateTime(2023),
+          endMonth: DateTime(2024, 12, 31),
+          language: 'en',
+          periodType: SummaryPeriodType.year,
+          selResumeItems: {
+            ResumeItemType.income: true,
+            ResumeItemType.expense: true,
+            ResumeItemType.balance: true,
+          },
+        );
+
+        expect(result.length, equals(3));
+        expect(result[0][0].xValue, equals('2023'));
+        expect(result[0][0].yValue, equals(1000));
+        expect(result[1][1].xValue, equals('2024'));
+        expect(result[1][1].yValue, equals(400));
+        expect(result[2][0].yValue, equals(1000));
+        expect(result[2][1].yValue, equals(-400));
       });
     });
 

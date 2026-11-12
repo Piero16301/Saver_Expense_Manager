@@ -16,6 +16,7 @@ class RemoteConfigService {
       _remoteConfigRepository.geminiPromptExtractReceiptData;
   int get paginationLimit => _remoteConfigRepository.paginationLimit;
   int get summaryLastMonths => _remoteConfigRepository.summaryLastMonths;
+  int get summaryLastYears => _remoteConfigRepository.summaryLastYears;
 
   String get homeInitialTab => _remoteConfigRepository.homeInitialTab;
 }

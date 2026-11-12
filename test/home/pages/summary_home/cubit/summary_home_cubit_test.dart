@@ -14,6 +14,7 @@ void main() {
     setUp(() {
       mockRemoteConfigService = MockRemoteConfigService();
       when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
+      when(() => mockRemoteConfigService.summaryLastYears).thenReturn(4);
       getIt.registerSingleton<RemoteConfigService>(mockRemoteConfigService);
 
       summaryHomeCubit = SummaryHomeCubit();
@@ -24,6 +25,9 @@ void main() {
     test('initial state is correct', () {
       expect(summaryHomeCubit.state.endMonth, isNotNull);
       expect(summaryHomeCubit.state.startMonth, isNotNull);
+      expect(summaryHomeCubit.state.endYear, isNotNull);
+      expect(summaryHomeCubit.state.startYear, isNotNull);
+      expect(summaryHomeCubit.state.periodType, SummaryPeriodType.month);
       expect(summaryHomeCubit.state.selResumeItems, const {
         ResumeItemType.income: true,
         ResumeItemType.balance: true,
@@ -53,6 +57,45 @@ void main() {
           (s) => s.endMonth,
           'endMonth',
           DateTime(2023, 12),
+        ),
+      ],
+    );
+
+    blocTest<SummaryHomeCubit, SummaryHomeState>(
+      'changeStartYear emits correct state',
+      build: () => summaryHomeCubit,
+      act: (cubit) => cubit.changeStartYear(DateTime(2022)),
+      expect: () => [
+        isA<SummaryHomeState>().having(
+          (s) => s.startYear,
+          'startYear',
+          DateTime(2022),
+        ),
+      ],
+    );
+
+    blocTest<SummaryHomeCubit, SummaryHomeState>(
+      'changeEndYear emits correct state',
+      build: () => summaryHomeCubit,
+      act: (cubit) => cubit.changeEndYear(DateTime(2024, 12, 31)),
+      expect: () => [
+        isA<SummaryHomeState>().having(
+          (s) => s.endYear,
+          'endYear',
+          DateTime(2024, 12, 31),
+        ),
+      ],
+    );
+
+    blocTest<SummaryHomeCubit, SummaryHomeState>(
+      'changePeriodType emits correct state',
+      build: () => summaryHomeCubit,
+      act: (cubit) => cubit.changePeriodType(SummaryPeriodType.year),
+      expect: () => [
+        isA<SummaryHomeState>().having(
+          (s) => s.periodType,
+          'periodType',
+          SummaryPeriodType.year,
         ),
       ],
     );

@@ -65,7 +65,7 @@ void main() {
       getIt.registerSingleton<DatabaseService>(databaseService);
 
       if (getIt.isRegistered<AuthService>()) {
-        getIt.unregister<AuthService>();
+        await getIt.unregister<AuthService>();
       }
       getIt.registerSingleton<AuthService>(authenticationService);
 
