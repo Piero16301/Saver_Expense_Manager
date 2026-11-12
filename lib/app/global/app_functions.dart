@@ -129,10 +129,52 @@ class AppFunctions {
     return targetDate;
   }
 
+  static DateTime substracYear(int year) {
+    final now = DateTime.now();
+    final targetYear = now.year - (year - 1);
+    final minYear = AppVariables.minDate.year;
+    return DateTime(targetYear < minYear ? minYear : targetYear);
+  }
+
   static (double, double, double, double) calculateIncomesAndExpenses({
     required List<Movement> movements,
     required DateTime endMonth,
+    SummaryPeriodType periodType = SummaryPeriodType.month,
   }) {
+    if (periodType.isYear) {
+      final pastYear = endMonth.year - 1;
+      final currentYear = endMonth.year;
+
+      final pastYearMovements = movements.where((movement) {
+        return movement.date.year == pastYear;
+      }).toList();
+
+      final currentYearMovements = movements.where((movement) {
+        return movement.date.year == currentYear;
+      }).toList();
+
+      final pastYearIncomes = pastYearMovements
+          .where((m) => m.category.type == CategoryType.income)
+          .fold<double>(0, (s, m) => s + m.price);
+      final pastYearExpenses = pastYearMovements
+          .where((m) => m.category.type == CategoryType.expense)
+          .fold<double>(0, (s, m) => s + m.price);
+
+      final currentYearIncomes = currentYearMovements
+          .where((m) => m.category.type == CategoryType.income)
+          .fold<double>(0, (s, m) => s + m.price);
+      final currentYearExpenses = currentYearMovements
+          .where((m) => m.category.type == CategoryType.expense)
+          .fold<double>(0, (s, m) => s + m.price);
+
+      return (
+        pastYearIncomes,
+        pastYearExpenses,
+        currentYearIncomes,
+        currentYearExpenses,
+      );
+    }
+
     final pastMonth = DateTime(endMonth.year, endMonth.month - 1);
     final currentMonth = DateTime(endMonth.year, endMonth.month);
 
@@ -266,57 +308,89 @@ class AppFunctions {
     required DateTime endMonth,
     required String language,
     required Map<ResumeItemType, bool> selResumeItems,
+    SummaryPeriodType periodType = SummaryPeriodType.month,
   }) {
     final data = <List<LinearChartData>>[];
     final incomeData = <LinearChartData>[];
     final expenseData = <LinearChartData>[];
     final balanceData = <LinearChartData>[];
-    for (
-      var i = startMonth;
-      i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
-      i = DateTime(
-        i.month == 12 ? i.year + 1 : i.year,
-        i.month == 12 ? 1 : i.month + 1,
-      )
-    ) {
-      final movementsByMonth = movements
-          .where(
-            (element) =>
-                element.date.year == i.year && element.date.month == i.month,
-          )
-          .toList();
-      final totalIncome = movementsByMonth.fold<double>(
-        0,
-        (previousValue, element) => element.category.type == CategoryType.income
-            ? previousValue + element.price
-            : previousValue,
-      );
-      final totalExpense = movementsByMonth.fold<double>(
-        0,
-        (previousValue, element) =>
-            element.category.type == CategoryType.expense
-            ? previousValue + element.price
-            : previousValue,
-      );
-      final balance = totalIncome - totalExpense;
-      incomeData.add(
-        LinearChartData(
-          xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
-          yValue: totalIncome,
-        ),
-      );
-      expenseData.add(
-        LinearChartData(
-          xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
-          yValue: totalExpense,
-        ),
-      );
-      balanceData.add(
-        LinearChartData(
-          xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
-          yValue: balance,
-        ),
-      );
+
+    if (periodType.isYear) {
+      for (var year = startMonth.year; year <= endMonth.year; year++) {
+        final movementsByYear = movements
+            .where((element) => element.date.year == year)
+            .toList();
+        final totalIncome = movementsByYear.fold<double>(
+          0,
+          (previousValue, element) =>
+              element.category.type == CategoryType.income
+              ? previousValue + element.price
+              : previousValue,
+        );
+        final totalExpense = movementsByYear.fold<double>(
+          0,
+          (previousValue, element) =>
+              element.category.type == CategoryType.expense
+              ? previousValue + element.price
+              : previousValue,
+        );
+        final balance = totalIncome - totalExpense;
+        final yearLabel = '$year';
+        incomeData.add(LinearChartData(xValue: yearLabel, yValue: totalIncome));
+        expenseData.add(
+          LinearChartData(xValue: yearLabel, yValue: totalExpense),
+        );
+        balanceData.add(LinearChartData(xValue: yearLabel, yValue: balance));
+      }
+    } else {
+      for (
+        var i = startMonth;
+        i.isBefore(endMonth) || i.isAtSameMomentAs(endMonth);
+        i = DateTime(
+          i.month == 12 ? i.year + 1 : i.year,
+          i.month == 12 ? 1 : i.month + 1,
+        )
+      ) {
+        final movementsByMonth = movements
+            .where(
+              (element) =>
+                  element.date.year == i.year && element.date.month == i.month,
+            )
+            .toList();
+        final totalIncome = movementsByMonth.fold<double>(
+          0,
+          (previousValue, element) =>
+              element.category.type == CategoryType.income
+              ? previousValue + element.price
+              : previousValue,
+        );
+        final totalExpense = movementsByMonth.fold<double>(
+          0,
+          (previousValue, element) =>
+              element.category.type == CategoryType.expense
+              ? previousValue + element.price
+              : previousValue,
+        );
+        final balance = totalIncome - totalExpense;
+        incomeData.add(
+          LinearChartData(
+            xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
+            yValue: totalIncome,
+          ),
+        );
+        expenseData.add(
+          LinearChartData(
+            xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
+            yValue: totalExpense,
+          ),
+        );
+        balanceData.add(
+          LinearChartData(
+            xValue: _capitalizeFirst(DateFormat('MMM', language).format(i)),
+            yValue: balance,
+          ),
+        );
+      }
     }
 
     if (selResumeItems[ResumeItemType.income] ?? false) {

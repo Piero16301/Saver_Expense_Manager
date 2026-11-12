@@ -162,17 +162,26 @@ class HomeView extends StatelessWidget {
       case 2:
         return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
           builder: (context, summaryState) {
-            if (summaryState.startMonth == null ||
-                summaryState.endMonth == null) {
+            final isYear = summaryState.periodType.isYear;
+            final startDate = isYear
+                ? summaryState.startYear
+                : summaryState.startMonth;
+            final endDate = isYear
+                ? summaryState.endYear
+                : summaryState.endMonth;
+            if (startDate == null || endDate == null) {
               return const SizedBox.shrink();
             }
             return MonthRangeSelector(
-              startMonth: summaryState.startMonth!,
-              endMonth: summaryState.endMonth!,
-              onChangeStartMonth: (date) =>
-                  context.read<SummaryHomeCubit>().changeStartMonth(date),
-              onChangeEndMonth: (date) =>
-                  context.read<SummaryHomeCubit>().changeEndMonth(date),
+              startMonth: startDate,
+              endMonth: endDate,
+              isYear: isYear,
+              onChangeStartMonth: (date) => isYear
+                  ? context.read<SummaryHomeCubit>().changeStartYear(date)
+                  : context.read<SummaryHomeCubit>().changeStartMonth(date),
+              onChangeEndMonth: (date) => isYear
+                  ? context.read<SummaryHomeCubit>().changeEndYear(date)
+                  : context.read<SummaryHomeCubit>().changeEndMonth(date),
             );
           },
         );

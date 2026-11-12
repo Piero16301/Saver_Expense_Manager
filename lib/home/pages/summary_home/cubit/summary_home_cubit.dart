@@ -15,6 +15,18 @@ class SummaryHomeCubit extends Cubit<SummaryHomeState> {
     emit(state.copyWith(endMonth: month));
   }
 
+  void changeStartYear(DateTime? year) {
+    emit(state.copyWith(startYear: year));
+  }
+
+  void changeEndYear(DateTime? year) {
+    emit(state.copyWith(endYear: year));
+  }
+
+  void changePeriodType(SummaryPeriodType periodType) {
+    emit(state.copyWith(periodType: periodType));
+  }
+
   void toggleResumeItem(ResumeItemType resumeItemType) {
     final newSelResumeItems = Map<ResumeItemType, bool>.from(
       state.selResumeItems,

@@ -49,6 +49,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(DateTime.now());
     registerFallbackValue(ResumeItemType.income);
+    registerFallbackValue(SummaryPeriodType.month);
   });
 
   setUp(() async {
@@ -56,6 +57,7 @@ void main() {
     mockRemoteConfigService = MockRemoteConfigService();
     when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
     when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
+    when(() => mockRemoteConfigService.summaryLastYears).thenReturn(4);
     mockAuthService = MockAuthService();
     mockAppCubit = MockAppCubit();
     mockSummaryHomeCubit = MockSummaryHomeCubit();
@@ -69,10 +71,10 @@ void main() {
       await getIt.unregister<DatabaseService>();
     }
     if (getIt.isRegistered<RemoteConfigService>()) {
-      getIt.unregister<RemoteConfigService>();
+      await getIt.unregister<RemoteConfigService>();
     }
     if (getIt.isRegistered<AuthService>()) {
-      getIt.unregister<AuthService>();
+      await getIt.unregister<AuthService>();
     }
 
     getIt
@@ -346,6 +348,49 @@ void main() {
       await tester.pumpAndSettle();
 
       verify(() => mockSummaryHomeCubit.toggleResumeItem(any())).called(1);
+    });
+
+    testWidgets('can switch between month and year period types', (
+      tester,
+    ) async {
+      final movements = <Movement>[
+        Movement(
+          id: '1',
+          title: 'Lunch',
+          description: 'Subway',
+          price: 15,
+          date: DateTime.now(),
+          category: testCategories.first,
+          user: 'user123',
+        ),
+      ];
+
+      when(
+        () => mockDatabaseService.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value(movements));
+
+      await tester.pumpWidget(buildView());
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byType(ExpressiveButtonGroup<SummaryPeriodType>),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('Year'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => mockSummaryHomeCubit.changePeriodType(SummaryPeriodType.year),
+      ).called(1);
     });
 
     testWidgets(

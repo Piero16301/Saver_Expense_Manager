@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-enum MonthPickerMode { single, range }
+enum MonthPickerMode { single, range, yearRange }
 
 class MonthPicker {
   static Future<DateTime?> showSingleMonthPicker({
@@ -49,6 +49,28 @@ class MonthPicker {
       ),
     );
   }
+
+  static Future<DateTimeRange?> showRangeYearPicker({
+    required BuildContext context,
+    DateTime? initialStartDate,
+    DateTime? initialEndDate,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
+    return await showDialog<DateTimeRange>(
+      context: context,
+      builder: (_) => BlocProvider.value(
+        value: context.read<AppCubit>(),
+        child: MonthPickerDialog(
+          mode: MonthPickerMode.yearRange,
+          initialStartDate: initialStartDate,
+          initialEndDate: initialEndDate,
+          firstDate: firstDate,
+          lastDate: lastDate,
+        ),
+      ),
+    );
+  }
 }
 
 class MonthPickerDialog extends StatefulWidget {
@@ -82,7 +104,8 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
   @override
   void initState() {
     super.initState();
-    if (widget.mode == MonthPickerMode.range) {
+    if (widget.mode == MonthPickerMode.range ||
+        widget.mode == MonthPickerMode.yearRange) {
       _startDate = widget.initialStartDate;
       _endDate = widget.initialEndDate;
       _displayedYear = _startDate ?? DateTime.now();
@@ -92,20 +115,50 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
     }
   }
 
+  int get _yearPageStart => (_displayedYear.year ~/ 12) * 12;
+
   void _previousYear() {
     setState(() {
-      _displayedYear = DateTime(_displayedYear.year - 1);
+      final step = widget.mode == MonthPickerMode.yearRange ? 12 : 1;
+      _displayedYear = DateTime(_displayedYear.year - step);
     });
   }
 
   void _nextYear() {
     setState(() {
-      _displayedYear = DateTime(_displayedYear.year + 1);
+      final step = widget.mode == MonthPickerMode.yearRange ? 12 : 1;
+      _displayedYear = DateTime(_displayedYear.year + step);
     });
   }
 
   bool _isSameMonth(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month;
+
+  void _onYearTapped(int year) {
+    if (widget.firstDate != null && year < widget.firstDate!.year) {
+      return;
+    }
+    if (widget.lastDate != null && year > widget.lastDate!.year) {
+      return;
+    }
+
+    final date = DateTime(year);
+    setState(() {
+      if (_startDate == null) {
+        _startDate = date;
+      } else if (_startDate != null && _endDate == null) {
+        if (year < _startDate!.year) {
+          _endDate = _startDate;
+          _startDate = date;
+        } else {
+          _endDate = date;
+        }
+      } else {
+        _startDate = date;
+        _endDate = null;
+      }
+    });
+  }
 
   void _onMonthTapped(DateTime date) {
     if (widget.firstDate != null &&
@@ -146,7 +199,14 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
   }
 
   String _getHeadlineString(BuildContext context, String lang) {
-    if (widget.mode == MonthPickerMode.single) {
+    if (widget.mode == MonthPickerMode.yearRange) {
+      if (_startDate == null) {
+        return context.l10n.yearPickerSelectMultipleYears;
+      }
+      final startStr = '${_startDate!.year}';
+      if (_endDate == null) return '$startStr - ';
+      return '$startStr - ${_endDate!.year}';
+    } else if (widget.mode == MonthPickerMode.single) {
       if (_selectedDate == null) {
         return context.l10n.monthPickerSelectSingleMonth;
       }
@@ -169,6 +229,119 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
         return '$startYrStr - $endStr';
       }
     }
+  }
+
+  Widget _buildYearCell(BuildContext context, int year) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    var isDisabled = false;
+    if (widget.firstDate != null && year < widget.firstDate!.year) {
+      isDisabled = true;
+    }
+    if (widget.lastDate != null && year > widget.lastDate!.year) {
+      isDisabled = true;
+    }
+
+    final isStart = _startDate != null && _startDate!.year == year;
+    final isEnd = _endDate != null && _endDate!.year == year;
+    final isInRange =
+        _startDate != null &&
+        _endDate != null &&
+        year > _startDate!.year &&
+        year < _endDate!.year &&
+        !isStart &&
+        !isEnd;
+    final isToday = year == DateTime.now().year;
+    final isSelectedCircle = isStart || isEnd;
+
+    final Widget pillContent = Container(
+      width: 56,
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: isSelectedCircle ? colorScheme.primary : Colors.transparent,
+        border: isToday && !isSelectedCircle
+            ? Border.all(color: colorScheme.primary, width: 1.5)
+            : null,
+      ),
+      child: Center(
+        child: Text(
+          '$year',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: isDisabled
+                ? colorScheme.onSurface.withValues(alpha: 0.38)
+                : isSelectedCircle
+                ? colorScheme.onPrimary
+                : colorScheme.onSurface,
+            fontVariations: <FontVariation>[
+              ...(Theme.of(context).textTheme.bodyMedium?.fontVariations ??
+                      const <FontVariation>[])
+                  .where((v) => v.axis != 'wght'),
+              FontVariation('wght', isToday || isSelectedCircle ? 700 : 400),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    final hasRightConnection =
+        isStart && _endDate != null && _startDate!.year < _endDate!.year;
+    final hasLeftConnection =
+        isEnd && _startDate != null && _startDate!.year < _endDate!.year;
+
+    return InkResponse(
+      onTap: isDisabled ? null : () => _onYearTapped(year),
+      radius: 24,
+      child: Stack(
+        children: [
+          if (hasRightConnection)
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: FractionallySizedBox(
+                  widthFactor: 0.85,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(50),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          if (hasLeftConnection)
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: 0.85,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer,
+                      borderRadius: const BorderRadius.horizontal(
+                        right: Radius.circular(50),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          if (isInRange)
+            Positioned.fill(
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                color: colorScheme.primaryContainer,
+              ),
+            ),
+          Center(child: pillContent),
+        ],
+      ),
+    );
   }
 
   Widget _buildMonthCell(BuildContext context, int month, String lang) {
@@ -339,7 +512,9 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.mode == MonthPickerMode.range
+                    widget.mode == MonthPickerMode.yearRange
+                        ? context.l10n.yearPickerSelectMultipleYears
+                        : widget.mode == MonthPickerMode.range
                         ? context.l10n.monthPickerSelectMultipleMonths
                         : context.l10n.monthPickerSelectSingleMonth,
                     style: textTheme.labelLarge?.copyWith(
@@ -375,27 +550,34 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
               ),
               child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    child: Text(
-                      '${_displayedYear.year}',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        fontVariations: <FontVariation>[
-                          ...(Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium?.fontVariations ??
-                                  const <FontVariation>[])
-                              .where((v) => v.axis != 'wght'),
-                          const FontVariation('wght', 700),
-                        ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          widget.mode == MonthPickerMode.yearRange
+                              ? '$_yearPageStart - ${_yearPageStart + 11}'
+                              : '${_displayedYear.year}',
+                          style: textTheme.titleMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                            fontVariations: <FontVariation>[
+                              ...(Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium?.fontVariations ??
+                                      const <FontVariation>[])
+                                  .where((v) => v.axis != 'wght'),
+                              const FontVariation('wght', 700),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  const Spacer(),
                   IconButton(
                     icon: const HugeIcon(
                       icon: HugeIcons.strokeRoundedArrowLeft01,
@@ -425,6 +607,10 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                   ),
                   itemCount: 12,
                   itemBuilder: (context, index) {
+                    if (widget.mode == MonthPickerMode.yearRange) {
+                      final year = _yearPageStart + index;
+                      return _buildYearCell(context, year);
+                    }
                     final month = index + 1;
                     return _buildMonthCell(context, month, language.toString());
                   },
@@ -444,7 +630,24 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                   ),
                   TextButton(
                     onPressed: () {
-                      if (widget.mode == MonthPickerMode.range) {
+                      if (widget.mode == MonthPickerMode.yearRange) {
+                        if (_startDate != null) {
+                          final endYearDate = _endDate ?? _startDate!;
+                          Navigator.of(context).pop(
+                            DateTimeRange(
+                              start: DateTime(_startDate!.year),
+                              end: DateTime(
+                                endYearDate.year,
+                                12,
+                                31,
+                                23,
+                                59,
+                                59,
+                              ),
+                            ),
+                          );
+                        }
+                      } else if (widget.mode == MonthPickerMode.range) {
                         if (_startDate != null) {
                           final endMonthDate = _endDate ?? _startDate!;
                           Navigator.of(context).pop(

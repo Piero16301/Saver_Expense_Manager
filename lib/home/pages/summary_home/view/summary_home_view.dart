@@ -21,94 +21,130 @@ class SummaryHomeView extends StatelessWidget {
         MediaQuery.orientationOf(context) == Orientation.landscape;
 
     return BlocBuilder<SummaryHomeCubit, SummaryHomeState>(
-      builder: (context, state) => StreamBuilder<List<Movement>>(
-        stream: database.getMovementsStream(
-          userId: auth.currentUser!.uid,
-          startDate: state.startMonth,
-          endDate: state.endMonth,
-          orderByDate: true,
-        ),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: ExpressiveCircularProgressIndicator(
-                size: 40,
-                strokeWidth: 4,
+      builder: (context, state) {
+        final isYear = state.periodType.isYear;
+        final startDate = isYear ? state.startYear : state.startMonth;
+        final endDate = isYear ? state.endYear : state.endMonth;
+
+        final periodSelector = ExpressiveButtonGroup<SummaryPeriodType>(
+          selectedValue: state.periodType,
+          onSelected: (type) =>
+              context.read<SummaryHomeCubit>().changePeriodType(type),
+          items: [
+            ExpressiveButtonGroupItem(
+              value: SummaryPeriodType.year,
+              label: l10n.summaryPeriodYear,
+              icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedCalendar01,
+                size: 18,
               ),
-            );
-          }
-
-          if (snapshot.data!.isEmpty) {
-            return Center(child: Text(l10n.movementsNoData));
-          }
-
-          final movements = snapshot.data!;
-
-          final resumeMovementsChart = ResumeMovementsChart(
-            movements: movements,
-            endMonth: state.endMonth!,
-            selResumeItems: state.selResumeItems,
-            onChangeResumeItems: (type) =>
-                context.read<SummaryHomeCubit>().toggleResumeItem(type),
-          );
-
-          final incomesAndExpensesChart = IncomesAndExpensesChart(
-            movements: movements,
-            startMonth: state.startMonth!,
-            endMonth: state.endMonth!,
-            selResumeItems: state.selResumeItems,
-          );
-
-          final charts = isLandscape
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  spacing: 16,
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: resumeMovementsChart,
-                      ),
-                    ),
-                    incomesAndExpensesChart,
-                  ],
-                )
-              : Column(
-                  spacing: 16,
-                  children: [resumeMovementsChart, incomesAndExpensesChart],
-                );
-
-          final categoriesCard = CategoriesResumeCards(
-            movements: movements,
-            categories: categories,
-          );
-
-          return Column(
-            spacing: 12,
-            children: [
-              Expanded(
-                child: isLandscape
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        spacing: 16,
-                        children: [
-                          Expanded(child: charts),
-                          SizedBox(width: 200, child: categoriesCard),
-                        ],
-                      )
-                    : Column(
-                        spacing: 16,
-                        children: [
-                          Expanded(child: charts),
-                          categoriesCard,
-                        ],
-                      ),
+            ),
+            ExpressiveButtonGroupItem(
+              value: SummaryPeriodType.month,
+              label: l10n.summaryPeriodMonth,
+              icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedCalendar03,
+                size: 18,
               ),
-            ],
-          );
-        },
-      ),
+            ),
+          ],
+        );
+
+        return Column(
+          spacing: 12,
+          children: [
+            periodSelector,
+            Expanded(
+              child: StreamBuilder<List<Movement>>(
+                stream: database.getMovementsStream(
+                  userId: auth.currentUser!.uid,
+                  startDate: startDate,
+                  endDate: endDate,
+                  orderByDate: true,
+                ),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: ExpressiveCircularProgressIndicator(
+                        size: 40,
+                        strokeWidth: 4,
+                      ),
+                    );
+                  }
+
+                  if (snapshot.data!.isEmpty) {
+                    return Center(child: Text(l10n.movementsNoData));
+                  }
+
+                  final movements = snapshot.data!;
+
+                  final resumeMovementsChart = ResumeMovementsChart(
+                    movements: movements,
+                    endMonth: endDate!,
+                    periodType: state.periodType,
+                    selResumeItems: state.selResumeItems,
+                    onChangeResumeItems: (type) =>
+                        context.read<SummaryHomeCubit>().toggleResumeItem(type),
+                  );
+
+                  final incomesAndExpensesChart = IncomesAndExpensesChart(
+                    movements: movements,
+                    startMonth: startDate!,
+                    endMonth: endDate,
+                    periodType: state.periodType,
+                    selResumeItems: state.selResumeItems,
+                  );
+
+                  final charts = isLandscape
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          spacing: 16,
+                          children: [
+                            SizedBox(
+                              width: 150,
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: resumeMovementsChart,
+                              ),
+                            ),
+                            incomesAndExpensesChart,
+                          ],
+                        )
+                      : Column(
+                          spacing: 16,
+                          children: [
+                            resumeMovementsChart,
+                            incomesAndExpensesChart,
+                          ],
+                        );
+
+                  final categoriesCard = CategoriesResumeCards(
+                    movements: movements,
+                    categories: categories,
+                  );
+
+                  return isLandscape
+                      ? Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          spacing: 16,
+                          children: [
+                            Expanded(child: charts),
+                            SizedBox(width: 200, child: categoriesCard),
+                          ],
+                        )
+                      : Column(
+                          spacing: 16,
+                          children: [
+                            Expanded(child: charts),
+                            categoriesCard,
+                          ],
+                        );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -117,6 +153,7 @@ class ResumeMovementsChart extends StatelessWidget {
   const ResumeMovementsChart({
     required this.movements,
     required this.endMonth,
+    this.periodType = SummaryPeriodType.month,
     this.selResumeItems = const <ResumeItemType, bool>{},
     this.onChangeResumeItems,
     super.key,
@@ -124,6 +161,7 @@ class ResumeMovementsChart extends StatelessWidget {
 
   final List<Movement> movements;
   final DateTime endMonth;
+  final SummaryPeriodType periodType;
   final Map<ResumeItemType, bool> selResumeItems;
   final void Function(ResumeItemType type)? onChangeResumeItems;
 
@@ -137,6 +175,7 @@ class ResumeMovementsChart extends StatelessWidget {
     ) = AppFunctions.calculateIncomesAndExpenses(
       movements: movements,
       endMonth: endMonth,
+      periodType: periodType,
     );
 
     final (pastMonthBalance, currentMonthBalance) = (
@@ -263,6 +302,8 @@ class ResumeItemCardMovements extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isLandscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
 
     final card = Opacity(
       opacity: isSelected ? 1.0 : 0.5,
@@ -278,7 +319,7 @@ class ResumeItemCardMovements extends StatelessWidget {
         ),
         child: ExpressiveCard(
           margin: EdgeInsets.zero,
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.all(isLandscape ? 8 : 12),
           borderRadius: BorderRadius.circular(18),
           backgroundColor: isSelected
               ? color.withValues(alpha: 0.12)
@@ -286,7 +327,7 @@ class ResumeItemCardMovements extends StatelessWidget {
           onTap: onTap != null ? () => onTap!(type) : null,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            spacing: 8,
+            spacing: isLandscape ? 4 : 8,
             children: [
               Row(
                 spacing: 8,
@@ -354,6 +395,7 @@ class IncomesAndExpensesChart extends StatelessWidget {
     required this.startMonth,
     required this.endMonth,
     required this.selResumeItems,
+    this.periodType = SummaryPeriodType.month,
     super.key,
   });
 
@@ -361,6 +403,7 @@ class IncomesAndExpensesChart extends StatelessWidget {
   final DateTime startMonth;
   final DateTime endMonth;
   final Map<ResumeItemType, bool> selResumeItems;
+  final SummaryPeriodType periodType;
 
   @override
   Widget build(BuildContext context) {
@@ -397,6 +440,7 @@ class IncomesAndExpensesChart extends StatelessWidget {
             endMonth: endMonth,
             language: language.toString(),
             selResumeItems: selResumeItems,
+            periodType: periodType,
           ),
         ),
       ),

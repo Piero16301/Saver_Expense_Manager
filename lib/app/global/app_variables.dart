@@ -124,6 +124,14 @@ enum ImageResolutionType { low, medium, high }
 
 enum ResumeItemType { income, expense, balance }
 
+enum SummaryPeriodType {
+  month,
+  year;
+
+  bool get isMonth => this == SummaryPeriodType.month;
+  bool get isYear => this == SummaryPeriodType.year;
+}
+
 enum ModelType {
   cloud,
   local;

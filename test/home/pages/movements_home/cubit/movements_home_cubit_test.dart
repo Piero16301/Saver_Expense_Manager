@@ -80,19 +80,19 @@ void main() {
     ).thenReturn(null);
 
     if (getIt.isRegistered<LocalStorageService>()) {
-      getIt.unregister<LocalStorageService>();
+      await getIt.unregister<LocalStorageService>();
     }
     if (getIt.isRegistered<AuthService>()) {
-      getIt.unregister<AuthService>();
+      await getIt.unregister<AuthService>();
     }
     if (getIt.isRegistered<DatabaseService>()) {
-      getIt.unregister<DatabaseService>();
+      await getIt.unregister<DatabaseService>();
     }
     if (getIt.isRegistered<RemoteConfigService>()) {
-      getIt.unregister<RemoteConfigService>();
+      await getIt.unregister<RemoteConfigService>();
     }
     if (getIt.isRegistered<AiService>()) {
-      getIt.unregister<AiService>();
+      await getIt.unregister<AiService>();
     }
 
     getIt
@@ -329,7 +329,7 @@ void main() {
       ).thenAnswer((_) => Stream.value([]));
 
       if (getIt.isRegistered<DatabaseService>()) {
-        getIt.unregister<DatabaseService>();
+        await getIt.unregister<DatabaseService>();
       }
       getIt.registerSingleton<DatabaseService>(mockDatabase);
     });
