@@ -4,14 +4,14 @@ import 'package:saver_expense_manager/settings/helpers/settings_app_specs_helper
     as helper;
 
 class AppSpecsData {
-  const AppSpecsData({
+  const new({
     required this.version,
     required this.buildNumber,
     required this.versionDisplay,
     required this.updateDate,
   });
 
-  factory AppSpecsData.fromPackageInfo(PackageInfo packageInfo) {
+  factory fromPackageInfo(PackageInfo packageInfo) {
     const buildDateEnv = String.fromEnvironment('BUILD_DATE');
     final envDate = buildDateEnv.isNotEmpty
         ? DateTime.tryParse(buildDateEnv)

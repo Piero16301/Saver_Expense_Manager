@@ -6,7 +6,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
 void main() {
   group('MonthSelector', () {
@@ -48,9 +48,8 @@ void main() {
 
       expect(find.text('Mar 2024'), findsOneWidget);
 
-      when(
-        () => appCubit.state,
-      ).thenReturn(const AppState(language: Locale('es')));
+      when(() => appCubit.state)
+          .thenReturn(const AppState(language: Locale('es')));
       await tester.pumpWidget(
         MaterialApp(
           locale: const Locale('es'),

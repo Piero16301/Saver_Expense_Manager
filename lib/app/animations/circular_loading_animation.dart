@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 
 class CircularLoadingAnimation extends StatefulWidget {
-  const CircularLoadingAnimation({
+  const new({
     required this.outerCircleColor,
     required this.innerCircleColor,
     required this.backgroundColor,
@@ -75,7 +75,7 @@ class _CircularLoadingAnimationState extends State<CircularLoadingAnimation>
 }
 
 class _LoadingPainter extends CustomPainter {
-  _LoadingPainter({
+  new({
     required this.progress,
     required this.outerColor,
     required this.innerColor,

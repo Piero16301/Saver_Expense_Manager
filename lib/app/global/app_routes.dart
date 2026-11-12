@@ -131,7 +131,7 @@ class AppRoutes {
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream) {
+  new(Stream<dynamic> stream) {
     notifyListeners();
     _subscription = stream.asBroadcastStream().listen(
       (dynamic _) => notifyListeners(),
@@ -156,7 +156,7 @@ enum AppRoute {
   category('category', 'category'),
   profile('profile', 'profile');
 
-  const AppRoute(this.path, this.name);
+  new(this.path, this.name);
   final String path;
   final String name;
 }

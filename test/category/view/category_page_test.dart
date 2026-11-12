@@ -7,11 +7,11 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/category/category.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
 void main() {
   setUpAll(() {

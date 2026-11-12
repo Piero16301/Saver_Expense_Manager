@@ -1,7 +1,7 @@
 import 'package:saver_expense_manager/app/app.dart';
 
 class CrashService {
-  CrashService({required this._crashRepository});
+  new({required this._crashRepository});
 
   final CrashRepository _crashRepository;
 

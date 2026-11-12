@@ -1,7 +1,7 @@
 part of 'category_cubit.dart';
 
 class CategoryState extends Equatable {
-  const CategoryState({this.category = Category.empty});
+  const new({this.category = Category.empty});
 
   final Category category;
 

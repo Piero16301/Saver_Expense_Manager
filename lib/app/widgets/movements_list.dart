@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MovementsList extends StatelessWidget {
-  const MovementsList({
+  const new({
     required this.filterCategory,
     required this.monthSelected,
     super.key,
@@ -73,9 +73,8 @@ class MovementsList extends StatelessWidget {
             trailing: Container(
               width: 90,
               decoration: BoxDecoration(
-                color: HexColor.fromHex(
-                  movement.category.color,
-                ).withValues(alpha: 0.5),
+                color: HexColor.fromHex(movement.category.color)
+                    .withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Padding(
@@ -84,9 +83,10 @@ class MovementsList extends StatelessWidget {
                   AppExtensions.moneyFormat.format(movement.price),
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     fontVariations: <FontVariation>[
-                      ...(Theme.of(
-                                context,
-                              ).textTheme.bodySmall?.fontVariations ??
+                      ...(Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.fontVariations ??
                               const <FontVariation>[])
                           .where((v) => v.axis != 'wght'),
                       const FontVariation('wght', 700),
@@ -99,9 +99,10 @@ class MovementsList extends StatelessWidget {
             leading: SizedBox(
               width: 40,
               child: Text(
-                AppExtensions.largeDateFormat(
-                  language.toString(),
-                ).format(movement.date).replaceFirst(' ', '\n').toUpperCase(),
+                AppExtensions.largeDateFormat(language.toString())
+                    .format(movement.date)
+                    .replaceFirst(' ', '\n')
+                    .toUpperCase(),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),

@@ -5,7 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class MockSharedPreferences extends Mock implements SharedPreferences {}
+class MockSharedPreferences extends Mock implements SharedPreferences;
 
 void main() {
   late MockSharedPreferences mockPrefs;
@@ -37,9 +37,8 @@ void main() {
 
   group('SharedPrefsLocalStorageRepository', () {
     test('saveLanguage calls setString', () {
-      when(
-        () => mockPrefs.setString(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockPrefs.setString(any(), any()))
+          .thenAnswer((_) async => true);
       repository.saveLanguage(language: const Locale('en', 'US'));
       verify(
         () =>
@@ -48,25 +47,22 @@ void main() {
     });
 
     test('getLanguage returns parsed Locale', () {
-      when(
-        () => mockPrefs.getString(LocalStorageRepository.kUserLanguage),
-      ).thenReturn('es_PE');
+      when(() => mockPrefs.getString(LocalStorageRepository.kUserLanguage))
+          .thenReturn('es_PE');
       final result = repository.getLanguage();
       expect(result, equals(const Locale('es', 'PE')));
     });
 
     test('getLanguage returns null if key missing', () {
-      when(
-        () => mockPrefs.getString(LocalStorageRepository.kUserLanguage),
-      ).thenReturn(null);
+      when(() => mockPrefs.getString(LocalStorageRepository.kUserLanguage))
+          .thenReturn(null);
       final result = repository.getLanguage();
       expect(result, isNull);
     });
 
     test('saveTheme calls setString with correct name', () {
-      when(
-        () => mockPrefs.setString(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockPrefs.setString(any(), any()))
+          .thenAnswer((_) async => true);
       repository.saveTheme(theme: ThemeMode.dark);
       verify(
         () => mockPrefs.setString(
@@ -77,17 +73,15 @@ void main() {
     });
 
     test('getTheme returns correctly parsed ThemeMode', () {
-      when(
-        () => mockPrefs.getString(LocalStorageRepository.kUserTheme),
-      ).thenReturn(ExpressiveTheme.toKey(ThemeMode.dark));
+      when(() => mockPrefs.getString(LocalStorageRepository.kUserTheme))
+          .thenReturn(ExpressiveTheme.toKey(ThemeMode.dark));
       final result = repository.getTheme();
       expect(result, equals(ThemeMode.dark));
     });
 
     test('saveBaseColor calls setString', () {
-      when(
-        () => mockPrefs.setString(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockPrefs.setString(any(), any()))
+          .thenAnswer((_) async => true);
       repository.saveBaseColor(baseColor: Colors.blue);
       verify(
         () => mockPrefs.setString(
@@ -98,17 +92,15 @@ void main() {
     });
 
     test('getBaseColor returns correctly parsed Color', () {
-      when(
-        () => mockPrefs.getString(LocalStorageRepository.kUserBaseColor),
-      ).thenReturn(ExpressiveColors.toKey(Colors.blue));
+      when(() => mockPrefs.getString(LocalStorageRepository.kUserBaseColor))
+          .thenReturn(ExpressiveColors.toKey(Colors.blue));
       final result = repository.getBaseColor();
       expect(result, equals(Colors.blue));
     });
 
     test('saveFontFamily calls setString', () {
-      when(
-        () => mockPrefs.setString(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockPrefs.setString(any(), any()))
+          .thenAnswer((_) async => true);
       repository.saveFontFamily(fontFamily: 'Roboto');
       verify(
         () => mockPrefs.setString(
@@ -119,16 +111,14 @@ void main() {
     });
 
     test('getFontFamily returns string', () {
-      when(
-        () => mockPrefs.getString(LocalStorageRepository.kUserFontFamily),
-      ).thenReturn('Roboto');
+      when(() => mockPrefs.getString(LocalStorageRepository.kUserFontFamily))
+          .thenReturn('Roboto');
       expect(repository.getFontFamily(), equals('Roboto'));
     });
 
     test('saveRecommendationsDate calls setString with formatted date', () {
-      when(
-        () => mockPrefs.setString(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockPrefs.setString(any(), any()))
+          .thenAnswer((_) async => true);
       final date = DateTime(2026);
       repository.saveRecommendationsDate(date: date);
       verify(
@@ -150,9 +140,8 @@ void main() {
     });
 
     test('saveRecommendations calls setStringList', () {
-      when(
-        () => mockPrefs.setStringList(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => mockPrefs.setStringList(any(), any()))
+          .thenAnswer((_) async => true);
       repository.saveRecommendations(recommendations: ['r1', 'r2']);
       verify(
         () => mockPrefs.setStringList(

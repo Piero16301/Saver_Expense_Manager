@@ -11,13 +11,13 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/movement.dart';
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockAppUser extends Mock implements AppUser {}
+class MockAppUser extends Mock implements AppUser;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -111,9 +111,8 @@ void main() {
     testWidgets('renders CircularProgressIndicator when loading categories', (
       tester,
     ) async {
-      when(
-        () => databaseService.getCategoriesStream(),
-      ).thenAnswer((_) => const Stream.empty());
+      when(() => databaseService.getCategoriesStream())
+          .thenAnswer((_) => const Stream.empty());
 
       await pumpMovementPage(tester);
 
@@ -121,9 +120,8 @@ void main() {
     });
 
     testWidgets('renders error text when categories are empty', (tester) async {
-      when(
-        () => databaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value([]));
+      when(() => databaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.value([]));
 
       await pumpMovementPage(tester);
       await tester.pumpAndSettle();
@@ -134,9 +132,8 @@ void main() {
     testWidgets('renders MovementView when categories are loaded', (
       tester,
     ) async {
-      when(
-        () => databaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value(categories));
+      when(() => databaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.value(categories));
 
       await pumpMovementPage(tester);
       await tester.pumpAndSettle();
@@ -145,9 +142,8 @@ void main() {
     });
 
     testWidgets('renders error text when stream has error', (tester) async {
-      when(
-        () => databaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.error(Exception('error')));
+      when(() => databaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.error(Exception('error')));
 
       await pumpMovementPage(tester);
       await tester.pumpAndSettle();

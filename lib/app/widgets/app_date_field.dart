@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class AppDateField extends StatelessWidget {
-  const AppDateField({
+  const new({
     required this.label,
     required this.initialDate,
     this.onDateChanged,

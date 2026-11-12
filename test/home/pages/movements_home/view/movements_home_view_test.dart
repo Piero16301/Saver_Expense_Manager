@@ -11,17 +11,17 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MockMovementsHomeCubit extends MockCubit<MovementsHomeState>
-    implements MovementsHomeCubit {}
+    implements MovementsHomeCubit;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class MockLocalStorageService extends Mock implements LocalStorageService {}
+class MockLocalStorageService extends Mock implements LocalStorageService;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
 const _testCategories = [
   Category(
@@ -80,9 +80,8 @@ void main() {
       () => mockLocalStorage.getRecommendations(userId: any(named: 'userId')),
     ).thenReturn([]);
 
-    when(
-      () => mockDatabase.getCategoriesStream(),
-    ).thenAnswer((_) => Stream.value([]));
+    when(() => mockDatabase.getCategoriesStream())
+        .thenAnswer((_) => Stream.value([]));
     when(
       () => mockDatabase.getMovementsStream(
         userId: any(named: 'userId'),
@@ -132,9 +131,8 @@ void main() {
       tester,
     ) async {
       final controller = StreamController<List<Category>>();
-      when(
-        () => mockDatabase.getCategoriesStream(),
-      ).thenAnswer((_) => controller.stream);
+      when(() => mockDatabase.getCategoriesStream())
+          .thenAnswer((_) => controller.stream);
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -146,9 +144,8 @@ void main() {
     testWidgets('shows empty categories message when list is empty', (
       tester,
     ) async {
-      when(
-        () => mockDatabase.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value([]));
+      when(() => mockDatabase.getCategoriesStream())
+          .thenAnswer((_) => Stream.value([]));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -160,9 +157,8 @@ void main() {
     testWidgets('shows MovementsHomeView when categories are present', (
       tester,
     ) async {
-      when(
-        () => mockDatabase.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value(_testCategories));
+      when(() => mockDatabase.getCategoriesStream())
+          .thenAnswer((_) => Stream.value(_testCategories));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -172,9 +168,8 @@ void main() {
     });
 
     testWidgets('shows error message when stream has error', (tester) async {
-      when(
-        () => mockDatabase.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.error('error'));
+      when(() => mockDatabase.getCategoriesStream())
+          .thenAnswer((_) => Stream.error('error'));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -186,9 +181,8 @@ void main() {
 
   group('MovementsHomeView', () {
     Widget buildView({MovementsHomeState? state, List<Category>? categories}) {
-      when(
-        () => mockCubit.state,
-      ).thenReturn(state ?? const MovementsHomeState());
+      when(() => mockCubit.state)
+          .thenReturn(state ?? const MovementsHomeState());
       return MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,

@@ -10,15 +10,15 @@ import 'package:saver_expense_manager/home/home.dart';
 
 import '../../helpers/helpers.dart';
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
-class MockAppUser extends Mock implements AppUser {}
+class MockAppUser extends Mock implements AppUser;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
 void main() {
   late MockDatabaseService mockDatabaseService;
@@ -46,9 +46,8 @@ void main() {
       ..registerSingleton<AuthService>(mockAuthService)
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService);
 
-    when(
-      () => mockAuthService.authStateChanges,
-    ).thenAnswer((_) => Stream.value(mockAppUser));
+    when(() => mockAuthService.authStateChanges)
+        .thenAnswer((_) => Stream.value(mockAppUser));
     when(() => mockAuthService.currentUser).thenReturn(mockAppUser);
     when(() => mockAppUser.photoURL).thenReturn(null);
     when(() => mockAppUser.uid).thenReturn('user123');
@@ -78,9 +77,8 @@ void main() {
     testWidgets('renders CircularProgressIndicator when loading categories', (
       tester,
     ) async {
-      when(
-        () => mockDatabaseService.getCategoriesStream(),
-      ).thenAnswer((_) => const Stream.empty());
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => const Stream.empty());
 
       await tester.pumpApp(buildSubject(const HomePage()));
 
@@ -90,9 +88,8 @@ void main() {
     testWidgets('renders no categories found message when list is empty', (
       tester,
     ) async {
-      when(
-        () => mockDatabaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value([]));
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.value([]));
 
       await tester.pumpApp(buildSubject(const HomePage()));
       await tester.pump();
@@ -110,9 +107,8 @@ void main() {
           color: '#FF0000',
         ),
       ];
-      when(
-        () => mockDatabaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream<List<Category>>.value(categories));
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream<List<Category>>.value(categories));
 
       await mockNetworkImagesFor(() async {
         await tester.pumpApp(buildSubject(const HomePage()));
@@ -124,9 +120,8 @@ void main() {
     testWidgets('renders CircularProgressIndicator when snapshot emits error', (
       tester,
     ) async {
-      when(
-        () => mockDatabaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.error(Exception('Error')));
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.error(Exception('Error')));
 
       await tester.pumpApp(buildSubject(const HomePage()));
       await tester.pump();

@@ -6,7 +6,7 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MovementsHomePage extends StatelessWidget {
-  const MovementsHomePage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

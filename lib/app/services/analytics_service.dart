@@ -1,7 +1,7 @@
 import 'package:saver_expense_manager/app/app.dart';
 
 class AnalyticsService {
-  AnalyticsService({required this._analyticsRepository});
+  new({required this._analyticsRepository});
 
   final AnalyticsRepository _analyticsRepository;
 

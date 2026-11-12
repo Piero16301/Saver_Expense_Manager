@@ -5,9 +5,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockLocalStorageService extends Mock implements LocalStorageService {}
+class MockLocalStorageService extends Mock implements LocalStorageService;
 
-class MockAnalyticsService extends Mock implements AnalyticsService {}
+class MockAnalyticsService extends Mock implements AnalyticsService;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -180,9 +180,8 @@ void main() {
       blocTest<AppCubit, AppState>(
         'emits correct state and calls localStorage',
         build: () {
-          when(
-            () => localStorage.saveTheme(theme: ThemeMode.dark),
-          ).thenAnswer((_) async {});
+          when(() => localStorage.saveTheme(theme: ThemeMode.dark))
+              .thenAnswer((_) async {});
           return AppCubit();
         },
         act: (cubit) => cubit.changeTheme(theme: ThemeMode.dark),
@@ -197,17 +196,15 @@ void main() {
       blocTest<AppCubit, AppState>(
         'emits correct state and calls localStorage',
         build: () {
-          when(
-            () => localStorage.saveBaseColor(baseColor: Colors.red),
-          ).thenAnswer((_) async {});
+          when(() => localStorage.saveBaseColor(baseColor: Colors.red))
+              .thenAnswer((_) async {});
           return AppCubit();
         },
         act: (cubit) => cubit.changeBaseColor(baseColor: Colors.red),
         expect: () => [const AppState(baseColor: Colors.red)],
         verify: (_) {
-          verify(
-            () => localStorage.saveBaseColor(baseColor: Colors.red),
-          ).called(1);
+          verify(() => localStorage.saveBaseColor(baseColor: Colors.red))
+              .called(1);
         },
       );
     });
@@ -216,17 +213,15 @@ void main() {
       blocTest<AppCubit, AppState>(
         'emits correct state and calls localStorage',
         build: () {
-          when(
-            () => localStorage.saveFontFamily(fontFamily: 'Merriweather'),
-          ).thenAnswer((_) async {});
+          when(() => localStorage.saveFontFamily(fontFamily: 'Merriweather'))
+              .thenAnswer((_) async {});
           return AppCubit();
         },
         act: (cubit) => cubit.changeFontFamily(fontFamily: 'Merriweather'),
         expect: () => [const AppState(fontFamily: 'Merriweather')],
         verify: (_) {
-          verify(
-            () => localStorage.saveFontFamily(fontFamily: 'Merriweather'),
-          ).called(1);
+          verify(() => localStorage.saveFontFamily(fontFamily: 'Merriweather'))
+              .called(1);
         },
       );
     });

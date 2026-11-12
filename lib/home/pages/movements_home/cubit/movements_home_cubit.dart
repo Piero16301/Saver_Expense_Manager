@@ -9,7 +9,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 part 'movements_home_state.dart';
 
 class MovementsHomeCubit extends Cubit<MovementsHomeState> {
-  MovementsHomeCubit({required this.l10n}) : super(const MovementsHomeState()) {
+  new({required this.l10n}) : super(const MovementsHomeState()) {
     unawaited(getRecommendations(l10n: l10n));
   }
 

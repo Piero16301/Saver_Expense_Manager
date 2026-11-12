@@ -6,15 +6,15 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockAiService extends Mock implements AiService {}
+class MockAiService extends Mock implements AiService;
 
-class MockAnalyticsService extends Mock implements AnalyticsService {}
+class MockAnalyticsService extends Mock implements AnalyticsService;
 
-class MockGoRouterState extends Mock implements GoRouterState {}
+class MockGoRouterState extends Mock implements GoRouterState;
 
-class MockBuildContext extends Mock implements BuildContext {}
+class MockBuildContext extends Mock implements BuildContext;
 
 void main() {
   late MockAuthService mockAuthService;
@@ -42,9 +42,8 @@ void main() {
       ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService)
       ..registerLazySingleton<AiService>(() => mockAiService);
 
-    when(
-      () => mockAuthService.userChanges,
-    ).thenAnswer((_) => const Stream.empty());
+    when(() => mockAuthService.userChanges)
+        .thenAnswer((_) => const Stream.empty());
     when(() => mockAuthService.isLoggedIn).thenReturn(false);
   });
 

@@ -6,7 +6,7 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class ExpensesHomeView extends StatelessWidget {
-  const ExpensesHomeView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,7 @@ class ExpensesHomeView extends StatelessWidget {
 }
 
 class ExpensesHomeMobileView extends StatelessWidget {
-  const ExpensesHomeMobileView({
+  const new({
     required this.data,
     required this.selectedIndex,
     required this.monthSelected,
@@ -111,7 +111,7 @@ class ExpensesHomeMobileView extends StatelessWidget {
 }
 
 class ExpensesHomeWebView extends StatelessWidget {
-  const ExpensesHomeWebView({
+  const new({
     required this.data,
     required this.selectedIndex,
     required this.monthSelected,

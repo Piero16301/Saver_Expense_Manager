@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class LocalStorageService {
-  LocalStorageService({required this._localStorageRepository});
+  new({required this._localStorageRepository});
 
   final LocalStorageRepository _localStorageRepository;
 

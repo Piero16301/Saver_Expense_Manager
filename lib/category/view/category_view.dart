@@ -8,7 +8,7 @@ import 'package:saver_expense_manager/category/category.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class CategoryView extends StatelessWidget {
-  const CategoryView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +32,8 @@ class CategoryView extends StatelessWidget {
           ),
           title: Text(
             AppFunctions.getCategoryName(state.category.name, l10n),
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
         body: Padding(
@@ -69,7 +68,7 @@ class CategoryView extends StatelessWidget {
 }
 
 class CategoryIcon extends StatelessWidget {
-  const CategoryIcon({required this.category, super.key});
+  const new({required this.category, super.key});
 
   final Category category;
 
@@ -98,7 +97,7 @@ class CategoryIcon extends StatelessWidget {
 }
 
 class CategoryTabBar extends StatefulWidget {
-  const CategoryTabBar({required this.category, super.key});
+  const new({required this.category, super.key});
 
   final Category category;
 
@@ -167,7 +166,7 @@ class _CategoryTabBarState extends State<CategoryTabBar>
 }
 
 class TabTrendCategory extends StatefulWidget {
-  const TabTrendCategory({super.key});
+  const new({super.key});
 
   @override
   State<TabTrendCategory> createState() => _TabTrendCategoryState();
@@ -271,7 +270,7 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
 }
 
 class TabMovementsCategory extends StatefulWidget {
-  const TabMovementsCategory({super.key});
+  const new({super.key});
 
   @override
   State<TabMovementsCategory> createState() => _TabMovementsCategoryState();

@@ -5,7 +5,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class AppLoader {
-  AppLoader(this.context);
+  new(this.context);
 
   final BuildContext context;
 

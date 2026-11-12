@@ -7,13 +7,13 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/register/cubit/register_cubit.dart';
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockAppLocalizations extends Mock implements AppLocalizations {}
+class MockAppLocalizations extends Mock implements AppLocalizations;
 
-class MockAnalyticsService extends Mock implements AnalyticsService {}
+class MockAnalyticsService extends Mock implements AnalyticsService;
 
-class MockCrashService extends Mock implements CrashService {}
+class MockCrashService extends Mock implements CrashService;
 
 void main() {
   late MockAuthService mockAuthService;
@@ -46,9 +46,8 @@ void main() {
       ),
     ).thenAnswer((_) async {});
 
-    when(
-      () => mockCrashService.setUserIdentifier(any<String>()),
-    ).thenAnswer((_) async {});
+    when(() => mockCrashService.setUserIdentifier(any<String>()))
+        .thenAnswer((_) async {});
 
     when(
       () => mockAnalyticsService.logEvent(
@@ -60,9 +59,8 @@ void main() {
     when(() => mockAppLocalizations.genericError).thenReturn('Error');
     when(() => mockAuthService.currentUser).thenReturn(null);
 
-    when(
-      () => mockAnalyticsService.setUserId(id: any<String>(named: 'id')),
-    ).thenAnswer((_) {});
+    when(() => mockAnalyticsService.setUserId(id: any<String>(named: 'id')))
+        .thenAnswer((_) {});
 
     registerCubit = RegisterCubit(authService: mockAuthService);
   });
@@ -153,9 +151,8 @@ void main() {
             any<String>(),
           ),
         ).thenAnswer((_) async => true);
-        when(
-          () => mockAuthService.updateUserName(any<String>()),
-        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.updateUserName(any<String>()))
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.register(mockAppLocalizations),
       expect: () => const [
@@ -262,12 +259,10 @@ void main() {
             any<String>(),
           ),
         ).thenAnswer((_) async => true);
-        when(
-          () => mockAuthService.currentUser,
-        ).thenReturn(const AppUser(uid: 'user-id', displayName: 'Piero'));
-        when(
-          () => mockAuthService.updateUserName(any<String>()),
-        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.currentUser)
+            .thenReturn(const AppUser(uid: 'user-id', displayName: 'Piero'));
+        when(() => mockAuthService.updateUserName(any<String>()))
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.register(mockAppLocalizations),
       verify: (_) {

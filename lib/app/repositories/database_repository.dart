@@ -106,7 +106,7 @@ class MockDatabaseRepository implements DatabaseRepository {
 }
 
 class FirestoreDatabaseRepository implements DatabaseRepository {
-  FirestoreDatabaseRepository({FirebaseFirestore? firestore})
+  new({FirebaseFirestore? firestore})
     : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;

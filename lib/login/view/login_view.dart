@@ -8,7 +8,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/login/login.dart';
 
 class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

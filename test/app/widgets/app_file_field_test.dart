@@ -11,9 +11,9 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 
 import '../../helpers/helpers.dart';
 
-class MockRemoteStorageService extends Mock implements RemoteStorageService {}
+class MockRemoteStorageService extends Mock implements RemoteStorageService;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
 void main() {
   late RemoteStorageService remoteStorageService;

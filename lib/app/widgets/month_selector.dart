@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MonthSelector extends StatelessWidget {
-  const MonthSelector({
+  const new({
     required this.monthSelected,
     required this.onBack,
     required this.onForward,

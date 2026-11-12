@@ -12,15 +12,15 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MockSummaryHomeCubit extends MockCubit<SummaryHomeState>
-    implements SummaryHomeCubit {}
+    implements SummaryHomeCubit;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
 void main() {
   late MockDatabaseService mockDatabaseService;
@@ -61,9 +61,8 @@ void main() {
     mockAuthService = MockAuthService();
     mockAppCubit = MockAppCubit();
     mockSummaryHomeCubit = MockSummaryHomeCubit();
-    when(
-      () => mockAuthService.currentUser,
-    ).thenReturn(const AppUser(uid: 'user123'));
+    when(() => mockAuthService.currentUser)
+        .thenReturn(const AppUser(uid: 'user123'));
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
 
@@ -87,9 +86,8 @@ void main() {
 
   group('SummaryHomePage', () {
     Widget buildPage() {
-      when(
-        () => mockSummaryHomeCubit.state,
-      ).thenReturn(SummaryHomeState.initial());
+      when(() => mockSummaryHomeCubit.state)
+          .thenReturn(SummaryHomeState.initial());
       return MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -106,9 +104,8 @@ void main() {
     testWidgets('renders CircularProgressIndicator when loading categories', (
       tester,
     ) async {
-      when(
-        () => mockDatabaseService.getCategoriesStream(),
-      ).thenAnswer((_) => const Stream.empty());
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => const Stream.empty());
 
       await tester.pumpWidget(buildPage());
 
@@ -118,9 +115,8 @@ void main() {
     testWidgets('renders error message when category stream fails', (
       tester,
     ) async {
-      when(
-        () => mockDatabaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.error('Error'));
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.error('Error'));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -131,9 +127,8 @@ void main() {
     testWidgets('renders no categories found message when list is empty', (
       tester,
     ) async {
-      when(
-        () => mockDatabaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value([]));
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.value([]));
 
       await tester.pumpWidget(buildPage());
       await tester.pump();
@@ -144,9 +139,8 @@ void main() {
     testWidgets('renders SummaryHomeView when categories are loaded', (
       tester,
     ) async {
-      when(
-        () => mockDatabaseService.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value(testCategories));
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.value(testCategories));
       when(
         () => mockDatabaseService.getMovementsStream(
           userId: any(named: 'userId'),

@@ -5,10 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class FakeFile extends Fake implements File {}
+class FakeFile extends Fake implements File;
 
 class MockRemoteStorageRepository extends Mock
-    implements RemoteStorageRepository {}
+    implements RemoteStorageRepository;
 
 void main() {
   late RemoteStorageService service;
@@ -29,9 +29,8 @@ void main() {
     });
 
     test('deleteFile calls repository', () async {
-      when(
-        () => mockRepository.deleteFile(any<String>()),
-      ).thenAnswer((_) async => true);
+      when(() => mockRepository.deleteFile(any<String>()))
+          .thenAnswer((_) async => true);
       final result = await service.deleteFile('path');
       expect(result, isTrue);
       verify(() => mockRepository.deleteFile('path')).called(1);
@@ -39,9 +38,8 @@ void main() {
 
     test('uploadFile calls repository', () async {
       final bytes = Uint8List(0);
-      when(
-        () => mockRepository.uploadFile(any<Uint8List>(), any<String>()),
-      ).thenAnswer((_) async => 'url');
+      when(() => mockRepository.uploadFile(any<Uint8List>(), any<String>()))
+          .thenAnswer((_) async => 'url');
       final result = await service.uploadFile(bytes, 'path');
       expect(result, equals('url'));
       verify(() => mockRepository.uploadFile(bytes, 'path')).called(1);
@@ -49,18 +47,16 @@ void main() {
 
     test('getData calls repository', () async {
       final data = Uint8List(0);
-      when(
-        () => mockRepository.getData(any<String>()),
-      ).thenAnswer((_) async => data);
+      when(() => mockRepository.getData(any<String>()))
+          .thenAnswer((_) async => data);
       final result = await service.getData('path');
       expect(result, equals(data));
       verify(() => mockRepository.getData('path')).called(1);
     });
 
     test('getDownloadURL calls repository', () async {
-      when(
-        () => mockRepository.getDownloadURL(any<String>()),
-      ).thenAnswer((_) async => 'https://example.com/file.pdf');
+      when(() => mockRepository.getDownloadURL(any<String>()))
+          .thenAnswer((_) async => 'https://example.com/file.pdf');
       final result = await service.getDownloadURL('path');
       expect(result, equals('https://example.com/file.pdf'));
       verify(() => mockRepository.getDownloadURL('path')).called(1);

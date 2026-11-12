@@ -10,7 +10,7 @@ import 'package:saver_expense_manager/movement/cubit/attachment_helper/attachmen
 part 'movement_state.dart';
 
 class MovementCubit extends Cubit<MovementState> {
-  MovementCubit() : super(const MovementState());
+  new() : super(const MovementState());
 
   void init(Movement movement, List<Category> categories) {
     emit(

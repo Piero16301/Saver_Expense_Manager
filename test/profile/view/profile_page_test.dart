@@ -9,7 +9,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/profile/profile.dart';
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,9 +22,8 @@ void main() {
       authService = MockAuthService();
       userChangesController = StreamController<AppUser?>();
 
-      when(
-        () => authService.userChanges,
-      ).thenAnswer((_) => userChangesController.stream);
+      when(() => authService.userChanges)
+          .thenAnswer((_) => userChangesController.stream);
 
       if (getIt.isRegistered<AuthService>()) {
         await getIt.unregister<AuthService>();

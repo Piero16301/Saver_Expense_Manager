@@ -6,11 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class ListMovementsItemHome extends StatelessWidget {
-  const ListMovementsItemHome({
-    required this.movement,
-    this.showDate = true,
-    super.key,
-  });
+  const new({required this.movement, this.showDate = true, super.key});
 
   final Movement movement;
   final bool showDate;
@@ -61,9 +57,8 @@ class ListMovementsItemHome extends StatelessWidget {
               ? Padding(
                   padding: const EdgeInsets.only(top: 2),
                   child: Text(
-                    DateFormat.yMMMMd(
-                      language.toString(),
-                    ).format(movement.date),
+                    DateFormat.yMMMMd(language.toString())
+                        .format(movement.date),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),

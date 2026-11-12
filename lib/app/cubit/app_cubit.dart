@@ -11,7 +11,7 @@ import 'package:saver_expense_manager/app/app.dart';
 part 'app_state.dart';
 
 class AppCubit extends Cubit<AppState> {
-  AppCubit() : super(const AppState());
+  new() : super(const AppState());
 
   final LocalStorageService localStorage = getIt<LocalStorageService>();
 

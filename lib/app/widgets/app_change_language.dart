@@ -6,7 +6,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class AppChangeLanguage extends StatelessWidget {
-  const AppChangeLanguage({super.key, this.padding});
+  const new({super.key, this.padding});
 
   final EdgeInsets? padding;
 

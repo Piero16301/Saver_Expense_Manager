@@ -8,7 +8,7 @@ import 'package:saver_expense_manager/app/models/models.dart';
 /// {@endtemplate}
 class Movement extends Equatable {
   /// {@macro movement}
-  const Movement({
+  const new({
     required this.id,
     required this.title,
     required this.description,
@@ -21,7 +21,7 @@ class Movement extends Equatable {
   });
 
   /// Creates an instance of [Movement] from a [Map]
-  factory Movement.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     return Movement(
       id: json['id'] as String,
       title: json['title'] as String? ?? '',
@@ -42,10 +42,7 @@ class Movement extends Equatable {
   }
 
   /// Creates an instance of [Movement] from a response from the AI service
-  factory Movement.fromAiService(
-    Map<String, dynamic> json,
-    List<Category> categories,
-  ) {
+  factory fromAiService(Map<String, dynamic> json, List<Category> categories) {
     final category = categories.firstWhere(
       (element) => element.name == json['category'],
       orElse: () => Category.empty,

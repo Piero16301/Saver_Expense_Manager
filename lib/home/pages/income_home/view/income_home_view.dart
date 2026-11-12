@@ -6,7 +6,7 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class IncomeHomeView extends StatelessWidget {
-  const IncomeHomeView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,7 @@ class IncomeHomeView extends StatelessWidget {
 }
 
 class IncomeHomeMobileView extends StatelessWidget {
-  const IncomeHomeMobileView({
+  const new({
     required this.data,
     required this.selectedIndex,
     required this.monthSelected,
@@ -109,7 +109,7 @@ class IncomeHomeMobileView extends StatelessWidget {
 }
 
 class IncomeHomeWebView extends StatelessWidget {
-  const IncomeHomeWebView({
+  const new({
     required this.data,
     required this.selectedIndex,
     required this.monthSelected,

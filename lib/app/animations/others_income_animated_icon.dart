@@ -3,11 +3,7 @@ import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 
 class OthersIncomeAnimatedIcon extends StatefulWidget {
-  const OthersIncomeAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const new({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -58,7 +54,7 @@ class _OthersIncomeAnimatedIconState extends State<OthersIncomeAnimatedIcon>
 }
 
 class _OthersIncomePainter extends CustomPainter {
-  _OthersIncomePainter({required this.color, required this.animationValue});
+  new({required this.color, required this.animationValue});
 
   final Color color;
   final double animationValue;

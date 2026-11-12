@@ -9,7 +9,7 @@ typedef ExpensesCategorySummaryCard = CategorySummaryCard;
 typedef IncomeCategorySummaryCard = CategorySummaryCard;
 
 class CategorySummaryCard extends StatelessWidget {
-  const CategorySummaryCard({
+  const new({
     required this.data,
     required this.selectedIndex,
     required this.onCategorySelected,
@@ -190,9 +190,8 @@ class CategorySummaryCard extends StatelessWidget {
                             duration: AppVariables.animationDuration,
                             color: i == safeIndex
                                 ? HexColor.fromHex(data[i].category.color)
-                                : HexColor.fromHex(
-                                    data[i].category.color,
-                                  ).withValues(alpha: 0.4),
+                                : HexColor.fromHex(data[i].category.color)
+                                      .withValues(alpha: 0.4),
                           ),
                         ),
                       ),
@@ -252,7 +251,7 @@ class CategorySummaryCard extends StatelessWidget {
 }
 
 class _CategoryExpandedItem extends StatelessWidget {
-  const _CategoryExpandedItem({
+  const new({
     required this.item,
     required this.percentage,
     required this.isSelected,
@@ -390,7 +389,7 @@ class _CategoryExpandedItem extends StatelessWidget {
 }
 
 class _CategorySegmentChip extends StatelessWidget {
-  const _CategorySegmentChip({
+  const new({
     required this.item,
     required this.percentage,
     required this.isSelected,

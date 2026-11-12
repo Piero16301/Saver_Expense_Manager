@@ -6,10 +6,10 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockFilePicker extends Mock
     with MockPlatformInterfaceMixin
-    implements FilePickerPlatform {}
+    implements FilePickerPlatform;
 
 final class FakePlatformFile extends PlatformFile {
-  FakePlatformFile({required this.name, required String path, this.bytes})
+  new({required this.name, required String path, this.bytes})
     : path = path,
       uri = Uri.file(path);
 

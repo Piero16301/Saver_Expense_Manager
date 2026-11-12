@@ -60,10 +60,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '269318126118',
     projectId: 'saver-expense-manager',
     storageBucket: 'saver-expense-manager.firebasestorage.app',
-    androidClientId:
-        '269318126118-cp3js8sb2v0961q8mg3c6h4gtq22pmml.apps.googleusercontent.com',
-    iosClientId:
-        '269318126118-1okee6h2hvj2gft9p05ki94qisfatf89.apps.googleusercontent.com',
+    androidClientId: '269318126118-cp3js8sb2v0961q8mg3c6h4gtq22pmml.apps.googleusercontent.com',
+    iosClientId: '269318126118-1okee6h2hvj2gft9p05ki94qisfatf89.apps.googleusercontent.com',
     iosBundleId: 'com.pmorales.saver.expense.manager',
   );
 

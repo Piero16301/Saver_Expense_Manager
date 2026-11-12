@@ -12,11 +12,11 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/register/register.dart';
 
 class MockRegisterCubit extends MockCubit<RegisterState>
-    implements RegisterCubit {}
+    implements RegisterCubit;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class MockAppLocalizations extends Mock implements AppLocalizations {}
+class MockAppLocalizations extends Mock implements AppLocalizations;
 
 void main() {
   late MockRegisterCubit mockRegisterCubit;
@@ -34,14 +34,12 @@ void main() {
     mockAppCubit = MockAppCubit();
 
     when(() => mockRegisterCubit.state).thenReturn(const RegisterState());
-    when(
-      () => mockRegisterCubit.stream,
-    ).thenAnswer((_) => const Stream.empty());
+    when(() => mockRegisterCubit.stream)
+        .thenAnswer((_) => const Stream.empty());
     when(() => mockRegisterCubit.register(any())).thenAnswer((_) async {});
     when(() => mockRegisterCubit.togglePasswordVisibility()).thenReturn(null);
-    when(
-      () => mockRegisterCubit.toggleConfirmPasswordVisibility(),
-    ).thenReturn(null);
+    when(() => mockRegisterCubit.toggleConfirmPasswordVisibility())
+        .thenReturn(null);
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockAppCubit.stream).thenAnswer((_) => const Stream.empty());
@@ -123,9 +121,8 @@ void main() {
         find.descendant(of: field, matching: find.byType(TextField)),
         'test@example.com',
       );
-      verify(
-        () => mockRegisterCubit.emailChanged('test@example.com'),
-      ).called(1);
+      verify(() => mockRegisterCubit.emailChanged('test@example.com'))
+          .called(1);
     });
 
     testWidgets('calls passwordChanged when typing in password field', (
@@ -136,9 +133,8 @@ void main() {
 
       final field = find.widgetWithText(
         AppTextField,
-        (await AppLocalizations.delegate.load(
-          const Locale('en'),
-        )).passwordLabel,
+        (await AppLocalizations.delegate.load(const Locale('en')))
+            .passwordLabel,
       );
       await tester.enterText(
         find.descendant(of: field, matching: find.byType(TextField)),
@@ -163,9 +159,8 @@ void main() {
           find.descendant(of: field, matching: find.byType(TextField)),
           'password123',
         );
-        verify(
-          () => mockRegisterCubit.confirmPasswordChanged('password123'),
-        ).called(1);
+        verify(() => mockRegisterCubit.confirmPasswordChanged('password123'))
+            .called(1);
       },
     );
 
@@ -200,9 +195,8 @@ void main() {
         await tester.tap(
           find.descendant(of: field, matching: find.byType(IconButton)),
         );
-        verify(
-          () => mockRegisterCubit.toggleConfirmPasswordVisibility(),
-        ).called(1);
+        verify(() => mockRegisterCubit.toggleConfirmPasswordVisibility())
+            .called(1);
       },
     );
 
@@ -218,9 +212,8 @@ void main() {
 
     testWidgets('renders loading state correctly', (tester) async {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      when(
-        () => mockRegisterCubit.state,
-      ).thenReturn(const RegisterState(status: RegisterStatus.loading));
+      when(() => mockRegisterCubit.state)
+          .thenReturn(const RegisterState(status: RegisterStatus.loading));
 
       await tester.pumpWidget(buildView());
       await tester.pump();

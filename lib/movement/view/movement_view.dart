@@ -12,7 +12,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/movement.dart';
 
 class MovementView extends StatelessWidget {
-  const MovementView({required this.type, required this.screenType, super.key});
+  const new({required this.type, required this.screenType, super.key});
 
   final CategoryType type;
   final MovementScreenType screenType;
@@ -139,9 +139,9 @@ class MovementView extends StatelessWidget {
                                               category.name,
                                               l10n,
                                             ),
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.bodyLarge,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
                                           ),
                                         ],
                                       ),
@@ -344,7 +344,7 @@ class MovementView extends StatelessWidget {
 }
 
 class MovementMetadata extends StatelessWidget {
-  const MovementMetadata({required this.id, super.key});
+  const new({required this.id, super.key});
 
   final String id;
 

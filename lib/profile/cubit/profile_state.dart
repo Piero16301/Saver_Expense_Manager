@@ -13,7 +13,7 @@ enum ProfileStatus {
 }
 
 class ProfileState extends Equatable {
-  const ProfileState({
+  const new({
     this.status = ProfileStatus.initial,
     this.user,
     this.userName = '',

@@ -1,7 +1,7 @@
 part of 'income_home_cubit.dart';
 
 class IncomeHomeState extends Equatable {
-  const IncomeHomeState({
+  const new({
     this.monthSelected,
     this.selectedIndex = 0,
     this.data = const <CategoryData>[],

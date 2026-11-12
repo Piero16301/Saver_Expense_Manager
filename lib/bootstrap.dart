@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class AppBlocObserver extends BlocObserver {
-  const AppBlocObserver();
+  const new();
 
   @override
   void onChange(BlocBase<dynamic> bloc, Change<dynamic> change) {

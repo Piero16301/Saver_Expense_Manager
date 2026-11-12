@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:saver_expense_manager/app/app.dart';
 
 class RemoteStorageService {
-  RemoteStorageService({required this._remoteStorageRepository});
+  new({required this._remoteStorageRepository});
 
   final RemoteStorageRepository _remoteStorageRepository;
 

@@ -1,12 +1,13 @@
 import 'dart:async';
+
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/repositories/performance_repository.dart';
 
-class MockFirebasePerformance extends Mock implements FirebasePerformance {}
+class MockFirebasePerformance extends Mock implements FirebasePerformance;
 
-class MockTrace extends Mock implements Trace {}
+class MockTrace extends Mock implements Trace;
 
 void main() {
   late MockFirebasePerformance mockPerformance;
@@ -66,12 +67,10 @@ void main() {
 
     test('startTrace and stopTrace handle errors gracefully', () async {
       when(() => mockPerformance.newTrace(any<String>())).thenReturn(mockTrace);
-      when(
-        () => mockTrace.start(),
-      ).thenAnswer((_) => Future.error(Exception('start error')));
-      when(
-        () => mockTrace.stop(),
-      ).thenAnswer((_) => Future.error(Exception('stop error')));
+      when(() => mockTrace.start())
+          .thenAnswer((_) => Future.error(Exception('start error')));
+      when(() => mockTrace.stop())
+          .thenAnswer((_) => Future.error(Exception('stop error')));
 
       final trace = repository.startTrace('error_trace');
       repository.stopTrace(trace);

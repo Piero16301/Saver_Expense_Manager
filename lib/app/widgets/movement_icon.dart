@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MovementIcon extends StatelessWidget {
-  const MovementIcon({required this.movement, super.key});
+  const new({required this.movement, super.key});
 
   final Movement movement;
 

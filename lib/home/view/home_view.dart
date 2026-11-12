@@ -18,7 +18,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:uuid/uuid.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({required this.categories, super.key});
+  const new({required this.categories, super.key});
 
   final List<Category> categories;
 
@@ -104,9 +104,9 @@ class HomeView extends StatelessWidget {
                                       HugeIcon(
                                         icon: HugeIcons.strokeRoundedUser,
                                         strokeWidth: 2,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                 ),
                               ),
@@ -261,7 +261,7 @@ class HomeView extends StatelessWidget {
 }
 
 class BottomNavigationBarHome extends StatelessWidget {
-  const BottomNavigationBarHome({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -308,11 +308,7 @@ class BottomNavigationBarHome extends StatelessWidget {
 }
 
 class AddMovementBottomSheet extends StatelessWidget {
-  const AddMovementBottomSheet({
-    required this.categories,
-    required this.movementType,
-    super.key,
-  });
+  const new({required this.categories, required this.movementType, super.key});
 
   final List<Category> categories;
   final CategoryType movementType;
@@ -708,7 +704,7 @@ class AddMovementBottomSheet extends StatelessWidget {
 }
 
 class TonalButtonActionHome extends StatelessWidget {
-  const TonalButtonActionHome({
+  const new({
     required this.title,
     required this.icon,
     this.onPressed,

@@ -5,10 +5,10 @@ import 'package:equatable/equatable.dart';
 /// {@endtemplate}
 class LinearChartData extends Equatable {
   /// {@macro linear_chart_data}
-  const LinearChartData({required this.xValue, required this.yValue});
+  const new({required this.xValue, required this.yValue});
 
   /// Creates an instance of [LinearChartData] from a [Map]
-  factory LinearChartData.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     return LinearChartData(
       xValue: json['xValue'] as String? ?? '',
       yValue: (json['yValue'] as num?)?.toDouble() ?? 0.0,

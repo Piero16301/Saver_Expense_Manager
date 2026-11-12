@@ -6,10 +6,10 @@ import 'package:saver_expense_manager/app/models/models.dart';
 /// {@endtemplate}
 class CategoryData extends Equatable {
   /// {@macro category_data}
-  const CategoryData({required this.category, required this.value});
+  const new({required this.category, required this.value});
 
   /// Creates an instance of [CategoryData] from a [Map]
-  factory CategoryData.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     return CategoryData(
       category: Category.fromJson(
         json['category'] as Map<String, dynamic>? ?? {},

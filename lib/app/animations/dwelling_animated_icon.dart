@@ -3,11 +3,7 @@ import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 
 class DwellingAnimatedIcon extends StatefulWidget {
-  const DwellingAnimatedIcon({
-    required this.color,
-    super.key,
-    this.size = 60.0,
-  });
+  const new({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -57,7 +53,7 @@ class _DwellingAnimatedIconState extends State<DwellingAnimatedIcon>
 }
 
 class _DwellingPainter extends CustomPainter {
-  _DwellingPainter({required this.color, required this.animationValue});
+  new({required this.color, required this.animationValue});
 
   final Color color;
   final double animationValue;

@@ -9,7 +9,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:uuid/uuid.dart';
 
 class AppFileField extends StatelessWidget {
-  const AppFileField({
+  const new({
     required this.label,
     required this.labelAdd,
     required this.onAdd,

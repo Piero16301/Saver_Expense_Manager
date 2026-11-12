@@ -74,7 +74,7 @@ class MonthPicker {
 }
 
 class MonthPickerDialog extends StatefulWidget {
-  const MonthPickerDialog({
+  const new({
     required this.mode,
     this.initialDate,
     this.initialStartDate,
@@ -566,9 +566,10 @@ class _MonthPickerDialogState extends State<MonthPickerDialog> {
                           style: textTheme.titleMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                             fontVariations: <FontVariation>[
-                              ...(Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium?.fontVariations ??
+                              ...(Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.fontVariations ??
                                       const <FontVariation>[])
                                   .where((v) => v.axis != 'wght'),
                               const FontVariation('wght', 700),

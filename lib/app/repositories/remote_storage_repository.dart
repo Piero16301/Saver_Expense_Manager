@@ -33,7 +33,7 @@ class MockRemoteStorageRepository implements RemoteStorageRepository {
 }
 
 class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
-  FirebaseRemoteStorageRepository({FirebaseStorage? storage})
+  new({FirebaseStorage? storage})
     : _storage = storage ?? FirebaseStorage.instance;
 
   final FirebaseStorage _storage;

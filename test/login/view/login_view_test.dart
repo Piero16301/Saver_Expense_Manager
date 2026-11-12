@@ -12,11 +12,11 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/login/login.dart';
 
-class MockLoginCubit extends MockCubit<LoginState> implements LoginCubit {}
+class MockLoginCubit extends MockCubit<LoginState> implements LoginCubit;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class MockAppLocalizations extends Mock implements AppLocalizations {}
+class MockAppLocalizations extends Mock implements AppLocalizations;
 
 void main() {
   late MockLoginCubit mockLoginCubit;
@@ -43,9 +43,8 @@ void main() {
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockAppCubit.stream).thenAnswer((_) => const Stream.empty());
-    when(
-      () => mockAppCubit.changeTheme(theme: any(named: 'theme')),
-    ).thenAnswer((_) async {});
+    when(() => mockAppCubit.changeTheme(theme: any(named: 'theme')))
+        .thenAnswer((_) async {});
   });
 
   Widget buildView({GoRouter? router}) {
@@ -152,9 +151,8 @@ void main() {
 
     testWidgets('renders loading state correctly', (tester) async {
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      when(
-        () => mockLoginCubit.state,
-      ).thenReturn(const LoginState(status: LoginStatus.loading));
+      when(() => mockLoginCubit.state)
+          .thenReturn(const LoginState(status: LoginStatus.loading));
 
       await tester.pumpWidget(buildView());
       await tester.pump();
