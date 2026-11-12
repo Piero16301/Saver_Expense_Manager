@@ -725,5 +725,126 @@ void main() {
         });
       },
     );
+
+    testWidgets(
+      'handleFilePick shows error snackbar and does not navigate when '
+      'uploadFile fails',
+      (tester) async {
+        await tester.runAsync(() async {
+          final tempFile = File('/tmp/test_fail.png');
+          if (!tempFile.existsSync()) {
+            tempFile
+              ..createSync(recursive: true)
+              ..writeAsBytesSync([1, 2, 3]);
+          }
+
+          final mockFilePicker = MockFilePicker();
+          FilePickerPlatform.instance = mockFilePicker;
+
+          final mockFile = FakePlatformFile(
+            name: 'test_fail.PNG',
+            path: '/tmp/test_fail.png',
+            bytes: Uint8List.fromList([1, 2, 3]),
+          );
+
+          whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
+
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => null);
+
+          AppFunctions.internetConnectionTestValue = true;
+          when(() => mockAppCubit.state).thenReturn(const AppState());
+
+          await mockNetworkImagesFor(() async {
+            await pumpRouterSubject(tester);
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.byType(ExpressiveFab));
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.text('File'));
+
+            for (var i = 0; i < 15; i++) {
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+              await tester.pump(const Duration(milliseconds: 500));
+            }
+
+            expect(find.byType(AddMovementBottomSheet), findsNothing);
+            expect(find.text('Movement Page'), findsNothing);
+            expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+            verify(
+              () => mockRemoteStorageService.uploadFile(
+                any<Uint8List>(),
+                any<String>(),
+              ),
+            ).called(1);
+          });
+        });
+      },
+    );
+
+    testWidgets(
+      'handleDocumentScan shows error snackbar and does not navigate when '
+      'uploadFile fails',
+      (tester) async {
+        await tester.runAsync(() async {
+          final tempFile = File('/tmp/test_scan_fail.png');
+          if (!tempFile.existsSync()) {
+            tempFile
+              ..createSync(recursive: true)
+              ..writeAsBytesSync([1, 2, 3]);
+          }
+
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            const MethodChannel('cunning_document_scanner'),
+            (message) async {
+              if (message.method == 'scanDocuments' ||
+                  message.method == 'getPictures') {
+                return {
+                  'images': ['/tmp/test_scan_fail.png'],
+                };
+              }
+              return null;
+            },
+          );
+
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => null);
+
+          AppFunctions.internetConnectionTestValue = true;
+
+          await mockNetworkImagesFor(() async {
+            await pumpRouterSubject(tester);
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.byType(ExpressiveFab));
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.text('Scan'));
+
+            await Future<void>.delayed(const Duration(seconds: 1));
+            await tester.pumpAndSettle();
+
+            expect(find.byType(AddMovementBottomSheet), findsNothing);
+            expect(find.text('Movement Page'), findsNothing);
+            expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+            verify(
+              () => mockRemoteStorageService.uploadFile(
+                any<Uint8List>(),
+                any<String>(),
+              ),
+            ).called(1);
+          });
+        });
+      },
+    );
   });
 }

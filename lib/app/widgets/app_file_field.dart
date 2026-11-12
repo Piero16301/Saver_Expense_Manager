@@ -97,7 +97,7 @@ class AppFileField extends StatelessWidget {
   }
 
   String getAttachmentName(String path, int index, AppLocalizations l10n) {
-    switch (path.split('.').last) {
+    switch (path.split('.').last.toLowerCase()) {
       case 'pdf':
         return l10n.movementPdfType;
       case 'png':
@@ -110,7 +110,7 @@ class AppFileField extends StatelessWidget {
   }
 
   List<List<dynamic>> getAttachmentIcon(String path) {
-    switch (path.split('.').last) {
+    switch (path.split('.').last.toLowerCase()) {
       case 'pdf':
         return HugeIcons.strokeRoundedPdf01;
       case 'png':
@@ -157,7 +157,7 @@ class AppFileField extends StatelessWidget {
 
       if (file != null) {
         unawaited(appLoader.showLoading());
-        final ext = file.name.split('.').last;
+        final ext = file.name.split('.').last.toLowerCase();
         final userId = getIt.isRegistered<AuthService>()
             ? getIt<AuthService>().currentUser?.uid ?? 'anonymous'
             : 'anonymous';
@@ -173,6 +173,12 @@ class AppFileField extends StatelessWidget {
         }
         if (name != null) {
           onAdd(name);
+        } else if (context.mounted) {
+          AppFunctions.showSnackBar(
+            context,
+            message: AppLocalizations.of(context).documentUploadError,
+            type: SnackBarType.error,
+          );
         }
       }
     } on Exception catch (e) {

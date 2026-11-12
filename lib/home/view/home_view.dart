@@ -356,18 +356,17 @@ class AddMovementBottomSheet extends StatelessWidget {
       );
       getIt<CrashService>().setCustomKey('movement_type', movementType.name);
 
-      if (modelType.isLocal &&
-          !AppVariables.imageExtensions.contains(file.name.split('.').last)) {
+      final ext = file.name.split('.').last.toLowerCase();
+      if (modelType.isLocal && !AppVariables.imageExtensions.contains(ext)) {
         throw Exception(AppVariables.unsupportedLocalModelFile);
       }
 
-      final ext = file.name.split('.').last;
       final userId = getIt<AuthService>().currentUser?.uid ?? 'anonymous';
       final path = 'users/$userId/attachments/${const Uuid().v4()}.$ext';
       final bytes = await file.readAsBytes();
       final mimeType =
           lookupMimeType(file.name, headerBytes: bytes) ??
-          (AppVariables.imageExtensions.contains(ext.toLowerCase())
+          (AppVariables.imageExtensions.contains(ext)
               ? 'image/$ext'
               : 'application/pdf');
 
@@ -405,10 +404,16 @@ class AddMovementBottomSheet extends StatelessWidget {
         final result = await (uploadFuture, aiFuture).wait;
         uploadName = result.$1;
         movement = result.$2;
+        if (uploadName == null) {
+          throw Exception(AppVariables.attachmentUploadError);
+        }
       } on Object catch (_) {
         unawaited(
           uploadFuture
-              .timeout(AppVariables.timeoutDuration, onTimeout: () => null)
+              .timeout(
+                AppVariables.storageTimeoutDuration,
+                onTimeout: () => null,
+              )
               .then((uploaded) {
                 if (uploaded != null) {
                   unawaited(getIt<RemoteStorageService>().deleteFile(path));
@@ -431,9 +436,7 @@ class AddMovementBottomSheet extends StatelessWidget {
             'type': movementType.value,
             'screenType': MovementScreenType.add.name.toUpperCase(),
           },
-          extra: movement.copyWith(
-            attachments: uploadName != null ? [uploadName] : [],
-          ),
+          extra: movement.copyWith(attachments: [uploadName]),
         ),
       );
     } on Object catch (e, stackTrace) {
@@ -452,10 +455,19 @@ class AddMovementBottomSheet extends StatelessWidget {
           message: l10n.invalidLocalModelFileInput,
           type: SnackBarType.error,
         );
+      } else if (e.toString().contains(AppVariables.attachmentUploadError) ||
+          (e is ParallelWaitError &&
+              e.errors is (Object?, Object?) &&
+              (e.errors! as (Object?, Object?)).$1 != null)) {
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.documentUploadError,
+          type: SnackBarType.error,
+        );
       } else {
         AppFunctions.showSnackBar(
           context,
-          message: l10n.genericError,
+          message: l10n.documentAiError,
           type: SnackBarType.error,
         );
       }
@@ -503,18 +515,17 @@ class AddMovementBottomSheet extends StatelessWidget {
       );
       getIt<CrashService>().setCustomKey('movement_type', movementType.name);
 
-      if (modelType.isLocal &&
-          !AppVariables.imageExtensions.contains(files.first.split('.').last)) {
+      final ext = files.first.split('.').last.toLowerCase();
+      if (modelType.isLocal && !AppVariables.imageExtensions.contains(ext)) {
         throw Exception(AppVariables.unsupportedLocalModelFile);
       }
 
-      final ext = files.first.split('.').last;
       final userId = getIt<AuthService>().currentUser?.uid ?? 'anonymous';
       final path = 'users/$userId/attachments/${const Uuid().v4()}.$ext';
       final bytes = await File(files.first).readAsBytes();
       final mimeType =
           lookupMimeType(files.first, headerBytes: bytes) ??
-          (AppVariables.imageExtensions.contains(ext.toLowerCase())
+          (AppVariables.imageExtensions.contains(ext)
               ? 'image/$ext'
               : 'application/pdf');
 
@@ -552,10 +563,16 @@ class AddMovementBottomSheet extends StatelessWidget {
         final result = await (uploadFuture, aiFuture).wait;
         uploadName = result.$1;
         movement = result.$2;
+        if (uploadName == null) {
+          throw Exception(AppVariables.attachmentUploadError);
+        }
       } on Object catch (_) {
         unawaited(
           uploadFuture
-              .timeout(AppVariables.timeoutDuration, onTimeout: () => null)
+              .timeout(
+                AppVariables.storageTimeoutDuration,
+                onTimeout: () => null,
+              )
               .then((uploaded) {
                 if (uploaded != null) {
                   unawaited(getIt<RemoteStorageService>().deleteFile(path));
@@ -578,9 +595,7 @@ class AddMovementBottomSheet extends StatelessWidget {
             'type': movementType.value,
             'screenType': MovementScreenType.add.name.toUpperCase(),
           },
-          extra: movement.copyWith(
-            attachments: uploadName != null ? [uploadName] : [],
-          ),
+          extra: movement.copyWith(attachments: [uploadName]),
         ),
       );
     } on Object catch (e, stackTrace) {
@@ -599,10 +614,19 @@ class AddMovementBottomSheet extends StatelessWidget {
           message: l10n.invalidLocalModelFileInput,
           type: SnackBarType.error,
         );
+      } else if (e.toString().contains(AppVariables.attachmentUploadError) ||
+          (e is ParallelWaitError &&
+              e.errors is (Object?, Object?) &&
+              (e.errors! as (Object?, Object?)).$1 != null)) {
+        AppFunctions.showSnackBar(
+          context,
+          message: l10n.documentUploadError,
+          type: SnackBarType.error,
+        );
       } else {
         AppFunctions.showSnackBar(
           context,
-          message: l10n.genericError,
+          message: l10n.documentAiError,
           type: SnackBarType.error,
         );
       }

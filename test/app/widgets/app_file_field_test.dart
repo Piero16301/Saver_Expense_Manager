@@ -190,6 +190,50 @@ void main() {
       expect(added, 'uploaded_path.png');
     });
 
+    testWidgets('shows SnackBar when uploadFile returns null without retry', (
+      tester,
+    ) async {
+      String? added;
+      final mockFile = FakePlatformFile(
+        name: 'test.PNG',
+        path: '/path/to/test.PNG',
+        bytes: Uint8List(0),
+      );
+
+      whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
+
+      when(
+        () => remoteStorageService.uploadFile(any<Uint8List>(), any<String>()),
+      ).thenAnswer((_) async => null);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: AppFileField(
+              label: 'Docs',
+              labelAdd: 'Upload',
+              onAdd: (path) => added = path,
+              onRemove: (_) async {},
+              openFile: (_) async {},
+              attachments: const [],
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Upload'));
+      await tester.pump();
+      await tester.pumpAndSettle();
+
+      expect(added, isNull);
+      expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+      verify(
+        () => remoteStorageService.uploadFile(any<Uint8List>(), any<String>()),
+      ).called(1);
+    });
+
     testWidgets('handles upload error and shows SnackBar', (tester) async {
       whenPickFile(mockFilePicker).thenThrow(Exception('Upload failed'));
 
