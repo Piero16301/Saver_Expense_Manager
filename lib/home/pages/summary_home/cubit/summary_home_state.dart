@@ -1,7 +1,7 @@
 part of 'summary_home_cubit.dart';
 
 class SummaryHomeState extends Equatable {
-  const SummaryHomeState({
+  const new({
     this.startMonth,
     this.endMonth,
     this.startYear,
@@ -10,7 +10,7 @@ class SummaryHomeState extends Equatable {
     this.selResumeItems = const <ResumeItemType, bool>{},
   });
 
-  factory SummaryHomeState.initial() {
+  factory initial() {
     final lastMonths = getIt<RemoteConfigService>().summaryLastMonths;
     final lastYears = getIt<RemoteConfigService>().summaryLastYears;
     final now = DateTime.now();

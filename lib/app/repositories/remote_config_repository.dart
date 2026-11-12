@@ -63,7 +63,7 @@ class MockRemoteConfigRepository implements RemoteConfigRepository {
 }
 
 class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
-  FirebaseRemoteConfigRepository({FirebaseRemoteConfig? remoteConfig})
+  new({FirebaseRemoteConfig? remoteConfig})
     : _remoteConfig = remoteConfig ?? FirebaseRemoteConfig.instance;
 
   final FirebaseRemoteConfig _remoteConfig;

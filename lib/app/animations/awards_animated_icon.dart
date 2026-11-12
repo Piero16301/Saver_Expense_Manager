@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 
 class AwardsAnimatedIcon extends StatefulWidget {
-  const AwardsAnimatedIcon({required this.color, super.key, this.size = 60.0});
+  const new({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -53,7 +53,7 @@ class _AwardsAnimatedIconState extends State<AwardsAnimatedIcon>
 }
 
 class _AwardsPainter extends CustomPainter {
-  _AwardsPainter({required this.color, required this.animationValue});
+  new({required this.color, required this.animationValue});
 
   final Color color;
   final double animationValue;

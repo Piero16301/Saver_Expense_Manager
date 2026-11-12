@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/repositories/analytics_repository.dart';
 
-class MockFirebaseAnalytics extends Mock implements FirebaseAnalytics {}
+class MockFirebaseAnalytics extends Mock implements FirebaseAnalytics;
 
 void main() {
   late MockFirebaseAnalytics mockAnalytics;
@@ -63,9 +63,8 @@ void main() {
     });
 
     test('setUserId calls analytics.setUserId', () async {
-      when(
-        () => mockAnalytics.setUserId(id: any<String?>(named: 'id')),
-      ).thenAnswer((_) async {});
+      when(() => mockAnalytics.setUserId(id: any<String?>(named: 'id')))
+          .thenAnswer((_) async {});
 
       repository.setUserId(id: 'user_123');
 

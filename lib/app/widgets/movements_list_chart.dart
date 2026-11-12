@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MovementsListChart extends StatelessWidget {
-  const MovementsListChart({
+  const new({
     required this.expenseType,
     required this.monthSelected,
     super.key,

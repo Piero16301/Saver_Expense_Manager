@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/models/models.dart';
 
-class MockFirebaseUser extends Mock implements firebase.User {}
+class MockFirebaseUser extends Mock implements firebase.User;
 
-class MockFirebaseUserInfo extends Mock implements firebase.UserInfo {}
+class MockFirebaseUserInfo extends Mock implements firebase.UserInfo;
 
 void main() {
   group('AppUserInfo', () {

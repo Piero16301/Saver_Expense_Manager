@@ -9,7 +9,7 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MovementsHomeView extends StatelessWidget {
-  const MovementsHomeView({required this.categories, super.key});
+  const new({required this.categories, super.key});
 
   final List<Category> categories;
 
@@ -75,7 +75,7 @@ class MovementsHomeView extends StatelessWidget {
 }
 
 class FilterMovementsAntResumeHome extends StatelessWidget {
-  const FilterMovementsAntResumeHome({
+  const new({
     required this.categories,
     required this.onFilterTypeChanged,
     required this.onFilterCategoryChanged,
@@ -145,9 +145,9 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
                       side: filterType == null
                           ? null
                           : BorderSide(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.secondaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
                             ),
                       label: Row(
                         spacing: 4,
@@ -187,9 +187,9 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
                         side: filterCategory == null
                             ? null
                             : BorderSide(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.secondaryContainer,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryContainer,
                               ),
                         label: Row(
                           spacing: 4,
@@ -382,7 +382,7 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
 }
 
 class ListMovementsHome extends StatelessWidget {
-  const ListMovementsHome({this.filterType, this.filterCategory, super.key});
+  const new({this.filterType, this.filterCategory, super.key});
 
   final CategoryType? filterType;
   final Category? filterCategory;
@@ -453,7 +453,7 @@ class ListMovementsHome extends StatelessWidget {
 }
 
 class AntRecommendationsWidget extends StatelessWidget {
-  const AntRecommendationsWidget({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

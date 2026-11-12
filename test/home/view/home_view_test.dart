@@ -21,29 +21,29 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 
 import '../../helpers/helpers.dart';
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class MockHomeCubit extends MockCubit<HomeState> implements HomeCubit {}
+class MockHomeCubit extends MockCubit<HomeState> implements HomeCubit;
 
-class MockAppUser extends Mock implements AppUser {}
+class MockAppUser extends Mock implements AppUser;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
-class MockLocalStorageService extends Mock implements LocalStorageService {}
+class MockLocalStorageService extends Mock implements LocalStorageService;
 
-class MockTrace extends Mock implements Trace {}
+class MockTrace extends Mock implements Trace;
 
-class MockRemoteStorageService extends Mock implements RemoteStorageService {}
+class MockRemoteStorageService extends Mock implements RemoteStorageService;
 
-class MockPerformanceService extends Mock implements PerformanceService {}
+class MockPerformanceService extends Mock implements PerformanceService;
 
-class MockCrashService extends Mock implements CrashService {}
+class MockCrashService extends Mock implements CrashService;
 
-class MockAiService extends Mock implements AiService {}
+class MockAiService extends Mock implements AiService;
 
 void main() {
   late MockAuthService mockAuthService;
@@ -118,20 +118,17 @@ void main() {
       ..registerSingleton<AiService>(mockAiService);
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
-    when(
-      () => mockHomeCubit.state,
-    ).thenReturn(const HomeState(selectedIndex: 0));
+    when(() => mockHomeCubit.state)
+        .thenReturn(const HomeState(selectedIndex: 0));
 
     when(() => mockAppUser.photoURL).thenReturn(null);
     when(() => mockAppUser.uid).thenReturn('user123');
-    when(
-      () => mockAuthService.authStateChanges,
-    ).thenAnswer((_) => Stream.value(mockAppUser));
+    when(() => mockAuthService.authStateChanges)
+        .thenAnswer((_) => Stream.value(mockAppUser));
     when(() => mockAuthService.currentUser).thenReturn(mockAppUser);
 
-    when(
-      () => mockDatabaseService.getCategoriesStream(),
-    ).thenAnswer((_) => Stream.value([]));
+    when(() => mockDatabaseService.getCategoriesStream())
+        .thenAnswer((_) => Stream.value([]));
     when(
       () => mockDatabaseService.getMovementsStream(
         userId: any<String>(named: 'userId'),
@@ -144,9 +141,8 @@ void main() {
       ),
     ).thenAnswer((_) => Stream.value([]));
 
-    when(
-      () => mockRemoteConfigService.geminiPromptExtractReceiptData,
-    ).thenReturn('prompt');
+    when(() => mockRemoteConfigService.geminiPromptExtractReceiptData)
+        .thenReturn('prompt');
     when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
     when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
     when(() => mockAiService.isLocalModelAvailable).thenReturn(true);
@@ -160,13 +156,11 @@ void main() {
           '{"date": "01/01/2024", "title": "Test", "price": 10.0, '
           '"category": "Test"}',
     );
-    when(
-      () => mockPerformanceService.startTrace(any<String>()),
-    ).thenReturn(mockTrace);
+    when(() => mockPerformanceService.startTrace(any<String>()))
+        .thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
-    when(
-      () => mockCrashService.setCustomKey(any<String>(), any()),
-    ).thenReturn(null);
+    when(() => mockCrashService.setCustomKey(any<String>(), any()))
+        .thenReturn(null);
     when(
       () => mockCrashService.recordError(
         any<Object>(),
@@ -256,9 +250,8 @@ void main() {
     });
 
     testWidgets('renders SizedBox.shrink when user is null', (tester) async {
-      when(
-        () => mockAuthService.authStateChanges,
-      ).thenAnswer((_) => Stream.value(null));
+      when(() => mockAuthService.authStateChanges)
+          .thenAnswer((_) => Stream.value(null));
       when(() => mockAuthService.currentUser).thenReturn(null);
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);
@@ -269,9 +262,8 @@ void main() {
     });
 
     testWidgets('renders network image for user with photoURL', (tester) async {
-      when(
-        () => mockAppUser.photoURL,
-      ).thenReturn('https://example.com/photo.png');
+      when(() => mockAppUser.photoURL)
+          .thenReturn('https://example.com/photo.png');
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
@@ -296,9 +288,8 @@ void main() {
     });
 
     testWidgets('navigates to profile on profile icon tap', (tester) async {
-      when(
-        () => mockAppUser.photoURL,
-      ).thenReturn('https://example.com/photo.png');
+      when(() => mockAppUser.photoURL)
+          .thenReturn('https://example.com/photo.png');
       await mockNetworkImagesFor(() async {
         await pumpRouterSubject(tester);
         await tester.pumpAndSettle();
@@ -330,9 +321,8 @@ void main() {
     testWidgets('renders body pages depending on selectedIndex', (
       tester,
     ) async {
-      when(
-        () => mockHomeCubit.state,
-      ).thenReturn(const HomeState(selectedIndex: 0));
+      when(() => mockHomeCubit.state)
+          .thenReturn(const HomeState(selectedIndex: 0));
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
@@ -344,9 +334,8 @@ void main() {
     testWidgets(
       'AddMovementBottomSheet uses correct movement type for Income',
       (tester) async {
-        when(
-          () => mockHomeCubit.state,
-        ).thenReturn(const HomeState(selectedIndex: 3));
+        when(() => mockHomeCubit.state)
+            .thenReturn(const HomeState(selectedIndex: 3));
         await mockNetworkImagesFor(() async {
           await pumpSubject(tester);
           await tester.pumpAndSettle();
@@ -494,9 +483,8 @@ void main() {
       final mockFilePicker = MockFilePicker();
       FilePickerPlatform.instance = mockFilePicker;
 
-      whenPickFile(
-        mockFilePicker,
-      ).thenThrow(Exception(AppVariables.unsupportedLocalModelFile));
+      whenPickFile(mockFilePicker)
+          .thenThrow(Exception(AppVariables.unsupportedLocalModelFile));
 
       await mockNetworkImagesFor(() async {
         await pumpSubject(tester);
@@ -652,9 +640,8 @@ void main() {
               any<String>(),
             ),
           ).thenAnswer((_) async => 'upload_name');
-          when(
-            () => mockRemoteStorageService.deleteFile(any<String>()),
-          ).thenAnswer((_) async => true);
+          when(() => mockRemoteStorageService.deleteFile(any<String>()))
+              .thenAnswer((_) async => true);
           when(
             () => mockAiService.generateContentRemote(
               prompt: any<List<PromptPart>>(named: 'prompt'),
@@ -679,9 +666,8 @@ void main() {
             }
 
             expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
-            verify(
-              () => mockRemoteStorageService.deleteFile(any<String>()),
-            ).called(1);
+            verify(() => mockRemoteStorageService.deleteFile(any<String>()))
+                .called(1);
           });
         });
       },
@@ -721,6 +707,127 @@ void main() {
             }
 
             expect(find.byType(SnackBar), findsOneWidget);
+          });
+        });
+      },
+    );
+
+    testWidgets(
+      'handleFilePick shows error snackbar and does not navigate when '
+      'uploadFile fails',
+      (tester) async {
+        await tester.runAsync(() async {
+          final tempFile = File('/tmp/test_fail.png');
+          if (!tempFile.existsSync()) {
+            tempFile
+              ..createSync(recursive: true)
+              ..writeAsBytesSync([1, 2, 3]);
+          }
+
+          final mockFilePicker = MockFilePicker();
+          FilePickerPlatform.instance = mockFilePicker;
+
+          final mockFile = FakePlatformFile(
+            name: 'test_fail.PNG',
+            path: '/tmp/test_fail.png',
+            bytes: Uint8List.fromList([1, 2, 3]),
+          );
+
+          whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
+
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => null);
+
+          AppFunctions.internetConnectionTestValue = true;
+          when(() => mockAppCubit.state).thenReturn(const AppState());
+
+          await mockNetworkImagesFor(() async {
+            await pumpRouterSubject(tester);
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.byType(ExpressiveFab));
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.text('File'));
+
+            for (var i = 0; i < 15; i++) {
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+              await tester.pump(const Duration(milliseconds: 500));
+            }
+
+            expect(find.byType(AddMovementBottomSheet), findsNothing);
+            expect(find.text('Movement Page'), findsNothing);
+            expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+            verify(
+              () => mockRemoteStorageService.uploadFile(
+                any<Uint8List>(),
+                any<String>(),
+              ),
+            ).called(1);
+          });
+        });
+      },
+    );
+
+    testWidgets(
+      'handleDocumentScan shows error snackbar and does not navigate when '
+      'uploadFile fails',
+      (tester) async {
+        await tester.runAsync(() async {
+          final tempFile = File('/tmp/test_scan_fail.png');
+          if (!tempFile.existsSync()) {
+            tempFile
+              ..createSync(recursive: true)
+              ..writeAsBytesSync([1, 2, 3]);
+          }
+
+          tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+            const MethodChannel('cunning_document_scanner'),
+            (message) async {
+              if (message.method == 'scanDocuments' ||
+                  message.method == 'getPictures') {
+                return {
+                  'images': ['/tmp/test_scan_fail.png'],
+                };
+              }
+              return null;
+            },
+          );
+
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => null);
+
+          AppFunctions.internetConnectionTestValue = true;
+
+          await mockNetworkImagesFor(() async {
+            await pumpRouterSubject(tester);
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.byType(ExpressiveFab));
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.text('Scan'));
+
+            await Future<void>.delayed(const Duration(seconds: 1));
+            await tester.pumpAndSettle();
+
+            expect(find.byType(AddMovementBottomSheet), findsNothing);
+            expect(find.text('Movement Page'), findsNothing);
+            expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+            verify(
+              () => mockRemoteStorageService.uploadFile(
+                any<Uint8List>(),
+                any<String>(),
+              ),
+            ).called(1);
           });
         });
       },

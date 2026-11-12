@@ -9,7 +9,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/settings/settings.dart';
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

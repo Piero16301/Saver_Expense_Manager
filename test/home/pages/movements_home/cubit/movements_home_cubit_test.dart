@@ -7,21 +7,21 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-class MockLocalStorageService extends Mock implements LocalStorageService {}
+class MockLocalStorageService extends Mock implements LocalStorageService;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+class MockFirebaseAuth extends Mock implements FirebaseAuth;
 
-class MockFirebaseUser extends Mock implements User {}
+class MockFirebaseUser extends Mock implements User;
 
-class MockAppLocalizations extends Mock implements AppLocalizations {}
+class MockAppLocalizations extends Mock implements AppLocalizations;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
-class MockAiService extends Mock implements AiService {}
+class MockAiService extends Mock implements AiService;
 
 DateTime get _todayDate {
   final now = DateTime.now();
@@ -215,9 +215,8 @@ void main() {
           userId: any(named: 'userId'),
         ),
       ).thenReturn(DateTime(2020));
-      when(
-        () => mockRemoteConfig.geminiPromptDetectAntExpense,
-      ).thenReturn('prompt');
+      when(() => mockRemoteConfig.geminiPromptDetectAntExpense)
+          .thenReturn('prompt');
       when(() => mockRemoteConfig.geminiAntLookbackDays).thenReturn(30);
       when(
         () => mockDatabase.getMovements(
@@ -259,9 +258,8 @@ void main() {
           userId: any(named: 'userId'),
         ),
       ).thenReturn(DateTime(2020));
-      when(
-        () => mockRemoteConfig.geminiPromptDetectAntExpense,
-      ).thenThrow(Exception('Fail'));
+      when(() => mockRemoteConfig.geminiPromptDetectAntExpense)
+          .thenThrow(Exception('Fail'));
 
       final cubit = await buildCubit();
 
@@ -313,9 +311,8 @@ void main() {
 
     setUp(() async {
       mockDatabase = MockDatabaseService();
-      when(
-        () => mockDatabase.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value([]));
+      when(() => mockDatabase.getCategoriesStream())
+          .thenAnswer((_) => Stream.value([]));
       when(
         () => mockDatabase.getMovementsStream(
           userId: any(named: 'userId'),

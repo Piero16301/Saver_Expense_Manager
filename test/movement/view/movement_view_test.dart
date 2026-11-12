@@ -11,15 +11,15 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/movement.dart';
 
 class MockMovementCubit extends MockCubit<MovementState>
-    implements MovementCubit {}
+    implements MovementCubit;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockAppUser extends Mock implements AppUser {}
+class MockAppUser extends Mock implements AppUser;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class FakeAppLocalizations extends Fake implements AppLocalizations {}
+class FakeAppLocalizations extends Fake implements AppLocalizations;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -135,9 +135,8 @@ void main() {
     });
 
     testWidgets('calls saveMovement when FAB is pressed', (tester) async {
-      when(
-        () => movementCubit.saveMovement(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => movementCubit.saveMovement(any(), any()))
+          .thenAnswer((_) async => true);
 
       await pumpMovementView(tester);
       await tester.tap(find.byType(ExpressiveFab));
@@ -151,9 +150,8 @@ void main() {
       'shows delete dialog and calls removeMovement when delete button '
       'is pressed',
       (tester) async {
-        when(
-          () => movementCubit.removeMovement(),
-        ).thenAnswer((_) async => true);
+        when(() => movementCubit.removeMovement())
+            .thenAnswer((_) async => true);
 
         await pumpMovementView(tester, screenType: MovementScreenType.edit);
 
@@ -213,9 +211,8 @@ void main() {
     testWidgets('shows warning dialog when date is old and confirms save', (
       tester,
     ) async {
-      when(
-        () => movementCubit.saveMovement(any(), any()),
-      ).thenAnswer((_) async => true);
+      when(() => movementCubit.saveMovement(any(), any()))
+          .thenAnswer((_) async => true);
       final oldDateState = MovementState(
         id: '1',
         title: 'Title',

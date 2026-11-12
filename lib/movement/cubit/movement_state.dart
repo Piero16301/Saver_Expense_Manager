@@ -1,7 +1,7 @@
 part of 'movement_cubit.dart';
 
 class MovementState extends Equatable {
-  const MovementState({
+  const new({
     this.id = '',
     this.title = '',
     this.description = '',

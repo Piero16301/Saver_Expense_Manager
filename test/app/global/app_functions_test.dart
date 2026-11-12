@@ -8,15 +8,15 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-class MockAppLocalizations extends Mock implements AppLocalizations {}
+class MockAppLocalizations extends Mock implements AppLocalizations;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
-class MockAiService extends Mock implements AiService {}
+class MockAiService extends Mock implements AiService;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class FakePromptPart extends Fake implements PromptPart {}
+class FakePromptPart extends Fake implements PromptPart;
 
 void main() {
   setUpAll(() async {
@@ -363,9 +363,8 @@ void main() {
         when(() => mockL10n.categoryTransport).thenReturn('Transporte');
         when(() => mockL10n.categoryFeeding).thenReturn('Alimentación');
         when(() => mockL10n.categoryHealth).thenReturn('Salud');
-        when(
-          () => mockL10n.categoryEntertainment,
-        ).thenReturn('Entretenimiento');
+        when(() => mockL10n.categoryEntertainment)
+            .thenReturn('Entretenimiento');
         when(() => mockL10n.categoryTrips).thenReturn('Viajes');
         when(() => mockL10n.categoryTechnology).thenReturn('Tecnología');
         when(() => mockL10n.categoryEducation).thenReturn('Educación');
@@ -795,9 +794,8 @@ void main() {
     group('getPrompt', () {
       test('replaces variables correctly', () {
         final mockRemoteConfig = MockRemoteConfigService();
-        when(
-          () => mockRemoteConfig.geminiPromptExtractReceiptData,
-        ).thenReturn('Test {{type}} {{language}} {{categories}}');
+        when(() => mockRemoteConfig.geminiPromptExtractReceiptData)
+            .thenReturn('Test {{type}} {{language}} {{categories}}');
         getIt.registerLazySingleton<RemoteConfigService>(
           () => mockRemoteConfig,
         );
@@ -832,9 +830,8 @@ void main() {
       test('uses remote model when local is unavailable', () async {
         final mockRemoteConfig = MockRemoteConfigService();
         final mockAiService = MockAiService();
-        when(
-          () => mockRemoteConfig.geminiPromptExtractReceiptData,
-        ).thenReturn('Prompt');
+        when(() => mockRemoteConfig.geminiPromptExtractReceiptData)
+            .thenReturn('Prompt');
         when(() => mockAiService.isLocalModelAvailable).thenReturn(false);
         when(
           () => mockAiService.generateContentRemote(
@@ -842,8 +839,7 @@ void main() {
             responseMimeType: any<String>(named: 'responseMimeType'),
           ),
         ).thenAnswer(
-          (_) async =>
-              '{"title": "Test Title", "price": 100, "description": "Test", "category": "INCOME", "date": "15/01/2023"}',
+          (_) async => '{"title": "Test Title", "price": 100, "description": "Test", "category": "INCOME", "date": "15/01/2023"}',
         );
 
         getIt
@@ -867,9 +863,8 @@ void main() {
       test('uses local model when requested and available', () async {
         final mockRemoteConfig = MockRemoteConfigService();
         final mockAiService = MockAiService();
-        when(
-          () => mockRemoteConfig.geminiPromptExtractReceiptData,
-        ).thenReturn('Prompt');
+        when(() => mockRemoteConfig.geminiPromptExtractReceiptData)
+            .thenReturn('Prompt');
         when(() => mockAiService.isLocalModelAvailable).thenReturn(true);
         when(
           () => mockAiService.generateContentLocal(
@@ -877,8 +872,7 @@ void main() {
             imagePrompt: any(named: 'imagePrompt'),
           ),
         ).thenAnswer(
-          (_) async =>
-              '{"title": "Local Title", "price": 50, "description": "Local", "category": "INCOME", "date": "15/01/2023"}',
+          (_) async => '{"title": "Local Title", "price": 50, "description": "Local", "category": "INCOME", "date": "15/01/2023"}',
         );
 
         getIt
@@ -907,9 +901,8 @@ void main() {
         final mockDatabaseService = MockDatabaseService();
         final mockL10n = MockAppLocalizations();
 
-        when(
-          () => mockRemoteConfig.geminiPromptDetectAntExpense,
-        ).thenReturn('Prompt {{transactions_list}}');
+        when(() => mockRemoteConfig.geminiPromptDetectAntExpense)
+            .thenReturn('Prompt {{transactions_list}}');
         when(() => mockRemoteConfig.geminiAntLookbackDays).thenReturn(30);
 
         when(

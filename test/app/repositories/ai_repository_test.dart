@@ -10,21 +10,21 @@ import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseAI extends Mock implements FirebaseAI {}
+class MockFirebaseAI extends Mock implements FirebaseAI;
 
-class MockFirebaseApp extends Mock implements FirebaseApp {}
+class MockFirebaseApp extends Mock implements FirebaseApp;
 
-class MockApiClient extends Mock implements ApiClient {}
+class MockApiClient extends Mock implements ApiClient;
 
-class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid {}
+class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid;
 
-class MockTrace extends Mock implements Trace {}
+class MockTrace extends Mock implements Trace;
 
-class MockPerformanceService extends Mock implements PerformanceService {}
+class MockPerformanceService extends Mock implements PerformanceService;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
-class MockCrashService extends Mock implements CrashService {}
+class MockCrashService extends Mock implements CrashService;
 
 void main() {
   late MockFirebaseAI mockRemoteModel;
@@ -86,9 +86,8 @@ void main() {
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
       ..registerSingleton<CrashService>(mockCrashService);
 
-    when(
-      () => mockPerformanceService.startTrace(any<String>()),
-    ).thenReturn(mockTrace);
+    when(() => mockPerformanceService.startTrace(any<String>()))
+        .thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
 
     repository = FirebaseAiRepository(
@@ -128,9 +127,8 @@ void main() {
     test(
       'initialize sets isLocalModelAvailable to false on exception',
       () async {
-        when(
-          () => mockLocalModel.isAvailable(),
-        ).thenThrow(Exception('AICore error'));
+        when(() => mockLocalModel.isAvailable())
+            .thenThrow(Exception('AICore error'));
         await repository.initialize();
         expect(repository.isLocalModelAvailable, isFalse);
       },
@@ -145,9 +143,8 @@ void main() {
       test(
         'calls generativeModel and returns response text with file and text',
         () async {
-          when(
-            () => mockRemoteConfigService.geminiModelName,
-          ).thenReturn('gemini-1.5-flash');
+          when(() => mockRemoteConfigService.geminiModelName)
+              .thenReturn('gemini-1.5-flash');
           final mockApiClient = MockApiClient();
           when(() => mockApiClient.makeRequest(any(), any())).thenAnswer(
             (_) async => {
@@ -192,9 +189,8 @@ void main() {
       );
 
       test('returns null when prompt parts are not text or file', () async {
-        when(
-          () => mockRemoteConfigService.geminiModelName,
-        ).thenReturn('gemini-1.5-flash');
+        when(() => mockRemoteConfigService.geminiModelName)
+            .thenReturn('gemini-1.5-flash');
         final mockApiClient = MockApiClient();
         final testModel = createTestModel(mockApiClient);
         when(
@@ -213,13 +209,11 @@ void main() {
       });
 
       test('records error and rethrows if remote generation fails', () async {
-        when(
-          () => mockRemoteConfigService.geminiModelName,
-        ).thenReturn('gemini-1.5-flash');
+        when(() => mockRemoteConfigService.geminiModelName)
+            .thenReturn('gemini-1.5-flash');
         final mockApiClient = MockApiClient();
-        when(
-          () => mockApiClient.makeRequest(any(), any()),
-        ).thenThrow(Exception('Remote Fail'));
+        when(() => mockApiClient.makeRequest(any(), any()))
+            .thenThrow(Exception('Remote Fail'));
         final testModel = createTestModel(mockApiClient);
         when(
           () => mockRemoteModel.generativeModel(

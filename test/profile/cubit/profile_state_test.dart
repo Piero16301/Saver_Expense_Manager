@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/profile/cubit/profile_cubit.dart';
 
-class MockAppUser extends Mock implements AppUser {}
+class MockAppUser extends Mock implements AppUser;
 
 void main() {
   group('ProfileState', () {

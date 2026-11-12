@@ -5,11 +5,11 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/login/cubit/login_cubit.dart';
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockAppLocalizations extends Mock implements AppLocalizations {}
+class MockAppLocalizations extends Mock implements AppLocalizations;
 
-class MockAnalyticsService extends Mock implements AnalyticsService {}
+class MockAnalyticsService extends Mock implements AnalyticsService;
 
 void main() {
   late MockAuthService mockAuthService;
@@ -33,15 +33,13 @@ void main() {
       ),
     ).thenAnswer((_) {});
 
-    when(
-      () => mockAnalyticsService.setUserId(id: any(named: 'id')),
-    ).thenAnswer((_) {});
+    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
+        .thenAnswer((_) {});
 
     when(() => mockL10n.genericError).thenReturn('Generic Error');
     when(() => mockAuthService.currentUser).thenReturn(null);
-    when(
-      () => mockAuthService.authStateChanges,
-    ).thenAnswer((_) => const Stream.empty());
+    when(() => mockAuthService.authStateChanges)
+        .thenAnswer((_) => const Stream.empty());
   });
 
   group('LoginState', () {
@@ -184,9 +182,8 @@ void main() {
       blocTest<LoginCubit, LoginState>(
         'emits loading and success when authentication succeeds',
         build: () {
-          when(
-            () => mockAuthService.signInWithGoogle(),
-          ).thenAnswer((_) async => true);
+          when(() => mockAuthService.signInWithGoogle())
+              .thenAnswer((_) async => true);
           return LoginCubit(authService: mockAuthService);
         },
         act: (cubit) => cubit.loginWithGoogle(mockL10n),
@@ -199,9 +196,8 @@ void main() {
       blocTest<LoginCubit, LoginState>(
         'emits failure when authentication throws',
         build: () {
-          when(
-            () => mockAuthService.signInWithGoogle(),
-          ).thenAnswer((_) async => false);
+          when(() => mockAuthService.signInWithGoogle())
+              .thenAnswer((_) async => false);
           return LoginCubit(authService: mockAuthService);
         },
         act: (cubit) => cubit.loginWithGoogle(mockL10n),

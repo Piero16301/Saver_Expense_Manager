@@ -3,11 +3,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-typedef TemplateContentGenerator =
-    Future<GenerateContentResponse> Function(
-      String templateId, {
-      required Map<String, Object?> inputs,
-    });
+typedef TemplateContentGenerator = Future<GenerateContentResponse> Function(
+  String templateId, {
+  required Map<String, Object?> inputs,
+});
 
 abstract class AiRepository {
   Future<void> initialize();
@@ -43,7 +42,7 @@ class MockAiRepository implements AiRepository {
 }
 
 class FirebaseAiRepository implements AiRepository {
-  FirebaseAiRepository({FirebaseAI? remoteModel, GeminiNanoAndroid? localModel})
+  new({FirebaseAI? remoteModel, GeminiNanoAndroid? localModel})
     : _remoteAi = remoteModel,
       _localModel = localModel ?? GeminiNanoAndroid();
 

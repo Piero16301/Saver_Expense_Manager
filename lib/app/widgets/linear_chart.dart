@@ -4,7 +4,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class LinearChart extends StatelessWidget {
-  const LinearChart({
+  const new({
     required this.titles,
     required this.colors,
     required this.data,

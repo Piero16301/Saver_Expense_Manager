@@ -6,7 +6,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/movement.dart';
 
 class MovementPage extends StatelessWidget {
-  const MovementPage({
+  const new({
     required this.movement,
     required this.type,
     required this.screenType,

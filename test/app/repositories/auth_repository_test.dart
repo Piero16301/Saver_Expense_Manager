@@ -5,26 +5,26 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseAuth extends Mock implements FirebaseAuth {}
+class MockFirebaseAuth extends Mock implements FirebaseAuth;
 
-class MockGoogleSignIn extends Mock implements GoogleSignIn {}
+class MockGoogleSignIn extends Mock implements GoogleSignIn;
 
-class MockUser extends Mock implements User {}
+class MockUser extends Mock implements User;
 
-class MockPerformanceService extends Mock implements PerformanceService {}
+class MockPerformanceService extends Mock implements PerformanceService;
 
-class MockTrace extends Mock implements Trace {}
+class MockTrace extends Mock implements Trace;
 
-class MockCrashService extends Mock implements CrashService {}
+class MockCrashService extends Mock implements CrashService;
 
-class MockAuthCredential extends Mock implements AuthCredential {}
+class MockAuthCredential extends Mock implements AuthCredential;
 
-class MockUserCredential extends Mock implements UserCredential {}
+class MockUserCredential extends Mock implements UserCredential;
 
-class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
+class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount;
 
 class MockGoogleSignInAuthentication extends Mock
-    implements GoogleSignInAuthentication {}
+    implements GoogleSignInAuthentication;
 
 void main() {
   late MockFirebaseAuth mockAuth;
@@ -53,9 +53,8 @@ void main() {
       ..registerSingleton<CrashService>(mockCrashService);
 
     final mockTrace = MockTrace();
-    when(
-      () => mockPerformanceService.startTrace(any<String>()),
-    ).thenReturn(mockTrace);
+    when(() => mockPerformanceService.startTrace(any<String>()))
+        .thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
 
     repository = FirebaseAuthRepository(
@@ -107,9 +106,8 @@ void main() {
       'updateDisplayName calls currentUser.updateDisplayName and reload',
       () async {
         when(() => mockAuth.currentUser).thenReturn(mockUser);
-        when(
-          () => mockUser.updateDisplayName(any<String?>()),
-        ).thenAnswer((_) async {});
+        when(() => mockUser.updateDisplayName(any<String?>()))
+            .thenAnswer((_) async {});
         when(() => mockUser.reload()).thenAnswer((_) async {});
 
         final result = await repository.updateDisplayName('New Name');
@@ -187,9 +185,8 @@ void main() {
 
     test('updateUserName calls currentUser.updateDisplayName', () async {
       when(() => mockAuth.currentUser).thenReturn(mockUser);
-      when(
-        () => mockUser.updateDisplayName(any<String?>()),
-      ).thenAnswer((_) async {});
+      when(() => mockUser.updateDisplayName(any<String?>()))
+          .thenAnswer((_) async {});
       when(() => mockUser.reload()).thenAnswer((_) async {});
       final result = await repository.updateUserName('Updated');
       expect(result, isTrue);
@@ -213,9 +210,8 @@ void main() {
       'linkWithEmailPassword calls currentUser.linkWithCredential',
       () async {
         when(() => mockAuth.currentUser).thenReturn(mockUser);
-        when(
-          () => mockUser.linkWithCredential(any<AuthCredential>()),
-        ).thenAnswer((_) async => MockUserCredential());
+        when(() => mockUser.linkWithCredential(any<AuthCredential>()))
+            .thenAnswer((_) async => MockUserCredential());
 
         final result = await repository.linkWithEmailPassword(
           email: 'e@t.com',
@@ -223,9 +219,8 @@ void main() {
         );
 
         expect(result, isTrue);
-        verify(
-          () => mockUser.linkWithCredential(any<AuthCredential>()),
-        ).called(1);
+        verify(() => mockUser.linkWithCredential(any<AuthCredential>()))
+            .called(1);
       },
     );
 
@@ -249,9 +244,8 @@ void main() {
     });
 
     test('userChanges returns mapped stream', () async {
-      when(
-        () => mockAuth.userChanges(),
-      ).thenAnswer((_) => Stream.fromIterable([null, mockUser]));
+      when(() => mockAuth.userChanges())
+          .thenAnswer((_) => Stream.fromIterable([null, mockUser]));
       when(() => mockUser.uid).thenReturn('uid');
       when(() => mockUser.email).thenReturn('e');
       when(() => mockUser.displayName).thenReturn('d');
@@ -266,9 +260,8 @@ void main() {
     });
 
     test('authStateChanges returns mapped stream', () async {
-      when(
-        () => mockAuth.authStateChanges(),
-      ).thenAnswer((_) => Stream.fromIterable([null, mockUser]));
+      when(() => mockAuth.authStateChanges())
+          .thenAnswer((_) => Stream.fromIterable([null, mockUser]));
       when(() => mockUser.uid).thenReturn('uid');
       when(() => mockUser.email).thenReturn('e');
       when(() => mockUser.displayName).thenReturn('d');
@@ -284,9 +277,8 @@ void main() {
 
     test('unlinkProvider calls currentUser.unlink and reload', () async {
       when(() => mockAuth.currentUser).thenReturn(mockUser);
-      when(
-        () => mockUser.unlink(any<String>()),
-      ).thenAnswer((_) async => mockUser);
+      when(() => mockUser.unlink(any<String>()))
+          .thenAnswer((_) async => mockUser);
       when(() => mockUser.reload()).thenAnswer((_) async {});
 
       final result = await repository.unlinkProvider('google.com');
@@ -302,24 +294,21 @@ void main() {
       final mockGoogleAuth = MockGoogleSignInAuthentication();
 
       when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
-      when(
-        () => mockGoogleSignIn.authenticate(),
-      ).thenAnswer((_) async => mockGoogleAccount);
+      when(() => mockGoogleSignIn.authenticate())
+          .thenAnswer((_) async => mockGoogleAccount);
       when(() => mockGoogleAccount.authentication).thenReturn(mockGoogleAuth);
       when(() => mockGoogleAuth.idToken).thenReturn('token');
       when(() => mockAuth.currentUser).thenReturn(mockUser);
-      when(
-        () => mockUser.linkWithCredential(any<AuthCredential>()),
-      ).thenAnswer((_) async => MockUserCredential());
+      when(() => mockUser.linkWithCredential(any<AuthCredential>()))
+          .thenAnswer((_) async => MockUserCredential());
 
       final result = await repository.linkWithGoogle();
 
       expect(result, isTrue);
       verify(() => mockGoogleSignIn.signOut()).called(1);
       verify(() => mockGoogleSignIn.authenticate()).called(1);
-      verify(
-        () => mockUser.linkWithCredential(any<AuthCredential>()),
-      ).called(1);
+      verify(() => mockUser.linkWithCredential(any<AuthCredential>()))
+          .called(1);
     });
 
     test('signInWithGoogle calls googleSignIn, authenticate, and '
@@ -328,23 +317,20 @@ void main() {
       final mockGoogleAuth = MockGoogleSignInAuthentication();
 
       when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
-      when(
-        () => mockGoogleSignIn.authenticate(),
-      ).thenAnswer((_) async => mockGoogleAccount);
+      when(() => mockGoogleSignIn.authenticate())
+          .thenAnswer((_) async => mockGoogleAccount);
       when(() => mockGoogleAccount.authentication).thenReturn(mockGoogleAuth);
       when(() => mockGoogleAuth.idToken).thenReturn('token');
-      when(
-        () => mockAuth.signInWithCredential(any<AuthCredential>()),
-      ).thenAnswer((_) async => MockUserCredential());
+      when(() => mockAuth.signInWithCredential(any<AuthCredential>()))
+          .thenAnswer((_) async => MockUserCredential());
 
       final result = await repository.signInWithGoogle();
 
       expect(result, isTrue);
       verify(() => mockGoogleSignIn.signOut()).called(1);
       verify(() => mockGoogleSignIn.authenticate()).called(1);
-      verify(
-        () => mockAuth.signInWithCredential(any<AuthCredential>()),
-      ).called(1);
+      verify(() => mockAuth.signInWithCredential(any<AuthCredential>()))
+          .called(1);
     });
 
     test('all auth methods record errors on exception', () async {
@@ -357,15 +343,13 @@ void main() {
           password: any<String>(named: 'password'),
         ),
       ).thenThrow(Exception('Fail'));
-      when(
-        () => mockUser.updateDisplayName(any()),
-      ).thenThrow(Exception('Fail'));
+      when(() => mockUser.updateDisplayName(any()))
+          .thenThrow(Exception('Fail'));
       when(() => mockUser.unlink(any())).thenThrow(Exception('Fail'));
       when(() => mockGoogleSignIn.signOut()).thenAnswer((_) async {});
       when(() => mockGoogleSignIn.authenticate()).thenThrow(Exception('Fail'));
-      when(
-        () => mockUser.linkWithCredential(any()),
-      ).thenThrow(Exception('Fail'));
+      when(() => mockUser.linkWithCredential(any()))
+          .thenThrow(Exception('Fail'));
       when(
         () => mockAuth.createUserWithEmailAndPassword(
           email: any<String>(named: 'email'),

@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockAnalyticsRepository extends Mock implements AnalyticsRepository {}
+class MockAnalyticsRepository extends Mock implements AnalyticsRepository;
 
 void main() {
   late AnalyticsService service;
@@ -37,15 +37,13 @@ void main() {
         ),
       ).thenReturn(null);
       service.setCurrentScreen(screenName: 'screen');
-      verify(
-        () => mockRepository.setCurrentScreen(screenName: 'screen'),
-      ).called(1);
+      verify(() => mockRepository.setCurrentScreen(screenName: 'screen'))
+          .called(1);
     });
 
     test('setUserId calls repository setUserId', () {
-      when(
-        () => mockRepository.setUserId(id: any<String>(named: 'id')),
-      ).thenReturn(null);
+      when(() => mockRepository.setUserId(id: any<String>(named: 'id')))
+          .thenReturn(null);
       service.setUserId(id: '123');
       verify(() => mockRepository.setUserId(id: '123')).called(1);
     });

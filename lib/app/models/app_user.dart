@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 
 class AppUserInfo extends Equatable {
-  const AppUserInfo({
+  const new({
     required this.uid,
     this.providerId,
     this.email,
@@ -11,7 +11,7 @@ class AppUserInfo extends Equatable {
     this.phoneNumber,
   });
 
-  factory AppUserInfo.fromFirebaseUserInfo(firebase.UserInfo info) {
+  factory fromFirebaseUserInfo(firebase.UserInfo info) {
     return AppUserInfo(
       uid: info.uid ?? '',
       providerId: info.providerId,
@@ -41,7 +41,7 @@ class AppUserInfo extends Equatable {
 }
 
 class AppUser extends Equatable {
-  const AppUser({
+  const new({
     required this.uid,
     this.email,
     this.displayName,
@@ -50,7 +50,7 @@ class AppUser extends Equatable {
     this.providerData = const [],
   });
 
-  factory AppUser.fromFirebaseUser(firebase.User user) {
+  factory fromFirebaseUser(firebase.User user) {
     return AppUser(
       uid: user.uid,
       email: user.email,

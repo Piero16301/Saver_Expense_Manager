@@ -4,7 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/home/pages/summary_home/cubit/summary_home_cubit.dart';
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
 void main() {
   group('SummaryHomeCubit', () {

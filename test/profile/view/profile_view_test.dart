@@ -10,10 +10,9 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/profile/profile.dart';
 
-class MockProfileCubit extends MockCubit<ProfileState>
-    implements ProfileCubit {}
+class MockProfileCubit extends MockCubit<ProfileState> implements ProfileCubit;
 
-class FakeAppLocalizations extends Fake implements AppLocalizations {}
+class FakeAppLocalizations extends Fake implements AppLocalizations;
 
 const _userNoProviders = AppUser(uid: 'uid-1', displayName: 'Test User');
 
@@ -499,9 +498,8 @@ void main() {
     testWidgets('calls unlinkProvider when unlink dialog is confirmed', (
       tester,
     ) async {
-      when(
-        () => profileCubit.unlinkProvider(any(), any()),
-      ).thenAnswer((_) async {});
+      when(() => profileCubit.unlinkProvider(any(), any()))
+          .thenAnswer((_) async {});
 
       await pumpProfileView(
         tester,

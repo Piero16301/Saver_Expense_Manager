@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockAiRepository extends Mock implements AiRepository {}
+class MockAiRepository extends Mock implements AiRepository;
 
 void main() {
   late AiService service;
@@ -38,21 +38,18 @@ void main() {
       ).thenAnswer((_) async => 'result');
       final result = await service.generateContentRemote(prompt: prompt);
       expect(result, equals('result'));
-      verify(
-        () => mockRepository.generateContentRemote(prompt: prompt),
-      ).called(1);
+      verify(() => mockRepository.generateContentRemote(prompt: prompt))
+          .called(1);
     });
 
     test('generateContentLocal calls repository and returns result', () async {
       final textPrompt = PromptPart.text(text: 'text');
-      when(
-        () => mockRepository.generateContentLocal(textPrompt: textPrompt),
-      ).thenAnswer((_) async => 'result');
+      when(() => mockRepository.generateContentLocal(textPrompt: textPrompt))
+          .thenAnswer((_) async => 'result');
       final result = await service.generateContentLocal(textPrompt: textPrompt);
       expect(result, equals('result'));
-      verify(
-        () => mockRepository.generateContentLocal(textPrompt: textPrompt),
-      ).called(1);
+      verify(() => mockRepository.generateContentLocal(textPrompt: textPrompt))
+          .called(1);
     });
   });
 }

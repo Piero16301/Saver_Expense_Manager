@@ -1,7 +1,7 @@
 import 'package:saver_expense_manager/app/app.dart';
 
 class AiService {
-  AiService({required this._aiRepository});
+  new({required this._aiRepository});
 
   final AiRepository _aiRepository;
 

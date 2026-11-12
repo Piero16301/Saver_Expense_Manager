@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseCrashlytics extends Mock implements CrashRepository {}
+class MockFirebaseCrashlytics extends Mock implements CrashRepository;
 
 void main() {
   group('CrashService', () {
@@ -54,9 +54,8 @@ void main() {
     });
 
     test('setCustomKey calls FirebaseCrashlytics.setCustomKey', () {
-      when(
-        () => mockCrashlytics.setCustomKey(any<String>(), any<Object>()),
-      ).thenAnswer((_) async {});
+      when(() => mockCrashlytics.setCustomKey(any<String>(), any<Object>()))
+          .thenAnswer((_) async {});
 
       crashService.setCustomKey('key', 'value');
 
@@ -64,9 +63,8 @@ void main() {
     });
 
     test('setUserIdentifier calls FirebaseCrashlytics.setUserIdentifier', () {
-      when(
-        () => mockCrashlytics.setUserIdentifier(any<String>()),
-      ).thenAnswer((_) async {});
+      when(() => mockCrashlytics.setUserIdentifier(any<String>()))
+          .thenAnswer((_) async {});
 
       crashService.setUserIdentifier('user123');
 

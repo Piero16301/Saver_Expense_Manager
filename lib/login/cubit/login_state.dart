@@ -13,7 +13,7 @@ enum LoginStatus {
 }
 
 class LoginState extends Equatable {
-  const LoginState({
+  const new({
     this.status = LoginStatus.initial,
     this.email = '',
     this.password = '',

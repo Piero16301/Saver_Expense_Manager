@@ -1,7 +1,7 @@
 import 'package:saver_expense_manager/app/app.dart';
 
 class AuthService {
-  AuthService({required this._authRepository});
+  new({required this._authRepository});
 
   final AuthRepository _authRepository;
 

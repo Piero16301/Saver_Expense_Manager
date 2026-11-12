@@ -6,15 +6,15 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockLocalStorageService extends Mock implements LocalStorageService {}
+class MockLocalStorageService extends Mock implements LocalStorageService;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class MockAnalyticsService extends Mock implements AnalyticsService {}
+class MockAnalyticsService extends Mock implements AnalyticsService;
 
-class MockUser extends Mock implements AppUser {}
+class MockUser extends Mock implements AppUser;
 
 void main() {
   late AuthService authenticationService;
@@ -37,9 +37,8 @@ void main() {
 
     when(() => mockUser.uid).thenReturn('test_uid');
 
-    when(
-      () => mockAnalyticsService.setUserId(id: any(named: 'id')),
-    ).thenAnswer((_) {});
+    when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
+        .thenAnswer((_) {});
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AuthService>()) {
@@ -57,18 +56,15 @@ void main() {
       ..registerLazySingleton<LocalStorageService>(() => localStorageService)
       ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService);
 
-    when(
-      () => authenticationService.userChanges,
-    ).thenAnswer((_) => const Stream.empty());
-    when(
-      () => authenticationService.authStateChanges,
-    ).thenAnswer((_) => const Stream.empty());
+    when(() => authenticationService.userChanges)
+        .thenAnswer((_) => const Stream.empty());
+    when(() => authenticationService.authStateChanges)
+        .thenAnswer((_) => const Stream.empty());
     when(() => authenticationService.isLoggedIn).thenReturn(false);
     when(() => authenticationService.currentUser).thenReturn(null);
 
-    when(
-      () => localStorageService.getLanguage(),
-    ).thenReturn(const Locale('en', 'US'));
+    when(() => localStorageService.getLanguage())
+        .thenReturn(const Locale('en', 'US'));
     when(() => localStorageService.getTheme()).thenReturn(ThemeMode.system);
     when(() => localStorageService.getBaseColor()).thenReturn(Colors.green);
     when(() => localStorageService.getFontFamily()).thenReturn('Poppins');
@@ -76,9 +72,8 @@ void main() {
     when(
       () => localStorageService.saveLanguage(language: any(named: 'language')),
     ).thenAnswer((_) async {});
-    when(
-      () => localStorageService.saveTheme(theme: any(named: 'theme')),
-    ).thenAnswer((_) async {});
+    when(() => localStorageService.saveTheme(theme: any(named: 'theme')))
+        .thenAnswer((_) async {});
     when(
       () =>
           localStorageService.saveBaseColor(baseColor: any(named: 'baseColor')),

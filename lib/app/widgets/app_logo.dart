@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 class AppLogo extends StatelessWidget {
-  const AppLogo({super.key, this.width = 100, this.height = 100});
+  const new({super.key, this.width = 100, this.height = 100});
 
   final double width;
   final double height;

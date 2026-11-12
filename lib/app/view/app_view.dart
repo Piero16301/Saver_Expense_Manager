@@ -8,7 +8,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class AppView extends StatefulWidget {
-  const AppView({super.key});
+  const new({super.key});
 
   @override
   State<AppView> createState() => _AppViewState();

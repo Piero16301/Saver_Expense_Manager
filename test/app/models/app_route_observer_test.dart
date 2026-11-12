@@ -3,11 +3,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockAnalyticsService extends Mock implements AnalyticsService {}
+class MockAnalyticsService extends Mock implements AnalyticsService;
 
-class MockPageRoute extends Mock implements PageRoute<dynamic> {}
+class MockPageRoute extends Mock implements PageRoute<dynamic>;
 
-class MockRoute extends Mock implements Route<dynamic> {}
+class MockRoute extends Mock implements Route<dynamic>;
 
 void main() {
   late MockAnalyticsService mockAnalyticsService;
@@ -21,9 +21,8 @@ void main() {
   group('AppRouteObserver', () {
     test('didPush calls setCurrentScreen when route is PageRoute', () {
       final route = MockPageRoute();
-      when(
-        () => route.settings,
-      ).thenReturn(const RouteSettings(name: 'test_screen'));
+      when(() => route.settings)
+          .thenReturn(const RouteSettings(name: 'test_screen'));
 
       observer.didPush(route, null);
 
@@ -63,9 +62,8 @@ void main() {
     test('didPop calls setCurrentScreen when previousRoute is PageRoute', () {
       final route = MockPageRoute();
       final previousRoute = MockPageRoute();
-      when(
-        () => previousRoute.settings,
-      ).thenReturn(const RouteSettings(name: 'prev_screen'));
+      when(() => previousRoute.settings)
+          .thenReturn(const RouteSettings(name: 'prev_screen'));
 
       observer.didPop(route, previousRoute);
 
@@ -79,9 +77,8 @@ void main() {
       () {
         final route = MockRoute();
         final previousRoute = MockPageRoute();
-        when(
-          () => previousRoute.settings,
-        ).thenReturn(const RouteSettings(name: 'removed_prev_screen'));
+        when(() => previousRoute.settings)
+            .thenReturn(const RouteSettings(name: 'removed_prev_screen'));
 
         observer.didRemove(route, previousRoute);
 
@@ -95,9 +92,8 @@ void main() {
 
     test('didReplace calls setCurrentScreen when newRoute is PageRoute', () {
       final newRoute = MockPageRoute();
-      when(
-        () => newRoute.settings,
-      ).thenReturn(const RouteSettings(name: 'new_screen'));
+      when(() => newRoute.settings)
+          .thenReturn(const RouteSettings(name: 'new_screen'));
 
       observer.didReplace(newRoute: newRoute, oldRoute: MockRoute());
 
@@ -108,9 +104,8 @@ void main() {
 
     test('didChangeTop calls setCurrentScreen when topRoute is PageRoute', () {
       final topRoute = MockPageRoute();
-      when(
-        () => topRoute.settings,
-      ).thenReturn(const RouteSettings(name: 'top_screen'));
+      when(() => topRoute.settings)
+          .thenReturn(const RouteSettings(name: 'top_screen'));
 
       observer.didChangeTop(topRoute, null);
 

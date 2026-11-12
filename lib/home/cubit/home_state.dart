@@ -1,9 +1,9 @@
 part of 'home_cubit.dart';
 
 class HomeState extends Equatable {
-  const HomeState({required this.selectedIndex});
+  const new({required this.selectedIndex});
 
-  factory HomeState.initial() {
+  factory initial() {
     return HomeState(
       selectedIndex: AppFunctions.getInitialTabIndex(
         getIt<RemoteConfigService>().homeInitialTab,

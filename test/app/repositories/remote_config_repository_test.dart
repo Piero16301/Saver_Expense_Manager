@@ -3,11 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseRemoteConfig extends Mock implements FirebaseRemoteConfig {}
+class MockFirebaseRemoteConfig extends Mock implements FirebaseRemoteConfig;
 
-class MockCrashService extends Mock implements CrashService {}
+class MockCrashService extends Mock implements CrashService;
 
-class FakeRemoteConfigSettings extends Fake implements RemoteConfigSettings {}
+class FakeRemoteConfigSettings extends Fake implements RemoteConfigSettings;
 
 void main() {
   late MockFirebaseRemoteConfig mockRemoteConfig;
@@ -46,21 +46,18 @@ void main() {
     test(
       'initialize calls setDefaults, setConfigSettings, and fetchAndActivate',
       () async {
-        when(
-          () => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()),
-        ).thenAnswer((_) async {});
+        when(() => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()))
+            .thenAnswer((_) async {});
         when(
           () => mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),
         ).thenAnswer((_) async {});
-        when(
-          () => mockRemoteConfig.fetchAndActivate(),
-        ).thenAnswer((_) async => true);
+        when(() => mockRemoteConfig.fetchAndActivate())
+            .thenAnswer((_) async => true);
 
         await repository.initialize();
 
-        verify(
-          () => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()),
-        ).called(1);
+        verify(() => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()))
+            .called(1);
         verify(
           () => mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),
         ).called(1);
@@ -69,9 +66,8 @@ void main() {
     );
 
     test('initialize records error on failure but does not rethrow', () async {
-      when(
-        () => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()),
-      ).thenAnswer((_) async {});
+      when(() => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()))
+          .thenAnswer((_) async {});
       when(
         () => mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),
       ).thenThrow(Exception('Config Fail'));

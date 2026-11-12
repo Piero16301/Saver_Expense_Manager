@@ -88,13 +88,10 @@ class MockAuthRepository implements AuthRepository {
 }
 
 class FirebaseAuthRepository implements AuthRepository {
-  FirebaseAuthRepository({
-    FirebaseAuth? auth,
-    GoogleSignIn? googleSignIn,
-    http.Client? httpClient,
-  }) : _auth = auth ?? FirebaseAuth.instance,
-       _googleSignIn = googleSignIn ?? GoogleSignIn.instance,
-       _httpClient = httpClient ?? http.Client();
+  new({FirebaseAuth? auth, GoogleSignIn? googleSignIn, http.Client? httpClient})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _googleSignIn = googleSignIn ?? GoogleSignIn.instance,
+      _httpClient = httpClient ?? http.Client();
 
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;

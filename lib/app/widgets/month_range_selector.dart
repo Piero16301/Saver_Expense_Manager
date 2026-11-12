@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MonthRangeSelector extends StatelessWidget {
-  const MonthRangeSelector({
+  const new({
     required this.startMonth,
     required this.endMonth,
     required this.onChangeStartMonth,

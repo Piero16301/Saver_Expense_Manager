@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockDatabaseRepository extends Mock implements DatabaseRepository {}
+class MockDatabaseRepository extends Mock implements DatabaseRepository;
 
 void main() {
   late DatabaseService databaseService;
@@ -50,21 +50,18 @@ void main() {
         user: '1',
       );
 
-      when(
-        () => mockDatabaseRepository.saveMovement(movement: movement),
-      ).thenReturn(null);
+      when(() => mockDatabaseRepository.saveMovement(movement: movement))
+          .thenReturn(null);
 
       databaseService.saveMovement(movement: movement);
 
-      verify(
-        () => mockDatabaseRepository.saveMovement(movement: movement),
-      ).called(1);
+      verify(() => mockDatabaseRepository.saveMovement(movement: movement))
+          .called(1);
     });
 
     test('getCategoriesStream delegates to repository', () {
-      when(
-        () => mockDatabaseRepository.getCategoriesStream(),
-      ).thenAnswer((_) => Stream.value([]));
+      when(() => mockDatabaseRepository.getCategoriesStream())
+          .thenAnswer((_) => Stream.value([]));
 
       final stream = databaseService.getCategoriesStream();
 
@@ -112,21 +109,18 @@ void main() {
       final movements = await databaseService.getMovements(userId: 'user_1');
 
       expect(movements, isEmpty);
-      verify(
-        () => mockDatabaseRepository.getMovements(userId: 'user_1'),
-      ).called(1);
+      verify(() => mockDatabaseRepository.getMovements(userId: 'user_1'))
+          .called(1);
     });
 
     test('deleteMovement delegates to repository', () {
-      when(
-        () => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'),
-      ).thenReturn(null);
+      when(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
+          .thenReturn(null);
 
       databaseService.deleteMovement(movementId: 'mov_1');
 
-      verify(
-        () => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'),
-      ).called(1);
+      verify(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
+          .called(1);
     });
   });
 }

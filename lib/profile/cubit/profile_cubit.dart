@@ -8,7 +8,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 part 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit({AuthService? authService})
+  new({AuthService? authService})
     : _authService = authService ?? getIt<AuthService>(),
       super(const ProfileState()) {
     _init();

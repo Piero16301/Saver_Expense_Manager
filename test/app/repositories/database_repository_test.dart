@@ -8,27 +8,27 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockPerformanceService extends Mock implements PerformanceService {}
+class MockPerformanceService extends Mock implements PerformanceService;
 
-class MockTrace extends Mock implements Trace {}
+class MockTrace extends Mock implements Trace;
 
-class MockCrashService extends Mock implements CrashService {}
+class MockCrashService extends Mock implements CrashService;
 
-class MockFirebaseFirestore extends Mock implements FirebaseFirestore {}
+class MockFirebaseFirestore extends Mock implements FirebaseFirestore;
 
 class MockCollectionReference<T extends Object?> extends Mock
-    implements CollectionReference<T> {}
+    implements CollectionReference<T>;
 
 class MockDocumentReference<T extends Object?> extends Mock
-    implements DocumentReference<T> {}
+    implements DocumentReference<T>;
 
-class MockQuery<T extends Object?> extends Mock implements Query<T> {}
+class MockQuery<T extends Object?> extends Mock implements Query<T>;
 
 class MockQuerySnapshot<T extends Object?> extends Mock
-    implements QuerySnapshot<T> {}
+    implements QuerySnapshot<T>;
 
 class MockQueryDocumentSnapshot<T extends Object?> extends Mock
-    implements QueryDocumentSnapshot<T> {}
+    implements QueryDocumentSnapshot<T>;
 
 void main() {
   late FirestoreDatabaseRepository repository;
@@ -71,9 +71,8 @@ void main() {
       ),
     ).thenAnswer((_) async {});
 
-    when(
-      () => mockPerformanceService.startTrace(any<String>()),
-    ).thenReturn(mockTrace);
+    when(() => mockPerformanceService.startTrace(any<String>()))
+        .thenReturn(mockTrace);
     when(() => mockPerformanceService.stopTrace(any())).thenReturn(null);
 
     repository = FirestoreDatabaseRepository(firestore: mockFirestore);
@@ -93,9 +92,8 @@ void main() {
 
   group('FirestoreDatabaseRepository', () {
     test('newId returns a document id', () {
-      when(
-        () => mockFirestore.collection(AppVariables.movementsCollection),
-      ).thenReturn(mockCollection);
+      when(() => mockFirestore.collection(AppVariables.movementsCollection))
+          .thenReturn(mockCollection);
       when(() => mockCollection.doc()).thenReturn(mockDoc);
       when(() => mockDoc.id).thenReturn('generated_id_123');
 
@@ -111,12 +109,10 @@ void main() {
         type: CategoryType.expense,
       );
 
-      when(
-        () => mockFirestore.collection(AppVariables.categoriesCollection),
-      ).thenReturn(mockCollection);
-      when(
-        () => mockCollection.snapshots(),
-      ).thenAnswer((_) => Stream.value(mockQuerySnapshot));
+      when(() => mockFirestore.collection(AppVariables.categoriesCollection))
+          .thenReturn(mockCollection);
+      when(() => mockCollection.snapshots())
+          .thenAnswer((_) => Stream.value(mockQuerySnapshot));
       when(() => mockQuerySnapshot.docs).thenReturn([mockDocSnapshot]);
       when(() => mockDocSnapshot.data()).thenReturn(category.toJson());
 
@@ -149,31 +145,26 @@ void main() {
         'date': Timestamp.fromDate(movement.date),
       };
 
-      when(
-        () => mockFirestore.collection(AppVariables.movementsCollection),
-      ).thenReturn(mockCollection);
+      when(() => mockFirestore.collection(AppVariables.movementsCollection))
+          .thenReturn(mockCollection);
       when(
         () => mockCollection.where(any(), isEqualTo: any(named: 'isEqualTo')),
       ).thenReturn(mockQuery);
-      when(
-        () => mockQuery.where(any(), isEqualTo: any(named: 'isEqualTo')),
-      ).thenReturn(mockQuery);
+      when(() => mockQuery.where(any(), isEqualTo: any(named: 'isEqualTo')))
+          .thenReturn(mockQuery);
       when(
         () => mockQuery.where(
           any(),
           isGreaterThanOrEqualTo: any(named: 'isGreaterThanOrEqualTo'),
         ),
       ).thenReturn(mockQuery);
-      when(
-        () => mockQuery.where(any(), isLessThan: any(named: 'isLessThan')),
-      ).thenReturn(mockQuery);
-      when(
-        () => mockQuery.orderBy(any(), descending: any(named: 'descending')),
-      ).thenReturn(mockQuery);
+      when(() => mockQuery.where(any(), isLessThan: any(named: 'isLessThan')))
+          .thenReturn(mockQuery);
+      when(() => mockQuery.orderBy(any(), descending: any(named: 'descending')))
+          .thenReturn(mockQuery);
       when(() => mockQuery.limit(any())).thenReturn(mockQuery);
-      when(
-        () => mockQuery.snapshots(),
-      ).thenAnswer((_) => Stream.value(mockQuerySnapshot));
+      when(() => mockQuery.snapshots())
+          .thenAnswer((_) => Stream.value(mockQuerySnapshot));
       when(() => mockQuerySnapshot.docs).thenReturn([mockDocSnapshot]);
       when(() => mockDocSnapshot.data()).thenReturn(movementData);
 
@@ -203,9 +194,8 @@ void main() {
         user: 'user_1',
       );
 
-      when(
-        () => mockFirestore.collection(AppVariables.movementsCollection),
-      ).thenReturn(mockCollection);
+      when(() => mockFirestore.collection(AppVariables.movementsCollection))
+          .thenReturn(mockCollection);
       when(() => mockCollection.doc(movement.id)).thenReturn(mockDoc);
       when(() => mockDoc.set(any())).thenAnswer((_) async {});
 
@@ -215,9 +205,8 @@ void main() {
     });
 
     test('saveMovement records error on exception', () async {
-      when(
-        () => mockFirestore.collection(any<String>()),
-      ).thenThrow(Exception('Firestore Fail'));
+      when(() => mockFirestore.collection(any<String>()))
+          .thenThrow(Exception('Firestore Fail'));
 
       repository.saveMovement(movement: Movement.empty.copyWith(id: '1'));
 
@@ -232,9 +221,8 @@ void main() {
 
     test('deleteMovement removes movement correctly', () async {
       const movementId = 'mov_1';
-      when(
-        () => mockFirestore.collection(AppVariables.movementsCollection),
-      ).thenReturn(mockCollection);
+      when(() => mockFirestore.collection(AppVariables.movementsCollection))
+          .thenReturn(mockCollection);
       when(() => mockCollection.doc(movementId)).thenReturn(mockDoc);
       when(() => mockDoc.delete()).thenAnswer((_) async {});
 
@@ -244,9 +232,8 @@ void main() {
     });
 
     test('deleteMovement records error on exception', () async {
-      when(
-        () => mockFirestore.collection(any<String>()),
-      ).thenThrow(Exception('Delete Fail'));
+      when(() => mockFirestore.collection(any<String>()))
+          .thenThrow(Exception('Delete Fail'));
 
       repository.deleteMovement(movementId: '1');
 
@@ -272,9 +259,8 @@ void main() {
         'date': Timestamp.fromDate(movement.date),
       };
 
-      when(
-        () => mockFirestore.collection(AppVariables.movementsCollection),
-      ).thenReturn(mockCollection);
+      when(() => mockFirestore.collection(AppVariables.movementsCollection))
+          .thenReturn(mockCollection);
       when(
         () => mockCollection.where(any(), isEqualTo: any(named: 'isEqualTo')),
       ).thenReturn(mockQuery);
@@ -284,9 +270,8 @@ void main() {
           isGreaterThanOrEqualTo: any(named: 'isGreaterThanOrEqualTo'),
         ),
       ).thenReturn(mockQuery);
-      when(
-        () => mockQuery.where(any(), isLessThan: any(named: 'isLessThan')),
-      ).thenReturn(mockQuery);
+      when(() => mockQuery.where(any(), isLessThan: any(named: 'isLessThan')))
+          .thenReturn(mockQuery);
       when(() => mockQuery.get()).thenAnswer((_) async => mockQuerySnapshot);
       when(() => mockQuerySnapshot.docs).thenReturn([mockDocSnapshot]);
       when(() => mockDocSnapshot.data()).thenReturn(movementData);
@@ -299,16 +284,14 @@ void main() {
 
       expect(result.length, 1);
       expect(result.first.id, equals('1'));
-      verify(
-        () => mockPerformanceService.startTrace('firestore_get_movements'),
-      ).called(1);
+      verify(() => mockPerformanceService.startTrace('firestore_get_movements'))
+          .called(1);
       verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
     });
 
     test('getMovements records error and rethrows on failure', () async {
-      when(
-        () => mockFirestore.collection(AppVariables.movementsCollection),
-      ).thenReturn(mockCollection);
+      when(() => mockFirestore.collection(AppVariables.movementsCollection))
+          .thenReturn(mockCollection);
       when(
         () => mockCollection.where(any(), isEqualTo: any(named: 'isEqualTo')),
       ).thenReturn(mockQuery);
@@ -341,18 +324,15 @@ void main() {
         'date': Timestamp.fromDate(movement.date),
       };
 
-      when(
-        () => mockFirestore.collection(AppVariables.movementsCollection),
-      ).thenReturn(mockCollection);
+      when(() => mockFirestore.collection(AppVariables.movementsCollection))
+          .thenReturn(mockCollection);
       when(
         () => mockCollection.where(any(), isEqualTo: any(named: 'isEqualTo')),
       ).thenReturn(mockQuery);
-      when(
-        () => mockQuery.get(),
-      ).thenThrow(TimeoutException('Firestore timeout'));
-      when(
-        () => mockQuery.get(const GetOptions(source: Source.cache)),
-      ).thenAnswer((_) async => mockQuerySnapshot);
+      when(() => mockQuery.get())
+          .thenThrow(TimeoutException('Firestore timeout'));
+      when(() => mockQuery.get(const GetOptions(source: Source.cache)))
+          .thenAnswer((_) async => mockQuerySnapshot);
       when(() => mockQuerySnapshot.docs).thenReturn([mockDocSnapshot]);
       when(() => mockDocSnapshot.data()).thenReturn(movementData);
 
@@ -360,9 +340,8 @@ void main() {
 
       expect(result.length, 1);
       expect(result.first.id, equals('1'));
-      verify(
-        () => mockQuery.get(const GetOptions(source: Source.cache)),
-      ).called(1);
+      verify(() => mockQuery.get(const GetOptions(source: Source.cache)))
+          .called(1);
     });
   });
 }

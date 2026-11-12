@@ -7,13 +7,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockFirebaseStorage extends Mock implements FirebaseStorage {}
+class MockFirebaseStorage extends Mock implements FirebaseStorage;
 
-class MockReference extends Mock implements Reference {}
+class MockReference extends Mock implements Reference;
 
-class MockCrashService extends Mock implements CrashService {}
+class MockCrashService extends Mock implements CrashService;
 
-class FakeFile extends Fake implements File {}
+class FakeFile extends Fake implements File;
 
 class FakeUploadTask extends Fake implements UploadTask {
   @override
@@ -23,9 +23,9 @@ class FakeUploadTask extends Fake implements UploadTask {
   }) => Future.value(onValue(MockTaskSnapshot()));
 }
 
-class MockTaskSnapshot extends Mock implements TaskSnapshot {}
+class MockTaskSnapshot extends Mock implements TaskSnapshot;
 
-class MockFullMetadata extends Mock implements FullMetadata {}
+class MockFullMetadata extends Mock implements FullMetadata;
 
 void main() {
   late MockFirebaseStorage mockStorage;
@@ -89,9 +89,8 @@ void main() {
 
     test('getData calls storage.getData', () async {
       final mockData = Uint8List(10);
-      when(
-        () => mockReference.getData(any<int>()),
-      ).thenAnswer((_) async => mockData);
+      when(() => mockReference.getData(any<int>()))
+          .thenAnswer((_) async => mockData);
       final result = await repository.getData('path/to/file');
       expect(result, equals(mockData));
       verify(() => mockReference.getData(any<int>())).called(1);
@@ -99,9 +98,8 @@ void main() {
 
     test('uploadFile calls ref.putData and returns ref.fullPath', () async {
       final fakeTask = FakeUploadTask();
-      when(
-        () => mockReference.putData(any<Uint8List>(), any()),
-      ).thenAnswer((_) => fakeTask);
+      when(() => mockReference.putData(any<Uint8List>(), any()))
+          .thenAnswer((_) => fakeTask);
       when(() => mockReference.fullPath).thenReturn('remote_path');
 
       final result = await repository.uploadFile(Uint8List(0), 'remote_path');
@@ -111,9 +109,8 @@ void main() {
     });
 
     test('uploadFile records error and returns null on exception', () async {
-      when(
-        () => mockReference.putData(any<Uint8List>(), any()),
-      ).thenThrow(Exception('Upload Fail'));
+      when(() => mockReference.putData(any<Uint8List>(), any()))
+          .thenThrow(Exception('Upload Fail'));
 
       final result = await repository.uploadFile(Uint8List(0), 'remote_path');
 
@@ -129,9 +126,8 @@ void main() {
     });
 
     test('getData records error and returns null on exception', () async {
-      when(
-        () => mockReference.getData(any<int>()),
-      ).thenThrow(Exception('Get Data Fail'));
+      when(() => mockReference.getData(any<int>()))
+          .thenThrow(Exception('Get Data Fail'));
 
       final result = await repository.getData('path/to/file');
 
@@ -147,9 +143,8 @@ void main() {
     });
 
     test('getDownloadURL calls ref.getDownloadURL', () async {
-      when(
-        () => mockReference.getDownloadURL(),
-      ).thenAnswer((_) async => 'https://download.url');
+      when(() => mockReference.getDownloadURL())
+          .thenAnswer((_) async => 'https://download.url');
 
       final result = await repository.getDownloadURL('remote_path');
 
@@ -160,9 +155,8 @@ void main() {
     test(
       'getDownloadURL records error and returns null on exception',
       () async {
-        when(
-          () => mockReference.getDownloadURL(),
-        ).thenThrow(Exception('Download URL Fail'));
+        when(() => mockReference.getDownloadURL())
+            .thenThrow(Exception('Download URL Fail'));
 
         final result = await repository.getDownloadURL('remote_path');
 
@@ -200,52 +194,39 @@ void main() {
       final mockMeta = MockFullMetadata();
       when(() => mockMeta.contentType).thenReturn(null);
       when(() => mockReference.getMetadata()).thenAnswer((_) async => mockMeta);
-      when(
-        () => mockReference.updateMetadata(any<SettableMetadata>()),
-      ).thenAnswer((_) async => mockMeta);
-      when(
-        () => mockReference.getDownloadURL(),
-      ).thenAnswer((_) async => 'https://download.url/image.png');
+      when(() => mockReference.updateMetadata(any<SettableMetadata>()))
+          .thenAnswer((_) async => mockMeta);
+      when(() => mockReference.getDownloadURL())
+          .thenAnswer((_) async => 'https://download.url/image.png');
 
       final result = await repository.getDownloadURL('image.png');
 
       expect(result, equals('https://download.url/image.png'));
-      verify(
-        () => mockReference.updateMetadata(any<SettableMetadata>()),
-      ).called(1);
+      verify(() => mockReference.updateMetadata(any<SettableMetadata>()))
+          .called(1);
     });
 
-    test(
-      'getDownloadURL updates metadata when contentType is application/octet-stream',
-      () async {
-        final mockMeta = MockFullMetadata();
-        when(() => mockMeta.contentType).thenReturn('application/octet-stream');
-        when(
-          () => mockReference.getMetadata(),
-        ).thenAnswer((_) async => mockMeta);
-        when(
-          () => mockReference.updateMetadata(any<SettableMetadata>()),
-        ).thenAnswer((_) async => mockMeta);
-        when(
-          () => mockReference.getDownloadURL(),
-        ).thenAnswer((_) async => 'https://download.url/image.png');
+    test('getDownloadURL updates metadata when contentType is application/octet-stream', () async {
+      final mockMeta = MockFullMetadata();
+      when(() => mockMeta.contentType).thenReturn('application/octet-stream');
+      when(() => mockReference.getMetadata()).thenAnswer((_) async => mockMeta);
+      when(() => mockReference.updateMetadata(any<SettableMetadata>()))
+          .thenAnswer((_) async => mockMeta);
+      when(() => mockReference.getDownloadURL())
+          .thenAnswer((_) async => 'https://download.url/image.png');
 
-        final result = await repository.getDownloadURL('image.png');
+      final result = await repository.getDownloadURL('image.png');
 
-        expect(result, equals('https://download.url/image.png'));
-        verify(
-          () => mockReference.updateMetadata(any<SettableMetadata>()),
-        ).called(1);
-      },
-    );
+      expect(result, equals('https://download.url/image.png'));
+      verify(() => mockReference.updateMetadata(any<SettableMetadata>()))
+          .called(1);
+    });
 
     test('getDownloadURL catches metadata error and continues', () async {
-      when(
-        () => mockReference.getMetadata(),
-      ).thenThrow(Exception('Meta error'));
-      when(
-        () => mockReference.getDownloadURL(),
-      ).thenAnswer((_) async => 'https://download.url/image.png');
+      when(() => mockReference.getMetadata())
+          .thenThrow(Exception('Meta error'));
+      when(() => mockReference.getDownloadURL())
+          .thenAnswer((_) async => 'https://download.url/image.png');
 
       final result = await repository.getDownloadURL('image.png');
 

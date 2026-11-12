@@ -12,15 +12,15 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class MockExpensesHomeCubit extends MockCubit<ExpensesHomeState>
-    implements ExpensesHomeCubit {}
+    implements ExpensesHomeCubit;
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
 void main() {
   group('ExpensesHomeView', () {
@@ -45,12 +45,10 @@ void main() {
 
       when(() => mockAppCubit.state).thenReturn(const AppState());
 
-      when(
-        () => mockCubit.state,
-      ).thenReturn(ExpensesHomeState(monthSelected: DateTime(2024, 3)));
-      when(
-        () => mockAuth.currentUser,
-      ).thenReturn(const AppUser(uid: 'user123'));
+      when(() => mockCubit.state)
+          .thenReturn(ExpensesHomeState(monthSelected: DateTime(2024, 3)));
+      when(() => mockAuth.currentUser)
+          .thenReturn(const AppUser(uid: 'user123'));
 
       when(
         () => mockDatabase.getMovementsStream(

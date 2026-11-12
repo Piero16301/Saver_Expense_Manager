@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 
 class HealthAnimatedIcon extends StatefulWidget {
-  const HealthAnimatedIcon({required this.color, super.key, this.size = 60.0});
+  const new({required this.color, super.key, this.size = 60.0});
 
   final Color color;
   final double size;
@@ -56,7 +56,7 @@ class _HealthAnimatedIconState extends State<HealthAnimatedIcon>
 }
 
 class _HealthPainter extends CustomPainter {
-  _HealthPainter({required this.color, required this.animationValue});
+  new({required this.color, required this.animationValue});
 
   final Color color;
   final double animationValue;

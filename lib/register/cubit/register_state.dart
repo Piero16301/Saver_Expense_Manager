@@ -13,7 +13,7 @@ enum RegisterStatus {
 }
 
 class RegisterState extends Equatable {
-  const RegisterState({
+  const new({
     this.name = '',
     this.email = '',
     this.password = '',

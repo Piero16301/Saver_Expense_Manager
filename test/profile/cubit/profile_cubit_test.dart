@@ -7,13 +7,13 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/profile/cubit/profile_cubit.dart';
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockAppLocalizations extends Mock implements AppLocalizations {}
+class MockAppLocalizations extends Mock implements AppLocalizations;
 
-class MockAppUser extends Mock implements AppUser {}
+class MockAppUser extends Mock implements AppUser;
 
-class MockAnalyticsService extends Mock implements AnalyticsService {}
+class MockAnalyticsService extends Mock implements AnalyticsService;
 
 void main() {
   late MockAuthService mockAuthService;
@@ -41,9 +41,8 @@ void main() {
     ).thenAnswer((_) {});
 
     when(() => mockAppLocalizations.genericError).thenReturn('Error');
-    when(
-      () => mockAuthService.userChanges,
-    ).thenAnswer((_) => userChangesController.stream);
+    when(() => mockAuthService.userChanges)
+        .thenAnswer((_) => userChangesController.stream);
 
     profileCubit = ProfileCubit(authService: mockAuthService);
   });
@@ -108,9 +107,8 @@ void main() {
       build: () => profileCubit,
       seed: () => const ProfileState(userName: 'New Name'),
       setUp: () {
-        when(
-          () => mockAuthService.updateDisplayName(any()),
-        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.updateDisplayName(any()))
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.saveName(mockAppLocalizations),
       expect: () => const [
@@ -124,9 +122,8 @@ void main() {
       build: () => profileCubit,
       seed: () => const ProfileState(userName: 'New Name'),
       setUp: () {
-        when(
-          () => mockAuthService.updateDisplayName(any()),
-        ).thenAnswer((_) async => false);
+        when(() => mockAuthService.updateDisplayName(any()))
+            .thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.saveName(mockAppLocalizations),
       expect: () => const [
@@ -143,9 +140,8 @@ void main() {
       'linkGoogle works correctly',
       build: () => profileCubit,
       setUp: () {
-        when(
-          () => mockAuthService.linkWithGoogle(),
-        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.linkWithGoogle())
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.linkGoogle(mockAppLocalizations),
       expect: () => const [
@@ -225,9 +221,8 @@ void main() {
       'unlinkProvider works correctly',
       build: () => profileCubit,
       setUp: () {
-        when(
-          () => mockAuthService.unlinkProvider(any()),
-        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.unlinkProvider(any()))
+            .thenAnswer((_) async => true);
       },
       act: (cubit) => cubit.unlinkProvider(mockAppLocalizations, 'providerId'),
       expect: () => const [
@@ -240,9 +235,8 @@ void main() {
       'unlinkProvider handles failure',
       build: () => profileCubit,
       setUp: () {
-        when(
-          () => mockAuthService.unlinkProvider(any()),
-        ).thenAnswer((_) async => false);
+        when(() => mockAuthService.unlinkProvider(any()))
+            .thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.unlinkProvider(mockAppLocalizations, 'providerId'),
       expect: () => const [
@@ -256,9 +250,8 @@ void main() {
       'linkGoogle handles failure',
       build: () => profileCubit,
       setUp: () {
-        when(
-          () => mockAuthService.linkWithGoogle(),
-        ).thenAnswer((_) async => false);
+        when(() => mockAuthService.linkWithGoogle())
+            .thenAnswer((_) async => false);
       },
       act: (cubit) => cubit.linkGoogle(mockAppLocalizations),
       expect: () => const [
@@ -338,9 +331,8 @@ void main() {
     blocTest<ProfileCubit, ProfileState>(
       'deleteAccount emits loading and success when deleteAccount succeeds',
       build: () {
-        when(
-          () => mockAuthService.deleteAccount(),
-        ).thenAnswer((_) async => true);
+        when(() => mockAuthService.deleteAccount())
+            .thenAnswer((_) async => true);
         return profileCubit;
       },
       act: (cubit) => cubit.deleteAccount(mockAppLocalizations),
@@ -349,9 +341,8 @@ void main() {
         ProfileState(status: ProfileStatus.success),
       ],
       verify: (_) {
-        verify(
-          () => mockAnalyticsService.logEvent(name: 'delete_account'),
-        ).called(1);
+        verify(() => mockAnalyticsService.logEvent(name: 'delete_account'))
+            .called(1);
       },
     );
 
@@ -359,9 +350,8 @@ void main() {
       'deleteAccount emits loading, failure and initial when deleteAccount '
       'fails',
       build: () {
-        when(
-          () => mockAuthService.deleteAccount(),
-        ).thenAnswer((_) async => false);
+        when(() => mockAuthService.deleteAccount())
+            .thenAnswer((_) async => false);
         return profileCubit;
       },
       act: (cubit) => cubit.deleteAccount(mockAppLocalizations),

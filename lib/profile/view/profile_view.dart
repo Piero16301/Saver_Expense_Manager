@@ -10,7 +10,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/profile/profile.dart';
 
 class ProfileView extends StatelessWidget {
-  const ProfileView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +44,8 @@ class ProfileView extends StatelessWidget {
           ),
           title: Text(
             l10n.profileTitle,
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.w700),
           ),
         ),
         body: BlocBuilder<ProfileCubit, ProfileState>(
@@ -87,9 +86,8 @@ class ProfileView extends StatelessWidget {
                             // User Avatar
                             CircleAvatar(
                               radius: 80,
-                              backgroundColor: Theme.of(
-                                context,
-                              ).primaryColor.withValues(alpha: 0.1),
+                              backgroundColor: Theme.of(context).primaryColor
+                                  .withValues(alpha: 0.1),
                               child: user.photoURL == null
                                   ? Container(
                                       width: 160,
@@ -97,9 +95,9 @@ class ProfileView extends StatelessWidget {
                                       foregroundDecoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                           width: 5,
                                         ),
                                       ),
@@ -107,9 +105,9 @@ class ProfileView extends StatelessWidget {
                                       child: HugeIcon(
                                         icon: HugeIcons.strokeRoundedUser,
                                         strokeWidth: 2,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
                                       ),
                                     )
                                   : Container(
@@ -118,9 +116,9 @@ class ProfileView extends StatelessWidget {
                                       foregroundDecoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
                                           width: 5,
                                         ),
                                       ),
@@ -145,9 +143,9 @@ class ProfileView extends StatelessWidget {
                                                       icon: HugeIcons
                                                           .strokeRoundedUser,
                                                       strokeWidth: 2,
-                                                      color: Theme.of(
-                                                        context,
-                                                      ).colorScheme.primary,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .primary,
                                                     ),
                                                   ),
                                         ),
@@ -178,9 +176,9 @@ class ProfileView extends StatelessWidget {
                                   Expanded(
                                     child: Text(
                                       user.displayName ?? l10n.noName,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleLarge,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -193,9 +191,9 @@ class ProfileView extends StatelessWidget {
                                     icon: HugeIcon(
                                       icon: HugeIcons
                                           .strokeRoundedCheckmarkCircle01,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
                                       size: 20,
                                     ),
                                   ),
@@ -206,9 +204,9 @@ class ProfileView extends StatelessWidget {
                                         .toggleEditingName(),
                                     icon: HugeIcon(
                                       icon: HugeIcons.strokeRoundedCancelCircle,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.error,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .error,
                                       size: 20,
                                     ),
                                   ),
@@ -220,9 +218,9 @@ class ProfileView extends StatelessWidget {
                                         .toggleEditingName(),
                                     icon: HugeIcon(
                                       icon: HugeIcons.strokeRoundedEdit01,
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary,
                                       size: 20,
                                     ),
                                   ),
@@ -519,7 +517,7 @@ class ProfileView extends StatelessWidget {
 }
 
 class _ProviderListTile extends StatelessWidget {
-  const _ProviderListTile({
+  const new({
     required this.icon,
     required this.title,
     required this.isConnected,

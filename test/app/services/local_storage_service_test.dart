@@ -3,8 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockLocalStorageRepository extends Mock
-    implements LocalStorageRepository {}
+class MockLocalStorageRepository extends Mock implements LocalStorageRepository;
 
 void main() {
   late LocalStorageService service;
@@ -39,9 +38,8 @@ void main() {
         ),
       ).thenReturn(null);
       service.saveLanguage(language: const Locale('en'));
-      verify(
-        () => mockRepository.saveLanguage(language: const Locale('en')),
-      ).called(1);
+      verify(() => mockRepository.saveLanguage(language: const Locale('en')))
+          .called(1);
     });
 
     test('getLanguage returns from repository', () {
@@ -69,9 +67,8 @@ void main() {
         ),
       ).thenReturn(null);
       service.saveBaseColor(baseColor: Colors.red);
-      verify(
-        () => mockRepository.saveBaseColor(baseColor: Colors.red),
-      ).called(1);
+      verify(() => mockRepository.saveBaseColor(baseColor: Colors.red))
+          .called(1);
     });
 
     test('getBaseColor returns from repository', () {
@@ -86,9 +83,8 @@ void main() {
         ),
       ).thenReturn(null);
       service.saveFontFamily(fontFamily: 'Roboto');
-      verify(
-        () => mockRepository.saveFontFamily(fontFamily: 'Roboto'),
-      ).called(1);
+      verify(() => mockRepository.saveFontFamily(fontFamily: 'Roboto'))
+          .called(1);
     });
 
     test('getFontFamily returns from repository', () {
@@ -104,9 +100,8 @@ void main() {
         ),
       ).thenReturn(null);
       service.saveRecommendationsDate(date: date);
-      verify(
-        () => mockRepository.saveRecommendationsDate(date: date),
-      ).called(1);
+      verify(() => mockRepository.saveRecommendationsDate(date: date))
+          .called(1);
     });
 
     test('getRecommendationsDate returns from repository', () {

@@ -1,7 +1,7 @@
 import 'package:saver_expense_manager/app/app.dart';
 
 class RemoteConfigService {
-  RemoteConfigService({required this._remoteConfigRepository});
+  new({required this._remoteConfigRepository});
 
   final RemoteConfigRepository _remoteConfigRepository;
 

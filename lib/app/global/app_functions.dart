@@ -37,9 +37,8 @@ class AppFunctions {
       return true;
     }
     try {
-      final result = await InternetAddress.lookup(
-        'google.com',
-      ).timeout(AppVariables.timeoutDuration);
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(AppVariables.timeoutDuration);
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
     } on SocketException catch (_) {
       return false;
@@ -94,9 +93,10 @@ class AppFunctions {
                 message ?? '',
                 style: TextStyle(
                   fontVariations: <FontVariation>[
-                    ...(Theme.of(
-                              context,
-                            ).textTheme.bodyMedium?.fontVariations ??
+                    ...(Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.fontVariations ??
                             const <FontVariation>[])
                         .where((v) => v.axis != 'wght'),
                     const FontVariation('wght', 700),

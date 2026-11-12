@@ -5,7 +5,7 @@ import 'package:saver_expense_manager/app/app.dart';
 part 'summary_home_state.dart';
 
 class SummaryHomeCubit extends Cubit<SummaryHomeState> {
-  SummaryHomeCubit() : super(SummaryHomeState.initial());
+  new() : super(SummaryHomeState.initial());
 
   void changeStartMonth(DateTime? month) {
     emit(state.copyWith(startMonth: month));

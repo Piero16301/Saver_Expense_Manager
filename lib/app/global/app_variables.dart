@@ -26,9 +26,12 @@ class AppVariables {
   static const animationDuration = Duration(milliseconds: 400);
   static const snackBarDuration = Duration(seconds: 5);
   static const timeoutDuration = Duration(seconds: 5);
-  static const aiTimeoutDuration = Duration(seconds: 10);
+  static const aiTimeoutDuration = Duration(seconds: 15);
+  static const storageTimeoutDuration = Duration(seconds: 15);
   static const remoteConfigFetchTimeout = Duration(minutes: 1);
   static const remoteConfigMinimumFetchInterval = Duration(hours: 1);
+
+  static const String attachmentUploadError = 'ATTACHMENT_UPLOAD_ERROR';
 
   static final DateFormat formatDate = DateFormat('dd/MM/yyyy');
 

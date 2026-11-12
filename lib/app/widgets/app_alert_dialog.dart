@@ -2,7 +2,7 @@ import 'package:expressive_kit/expressive_kit.dart';
 import 'package:material_ui/material_ui.dart';
 
 class AppAlertDialog extends StatelessWidget {
-  const AppAlertDialog({
+  const new({
     required this.title,
     required this.onConfirm,
     required this.onCancel,

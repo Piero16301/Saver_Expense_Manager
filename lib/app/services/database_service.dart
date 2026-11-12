@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:saver_expense_manager/app/app.dart';
 
 class DatabaseService {
-  DatabaseService({required this._databaseRepository});
+  new({required this._databaseRepository});
 
   final DatabaseRepository _databaseRepository;
 

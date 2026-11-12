@@ -6,7 +6,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 part 'register_state.dart';
 
 class RegisterCubit extends Cubit<RegisterState> {
-  RegisterCubit({AuthService? authService})
+  new({AuthService? authService})
     : _authService = authService ?? getIt<AuthService>(),
       super(const RegisterState());
 

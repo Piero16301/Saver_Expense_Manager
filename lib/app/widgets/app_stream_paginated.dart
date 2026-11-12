@@ -5,11 +5,7 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class AppStreamPaginated<T> extends StatefulWidget {
-  const AppStreamPaginated({
-    required this.stream,
-    required this.itemBuilder,
-    super.key,
-  });
+  const new({required this.stream, required this.itemBuilder, super.key});
 
   final Stream<List<T>>? Function(int limit) stream;
   final Widget Function(BuildContext, List<T>, int) itemBuilder;

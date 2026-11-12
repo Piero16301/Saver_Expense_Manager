@@ -33,7 +33,7 @@ class MockRemoteStorageRepository implements RemoteStorageRepository {
 }
 
 class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
-  FirebaseRemoteStorageRepository({FirebaseStorage? storage})
+  new({FirebaseStorage? storage})
     : _storage = storage ?? FirebaseStorage.instance;
 
   final FirebaseStorage _storage;
@@ -65,13 +65,13 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
       }
 
       final ref = _storage.ref().child(path);
-      final mimeType = lookupMimeType(path);
+      final mimeType = lookupMimeType(path, headerBytes: bytes);
       final metadata = mimeType != null
           ? SettableMetadata(contentType: mimeType)
           : null;
       final uploadTask = ref.putData(bytes, metadata);
       await (() async => await uploadTask)().timeout(
-        AppVariables.timeoutDuration,
+        AppVariables.storageTimeoutDuration,
         onTimeout: () {
           try {
             unawaited(uploadTask.cancel());
@@ -97,7 +97,7 @@ class FirebaseRemoteStorageRepository implements RemoteStorageRepository {
           .ref()
           .child(path)
           .getData()
-          .timeout(AppVariables.timeoutDuration);
+          .timeout(AppVariables.storageTimeoutDuration);
     } on Object catch (e, stackTrace) {
       getIt<CrashService>().recordError(
         e,

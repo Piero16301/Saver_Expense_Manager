@@ -5,7 +5,7 @@ import 'package:saver_expense_manager/app/app.dart';
 part 'income_home_state.dart';
 
 class IncomeHomeCubit extends Cubit<IncomeHomeState> {
-  IncomeHomeCubit() : super(const IncomeHomeState());
+  new() : super(const IncomeHomeState());
 
   void init() {
     final now = DateTime.now();

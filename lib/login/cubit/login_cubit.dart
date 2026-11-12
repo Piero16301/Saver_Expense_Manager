@@ -6,7 +6,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  LoginCubit({AuthService? authService})
+  new({AuthService? authService})
     : _authService = authService ?? getIt<AuthService>(),
       super(const LoginState());
 

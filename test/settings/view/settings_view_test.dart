@@ -10,9 +10,9 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/settings/settings.dart';
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
-class FakeAppLocalizations extends Fake implements AppLocalizations {}
+class FakeAppLocalizations extends Fake implements AppLocalizations;
 
 void main() {
   group('SettingsView', () {
@@ -101,9 +101,8 @@ void main() {
       await tester.tap(find.widgetWithText(ListTile, 'Spanish'));
       await tester.pumpAndSettle();
 
-      verify(
-        () => appCubit.changeLanguage(language: const Locale('es', 'ES')),
-      ).called(1);
+      verify(() => appCubit.changeLanguage(language: const Locale('es', 'ES')))
+          .called(1);
     });
 
     testWidgets('changes theme when Theme tile is tapped', (tester) async {

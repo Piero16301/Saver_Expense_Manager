@@ -8,7 +8,7 @@ import 'package:saver_expense_manager/home/home.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class SummaryHomeView extends StatelessWidget {
-  const SummaryHomeView({required this.categories, super.key});
+  const new({required this.categories, super.key});
 
   final List<Category> categories;
 
@@ -150,7 +150,7 @@ class SummaryHomeView extends StatelessWidget {
 }
 
 class ResumeMovementsChart extends StatelessWidget {
-  const ResumeMovementsChart({
+  const new({
     required this.movements,
     required this.endMonth,
     this.periodType = SummaryPeriodType.month,
@@ -239,7 +239,7 @@ class ResumeMovementsChart extends StatelessWidget {
 }
 
 class ResumeItemCardMovements extends StatelessWidget {
-  const ResumeItemCardMovements({
+  const new({
     required this.type,
     required this.value,
     required this.difference,
@@ -390,7 +390,7 @@ class ResumeItemCardMovements extends StatelessWidget {
 }
 
 class IncomesAndExpensesChart extends StatelessWidget {
-  const IncomesAndExpensesChart({
+  const new({
     required this.movements,
     required this.startMonth,
     required this.endMonth,
@@ -449,11 +449,7 @@ class IncomesAndExpensesChart extends StatelessWidget {
 }
 
 class CategoriesResumeCards extends StatefulWidget {
-  const CategoriesResumeCards({
-    required this.movements,
-    required this.categories,
-    super.key,
-  });
+  const new({required this.movements, required this.categories, super.key});
 
   final List<Movement> movements;
   final List<Category> categories;
@@ -558,9 +554,9 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
                         states,
                       ) {
                         if (states.contains(WidgetState.selected)) {
-                          return Theme.of(
-                            context,
-                          ).colorScheme.secondaryContainer;
+                          return Theme.of(context)
+                              .colorScheme
+                              .secondaryContainer;
                         }
                         return Theme.of(context).colorScheme.surfaceContainer;
                       }),
@@ -622,13 +618,13 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
                             states,
                           ) {
                             if (states.contains(WidgetState.selected)) {
-                              return Theme.of(
-                                context,
-                              ).colorScheme.secondaryContainer;
+                              return Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer;
                             }
-                            return Theme.of(
-                              context,
-                            ).colorScheme.surfaceContainer;
+                            return Theme.of(context)
+                                .colorScheme
+                                .surfaceContainer;
                           }),
                         ),
                       ),
@@ -650,7 +646,7 @@ class _CategoriesResumeCardsState extends State<CategoriesResumeCards> {
 }
 
 class CategoryExpenseCard extends StatelessWidget {
-  const CategoryExpenseCard({
+  const new({
     required this.category,
     required this.amount,
     required this.percentage,

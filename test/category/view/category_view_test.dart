@@ -10,16 +10,16 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/category/category.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
-class MockAppCubit extends MockCubit<AppState> implements AppCubit {}
+class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
 class MockCategoryCubit extends MockCubit<CategoryState>
-    implements CategoryCubit {}
+    implements CategoryCubit;
 
-class MockAuthService extends Mock implements AuthService {}
+class MockAuthService extends Mock implements AuthService;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
-class MockRemoteConfigService extends Mock implements RemoteConfigService {}
+class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
 void main() {
   setUpAll(() {
@@ -50,9 +50,8 @@ void main() {
       mockRemoteConfig = MockRemoteConfigService();
 
       when(() => appCubit.state).thenReturn(const AppState());
-      when(
-        () => categoryCubit.state,
-      ).thenReturn(const CategoryState(category: category));
+      when(() => categoryCubit.state)
+          .thenReturn(const CategoryState(category: category));
       when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user1'));
       when(
         () => mockDatabase.getMovementsStream(

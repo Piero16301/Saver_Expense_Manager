@@ -13,7 +13,7 @@ enum RecommendationsStatus {
 }
 
 class MovementsHomeState extends Equatable {
-  const MovementsHomeState({
+  const new({
     this.filterType,
     this.filterCategory,
     this.recommendationsStatus = RecommendationsStatus.initial,

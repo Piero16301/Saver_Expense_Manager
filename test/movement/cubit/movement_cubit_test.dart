@@ -10,11 +10,11 @@ import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/movement/cubit/movement_cubit.dart';
 
-class MockRemoteStorageService extends Mock implements RemoteStorageService {}
+class MockRemoteStorageService extends Mock implements RemoteStorageService;
 
-class MockCrashService extends Mock implements CrashService {}
+class MockCrashService extends Mock implements CrashService;
 
-class MockAppLocalizations extends Mock implements AppLocalizations {}
+class MockAppLocalizations extends Mock implements AppLocalizations;
 
 class MockFormState extends Mock implements FormState {
   @override
@@ -23,15 +23,15 @@ class MockFormState extends Mock implements FormState {
   }
 }
 
-class MockGlobalKey extends Mock implements GlobalKey<FormState> {}
+class MockGlobalKey extends Mock implements GlobalKey<FormState>;
 
-class MockDatabaseService extends Mock implements DatabaseService {}
+class MockDatabaseService extends Mock implements DatabaseService;
 
 class MockPathProviderPlatform extends Mock
     with MockPlatformInterfaceMixin
-    implements PathProviderPlatform {}
+    implements PathProviderPlatform;
 
-class MockAnalyticsService extends Mock implements AnalyticsService {}
+class MockAnalyticsService extends Mock implements AnalyticsService;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -117,9 +117,8 @@ void main() {
         ),
       ).thenAnswer((_) async => true);
 
-      when(
-        () => mockCrashService.log(any<String>()),
-      ).thenAnswer((_) async => true);
+      when(() => mockCrashService.log(any<String>()))
+          .thenAnswer((_) async => true);
       when(
         () => mockCrashService.recordError(
           any<dynamic>(),
@@ -130,9 +129,8 @@ void main() {
         ),
       ).thenAnswer((_) async => true);
 
-      when(
-        () => mockPathProviderPlatform.getApplicationCachePath(),
-      ).thenAnswer((_) async => '.');
+      when(() => mockPathProviderPlatform.getApplicationCachePath())
+          .thenAnswer((_) async => '.');
 
       movementCubit = MovementCubit();
     });
@@ -239,9 +237,8 @@ void main() {
       blocTest<MovementCubit, MovementState>(
         'removes attachment and deletes from storage',
         setUp: () {
-          when(
-            () => mockRemoteStorageService.deleteFile(any()),
-          ).thenAnswer((_) async => true);
+          when(() => mockRemoteStorageService.deleteFile(any()))
+              .thenAnswer((_) async => true);
         },
         build: () => movementCubit,
         seed: () => const MovementState(attachments: ['file1', 'file2']),
@@ -257,9 +254,8 @@ void main() {
       blocTest<MovementCubit, MovementState>(
         'removes attachment and continues if storage service returns false',
         setUp: () {
-          when(
-            () => mockRemoteStorageService.deleteFile(any()),
-          ).thenAnswer((_) async => false);
+          when(() => mockRemoteStorageService.deleteFile(any()))
+              .thenAnswer((_) async => false);
         },
         build: () => movementCubit,
         seed: () => const MovementState(attachments: ['file1', 'file2']),
@@ -275,9 +271,8 @@ void main() {
 
     group('attachOpen', () {
       test('handles exception in attachOpen', () async {
-        when(
-          () => mockRemoteStorageService.getData(any()),
-        ).thenThrow(Exception('Error'));
+        when(() => mockRemoteStorageService.getData(any()))
+            .thenThrow(Exception('Error'));
 
         await movementCubit.attachOpen('file1');
 
@@ -285,9 +280,8 @@ void main() {
       });
 
       test('opens attachment and handles null data', () async {
-        when(
-          () => mockRemoteStorageService.getData(any()),
-        ).thenAnswer((_) async => Uint8List(0));
+        when(() => mockRemoteStorageService.getData(any()))
+            .thenAnswer((_) async => Uint8List(0));
 
         try {
           await movementCubit.attachOpen('file1');
@@ -389,17 +383,15 @@ void main() {
       });
 
       test('removes movement and associated attachments', () async {
-        when(
-          () => mockRemoteStorageService.deleteFile(any()),
-        ).thenAnswer((_) async => true);
+        when(() => mockRemoteStorageService.deleteFile(any()))
+            .thenAnswer((_) async => true);
 
         movementCubit
           ..init(movement, categories)
           ..removeMovement();
 
-        verify(
-          () => mockDatabaseService.deleteMovement(movementId: 'm1'),
-        ).called(1);
+        verify(() => mockDatabaseService.deleteMovement(movementId: 'm1'))
+            .called(1);
         verify(() => mockRemoteStorageService.deleteFile('file1')).called(1);
       });
     });

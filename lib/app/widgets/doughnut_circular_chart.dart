@@ -5,7 +5,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DoughnutCircularChart extends StatelessWidget {
-  const DoughnutCircularChart({
+  const new({
     required this.data,
     this.selectedIndex = 0,
     this.onPointTap,
@@ -42,9 +42,10 @@ class DoughnutCircularChart extends StatelessWidget {
                   AppExtensions.moneyFormat.format(data[selectedIndex].value),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontVariations: <FontVariation>[
-                      ...(Theme.of(
-                                context,
-                              ).textTheme.titleLarge?.fontVariations ??
+                      ...(Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.fontVariations ??
                               const <FontVariation>[])
                           .where((v) => v.axis != 'wght'),
                       const FontVariation('wght', 700),

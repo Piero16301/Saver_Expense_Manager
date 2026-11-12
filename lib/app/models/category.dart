@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 /// {@endtemplate}
 class Category extends Equatable {
   /// {@macro category}
-  const Category({
+  const new({
     required this.id,
     required this.name,
     required this.icon,
@@ -14,7 +14,7 @@ class Category extends Equatable {
   });
 
   /// Creates an instance of [Category] from a [Map]
-  factory Category.fromJson(Map<String, dynamic> json) {
+  factory fromJson(Map<String, dynamic> json) {
     return Category(
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
@@ -72,7 +72,7 @@ enum CategoryType {
   income('INCOME');
 
   /// Creates an instance of [CategoryType] from a [String]
-  const CategoryType(this.value);
+  new(this.value);
 
   /// The string value of the category type
   final String value;

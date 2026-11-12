@@ -8,7 +8,7 @@ import 'package:saver_expense_manager/l10n/l10n.dart';
 import 'package:saver_expense_manager/register/register.dart';
 
 class RegisterView extends StatelessWidget {
-  const RegisterView({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

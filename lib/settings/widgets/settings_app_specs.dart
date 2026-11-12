@@ -6,7 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
 
 class SettingsAppSpecs extends StatelessWidget {
-  const SettingsAppSpecs({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -2,8 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
-class MockRemoteConfigRepository extends Mock
-    implements RemoteConfigRepository {}
+class MockRemoteConfigRepository extends Mock implements RemoteConfigRepository;
 
 void main() {
   late RemoteConfigService service;
@@ -31,23 +30,20 @@ void main() {
     });
 
     test('geminiModelName returns from repository', () {
-      when(
-        () => mockRepository.geminiModelName,
-      ).thenReturn('gemini-3.5-flash-lite');
+      when(() => mockRepository.geminiModelName)
+          .thenReturn('gemini-3.5-flash-lite');
       expect(service.geminiModelName, equals('gemini-3.5-flash-lite'));
     });
 
     test('geminiPromptExtractReceiptData returns from repository', () {
-      when(
-        () => mockRepository.geminiPromptExtractReceiptData,
-      ).thenReturn('prompt1');
+      when(() => mockRepository.geminiPromptExtractReceiptData)
+          .thenReturn('prompt1');
       expect(service.geminiPromptExtractReceiptData, equals('prompt1'));
     });
 
     test('geminiPromptDetectAntExpense returns from repository', () {
-      when(
-        () => mockRepository.geminiPromptDetectAntExpense,
-      ).thenReturn('prompt2');
+      when(() => mockRepository.geminiPromptDetectAntExpense)
+          .thenReturn('prompt2');
       expect(service.geminiPromptDetectAntExpense, equals('prompt2'));
     });
 
