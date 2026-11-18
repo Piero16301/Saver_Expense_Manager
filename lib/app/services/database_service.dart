@@ -10,7 +10,26 @@ class DatabaseService {
   String get newId => _databaseRepository.newId;
 
   void saveMovement({required Movement movement}) {
-    _databaseRepository.saveMovement(movement: movement);
+    try {
+      unawaited(
+        _databaseRepository.saveMovement(movement: movement).catchError((
+          Object e,
+          StackTrace stackTrace,
+        ) {
+          getIt<CrashService>().recordError(
+            e,
+            stackTrace,
+            reason: 'DatabaseService saveMovement error',
+          );
+        }),
+      );
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'DatabaseService saveMovement error',
+      );
+    }
   }
 
   Stream<List<Category>> getCategoriesStream() {
@@ -42,14 +61,46 @@ class DatabaseService {
     DateTime? from,
     DateTime? to,
   }) async {
-    return await _databaseRepository.getMovements(
-      userId: userId,
-      from: from,
-      to: to,
-    );
+    final performance = getIt<PerformanceService>();
+    final trace = performance.startTrace('firestore_get_movements');
+    try {
+      return await _databaseRepository.getMovements(
+        userId: userId,
+        from: from,
+        to: to,
+      );
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'DatabaseService getMovements error',
+      );
+      rethrow;
+    } finally {
+      performance.stopTrace(trace);
+    }
   }
 
   void deleteMovement({required String movementId}) {
-    _databaseRepository.deleteMovement(movementId: movementId);
+    try {
+      unawaited(
+        _databaseRepository.deleteMovement(movementId: movementId).catchError((
+          Object e,
+          StackTrace stackTrace,
+        ) {
+          getIt<CrashService>().recordError(
+            e,
+            stackTrace,
+            reason: 'DatabaseService deleteMovement error',
+          );
+        }),
+      );
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'DatabaseService deleteMovement error',
+      );
+    }
   }
 }

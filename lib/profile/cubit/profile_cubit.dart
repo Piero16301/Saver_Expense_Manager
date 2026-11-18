@@ -18,15 +18,24 @@ class ProfileCubit extends Cubit<ProfileState> {
   StreamSubscription<AppUser?>? _userSubscription;
 
   void _init() {
-    _userSubscription = _authService.userChanges.listen((user) {
-      emit(
-        state.copyWith(
-          user: user,
-          userName: user?.displayName ?? '',
-          status: ProfileStatus.success,
-        ),
-      );
-    });
+    _userSubscription = _authService.userChanges.listen(
+      (user) {
+        emit(
+          state.copyWith(
+            user: user,
+            userName: user?.displayName ?? '',
+            status: ProfileStatus.success,
+          ),
+        );
+      },
+      onError: (Object e, StackTrace stackTrace) {
+        getIt<CrashService>().recordError(
+          e,
+          stackTrace,
+          reason: 'ProfileCubit userChanges error',
+        );
+      },
+    );
   }
 
   void nameChanged(String name) {
@@ -38,6 +47,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
     final success = await _authService.updateDisplayName(state.userName.trim());
     if (success) {
+      getIt<AnalyticsService>().logEvent(name: 'update_display_name');
       emit(state.copyWith(status: ProfileStatus.success, isEditingName: false));
     } else {
       emit(
@@ -67,6 +77,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
     final success = await _authService.linkWithGoogle();
     if (success) {
+      getIt<AnalyticsService>().logEvent(
+        name: 'link_provider',
+        parameters: {'provider': AppVariables.googleProvider},
+      );
       emit(state.copyWith(status: ProfileStatus.success));
     } else {
       emit(
@@ -90,6 +104,10 @@ class ProfileCubit extends Cubit<ProfileState> {
       password: password,
     );
     if (success) {
+      getIt<AnalyticsService>().logEvent(
+        name: 'link_provider',
+        parameters: {'provider': AppVariables.emailProvider},
+      );
       emit(state.copyWith(status: ProfileStatus.success));
     } else {
       emit(
@@ -106,6 +124,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(status: ProfileStatus.loading));
     final success = await _authService.unlinkProvider(providerId);
     if (success) {
+      getIt<AnalyticsService>().logEvent(
+        name: 'unlink_provider',
+        parameters: {'provider': providerId},
+      );
       emit(state.copyWith(status: ProfileStatus.success));
     } else {
       emit(

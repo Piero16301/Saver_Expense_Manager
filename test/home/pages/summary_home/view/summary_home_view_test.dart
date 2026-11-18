@@ -22,10 +22,13 @@ class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
 class MockAuthService extends Mock implements AuthService;
 
+class MockAnalyticsService extends Mock implements AnalyticsService;
+
 void main() {
   late MockDatabaseService mockDatabaseService;
   late MockRemoteConfigService mockRemoteConfigService;
   late MockAuthService mockAuthService;
+  late MockAnalyticsService mockAnalyticsService;
   late MockAppCubit mockAppCubit;
   late MockSummaryHomeCubit mockSummaryHomeCubit;
 
@@ -59,27 +62,26 @@ void main() {
     when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
     when(() => mockRemoteConfigService.summaryLastYears).thenReturn(4);
     mockAuthService = MockAuthService();
+    mockAnalyticsService = MockAnalyticsService();
     mockAppCubit = MockAppCubit();
     mockSummaryHomeCubit = MockSummaryHomeCubit();
     when(() => mockAuthService.currentUser)
         .thenReturn(const AppUser(uid: 'user123'));
+    when(
+      () => mockAnalyticsService.logEvent(
+        name: any(named: 'name'),
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
 
-    if (getIt.isRegistered<DatabaseService>()) {
-      await getIt.unregister<DatabaseService>();
-    }
-    if (getIt.isRegistered<RemoteConfigService>()) {
-      await getIt.unregister<RemoteConfigService>();
-    }
-    if (getIt.isRegistered<AuthService>()) {
-      await getIt.unregister<AuthService>();
-    }
-
+    await getIt.reset();
     getIt
       ..registerSingleton<DatabaseService>(mockDatabaseService)
       ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
-      ..registerSingleton<AuthService>(mockAuthService);
+      ..registerSingleton<AuthService>(mockAuthService)
+      ..registerSingleton<AnalyticsService>(mockAnalyticsService);
   });
 
   tearDown(getIt.reset);

@@ -5,7 +5,21 @@ class RemoteConfigService {
 
   final RemoteConfigRepository _remoteConfigRepository;
 
-  Future<void> initialize() async => await _remoteConfigRepository.initialize();
+  Future<void> initialize() async {
+    final performance = getIt<PerformanceService>();
+    final trace = performance.startTrace('remote_config_init');
+    try {
+      await _remoteConfigRepository.initialize();
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'RemoteConfig initialization failed',
+      );
+    } finally {
+      performance.stopTrace(trace);
+    }
+  }
 
   int get geminiAntLookbackDays =>
       _remoteConfigRepository.geminiAntLookbackDays;

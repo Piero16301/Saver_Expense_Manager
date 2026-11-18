@@ -6,14 +6,26 @@ import 'package:saver_expense_manager/home/cubit/home_cubit.dart';
 
 class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
+class MockAnalyticsService extends Mock implements AnalyticsService;
+
 void main() {
   late MockRemoteConfigService mockRemoteConfigService;
+  late MockAnalyticsService mockAnalyticsService;
 
   setUp(() {
     mockRemoteConfigService = MockRemoteConfigService();
+    mockAnalyticsService = MockAnalyticsService();
     when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
     when(() => mockRemoteConfigService.homeInitialTab).thenReturn('summary');
-    getIt.registerSingleton<RemoteConfigService>(mockRemoteConfigService);
+    when(
+      () => mockAnalyticsService.logEvent(
+        name: any(named: 'name'),
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
+    getIt
+      ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
+      ..registerSingleton<AnalyticsService>(mockAnalyticsService);
   });
 
   tearDown(getIt.reset);
@@ -55,6 +67,14 @@ void main() {
       build: HomeCubit.new,
       act: (cubit) => cubit.toggleSelectedIndex(2),
       expect: () => [const HomeState(selectedIndex: 2)],
+      verify: (_) {
+        verify(
+          () => mockAnalyticsService.logEvent(
+            name: 'select_home_tab',
+            parameters: {'tab_index': 2},
+          ),
+        ).called(1);
+      },
     );
   });
 }

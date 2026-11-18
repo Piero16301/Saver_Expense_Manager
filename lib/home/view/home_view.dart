@@ -351,6 +351,14 @@ class AddMovementBottomSheet extends StatelessWidget {
         modelType.name,
       );
       getIt<CrashService>().setCustomKey('movement_type', movementType.name);
+      getIt<AnalyticsService>().logEvent(
+        name: 'receipt_ai_extraction',
+        parameters: {
+          'source': 'file',
+          'model_type': modelType.name,
+          'movement_type': movementType.value,
+        },
+      );
 
       final ext = file.name.split('.').last.toLowerCase();
       if (modelType.isLocal && !AppVariables.imageExtensions.contains(ext)) {
@@ -369,57 +377,60 @@ class AddMovementBottomSheet extends StatelessWidget {
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_file');
 
-      final uploadFuture = () async {
-        final uploadTrace = performance.startTrace('receipt_upload_file');
-        try {
-          return await getIt<RemoteStorageService>().uploadFile(bytes, path);
-        } finally {
-          performance.stopTrace(uploadTrace);
-        }
-      }();
-
-      final aiFuture = () async {
-        final aiTrace = performance.startTrace('receipt_ai_processing_file');
-        try {
-          return await AppFunctions.buildMovementFromFile(
-            movementType: movementType,
-            categories: selectedCategories,
-            language: language.toString(),
-            mimeType: mimeType,
-            bytes: bytes,
-            modelType: modelType,
-          );
-        } finally {
-          performance.stopTrace(aiTrace);
-        }
-      }();
-
       String? uploadName;
       Movement? movement;
       try {
-        final result = await (uploadFuture, aiFuture).wait;
-        uploadName = result.$1;
-        movement = result.$2;
-        if (uploadName == null) {
-          throw Exception(AppVariables.attachmentUploadError);
+        final uploadFuture = () async {
+          final uploadTrace = performance.startTrace('receipt_upload_file');
+          try {
+            return await getIt<RemoteStorageService>().uploadFile(bytes, path);
+          } finally {
+            performance.stopTrace(uploadTrace);
+          }
+        }();
+
+        final aiFuture = () async {
+          final aiTrace = performance.startTrace('receipt_ai_processing_file');
+          try {
+            return await AppFunctions.buildMovementFromFile(
+              movementType: movementType,
+              categories: selectedCategories,
+              language: language.toString(),
+              mimeType: mimeType,
+              bytes: bytes,
+              modelType: modelType,
+            );
+          } finally {
+            performance.stopTrace(aiTrace);
+          }
+        }();
+
+        try {
+          final result = await (uploadFuture, aiFuture).wait;
+          uploadName = result.$1;
+          movement = result.$2;
+          if (uploadName == null) {
+            throw Exception(AppVariables.attachmentUploadError);
+          }
+        } on Object catch (_) {
+          unawaited(
+            uploadFuture
+                .timeout(
+                  AppVariables.storageTimeoutDuration,
+                  onTimeout: () => null,
+                )
+                .then((uploaded) {
+                  if (uploaded != null) {
+                    unawaited(getIt<RemoteStorageService>().deleteFile(path));
+                  }
+                })
+                .catchError((Object _) {}),
+          );
+          rethrow;
         }
-      } on Object catch (_) {
-        unawaited(
-          uploadFuture
-              .timeout(
-                AppVariables.storageTimeoutDuration,
-                onTimeout: () => null,
-              )
-              .then((uploaded) {
-                if (uploaded != null) {
-                  unawaited(getIt<RemoteStorageService>().deleteFile(path));
-                }
-              })
-              .catchError((Object _) {}),
-        );
-        rethrow;
+      } finally {
+        performance.stopTrace(trace);
       }
-      performance.stopTrace(trace);
 
       if (loader.isLoading) {
         loader.hideLoading();
@@ -510,6 +521,14 @@ class AddMovementBottomSheet extends StatelessWidget {
         modelType.name,
       );
       getIt<CrashService>().setCustomKey('movement_type', movementType.name);
+      getIt<AnalyticsService>().logEvent(
+        name: 'receipt_ai_extraction',
+        parameters: {
+          'source': 'scan',
+          'model_type': modelType.name,
+          'movement_type': movementType.value,
+        },
+      );
 
       final ext = files.first.split('.').last.toLowerCase();
       if (modelType.isLocal && !AppVariables.imageExtensions.contains(ext)) {
@@ -528,57 +547,60 @@ class AddMovementBottomSheet extends StatelessWidget {
       final performance = getIt<PerformanceService>();
       final trace = performance.startTrace('receipt_processing_scan');
 
-      final uploadFuture = () async {
-        final uploadTrace = performance.startTrace('receipt_upload_scan');
-        try {
-          return await getIt<RemoteStorageService>().uploadFile(bytes, path);
-        } finally {
-          performance.stopTrace(uploadTrace);
-        }
-      }();
-
-      final aiFuture = () async {
-        final aiTrace = performance.startTrace('receipt_ai_processing_scan');
-        try {
-          return await AppFunctions.buildMovementFromFile(
-            movementType: movementType,
-            categories: selectedCategories,
-            language: language.toString(),
-            mimeType: mimeType,
-            bytes: bytes,
-            modelType: modelType,
-          );
-        } finally {
-          performance.stopTrace(aiTrace);
-        }
-      }();
-
       String? uploadName;
       Movement? movement;
       try {
-        final result = await (uploadFuture, aiFuture).wait;
-        uploadName = result.$1;
-        movement = result.$2;
-        if (uploadName == null) {
-          throw Exception(AppVariables.attachmentUploadError);
+        final uploadFuture = () async {
+          final uploadTrace = performance.startTrace('receipt_upload_scan');
+          try {
+            return await getIt<RemoteStorageService>().uploadFile(bytes, path);
+          } finally {
+            performance.stopTrace(uploadTrace);
+          }
+        }();
+
+        final aiFuture = () async {
+          final aiTrace = performance.startTrace('receipt_ai_processing_scan');
+          try {
+            return await AppFunctions.buildMovementFromFile(
+              movementType: movementType,
+              categories: selectedCategories,
+              language: language.toString(),
+              mimeType: mimeType,
+              bytes: bytes,
+              modelType: modelType,
+            );
+          } finally {
+            performance.stopTrace(aiTrace);
+          }
+        }();
+
+        try {
+          final result = await (uploadFuture, aiFuture).wait;
+          uploadName = result.$1;
+          movement = result.$2;
+          if (uploadName == null) {
+            throw Exception(AppVariables.attachmentUploadError);
+          }
+        } on Object catch (_) {
+          unawaited(
+            uploadFuture
+                .timeout(
+                  AppVariables.storageTimeoutDuration,
+                  onTimeout: () => null,
+                )
+                .then((uploaded) {
+                  if (uploaded != null) {
+                    unawaited(getIt<RemoteStorageService>().deleteFile(path));
+                  }
+                })
+                .catchError((Object _) {}),
+          );
+          rethrow;
         }
-      } on Object catch (_) {
-        unawaited(
-          uploadFuture
-              .timeout(
-                AppVariables.storageTimeoutDuration,
-                onTimeout: () => null,
-              )
-              .then((uploaded) {
-                if (uploaded != null) {
-                  unawaited(getIt<RemoteStorageService>().deleteFile(path));
-                }
-              })
-              .catchError((Object _) {}),
-        );
-        rethrow;
+      } finally {
+        performance.stopTrace(trace);
       }
-      performance.stopTrace(trace);
 
       if (loader.isLoading) {
         loader.hideLoading();
@@ -682,6 +704,13 @@ class AddMovementBottomSheet extends StatelessWidget {
                 title: l10n.homeEnter,
                 icon: HugeIcons.strokeRoundedEdit02,
                 onPressed: () {
+                  getIt<AnalyticsService>().logEvent(
+                    name: 'add_movement_method',
+                    parameters: {
+                      'method': 'manual',
+                      'movement_type': movementType.value,
+                    },
+                  );
                   Navigator.of(context).pop();
                   unawaited(
                     context.pushNamed(

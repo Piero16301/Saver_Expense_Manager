@@ -24,10 +24,19 @@ class _AppViewState extends State<AppView> {
     _router = AppRoutes.getRouter();
 
     final authService = getIt<AuthService>();
-    _authSubscription = authService.authStateChanges.listen((user) {
-      getIt<AnalyticsService>().setUserId(id: user?.uid ?? '');
-      getIt<CrashService>().setUserIdentifier(user?.uid ?? '');
-    });
+    _authSubscription = authService.authStateChanges.listen(
+      (user) {
+        getIt<AnalyticsService>().setUserId(id: user?.uid ?? '');
+        getIt<CrashService>().setUserIdentifier(user?.uid ?? '');
+      },
+      onError: (Object e, StackTrace stackTrace) {
+        getIt<CrashService>().recordError(
+          e,
+          stackTrace,
+          reason: 'AppView authStateChanges error',
+        );
+      },
+    );
   }
 
   @override

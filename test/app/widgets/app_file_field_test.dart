@@ -15,9 +15,12 @@ class MockRemoteStorageService extends Mock implements RemoteStorageService;
 
 class MockAuthService extends Mock implements AuthService;
 
+class MockCrashService extends Mock implements CrashService;
+
 void main() {
   late RemoteStorageService remoteStorageService;
   late MockFilePicker mockFilePicker;
+  late MockCrashService mockCrashService;
 
   setUpAll(() {
     registerFallbackValue(Uint8List(0));
@@ -27,6 +30,7 @@ void main() {
   setUp(() async {
     remoteStorageService = MockRemoteStorageService();
     mockFilePicker = MockFilePicker();
+    mockCrashService = MockCrashService();
     FilePickerPlatform.instance = mockFilePicker;
 
     final getIt = GetIt.instance;
@@ -43,6 +47,18 @@ void main() {
       await getIt.unregister<AuthService>();
     }
     getIt.registerLazySingleton<AuthService>(() => mockAuth);
+
+    when(
+      () => mockCrashService.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) {});
+    if (getIt.isRegistered<CrashService>()) {
+      await getIt.unregister<CrashService>();
+    }
+    getIt.registerLazySingleton<CrashService>(() => mockCrashService);
   });
 
   group('AppFileField', () {
@@ -262,6 +278,13 @@ void main() {
         find.textContaining('Exception: Upload failed', skipOffstage: false),
         findsOneWidget,
       );
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'AppFileField handleUpload error',
+        ),
+      ).called(1);
     });
 
     testWidgets('does nothing if file picking is cancelled', (tester) async {

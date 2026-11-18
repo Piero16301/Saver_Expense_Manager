@@ -24,6 +24,10 @@ class SummaryHomeCubit extends Cubit<SummaryHomeState> {
   }
 
   void changePeriodType(SummaryPeriodType periodType) {
+    getIt<AnalyticsService>().logEvent(
+      name: 'change_summary_period',
+      parameters: {'period': periodType.name},
+    );
     emit(state.copyWith(periodType: periodType));
   }
 
@@ -33,6 +37,13 @@ class SummaryHomeCubit extends Cubit<SummaryHomeState> {
     );
     newSelResumeItems[resumeItemType] =
         !(newSelResumeItems[resumeItemType] ?? true);
+    getIt<AnalyticsService>().logEvent(
+      name: 'toggle_summary_series',
+      parameters: {
+        'series': resumeItemType.name,
+        'selected': newSelResumeItems[resumeItemType]!.toString(),
+      },
+    );
     emit(state.copyWith(selResumeItems: newSelResumeItems));
   }
 }

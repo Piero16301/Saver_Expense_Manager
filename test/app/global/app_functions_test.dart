@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -16,12 +17,17 @@ class MockAiService extends Mock implements AiService;
 
 class MockDatabaseService extends Mock implements DatabaseService;
 
+class MockPerformanceService extends Mock implements PerformanceService;
+
+class MockTrace extends Mock implements Trace;
+
 class FakePromptPart extends Fake implements PromptPart;
 
 void main() {
   setUpAll(() async {
     await initializeDateFormatting('en');
     registerFallbackValue(FakePromptPart());
+    registerFallbackValue(MockTrace());
   });
 
   setUp(getIt.reset);
@@ -899,7 +905,14 @@ void main() {
         final mockRemoteConfig = MockRemoteConfigService();
         final mockAiService = MockAiService();
         final mockDatabaseService = MockDatabaseService();
+        final mockPerformanceService = MockPerformanceService();
+        final mockTrace = MockTrace();
         final mockL10n = MockAppLocalizations();
+
+        when(() => mockPerformanceService.startTrace(any<String>()))
+            .thenReturn(mockTrace);
+        when(() => mockPerformanceService.stopTrace(any<Trace>()))
+            .thenReturn(null);
 
         when(() => mockRemoteConfig.geminiPromptDetectAntExpense)
             .thenReturn('Prompt {{transactions_list}}');
@@ -924,7 +937,10 @@ void main() {
         getIt
           ..registerLazySingleton<RemoteConfigService>(() => mockRemoteConfig)
           ..registerLazySingleton<AiService>(() => mockAiService)
-          ..registerLazySingleton<DatabaseService>(() => mockDatabaseService);
+          ..registerLazySingleton<DatabaseService>(() => mockDatabaseService)
+          ..registerLazySingleton<PerformanceService>(
+            () => mockPerformanceService,
+          );
 
         final result = await AppFunctions.getAntRecommendations(
           userId: 'user_1',
@@ -937,6 +953,9 @@ void main() {
         expect(result[0], equals('Rec 1'));
         expect(result[1], equals('Rec 2'));
         expect(result[2], equals('Rec 3'));
+        verify(() => mockPerformanceService.startTrace('ant_recommendations'))
+            .called(1);
+        verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
       });
     });
   });

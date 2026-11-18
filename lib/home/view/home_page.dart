@@ -14,7 +14,16 @@ class HomePage extends StatelessWidget {
     final database = getIt<DatabaseService>();
 
     return StreamBuilder<List<Category>>(
-      stream: database.getCategoriesStream().handleError((dynamic _) {}),
+      stream: database.getCategoriesStream().handleError((
+        Object e,
+        StackTrace stackTrace,
+      ) {
+        getIt<CrashService>().recordError(
+          e,
+          stackTrace,
+          reason: 'HomePage getCategoriesStream error',
+        );
+      }),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(

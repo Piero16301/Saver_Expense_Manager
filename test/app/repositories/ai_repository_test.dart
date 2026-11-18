@@ -4,7 +4,6 @@ import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_ai/src/base_model.dart';
 import 'package:firebase_ai/src/client.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gemini_nano_android/gemini_nano_android.dart';
 import 'package:mocktail/mocktail.dart';
@@ -18,22 +17,9 @@ class MockApiClient extends Mock implements ApiClient;
 
 class MockGeminiNanoAndroid extends Mock implements GeminiNanoAndroid;
 
-class MockTrace extends Mock implements Trace;
-
-class MockPerformanceService extends Mock implements PerformanceService;
-
-class MockRemoteConfigService extends Mock implements RemoteConfigService;
-
-class MockCrashService extends Mock implements CrashService;
-
 void main() {
   late MockFirebaseAI mockRemoteModel;
   late MockGeminiNanoAndroid mockLocalModel;
-  late MockTrace mockTrace;
-
-  late MockPerformanceService mockPerformanceService;
-  late MockRemoteConfigService mockRemoteConfigService;
-  late MockCrashService mockCrashService;
 
   late FirebaseAiRepository repository;
 
@@ -59,7 +45,6 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(Content.text(''));
-    registerFallbackValue(MockTrace());
     registerFallbackValue(Uri());
     registerFallbackValue(GenerationConfig());
     registerFallbackValue(
@@ -71,24 +56,9 @@ void main() {
     );
   });
 
-  setUp(() async {
+  setUp(() {
     mockRemoteModel = MockFirebaseAI();
     mockLocalModel = MockGeminiNanoAndroid();
-    mockTrace = MockTrace();
-
-    mockPerformanceService = MockPerformanceService();
-    mockRemoteConfigService = MockRemoteConfigService();
-    mockCrashService = MockCrashService();
-
-    await getIt.reset();
-    getIt
-      ..registerSingleton<PerformanceService>(mockPerformanceService)
-      ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
-      ..registerSingleton<CrashService>(mockCrashService);
-
-    when(() => mockPerformanceService.startTrace(any<String>()))
-        .thenReturn(mockTrace);
-    when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
 
     repository = FirebaseAiRepository(
       remoteModel: mockRemoteModel,
@@ -104,6 +74,7 @@ void main() {
       expect(
         await mock.generateContentRemote(
           prompt: [PromptPart.text(text: 'test')],
+          model: 'gemini-1.5-flash',
         ),
         isNull,
       );
@@ -136,15 +107,16 @@ void main() {
 
     group('generateContentRemote', () {
       test('returns null if prompt is empty', () async {
-        final result = await repository.generateContentRemote(prompt: []);
+        final result = await repository.generateContentRemote(
+          prompt: [],
+          model: 'gemini-1.5-flash',
+        );
         expect(result, isNull);
       });
 
       test(
         'calls generativeModel and returns response text with file and text',
         () async {
-          when(() => mockRemoteConfigService.geminiModelName)
-              .thenReturn('gemini-1.5-flash');
           final mockApiClient = MockApiClient();
           when(() => mockApiClient.makeRequest(any(), any())).thenAnswer(
             (_) async => {
@@ -178,19 +150,14 @@ void main() {
                 bytes: Uint8List.fromList([1, 2, 3]),
               ),
             ],
+            model: 'gemini-1.5-flash',
           );
 
           expect(result, '{"title": "Test"}');
-          verify(
-            () => mockPerformanceService.startTrace('gemini_generate_remote'),
-          ).called(1);
-          verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
         },
       );
 
       test('returns null when prompt parts are not text or file', () async {
-        when(() => mockRemoteConfigService.geminiModelName)
-            .thenReturn('gemini-1.5-flash');
         final mockApiClient = MockApiClient();
         final testModel = createTestModel(mockApiClient);
         when(
@@ -203,14 +170,13 @@ void main() {
 
         final result = await repository.generateContentRemote(
           prompt: [const PromptPart(type: PromptPartType.text)],
+          model: 'gemini-1.5-flash',
         );
 
         expect(result, isNull);
       });
 
-      test('records error and rethrows if remote generation fails', () async {
-        when(() => mockRemoteConfigService.geminiModelName)
-            .thenReturn('gemini-1.5-flash');
+      test('rethrows if remote generation fails', () async {
         final mockApiClient = MockApiClient();
         when(() => mockApiClient.makeRequest(any(), any()))
             .thenThrow(Exception('Remote Fail'));
@@ -223,21 +189,13 @@ void main() {
           ),
         ).thenReturn(testModel);
 
-        expect(
+        await expectLater(
           () => repository.generateContentRemote(
             prompt: [PromptPart.text(text: 'test')],
+            model: 'gemini-1.5-flash',
           ),
           throwsException,
         );
-
-        await Future<void>.delayed(Duration.zero);
-        verify(
-          () => mockCrashService.recordError(
-            any<Object>(),
-            any<StackTrace?>(),
-            reason: 'AiService generateContentRemote error',
-          ),
-        ).called(1);
       });
 
       test('default constructor initializes correctly', () {
@@ -358,7 +316,7 @@ void main() {
         expect(result, isNull);
       });
 
-      test('records error and rethrows on local failure', () async {
+      test('rethrows on local failure', () async {
         when(() => mockLocalModel.isAvailable()).thenAnswer((_) async => true);
         when(
           () => mockLocalModel.generate(
@@ -367,21 +325,12 @@ void main() {
           ),
         ).thenThrow(Exception('Local Fail'));
 
-        expect(
+        await expectLater(
           () => repository.generateContentLocal(
             textPrompt: const PromptPart(text: 'p', type: PromptPartType.text),
           ),
           throwsException,
         );
-
-        await Future<void>.delayed(Duration.zero);
-        verify(
-          () => mockCrashService.recordError(
-            any<Object>(),
-            any<StackTrace?>(),
-            reason: any<dynamic>(named: 'reason'),
-          ),
-        ).called(1);
       });
     });
   });

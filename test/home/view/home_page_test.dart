@@ -16,6 +16,8 @@ class MockAuthService extends Mock implements AuthService;
 
 class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
+class MockCrashService extends Mock implements CrashService;
+
 class MockAppUser extends Mock implements AppUser;
 
 class MockAppCubit extends MockCubit<AppState> implements AppCubit;
@@ -24,6 +26,7 @@ void main() {
   late MockDatabaseService mockDatabaseService;
   late MockAuthService mockAuthService;
   late MockRemoteConfigService mockRemoteConfigService;
+  late MockCrashService mockCrashService;
   late MockAppUser mockAppUser;
   late MockAppCubit mockAppCubit;
 
@@ -36,15 +39,24 @@ void main() {
     mockDatabaseService = MockDatabaseService();
     mockAuthService = MockAuthService();
     mockRemoteConfigService = MockRemoteConfigService();
+    mockCrashService = MockCrashService();
     when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
     when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
+    when(
+      () => mockCrashService.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) {});
     mockAppUser = MockAppUser();
     mockAppCubit = MockAppCubit();
 
     getIt
       ..registerSingleton<DatabaseService>(mockDatabaseService)
       ..registerSingleton<AuthService>(mockAuthService)
-      ..registerSingleton<RemoteConfigService>(mockRemoteConfigService);
+      ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
+      ..registerSingleton<CrashService>(mockCrashService);
 
     when(() => mockAuthService.authStateChanges)
         .thenAnswer((_) => Stream.value(mockAppUser));
@@ -127,6 +139,33 @@ void main() {
       await tester.pump();
 
       expect(find.byType(ExpressiveCircularProgressIndicator), findsOneWidget);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'HomePage getCategoriesStream error',
+        ),
+      ).called(1);
     });
+
+    testWidgets(
+      'renders error message when stream error propagates to StreamBuilder',
+      (tester) async {
+        when(() => mockDatabaseService.getCategoriesStream())
+            .thenAnswer((_) => Stream.error(Exception('Error')));
+        when(
+          () => mockCrashService.recordError(
+            any<Object>(),
+            any<StackTrace?>(),
+            reason: any<dynamic>(named: 'reason'),
+          ),
+        ).thenThrow(Exception('Propagated error'));
+
+        await tester.pumpApp(buildSubject(HomePage(key: UniqueKey())));
+        await tester.pump();
+
+        expect(find.text('Error loading categories'), findsOneWidget);
+      },
+    );
   });
 }

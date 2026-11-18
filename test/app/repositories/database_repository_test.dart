@@ -3,16 +3,9 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
-
-class MockPerformanceService extends Mock implements PerformanceService;
-
-class MockTrace extends Mock implements Trace;
-
-class MockCrashService extends Mock implements CrashService;
 
 class MockFirebaseFirestore extends Mock implements FirebaseFirestore;
 
@@ -38,42 +31,18 @@ void main() {
   late MockQuery<Map<String, dynamic>> mockQuery;
   late MockQuerySnapshot<Map<String, dynamic>> mockQuerySnapshot;
   late MockQueryDocumentSnapshot<Map<String, dynamic>> mockDocSnapshot;
-  late MockPerformanceService mockPerformanceService;
-  late MockTrace mockTrace;
-  late MockCrashService mockCrashService;
 
   setUpAll(() {
-    registerFallbackValue(MockTrace());
     registerFallbackValue(Timestamp.now());
   });
 
-  setUp(() async {
+  setUp(() {
     mockFirestore = MockFirebaseFirestore();
     mockCollection = MockCollectionReference<Map<String, dynamic>>();
     mockDoc = MockDocumentReference<Map<String, dynamic>>();
     mockQuery = MockQuery<Map<String, dynamic>>();
     mockQuerySnapshot = MockQuerySnapshot<Map<String, dynamic>>();
     mockDocSnapshot = MockQueryDocumentSnapshot<Map<String, dynamic>>();
-    mockPerformanceService = MockPerformanceService();
-    mockTrace = MockTrace();
-    mockCrashService = MockCrashService();
-
-    await getIt.reset();
-    getIt
-      ..registerSingleton<PerformanceService>(mockPerformanceService)
-      ..registerSingleton<CrashService>(mockCrashService);
-
-    when(
-      () => mockCrashService.recordError(
-        any<Object>(),
-        any<StackTrace?>(),
-        reason: any<dynamic>(named: 'reason'),
-      ),
-    ).thenAnswer((_) async {});
-
-    when(() => mockPerformanceService.startTrace(any<String>()))
-        .thenReturn(mockTrace);
-    when(() => mockPerformanceService.stopTrace(any())).thenReturn(null);
 
     repository = FirestoreDatabaseRepository(firestore: mockFirestore);
   });
@@ -82,11 +51,11 @@ void main() {
     test('Mock tests for coverage', () async {
       final mock = MockDatabaseRepository();
       expect(mock.newId, isNotEmpty);
-      mock.saveMovement(movement: Movement.empty);
+      await mock.saveMovement(movement: Movement.empty);
       expect(await mock.getCategoriesStream().first, isNotEmpty);
       expect(await mock.getMovementsStream(userId: '1').first, isNotEmpty);
       expect(await mock.getMovements(userId: '1'), isNotEmpty);
-      mock.deleteMovement(movementId: '1');
+      await mock.deleteMovement(movementId: '1');
     });
   });
 
@@ -199,24 +168,20 @@ void main() {
       when(() => mockCollection.doc(movement.id)).thenReturn(mockDoc);
       when(() => mockDoc.set(any())).thenAnswer((_) async {});
 
-      repository.saveMovement(movement: movement);
+      await repository.saveMovement(movement: movement);
 
       verify(() => mockDoc.set(movement.toJson())).called(1);
     });
 
-    test('saveMovement records error on exception', () async {
+    test('saveMovement rethrows on exception', () {
       when(() => mockFirestore.collection(any<String>()))
           .thenThrow(Exception('Firestore Fail'));
 
-      repository.saveMovement(movement: Movement.empty.copyWith(id: '1'));
-
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),
-        ),
-      ).called(1);
+      expect(
+        () =>
+            repository.saveMovement(movement: Movement.empty.copyWith(id: '1')),
+        throwsException,
+      );
     });
 
     test('deleteMovement removes movement correctly', () async {
@@ -226,24 +191,16 @@ void main() {
       when(() => mockCollection.doc(movementId)).thenReturn(mockDoc);
       when(() => mockDoc.delete()).thenAnswer((_) async {});
 
-      repository.deleteMovement(movementId: movementId);
+      await repository.deleteMovement(movementId: movementId);
 
       verify(() => mockDoc.delete()).called(1);
     });
 
-    test('deleteMovement records error on exception', () async {
+    test('deleteMovement rethrows on exception', () {
       when(() => mockFirestore.collection(any<String>()))
           .thenThrow(Exception('Delete Fail'));
 
-      repository.deleteMovement(movementId: '1');
-
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),
-        ),
-      ).called(1);
+      expect(() => repository.deleteMovement(movementId: '1'), throwsException);
     });
 
     test('getMovements returns full list', () async {
@@ -284,12 +241,9 @@ void main() {
 
       expect(result.length, 1);
       expect(result.first.id, equals('1'));
-      verify(() => mockPerformanceService.startTrace('firestore_get_movements'))
-          .called(1);
-      verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
     });
 
-    test('getMovements records error and rethrows on failure', () async {
+    test('getMovements rethrows on failure', () async {
       when(() => mockFirestore.collection(AppVariables.movementsCollection))
           .thenReturn(mockCollection);
       when(
@@ -301,15 +255,6 @@ void main() {
         () => repository.getMovements(userId: 'user_1'),
         throwsA(isA<Exception>()),
       );
-
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),
-        ),
-      ).called(1);
-      verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
     });
 
     test('getMovements falls back to cache on TimeoutException', () async {

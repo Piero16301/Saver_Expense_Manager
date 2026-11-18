@@ -11,10 +11,13 @@ class MockLocalStorageService extends Mock implements LocalStorageService;
 
 class MockAnalyticsService extends Mock implements AnalyticsService;
 
+class MockCrashService extends Mock implements CrashService;
+
 void main() {
   late AuthService authenticationService;
   late LocalStorageService localStorageService;
   late MockAnalyticsService mockAnalyticsService;
+  late MockCrashService mockCrashService;
 
   setUpAll(() {
     registerFallbackValue(const Locale('en', 'US'));
@@ -27,25 +30,28 @@ void main() {
     authenticationService = MockAuthService();
     localStorageService = MockLocalStorageService();
     mockAnalyticsService = MockAnalyticsService();
+    mockCrashService = MockCrashService();
 
     when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
         .thenAnswer((_) {});
+    when(() => mockCrashService.setUserIdentifier(any<String>()))
+        .thenAnswer((_) {});
+    when(
+      () => mockCrashService.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) {});
 
     final getIt = GetIt.instance;
-    if (getIt.isRegistered<AuthService>()) {
-      await getIt.unregister<AuthService>();
-    }
-    if (getIt.isRegistered<LocalStorageService>()) {
-      await getIt.unregister<LocalStorageService>();
-    }
-    if (getIt.isRegistered<AnalyticsService>()) {
-      await getIt.unregister<AnalyticsService>();
-    }
+    await getIt.reset();
 
     getIt
       ..registerLazySingleton<AuthService>(() => authenticationService)
       ..registerLazySingleton<LocalStorageService>(() => localStorageService)
-      ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService);
+      ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService)
+      ..registerLazySingleton<CrashService>(() => mockCrashService);
 
     when(() => authenticationService.userChanges)
         .thenAnswer((_) => const Stream.empty());
@@ -83,6 +89,9 @@ void main() {
       expect(find.byType(BlocProvider<AppCubit>), findsOneWidget);
 
       verify(() => localStorageService.getLanguage()).called(2);
+
+      await tester.pumpWidget(AppPage(key: UniqueKey()));
+      expect(find.byType(AppPage), findsOneWidget);
     });
   });
 }

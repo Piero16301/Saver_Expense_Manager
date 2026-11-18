@@ -23,6 +23,12 @@ class MockLocalStorageService extends Mock implements LocalStorageService;
 
 class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
+class MockAnalyticsService extends Mock implements AnalyticsService;
+
+class MockCrashService extends Mock implements CrashService;
+
+class MockPerformanceService extends Mock implements PerformanceService;
+
 const _testCategories = [
   Category(
     id: 'cat1',
@@ -49,6 +55,9 @@ void main() {
   late MockDatabaseService mockDatabase;
   late MockLocalStorageService mockLocalStorage;
   late MockRemoteConfigService mockRemoteConfig;
+  late MockAnalyticsService mockAnalytics;
+  late MockCrashService mockCrash;
+  late MockPerformanceService mockPerformance;
 
   setUpAll(() {
     registerFallbackValue(DateTime.now());
@@ -63,6 +72,23 @@ void main() {
     mockDatabase = MockDatabaseService();
     mockLocalStorage = MockLocalStorageService();
     mockRemoteConfig = MockRemoteConfigService();
+    mockAnalytics = MockAnalyticsService();
+    mockCrash = MockCrashService();
+    mockPerformance = MockPerformanceService();
+
+    when(
+      () => mockAnalytics.logEvent(
+        name: any(named: 'name'),
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
+    when(
+      () => mockCrash.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) {});
 
     when(() => mockAuth.currentUser).thenReturn(const AppUser(uid: 'user123'));
     when(() => mockRemoteConfig.paginationLimit).thenReturn(10);
@@ -94,23 +120,15 @@ void main() {
       ),
     ).thenAnswer((_) => Stream.value([]));
 
-    if (getIt.isRegistered<AuthService>()) {
-      await getIt.unregister<AuthService>();
-    }
-    if (getIt.isRegistered<DatabaseService>()) {
-      await getIt.unregister<DatabaseService>();
-    }
-    if (getIt.isRegistered<LocalStorageService>()) {
-      await getIt.unregister<LocalStorageService>();
-    }
-    if (getIt.isRegistered<RemoteConfigService>()) {
-      await getIt.unregister<RemoteConfigService>();
-    }
+    await getIt.reset();
     getIt
       ..registerSingleton<AuthService>(mockAuth)
       ..registerSingleton<DatabaseService>(mockDatabase)
       ..registerSingleton<LocalStorageService>(mockLocalStorage)
-      ..registerSingleton<RemoteConfigService>(mockRemoteConfig);
+      ..registerSingleton<RemoteConfigService>(mockRemoteConfig)
+      ..registerSingleton<AnalyticsService>(mockAnalytics)
+      ..registerSingleton<CrashService>(mockCrash)
+      ..registerSingleton<PerformanceService>(mockPerformance);
   });
 
   tearDown(getIt.reset);

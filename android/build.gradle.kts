@@ -15,6 +15,11 @@ rootProject.layout.buildDirectory.value(newBuildDir)
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
+
+    val subprojectDirPath = project.projectDir.absolutePath
+    tasks.matching { it.name.startsWith("compile") && it.name.endsWith("Kotlin") }.configureEach {
+        inputs.property("subprojectDirPath", subprojectDirPath)
+    }
     
     pluginManager.withPlugin("com.android.library") {
         extensions.configure<com.android.build.gradle.LibraryExtension> {

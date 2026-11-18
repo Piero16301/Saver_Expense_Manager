@@ -16,6 +16,10 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
   final AppLocalizations l10n;
 
   void updateFilterType(CategoryType? type) {
+    getIt<AnalyticsService>().logEvent(
+      name: 'filter_movements_type',
+      parameters: {'type': type?.value ?? 'all'},
+    );
     emit(
       state.copyWith(
         filterType: type,
@@ -29,13 +33,22 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
   }
 
   void updateFilterCategory(Category? category) {
+    getIt<AnalyticsService>().logEvent(
+      name: 'filter_movements_category',
+      parameters: {'category': category?.name ?? 'all'},
+    );
     emit(
       state.copyWith(filterType: state.filterType, filterCategory: category),
     );
   }
 
   void changeShowRecommendations() {
-    emit(state.copyWith(showRecommendations: !state.showRecommendations));
+    final nextShow = !state.showRecommendations;
+    getIt<AnalyticsService>().logEvent(
+      name: 'ant_recommendations_toggle',
+      parameters: {'visible': nextShow.toString()},
+    );
+    emit(state.copyWith(showRecommendations: nextShow));
   }
 
   void resetRecommendationsStatus() {
@@ -76,6 +89,10 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
         l10n: l10n,
       );
       if (recommendations != null) {
+        getIt<AnalyticsService>().logEvent(
+          name: 'ant_recommendations_generated',
+          parameters: {'count': recommendations.length},
+        );
         localStorage
           ..saveRecommendations(
             recommendations: recommendations,
@@ -92,7 +109,12 @@ class MovementsHomeCubit extends Cubit<MovementsHomeState> {
           ),
         );
       }
-    } on Object catch (_) {
+    } on Object catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'MovementsHomeCubit getRecommendations error',
+      );
       if (!isClosed) {
         emit(
           state.copyWith(recommendationsStatus: RecommendationsStatus.failure),

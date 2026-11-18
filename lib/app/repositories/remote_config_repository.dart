@@ -83,23 +83,15 @@ class FirebaseRemoteConfigRepository implements RemoteConfigRepository {
       RemoteConfigRepository.uiHomeInitialTab: 'movimientos',
     });
 
-    try {
-      await _remoteConfig.setConfigSettings(
-        RemoteConfigSettings(
-          fetchTimeout: AppVariables.remoteConfigFetchTimeout,
-          minimumFetchInterval: kDebugMode
-              ? Duration.zero
-              : AppVariables.remoteConfigMinimumFetchInterval,
-        ),
-      );
-      await _remoteConfig.fetchAndActivate();
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'RemoteConfig initialization failed',
-      );
-    }
+    await _remoteConfig.setConfigSettings(
+      RemoteConfigSettings(
+        fetchTimeout: AppVariables.remoteConfigFetchTimeout,
+        minimumFetchInterval: kDebugMode
+            ? Duration.zero
+            : AppVariables.remoteConfigMinimumFetchInterval,
+      ),
+    );
+    await _remoteConfig.fetchAndActivate();
   }
 
   @override

@@ -1,15 +1,42 @@
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MockRemoteConfigRepository extends Mock implements RemoteConfigRepository;
 
+class MockCrashService extends Mock implements CrashService;
+
+class MockTrace extends Mock implements Trace;
+
+class MockPerformanceService extends Mock implements PerformanceService;
+
 void main() {
   late RemoteConfigService service;
   late MockRemoteConfigRepository mockRepository;
+  late MockCrashService mockCrashService;
+  late MockTrace mockTrace;
+  late MockPerformanceService mockPerformanceService;
 
-  setUp(() {
+  setUpAll(() {
+    registerFallbackValue(MockTrace());
+  });
+
+  setUp(() async {
     mockRepository = MockRemoteConfigRepository();
+    mockCrashService = MockCrashService();
+    mockTrace = MockTrace();
+    mockPerformanceService = MockPerformanceService();
+
+    await getIt.reset();
+    getIt
+      ..registerSingleton<CrashService>(mockCrashService)
+      ..registerSingleton<PerformanceService>(mockPerformanceService);
+
+    when(() => mockPerformanceService.startTrace(any<String>()))
+        .thenReturn(mockTrace);
+    when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
+
     service = RemoteConfigService(remoteConfigRepository: mockRepository);
   });
 
@@ -22,6 +49,25 @@ void main() {
       when(() => mockRepository.initialize()).thenAnswer((_) async {});
       await service.initialize();
       verify(() => mockRepository.initialize()).called(1);
+      verify(() => mockPerformanceService.startTrace('remote_config_init'))
+          .called(1);
+      verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
+    });
+
+    test('initialize records error on failure and does not rethrow', () async {
+      when(() => mockRepository.initialize())
+          .thenThrow(Exception('Config Fail'));
+
+      await service.initialize();
+
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'RemoteConfig initialization failed',
+        ),
+      ).called(1);
+      verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
     });
 
     test('homeInitialTab returns from repository', () {

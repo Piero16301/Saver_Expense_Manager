@@ -181,7 +181,12 @@ class AppFileField extends StatelessWidget {
           );
         }
       }
-    } on Exception catch (e) {
+    } on Exception catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AppFileField handleUpload error',
+      );
       if (appLoader.isLoading) {
         appLoader.hideLoading();
       }

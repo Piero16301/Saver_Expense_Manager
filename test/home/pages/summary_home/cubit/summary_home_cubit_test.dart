@@ -6,16 +6,28 @@ import 'package:saver_expense_manager/home/pages/summary_home/cubit/summary_home
 
 class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
+class MockAnalyticsService extends Mock implements AnalyticsService;
+
 void main() {
   group('SummaryHomeCubit', () {
     late SummaryHomeCubit summaryHomeCubit;
     late MockRemoteConfigService mockRemoteConfigService;
+    late MockAnalyticsService mockAnalyticsService;
 
     setUp(() {
       mockRemoteConfigService = MockRemoteConfigService();
+      mockAnalyticsService = MockAnalyticsService();
       when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
       when(() => mockRemoteConfigService.summaryLastYears).thenReturn(4);
-      getIt.registerSingleton<RemoteConfigService>(mockRemoteConfigService);
+      when(
+        () => mockAnalyticsService.logEvent(
+          name: any(named: 'name'),
+          parameters: any(named: 'parameters'),
+        ),
+      ).thenAnswer((_) {});
+      getIt
+        ..registerSingleton<RemoteConfigService>(mockRemoteConfigService)
+        ..registerSingleton<AnalyticsService>(mockAnalyticsService);
 
       summaryHomeCubit = SummaryHomeCubit();
     });
@@ -98,6 +110,14 @@ void main() {
           SummaryPeriodType.year,
         ),
       ],
+      verify: (_) {
+        verify(
+          () => mockAnalyticsService.logEvent(
+            name: 'change_summary_period',
+            parameters: {'period': 'year'},
+          ),
+        ).called(1);
+      },
     );
 
     blocTest<SummaryHomeCubit, SummaryHomeState>(
@@ -120,6 +140,20 @@ void main() {
           true,
         ),
       ],
+      verify: (_) {
+        verify(
+          () => mockAnalyticsService.logEvent(
+            name: 'toggle_summary_series',
+            parameters: {'series': 'income', 'selected': 'false'},
+          ),
+        ).called(1);
+        verify(
+          () => mockAnalyticsService.logEvent(
+            name: 'toggle_summary_series',
+            parameters: {'series': 'income', 'selected': 'true'},
+          ),
+        ).called(1);
+      },
     );
   });
 }

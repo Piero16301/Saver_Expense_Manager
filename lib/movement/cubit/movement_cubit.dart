@@ -57,6 +57,7 @@ class MovementCubit extends Cubit<MovementState> {
 
   void attachAdd(String value) {
     final updatedAttachments = List<String>.from(state.attachments)..add(value);
+    getIt<AnalyticsService>().logEvent(name: 'attachment_add');
     emit(state.copyWith(attachments: updatedAttachments));
   }
 
@@ -67,9 +68,11 @@ class MovementCubit extends Cubit<MovementState> {
 
     // Remove the file from Firebase Storage
     await getIt<RemoteStorageService>().deleteFile(value);
+    getIt<AnalyticsService>().logEvent(name: 'attachment_remove');
   }
 
   Future<void> attachOpen(String value) async {
+    getIt<AnalyticsService>().logEvent(name: 'attachment_open');
     try {
       await openAttachment(
         value,

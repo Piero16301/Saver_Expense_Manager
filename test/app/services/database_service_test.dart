@@ -1,14 +1,25 @@
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 class MockDatabaseRepository extends Mock implements DatabaseRepository;
 
+class MockTrace extends Mock implements Trace;
+
+class MockPerformanceService extends Mock implements PerformanceService;
+
+class MockCrashService extends Mock implements CrashService;
+
 void main() {
   late DatabaseService databaseService;
   late MockDatabaseRepository mockDatabaseRepository;
+  late MockTrace mockTrace;
+  late MockPerformanceService mockPerformanceService;
+  late MockCrashService mockCrashService;
 
   setUpAll(() {
+    registerFallbackValue(MockTrace());
     registerFallbackValue(
       Movement(
         id: '1',
@@ -22,8 +33,21 @@ void main() {
     );
   });
 
-  setUp(() {
+  setUp(() async {
     mockDatabaseRepository = MockDatabaseRepository();
+    mockTrace = MockTrace();
+    mockPerformanceService = MockPerformanceService();
+    mockCrashService = MockCrashService();
+
+    await getIt.reset();
+    getIt
+      ..registerSingleton<PerformanceService>(mockPerformanceService)
+      ..registerSingleton<CrashService>(mockCrashService);
+
+    when(() => mockPerformanceService.startTrace(any<String>()))
+        .thenReturn(mockTrace);
+    when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
+
     databaseService = DatabaseService(
       databaseRepository: mockDatabaseRepository,
     );
@@ -51,7 +75,7 @@ void main() {
       );
 
       when(() => mockDatabaseRepository.saveMovement(movement: movement))
-          .thenReturn(null);
+          .thenAnswer((_) async {});
 
       databaseService.saveMovement(movement: movement);
 
@@ -111,16 +135,107 @@ void main() {
       expect(movements, isEmpty);
       verify(() => mockDatabaseRepository.getMovements(userId: 'user_1'))
           .called(1);
+      verify(() => mockPerformanceService.startTrace('firestore_get_movements'))
+          .called(1);
+      verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
+    });
+
+    test('getMovements records error, stops trace, and rethrows', () async {
+      when(
+        () => mockDatabaseRepository.getMovements(
+          userId: any(named: 'userId'),
+          from: any(named: 'from'),
+          to: any(named: 'to'),
+        ),
+      ).thenThrow(Exception('Get Fail'));
+
+      await expectLater(
+        () => databaseService.getMovements(userId: 'user_1'),
+        throwsException,
+      );
+
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'DatabaseService getMovements error',
+        ),
+      ).called(1);
+      verify(() => mockPerformanceService.stopTrace(mockTrace)).called(1);
+    });
+
+    test('saveMovement records error on exception', () {
+      final movement = Movement.empty.copyWith(id: '1');
+      when(() => mockDatabaseRepository.saveMovement(movement: movement))
+          .thenThrow(Exception('Save Fail'));
+
+      databaseService.saveMovement(movement: movement);
+
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'DatabaseService saveMovement error',
+        ),
+      ).called(1);
+    });
+
+    test('saveMovement records error on async failure', () async {
+      final movement = Movement.empty.copyWith(id: '1');
+      when(() => mockDatabaseRepository.saveMovement(movement: movement))
+          .thenAnswer((_) => Future.error(Exception('Async Save Fail')));
+
+      databaseService.saveMovement(movement: movement);
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'DatabaseService saveMovement error',
+        ),
+      ).called(1);
     });
 
     test('deleteMovement delegates to repository', () {
       when(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
-          .thenReturn(null);
+          .thenAnswer((_) async {});
 
       databaseService.deleteMovement(movementId: 'mov_1');
 
       verify(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
           .called(1);
+    });
+
+    test('deleteMovement records error on exception', () {
+      when(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
+          .thenThrow(Exception('Delete Fail'));
+
+      databaseService.deleteMovement(movementId: 'mov_1');
+
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'DatabaseService deleteMovement error',
+        ),
+      ).called(1);
+    });
+
+    test('deleteMovement records error on async failure', () async {
+      when(() => mockDatabaseRepository.deleteMovement(movementId: 'mov_1'))
+          .thenAnswer((_) => Future.error(Exception('Async Delete Fail')));
+
+      databaseService.deleteMovement(movementId: 'mov_1');
+      await Future<void>.delayed(Duration.zero);
+
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'DatabaseService deleteMovement error',
+        ),
+      ).called(1);
     });
   });
 }
