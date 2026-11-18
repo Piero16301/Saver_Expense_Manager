@@ -5,25 +5,18 @@ import 'package:saver_expense_manager/app/app.dart';
 
 class MockFirebaseRemoteConfig extends Mock implements FirebaseRemoteConfig;
 
-class MockCrashService extends Mock implements CrashService;
-
 class FakeRemoteConfigSettings extends Fake implements RemoteConfigSettings;
 
 void main() {
   late MockFirebaseRemoteConfig mockRemoteConfig;
-  late MockCrashService mockCrashService;
   late FirebaseRemoteConfigRepository repository;
 
   setUpAll(() {
     registerFallbackValue(FakeRemoteConfigSettings());
   });
 
-  setUp(() async {
+  setUp(() {
     mockRemoteConfig = MockFirebaseRemoteConfig();
-    mockCrashService = MockCrashService();
-
-    await getIt.reset();
-    getIt.registerSingleton<CrashService>(mockCrashService);
 
     repository = FirebaseRemoteConfigRepository(remoteConfig: mockRemoteConfig);
   });
@@ -65,23 +58,14 @@ void main() {
       },
     );
 
-    test('initialize records error on failure but does not rethrow', () async {
+    test('initialize rethrows on failure', () async {
       when(() => mockRemoteConfig.setDefaults(any<Map<String, dynamic>>()))
           .thenAnswer((_) async {});
       when(
         () => mockRemoteConfig.setConfigSettings(any<RemoteConfigSettings>()),
       ).thenThrow(Exception('Config Fail'));
 
-      await repository.initialize();
-
-      await Future<void>.delayed(Duration.zero);
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),
-        ),
-      ).called(1);
+      await expectLater(() => repository.initialize(), throwsException);
     });
 
     test('getters return correct values from remote config', () {

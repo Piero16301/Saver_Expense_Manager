@@ -15,28 +15,44 @@ class MockAppUser extends Mock implements AppUser;
 
 class MockAnalyticsService extends Mock implements AnalyticsService;
 
+class MockCrashService extends Mock implements CrashService;
+
 void main() {
   late MockAuthService mockAuthService;
   late MockAppLocalizations mockAppLocalizations;
   late StreamController<AppUser?> userChangesController;
   late ProfileCubit profileCubit;
   late MockAnalyticsService mockAnalyticsService;
+  late MockCrashService mockCrashService;
 
   setUp(() async {
     mockAuthService = MockAuthService();
     mockAppLocalizations = MockAppLocalizations();
     userChangesController = StreamController<AppUser?>();
     mockAnalyticsService = MockAnalyticsService();
+    mockCrashService = MockCrashService();
 
     if (getIt.isRegistered<AnalyticsService>()) {
       await getIt.unregister<AnalyticsService>();
     }
-    getIt.registerSingleton<AnalyticsService>(mockAnalyticsService);
+    if (getIt.isRegistered<CrashService>()) {
+      await getIt.unregister<CrashService>();
+    }
+    getIt
+      ..registerSingleton<AnalyticsService>(mockAnalyticsService)
+      ..registerSingleton<CrashService>(mockCrashService);
 
     when(
       () => mockAnalyticsService.logEvent(
         name: any(named: 'name'),
         parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
+    when(
+      () => mockCrashService.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
       ),
     ).thenAnswer((_) {});
 
@@ -89,6 +105,23 @@ void main() {
     );
 
     blocTest<ProfileCubit, ProfileState>(
+      'records error when userChanges emits an error',
+      build: () => profileCubit,
+      act: (_) {
+        userChangesController.addError(Exception('Stream error'));
+      },
+      verify: (_) {
+        verify(
+          () => mockCrashService.recordError(
+            any<Object>(),
+            any<StackTrace?>(),
+            reason: 'ProfileCubit userChanges error',
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<ProfileCubit, ProfileState>(
       'nameChanged updates state',
       build: () => profileCubit,
       act: (cubit) => cubit.nameChanged('New Name'),
@@ -115,6 +148,10 @@ void main() {
         ProfileState(userName: 'New Name', status: ProfileStatus.loading),
         ProfileState(userName: 'New Name', status: ProfileStatus.success),
       ],
+      verify: (_) {
+        verify(() => mockAnalyticsService.logEvent(name: 'update_display_name'))
+            .called(1);
+      },
     );
 
     blocTest<ProfileCubit, ProfileState>(
@@ -148,6 +185,14 @@ void main() {
         ProfileState(status: ProfileStatus.loading),
         ProfileState(status: ProfileStatus.success),
       ],
+      verify: (_) {
+        verify(
+          () => mockAnalyticsService.logEvent(
+            name: 'link_provider',
+            parameters: {'provider': AppVariables.googleProvider},
+          ),
+        ).called(1);
+      },
     );
 
     blocTest<ProfileCubit, ProfileState>(
@@ -192,6 +237,14 @@ void main() {
         ProfileState(status: ProfileStatus.loading),
         ProfileState(status: ProfileStatus.success),
       ],
+      verify: (_) {
+        verify(
+          () => mockAnalyticsService.logEvent(
+            name: 'link_provider',
+            parameters: {'provider': AppVariables.emailProvider},
+          ),
+        ).called(1);
+      },
     );
 
     blocTest<ProfileCubit, ProfileState>(
@@ -229,6 +282,14 @@ void main() {
         ProfileState(status: ProfileStatus.loading),
         ProfileState(status: ProfileStatus.success),
       ],
+      verify: (_) {
+        verify(
+          () => mockAnalyticsService.logEvent(
+            name: 'unlink_provider',
+            parameters: {'provider': 'providerId'},
+          ),
+        ).called(1);
+      },
     );
 
     blocTest<ProfileCubit, ProfileState>(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,12 +16,15 @@ class MockAppCubit extends MockCubit<AppState> implements AppCubit;
 
 class MockAnalyticsService extends Mock implements AnalyticsService;
 
+class MockCrashService extends Mock implements CrashService;
+
 class MockUser extends Mock implements AppUser;
 
 void main() {
   late AuthService authenticationService;
   late LocalStorageService localStorageService;
   late MockAnalyticsService mockAnalyticsService;
+  late MockCrashService mockCrashService;
   late MockUser mockUser;
 
   setUpAll(() {
@@ -33,28 +38,31 @@ void main() {
     authenticationService = MockAuthService();
     localStorageService = MockLocalStorageService();
     mockAnalyticsService = MockAnalyticsService();
+    mockCrashService = MockCrashService();
     mockUser = MockUser();
 
     when(() => mockUser.uid).thenReturn('test_uid');
 
     when(() => mockAnalyticsService.setUserId(id: any(named: 'id')))
         .thenAnswer((_) {});
+    when(() => mockCrashService.setUserIdentifier(any<String>()))
+        .thenAnswer((_) {});
+    when(
+      () => mockCrashService.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) {});
 
     final getIt = GetIt.instance;
-    if (getIt.isRegistered<AuthService>()) {
-      await getIt.unregister<AuthService>();
-    }
-    if (getIt.isRegistered<LocalStorageService>()) {
-      await getIt.unregister<LocalStorageService>();
-    }
-    if (getIt.isRegistered<AnalyticsService>()) {
-      await getIt.unregister<AnalyticsService>();
-    }
+    await getIt.reset();
 
     getIt
       ..registerLazySingleton<AuthService>(() => authenticationService)
       ..registerLazySingleton<LocalStorageService>(() => localStorageService)
-      ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService);
+      ..registerLazySingleton<AnalyticsService>(() => mockAnalyticsService)
+      ..registerLazySingleton<CrashService>(() => mockCrashService);
 
     when(() => authenticationService.userChanges)
         .thenAnswer((_) => const Stream.empty());
@@ -106,6 +114,36 @@ void main() {
       final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
       expect(materialApp.locale, equals(state.language));
       expect(materialApp.themeMode, equals(state.theme));
+    });
+
+    testWidgets('records crash error when authStateChanges emits an error', (
+      tester,
+    ) async {
+      final controller = StreamController<AppUser?>();
+      when(() => authenticationService.authStateChanges)
+          .thenAnswer((_) => controller.stream);
+
+      final appCubit = MockAppCubit();
+      const state = AppState();
+      when(() => appCubit.state).thenReturn(state);
+      whenListen(appCubit, Stream.fromIterable([state]));
+
+      await tester.pumpWidget(
+        BlocProvider<AppCubit>.value(value: appCubit, child: const AppView()),
+      );
+
+      controller.addError(Exception('Auth stream failed'));
+      await tester.pump();
+
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'AppView authStateChanges error',
+        ),
+      ).called(1);
+
+      await controller.close();
     });
   });
 }

@@ -8,6 +8,10 @@ class HomeCubit extends Cubit<HomeState> {
   new() : super(HomeState.initial());
 
   void toggleSelectedIndex(int index) {
+    getIt<AnalyticsService>().logEvent(
+      name: 'select_home_tab',
+      parameters: {'tab_index': index},
+    );
     emit(state.copyWith(selectedIndex: index));
   }
 }

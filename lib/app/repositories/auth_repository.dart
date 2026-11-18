@@ -24,7 +24,9 @@ abstract class AuthRepository {
   Future<bool> signInWithEmailAndPassword(String email, String password);
   Future<bool> signUpWithEmailAndPassword(String email, String password);
   Future<bool> updateUserName(String newName);
-  Future<bool> deleteAccount();
+  Future<bool> deleteAccount({
+    void Function(Object error, StackTrace stackTrace)? onCloudFunctionError,
+  });
 }
 
 class MockAuthRepository implements AuthRepository {
@@ -84,7 +86,9 @@ class MockAuthRepository implements AuthRepository {
   Future<bool> updateUserName(String newName) async => true;
 
   @override
-  Future<bool> deleteAccount() async => true;
+  Future<bool> deleteAccount({
+    void Function(Object error, StackTrace stackTrace)? onCloudFunctionError,
+  }) async => true;
 }
 
 class FirebaseAuthRepository implements AuthRepository {
@@ -102,18 +106,9 @@ class FirebaseAuthRepository implements AuthRepository {
     if (kIsWeb) {
       return;
     }
-    try {
-      await _googleSignIn.initialize(
-        serverClientId: DefaultFirebaseOptions.googleClientId,
-      );
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService initialize error',
-      );
-      rethrow;
-    }
+    await _googleSignIn.initialize(
+      serverClientId: DefaultFirebaseOptions.googleClientId,
+    );
   }
 
   @override
@@ -136,98 +131,47 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<bool> updateDisplayName(String newName) async {
-    try {
-      await _auth.currentUser?.updateDisplayName(newName);
-      await _auth.currentUser?.reload();
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService updateDisplayName error',
-      );
-      return false;
-    }
+    await _auth.currentUser?.updateDisplayName(newName);
+    await _auth.currentUser?.reload();
+    return true;
   }
 
   @override
   Future<bool> signOut() async {
-    try {
-      try {
-        final currentUid = _auth.currentUser?.uid;
-        if (currentUid != null && getIt.isRegistered<LocalStorageService>()) {
-          getIt<LocalStorageService>().clearRecommendations(userId: currentUid);
-        }
-      } on Object catch (_) {}
-      await _auth.signOut();
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService signOut error',
-      );
-      return false;
-    }
+    await _auth.signOut();
+    return true;
   }
 
   @override
   Future<bool> unlinkProvider(String providerId) async {
-    try {
-      await _auth.currentUser?.unlink(providerId);
-      await _auth.currentUser?.reload();
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService unlinkProvider error',
-      );
-      return false;
-    }
+    await _auth.currentUser?.unlink(providerId);
+    await _auth.currentUser?.reload();
+    return true;
   }
 
   @override
   Future<bool> reloadUser() async {
-    try {
-      await _auth.currentUser?.reload();
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService reloadUser error',
-      );
-      return false;
-    }
+    await _auth.currentUser?.reload();
+    return true;
   }
 
   @override
   Future<bool> linkWithGoogle() async {
-    try {
-      if (kIsWeb) {
-        final googleProvider = GoogleAuthProvider();
-        await _auth.currentUser?.linkWithPopup(googleProvider);
-        return true;
-      }
-
-      await _googleSignIn.signOut();
-      final googleUser = await _googleSignIn.authenticate();
-      final googleAuth = googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-      );
-      await _auth.currentUser?.linkWithCredential(credential);
+    if (kIsWeb) {
+      final googleProvider = GoogleAuthProvider();
+      await _auth.currentUser?.linkWithPopup(googleProvider);
       return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService linkWithGoogle error',
-      );
-      return false;
     }
+
+    await _googleSignIn.signOut();
+    final googleUser = await _googleSignIn.authenticate();
+    final googleAuth = googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+    );
+    await _auth.currentUser?.linkWithCredential(credential);
+    return true;
   }
 
   @override
@@ -235,159 +179,90 @@ class FirebaseAuthRepository implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    try {
-      final credential = EmailAuthProvider.credential(
-        email: email,
-        password: password,
-      );
-      await _auth.currentUser?.linkWithCredential(credential);
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService linkWithEmailPassword error',
-      );
-      return false;
-    }
+    final credential = EmailAuthProvider.credential(
+      email: email,
+      password: password,
+    );
+    await _auth.currentUser?.linkWithCredential(credential);
+    return true;
   }
 
   @override
   Future<bool> signInWithGoogle() async {
-    final performance = getIt<PerformanceService>();
-    final trace = performance.startTrace('auth_sign_in_google');
-    try {
-      if (kIsWeb) {
-        final googleProvider = GoogleAuthProvider();
-        await _auth.signInWithPopup(googleProvider);
-        return true;
-      }
-
-      await _googleSignIn.signOut();
-      final googleUser = await _googleSignIn.authenticate();
-      final googleAuth = googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-      );
-      await _auth.signInWithCredential(credential);
+    if (kIsWeb) {
+      final googleProvider = GoogleAuthProvider();
+      await _auth.signInWithPopup(googleProvider);
       return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService signInWithGoogle error',
-      );
-      return false;
-    } finally {
-      performance.stopTrace(trace);
     }
+
+    await _googleSignIn.signOut();
+    final googleUser = await _googleSignIn.authenticate();
+    final googleAuth = googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      idToken: googleAuth.idToken,
+    );
+    await _auth.signInWithCredential(credential);
+    return true;
   }
 
   @override
   Future<bool> signInWithEmailAndPassword(String email, String password) async {
-    final performance = getIt<PerformanceService>();
-    final trace = performance.startTrace('auth_sign_in_email');
-    try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService signInWithEmailAndPassword error',
-      );
-      return false;
-    } finally {
-      performance.stopTrace(trace);
-    }
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
+    return true;
   }
 
   @override
   Future<bool> signUpWithEmailAndPassword(String email, String password) async {
-    final performance = getIt<PerformanceService>();
-    final trace = performance.startTrace('auth_sign_up_email');
-    try {
-      await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService signUpWithEmailAndPassword error',
-      );
-      return false;
-    } finally {
-      performance.stopTrace(trace);
-    }
+    await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    return true;
   }
 
   @override
   Future<bool> updateUserName(String newName) async {
-    try {
-      await _auth.currentUser?.updateDisplayName(newName);
-      await _auth.currentUser?.reload();
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService updateUserName error',
-      );
-      return false;
-    }
+    await _auth.currentUser?.updateDisplayName(newName);
+    await _auth.currentUser?.reload();
+    return true;
   }
 
   @override
-  Future<bool> deleteAccount() async {
-    try {
-      final user = _auth.currentUser;
-      final currentUid = user?.uid;
-      if (currentUid != null && getIt.isRegistered<LocalStorageService>()) {
-        try {
-          getIt<LocalStorageService>().clearRecommendations(userId: currentUid);
-        } on Object catch (_) {}
-      }
+  Future<bool> deleteAccount({
+    void Function(Object error, StackTrace stackTrace)? onCloudFunctionError,
+  }) async {
+    final user = _auth.currentUser;
 
-      // 1. Invocar Cloud Function (2ª Gen)
-      if (user != null) {
-        try {
-          final idToken = await user.getIdToken();
-          if (idToken != null) {
-            final response = await _httpClient
-                .post(
-                  Uri.parse(AppVariables.deleteUserAccountFunctionUrl),
-                  headers: {
-                    'Authorization': 'Bearer $idToken',
-                    'Content-Type': 'application/json',
-                  },
-                )
-                .timeout(AppVariables.timeoutDuration);
+    // 1. Invocar Cloud Function (2ª Gen)
+    if (user != null) {
+      try {
+        final idToken = await user.getIdToken();
+        if (idToken != null) {
+          final response = await _httpClient
+              .post(
+                Uri.parse(AppVariables.deleteUserAccountFunctionUrl),
+                headers: {
+                  'Authorization': 'Bearer $idToken',
+                  'Content-Type': 'application/json',
+                },
+              )
+              .timeout(AppVariables.timeoutDuration);
 
-            if (response.statusCode == 200) {
-              await _auth.signOut();
-              return true;
-            }
+          if (response.statusCode == 200) {
+            await _auth.signOut();
+            return true;
           }
-        } on Object catch (_) {
-          // Si la Cloud Function aún no está disponible o falla por red,
-          // se procede al borrado directo de cuenta en Firebase Auth como
-          // fallback.
         }
+      } on Object catch (e, stackTrace) {
+        onCloudFunctionError?.call(e, stackTrace);
+        // Si la Cloud Function aún no está disponible o falla por red,
+        // se procede al borrado directo de cuenta en Firebase Auth como
+        // fallback.
       }
-
-      await _auth.currentUser?.delete();
-      return true;
-    } on Exception catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AuthService deleteAccount error',
-      );
-      return false;
     }
+
+    await _auth.currentUser?.delete();
+    return true;
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -23,6 +24,14 @@ class MockRemoteConfigService extends Mock implements RemoteConfigService;
 
 class MockAiService extends Mock implements AiService;
 
+class MockAnalyticsService extends Mock implements AnalyticsService;
+
+class MockCrashService extends Mock implements CrashService;
+
+class MockPerformanceService extends Mock implements PerformanceService;
+
+class MockTrace extends Mock implements Trace;
+
 DateTime get _todayDate {
   final now = DateTime.now();
   return DateTime(now.year, now.month, now.day);
@@ -36,6 +45,10 @@ void main() {
   late MockDatabaseService mockDatabase;
   late MockRemoteConfigService mockRemoteConfig;
   late MockAiService mockAiService;
+  late MockAnalyticsService mockAnalyticsService;
+  late MockCrashService mockCrashService;
+  late MockPerformanceService mockPerformanceService;
+  late MockTrace mockTrace;
 
   setUpAll(() {
     registerFallbackValue(CategoryType.expense);
@@ -43,6 +56,7 @@ void main() {
     registerFallbackValue(
       const PromptPart(type: PromptPartType.text, text: ''),
     );
+    registerFallbackValue(MockTrace());
   });
 
   setUp(() async {
@@ -53,6 +67,27 @@ void main() {
     mockDatabase = MockDatabaseService();
     mockRemoteConfig = MockRemoteConfigService();
     mockAiService = MockAiService();
+    mockAnalyticsService = MockAnalyticsService();
+    mockCrashService = MockCrashService();
+    mockPerformanceService = MockPerformanceService();
+    mockTrace = MockTrace();
+
+    when(
+      () => mockAnalyticsService.logEvent(
+        name: any(named: 'name'),
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
+    when(
+      () => mockCrashService.recordError(
+        any<Object>(),
+        any<StackTrace?>(),
+        reason: any<dynamic>(named: 'reason'),
+      ),
+    ).thenAnswer((_) {});
+    when(() => mockPerformanceService.startTrace(any<String>()))
+        .thenReturn(mockTrace);
+    when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
 
     when(() => mockFirebaseUser.uid).thenReturn('user123');
     when(() => mockFirebaseAuth.currentUser).thenReturn(mockFirebaseUser);
@@ -79,28 +114,16 @@ void main() {
       ),
     ).thenReturn(null);
 
-    if (getIt.isRegistered<LocalStorageService>()) {
-      await getIt.unregister<LocalStorageService>();
-    }
-    if (getIt.isRegistered<AuthService>()) {
-      await getIt.unregister<AuthService>();
-    }
-    if (getIt.isRegistered<DatabaseService>()) {
-      await getIt.unregister<DatabaseService>();
-    }
-    if (getIt.isRegistered<RemoteConfigService>()) {
-      await getIt.unregister<RemoteConfigService>();
-    }
-    if (getIt.isRegistered<AiService>()) {
-      await getIt.unregister<AiService>();
-    }
-
+    await getIt.reset();
     getIt
       ..registerSingleton<LocalStorageService>(mockLocalStorage)
       ..registerSingleton<AuthService>(mockAuth)
       ..registerSingleton<DatabaseService>(mockDatabase)
       ..registerSingleton<RemoteConfigService>(mockRemoteConfig)
-      ..registerSingleton<AiService>(mockAiService);
+      ..registerSingleton<AiService>(mockAiService)
+      ..registerSingleton<AnalyticsService>(mockAnalyticsService)
+      ..registerSingleton<CrashService>(mockCrashService)
+      ..registerSingleton<PerformanceService>(mockPerformanceService);
 
     AppFunctions.internetConnectionTestValue = true;
   });
@@ -125,6 +148,12 @@ void main() {
         cubit.updateFilterType(CategoryType.expense);
         expect(cubit.state.filterType, CategoryType.expense);
         expect(cubit.state.filterCategory, isNull);
+        verify(
+          () => mockAnalyticsService.logEvent(
+            name: 'filter_movements_type',
+            parameters: {'type': 'EXPENSE'},
+          ),
+        ).called(1);
         await cubit.close();
       },
     );
@@ -174,6 +203,12 @@ void main() {
           ),
         );
       expect(cubit.state.filterCategory?.id, '5');
+      verify(
+        () => mockAnalyticsService.logEvent(
+          name: 'filter_movements_category',
+          parameters: {'category': 'FEEDING'},
+        ),
+      ).called(1);
       await cubit.close();
     });
 
@@ -182,6 +217,12 @@ void main() {
       final before = cubit.state.showRecommendations;
       cubit.changeShowRecommendations();
       expect(cubit.state.showRecommendations, !before);
+      verify(
+        () => mockAnalyticsService.logEvent(
+          name: 'ant_recommendations_toggle',
+          parameters: {'visible': (!before).toString()},
+        ),
+      ).called(1);
       await cubit.close();
     });
 
@@ -249,6 +290,12 @@ void main() {
           userId: any(named: 'userId'),
         ),
       ).called(1);
+      verify(
+        () => mockAnalyticsService.logEvent(
+          name: 'ant_recommendations_generated',
+          parameters: {'count': 2},
+        ),
+      ).called(1);
       await cubit.close();
     });
 
@@ -264,6 +311,13 @@ void main() {
       final cubit = await buildCubit();
 
       expect(cubit.state.recommendationsStatus, RecommendationsStatus.failure);
+      verify(
+        () => mockCrashService.recordError(
+          any<Object>(),
+          any<StackTrace?>(),
+          reason: 'MovementsHomeCubit getRecommendations error',
+        ),
+      ).called(1);
       await cubit.close();
     });
 

@@ -11,8 +11,6 @@ class MockFirebaseStorage extends Mock implements FirebaseStorage;
 
 class MockReference extends Mock implements Reference;
 
-class MockCrashService extends Mock implements CrashService;
-
 class FakeFile extends Fake implements File;
 
 class FakeUploadTask extends Fake implements UploadTask {
@@ -30,7 +28,6 @@ class MockFullMetadata extends Mock implements FullMetadata;
 void main() {
   late MockFirebaseStorage mockStorage;
   late MockReference mockReference;
-  late MockCrashService mockCrashService;
   late FirebaseRemoteStorageRepository repository;
 
   setUpAll(() {
@@ -38,13 +35,9 @@ void main() {
     registerFallbackValue(SettableMetadata());
   });
 
-  setUp(() async {
+  setUp(() {
     mockStorage = MockFirebaseStorage();
     mockReference = MockReference();
-    mockCrashService = MockCrashService();
-
-    await getIt.reset();
-    getIt.registerSingleton<CrashService>(mockCrashService);
 
     repository = FirebaseRemoteStorageRepository(storage: mockStorage);
 
@@ -73,18 +66,12 @@ void main() {
       verify(() => mockReference.delete()).called(1);
     });
 
-    test('deleteFile returns false and records error on exception', () async {
+    test('deleteFile rethrows on exception', () async {
       when(() => mockReference.delete()).thenThrow(Exception('Delete Fail'));
-      final result = await repository.deleteFile('path/to/file');
-      expect(result, isFalse);
-      await Future<void>.delayed(Duration.zero);
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),
-        ),
-      ).called(1);
+      await expectLater(
+        () => repository.deleteFile('path/to/file'),
+        throwsException,
+      );
     });
 
     test('getData calls storage.getData', () async {
@@ -108,38 +95,24 @@ void main() {
       verify(() => mockReference.putData(any<Uint8List>(), any())).called(1);
     });
 
-    test('uploadFile records error and returns null on exception', () async {
+    test('uploadFile rethrows on exception', () async {
       when(() => mockReference.putData(any<Uint8List>(), any()))
           .thenThrow(Exception('Upload Fail'));
 
-      final result = await repository.uploadFile(Uint8List(0), 'remote_path');
-
-      expect(result, isNull);
-      await Future<void>.delayed(Duration.zero);
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: 'RemoteStorageService uploadFile error',
-        ),
-      ).called(1);
+      await expectLater(
+        () => repository.uploadFile(Uint8List(0), 'remote_path'),
+        throwsException,
+      );
     });
 
-    test('getData records error and returns null on exception', () async {
+    test('getData rethrows on exception', () async {
       when(() => mockReference.getData(any<int>()))
           .thenThrow(Exception('Get Data Fail'));
 
-      final result = await repository.getData('path/to/file');
-
-      expect(result, isNull);
-      await Future<void>.delayed(Duration.zero);
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: 'RemoteStorageService getData error',
-        ),
-      ).called(1);
+      await expectLater(
+        () => repository.getData('path/to/file'),
+        throwsException,
+      );
     });
 
     test('getDownloadURL calls ref.getDownloadURL', () async {
@@ -152,25 +125,15 @@ void main() {
       verify(() => mockReference.getDownloadURL()).called(1);
     });
 
-    test(
-      'getDownloadURL records error and returns null on exception',
-      () async {
-        when(() => mockReference.getDownloadURL())
-            .thenThrow(Exception('Download URL Fail'));
+    test('getDownloadURL rethrows on exception', () async {
+      when(() => mockReference.getDownloadURL())
+          .thenThrow(Exception('Download URL Fail'));
 
-        final result = await repository.getDownloadURL('remote_path');
-
-        expect(result, isNull);
-        await Future<void>.delayed(Duration.zero);
-        verify(
-          () => mockCrashService.recordError(
-            any<Object>(),
-            any<StackTrace?>(),
-            reason: 'RemoteStorageService getDownloadURL error',
-          ),
-        ).called(1);
-      },
-    );
+      await expectLater(
+        () => repository.getDownloadURL('remote_path'),
+        throwsException,
+      );
+    });
 
     test('uploadFile sets metadata when path has mimeType', () async {
       final fakeTask = FakeUploadTask();

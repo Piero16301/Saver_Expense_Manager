@@ -14,16 +14,53 @@ class AiService {
   Future<String?> generateContentRemote({
     required List<PromptPart> prompt,
     String responseMimeType = 'text/plain',
-  }) => _aiRepository.generateContentRemote(
-    prompt: prompt,
-    responseMimeType: responseMimeType,
-  );
+  }) async {
+    if (prompt.isEmpty) {
+      return null;
+    }
+
+    final performance = getIt<PerformanceService>();
+    final trace = performance.startTrace('gemini_generate_remote');
+
+    try {
+      final model = getIt<RemoteConfigService>().geminiModelName;
+      return await _aiRepository.generateContentRemote(
+        prompt: prompt,
+        model: model,
+        responseMimeType: responseMimeType,
+      );
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AiService generateContentRemote error',
+      );
+      rethrow;
+    } finally {
+      performance.stopTrace(trace);
+    }
+  }
 
   Future<String?> generateContentLocal({
     required PromptPart textPrompt,
     PromptPart? imagePrompt,
-  }) => _aiRepository.generateContentLocal(
-    textPrompt: textPrompt,
-    imagePrompt: imagePrompt,
-  );
+  }) async {
+    final performance = getIt<PerformanceService>();
+    final trace = performance.startTrace('gemini_generate_local');
+    try {
+      return await _aiRepository.generateContentLocal(
+        textPrompt: textPrompt,
+        imagePrompt: imagePrompt,
+      );
+    } catch (e, stackTrace) {
+      getIt<CrashService>().recordError(
+        e,
+        stackTrace,
+        reason: 'AiService generateContentLocal error',
+      );
+      rethrow;
+    } finally {
+      performance.stopTrace(trace);
+    }
+  }
 }

@@ -13,6 +13,7 @@ abstract class AiRepository {
   bool get isLocalModelAvailable;
   Future<String?> generateContentRemote({
     required List<PromptPart> prompt,
+    required String model,
     String responseMimeType = 'text/plain',
   });
   Future<String?> generateContentLocal({
@@ -31,6 +32,7 @@ class MockAiRepository implements AiRepository {
   @override
   Future<String?> generateContentRemote({
     required List<PromptPart> prompt,
+    required String model,
     String responseMimeType = 'text/plain',
   }) async => null;
 
@@ -72,63 +74,47 @@ class FirebaseAiRepository implements AiRepository {
   @override
   Future<String?> generateContentRemote({
     required List<PromptPart> prompt,
+    required String model,
     String responseMimeType = 'text/plain',
   }) async {
     if (prompt.isEmpty) {
       return null;
     }
 
-    final performance = getIt<PerformanceService>();
-    final trace = performance.startTrace('gemini_generate_remote');
+    final ai = _remoteAi ?? FirebaseAI.agentPlatform();
 
-    try {
-      final remoteConfig = getIt<RemoteConfigService>();
-      final model = remoteConfig.geminiModelName;
+    final genModel = ai.generativeModel(
+      model: model,
+      generationConfig: GenerationConfig(responseMimeType: responseMimeType),
+      safetySettings: [
+        SafetySetting(
+          HarmCategory.dangerousContent,
+          HarmBlockThreshold.none,
+          null,
+        ),
+      ],
+    );
 
-      final ai = _remoteAi ?? FirebaseAI.agentPlatform();
-
-      final genModel = ai.generativeModel(
-        model: model,
-        generationConfig: GenerationConfig(responseMimeType: responseMimeType),
-        safetySettings: [
-          SafetySetting(
-            HarmCategory.dangerousContent,
-            HarmBlockThreshold.none,
-            null,
+    final parts = <Part>[
+      for (final item in prompt)
+        if (item.type.isText && item.text != null)
+          TextPart(item.text!)
+        else if (item.type.isFile && item.bytes != null)
+          InlineDataPart(
+            item.mimeType?.isNotEmpty == true ? item.mimeType! : 'image/jpeg',
+            item.bytes!,
           ),
-        ],
-      );
+    ];
 
-      final parts = <Part>[
-        for (final item in prompt)
-          if (item.type.isText && item.text != null)
-            TextPart(item.text!)
-          else if (item.type.isFile && item.bytes != null)
-            InlineDataPart(
-              item.mimeType?.isNotEmpty == true ? item.mimeType! : 'image/jpeg',
-              item.bytes!,
-            ),
-      ];
-
-      if (parts.isEmpty) {
-        return null;
-      }
-
-      final response = await genModel
-          .generateContent([Content.multi(parts)])
-          .timeout(AppVariables.aiTimeoutDuration);
-
-      return response.text;
-    } catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AiService generateContentRemote error',
-      );
-      rethrow;
-    } finally {
-      performance.stopTrace(trace);
+    if (parts.isEmpty) {
+      return null;
     }
+
+    final response = await genModel
+        .generateContent([Content.multi(parts)])
+        .timeout(AppVariables.aiTimeoutDuration);
+
+    return response.text;
   }
 
   @override
@@ -148,29 +134,16 @@ class FirebaseAiRepository implements AiRepository {
       return null;
     }
 
-    final performance = getIt<PerformanceService>();
-    final trace = performance.startTrace('gemini_generate_local');
-    try {
-      if (imagePrompt != null &&
-          imagePrompt.mimeType != 'image/jpeg' &&
-          imagePrompt.mimeType != 'image/png') {
-        return null;
-      }
-
-      final response = await _localModel
-          .generate(prompt: textPrompt.text ?? '', image: imagePrompt?.bytes)
-          .timeout(AppVariables.aiTimeoutDuration);
-
-      return response.isEmpty || response.first.isEmpty ? null : response.first;
-    } catch (e, stackTrace) {
-      getIt<CrashService>().recordError(
-        e,
-        stackTrace,
-        reason: 'AiService generateContentLocal error',
-      );
-      rethrow;
-    } finally {
-      performance.stopTrace(trace);
+    if (imagePrompt != null &&
+        imagePrompt.mimeType != 'image/jpeg' &&
+        imagePrompt.mimeType != 'image/png') {
+      return null;
     }
+
+    final response = await _localModel
+        .generate(prompt: textPrompt.text ?? '', image: imagePrompt?.bytes)
+        .timeout(AppVariables.aiTimeoutDuration);
+
+    return response.isEmpty || response.first.isEmpty ? null : response.first;
   }
 }

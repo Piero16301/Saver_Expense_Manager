@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
@@ -10,12 +9,6 @@ class MockFirebaseAuth extends Mock implements FirebaseAuth;
 class MockGoogleSignIn extends Mock implements GoogleSignIn;
 
 class MockUser extends Mock implements User;
-
-class MockPerformanceService extends Mock implements PerformanceService;
-
-class MockTrace extends Mock implements Trace;
-
-class MockCrashService extends Mock implements CrashService;
 
 class MockAuthCredential extends Mock implements AuthCredential;
 
@@ -30,32 +23,17 @@ void main() {
   late MockFirebaseAuth mockAuth;
   late MockGoogleSignIn mockGoogleSignIn;
   late MockUser mockUser;
-  late MockPerformanceService mockPerformanceService;
-  late MockCrashService mockCrashService;
   late FirebaseAuthRepository repository;
 
   setUpAll(() {
     registerFallbackValue(MockAuthCredential());
-    registerFallbackValue(MockTrace());
   });
 
-  setUp(() async {
+  setUp(() {
     mockAuth = MockFirebaseAuth();
     mockGoogleSignIn = MockGoogleSignIn();
     mockUser = MockUser();
     when(() => mockUser.uid).thenReturn('user123');
-    mockPerformanceService = MockPerformanceService();
-    mockCrashService = MockCrashService();
-
-    await getIt.reset();
-    getIt
-      ..registerSingleton<PerformanceService>(mockPerformanceService)
-      ..registerSingleton<CrashService>(mockCrashService);
-
-    final mockTrace = MockTrace();
-    when(() => mockPerformanceService.startTrace(any<String>()))
-        .thenReturn(mockTrace);
-    when(() => mockPerformanceService.stopTrace(any<Trace>())).thenReturn(null);
 
     repository = FirebaseAuthRepository(
       auth: mockAuth,
@@ -224,23 +202,14 @@ void main() {
       },
     );
 
-    test('initialize records error and rethrows on exception', () async {
+    test('initialize rethrows on exception', () async {
       when(
         () => mockGoogleSignIn.initialize(
           serverClientId: any<String?>(named: 'serverClientId'),
         ),
       ).thenThrow(Exception('Init Fail'));
 
-      expect(() => repository.initialize(), throwsException);
-
-      await Future<void>.delayed(Duration.zero);
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: 'AuthService initialize error',
-        ),
-      ).called(1);
+      await expectLater(() => repository.initialize(), throwsException);
     });
 
     test('userChanges returns mapped stream', () async {
@@ -333,7 +302,7 @@ void main() {
           .called(1);
     });
 
-    test('all auth methods record errors on exception', () async {
+    test('all auth methods rethrow on exception', () async {
       when(() => mockAuth.currentUser).thenReturn(mockUser);
       when(() => mockUser.reload()).thenThrow(Exception('Fail'));
       when(() => mockAuth.signOut()).thenThrow(Exception('Fail'));
@@ -357,27 +326,34 @@ void main() {
         ),
       ).thenThrow(Exception('Fail'));
 
-      expect(await repository.reloadUser(), isFalse);
-      expect(await repository.signOut(), isFalse);
-      expect(await repository.signInWithEmailAndPassword('e', 'p'), isFalse);
-      expect(await repository.updateDisplayName('name'), isFalse);
-      expect(await repository.unlinkProvider('provider'), isFalse);
-      expect(await repository.linkWithGoogle(), isFalse);
-      expect(
-        await repository.linkWithEmailPassword(email: 'e', password: 'p'),
-        isFalse,
+      await expectLater(() => repository.reloadUser(), throwsException);
+      await expectLater(() => repository.signOut(), throwsException);
+      await expectLater(
+        () => repository.signInWithEmailAndPassword('e', 'p'),
+        throwsException,
       );
-      expect(await repository.signInWithGoogle(), isFalse);
-      expect(await repository.signUpWithEmailAndPassword('e', 'p'), isFalse);
-      expect(await repository.updateUserName('name'), isFalse);
-
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: any<dynamic>(named: 'reason'),
-        ),
-      ).called(10);
+      await expectLater(
+        () => repository.updateDisplayName('name'),
+        throwsException,
+      );
+      await expectLater(
+        () => repository.unlinkProvider('provider'),
+        throwsException,
+      );
+      await expectLater(() => repository.linkWithGoogle(), throwsException);
+      await expectLater(
+        () => repository.linkWithEmailPassword(email: 'e', password: 'p'),
+        throwsException,
+      );
+      await expectLater(() => repository.signInWithGoogle(), throwsException);
+      await expectLater(
+        () => repository.signUpWithEmailAndPassword('e', 'p'),
+        throwsException,
+      );
+      await expectLater(
+        () => repository.updateUserName('name'),
+        throwsException,
+      );
     });
 
     test(
@@ -401,22 +377,23 @@ void main() {
 
     test('deleteAccount calls currentUser.delete', () async {
       when(() => mockAuth.currentUser).thenReturn(mockUser);
+      when(() => mockUser.getIdToken()).thenThrow(Exception('Token fail'));
       when(() => mockUser.delete()).thenAnswer((_) async {});
-      expect(await repository.deleteAccount(), isTrue);
+      Object? capturedError;
+      expect(
+        await repository.deleteAccount(
+          onCloudFunctionError: (e, _) => capturedError = e,
+        ),
+        isTrue,
+      );
+      expect(capturedError, isA<Exception>());
       verify(() => mockUser.delete()).called(1);
     });
 
-    test('deleteAccount records error on exception', () async {
+    test('deleteAccount rethrows on exception', () async {
       when(() => mockAuth.currentUser).thenReturn(mockUser);
       when(() => mockUser.delete()).thenThrow(Exception('Delete failed'));
-      expect(await repository.deleteAccount(), isFalse);
-      verify(
-        () => mockCrashService.recordError(
-          any<Object>(),
-          any<StackTrace?>(),
-          reason: 'AuthService deleteAccount error',
-        ),
-      ).called(1);
+      await expectLater(() => repository.deleteAccount(), throwsException);
     });
   });
 }

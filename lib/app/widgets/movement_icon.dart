@@ -10,7 +10,11 @@ class MovementIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final customLogoKey = AppVariables.companiesWithLogo.firstWhere((company) {
-      return movement.company.toLowerCase().contains(company);
+      return movement.company
+          .toLowerCase()
+          .replaceAll(' ', '-')
+          .replaceAll("'", '')
+          .contains(company);
     }, orElse: () => '');
 
     if (customLogoKey.isNotEmpty) {

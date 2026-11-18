@@ -484,46 +484,53 @@ class AppFunctions {
     required String language,
     required AppLocalizations l10n,
   }) async {
-    final template = getIt<RemoteConfigService>().geminiPromptDetectAntExpense;
-    final lookbackDays = getIt<RemoteConfigService>().geminiAntLookbackDays;
+    final performance = getIt<PerformanceService>();
+    final trace = performance.startTrace('ant_recommendations');
+    try {
+      final template =
+          getIt<RemoteConfigService>().geminiPromptDetectAntExpense;
+      final lookbackDays = getIt<RemoteConfigService>().geminiAntLookbackDays;
 
-    final now = DateTime.now();
-    final fromDate = now.subtract(Duration(days: lookbackDays));
+      final now = DateTime.now();
+      final fromDate = now.subtract(Duration(days: lookbackDays));
 
-    final movements = await getIt<DatabaseService>().getMovements(
-      userId: userId,
-      from: DateTime(fromDate.year, fromDate.month, fromDate.day),
-      to: DateTime(now.year, now.month, now.day, 23, 59, 59, 999),
-    );
-
-    final prompt = template
-        .replaceAll(
-          '{{transactions_list}}',
-          movements.map((e) => '- ${getMovementRecap(l10n, e)}').join('\n'),
-        )
-        .replaceAll('{{language}}', language)
-        .replaceAll('{{lookbackDays}}', lookbackDays.toString());
-
-    String? response;
-    final aiService = getIt<AiService>();
-
-    final hasInternet = await AppFunctions.hasInternetConnection();
-
-    if (hasInternet) {
-      response = await aiService.generateContentRemote(
-        prompt: [PromptPart.text(text: prompt)],
+      final movements = await getIt<DatabaseService>().getMovements(
+        userId: userId,
+        from: DateTime(fromDate.year, fromDate.month, fromDate.day),
+        to: DateTime(now.year, now.month, now.day, 23, 59, 59, 999),
       );
-    } else {
-      if (aiService.isLocalModelAvailable) {
-        response = await aiService.generateContentLocal(
-          textPrompt: PromptPart.text(text: prompt),
+
+      final prompt = template
+          .replaceAll(
+            '{{transactions_list}}',
+            movements.map((e) => '- ${getMovementRecap(l10n, e)}').join('\n'),
+          )
+          .replaceAll('{{language}}', language)
+          .replaceAll('{{lookbackDays}}', lookbackDays.toString());
+
+      String? response;
+      final aiService = getIt<AiService>();
+
+      final hasInternet = await AppFunctions.hasInternetConnection();
+
+      if (hasInternet) {
+        response = await aiService.generateContentRemote(
+          prompt: [PromptPart.text(text: prompt)],
         );
       } else {
-        throw Exception('NO_LOCAL_MODEL_AVAILABLE');
+        if (aiService.isLocalModelAvailable) {
+          response = await aiService.generateContentLocal(
+            textPrompt: PromptPart.text(text: prompt),
+          );
+        } else {
+          throw Exception('NO_LOCAL_MODEL_AVAILABLE');
+        }
       }
-    }
 
-    return response?.split('|||').map((e) => e.trim()).toList();
+      return response?.split('|||').map((e) => e.trim()).toList();
+    } finally {
+      performance.stopTrace(trace);
+    }
   }
 
   static String getMovementRecap(AppLocalizations l10n, Movement movement) {

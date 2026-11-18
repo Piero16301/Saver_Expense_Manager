@@ -231,6 +231,10 @@ void main() {
         const MovementState(attachments: ['file1']),
         const MovementState(attachments: ['file1', 'file2']),
       ],
+      verify: (_) {
+        verify(() => mockAnalyticsService.logEvent(name: 'attachment_add'))
+            .called(2);
+      },
     );
 
     group('attachRemove', () {
@@ -248,6 +252,8 @@ void main() {
         ],
         verify: (_) {
           verify(() => mockRemoteStorageService.deleteFile('file1')).called(1);
+          verify(() => mockAnalyticsService.logEvent(name: 'attachment_remove'))
+              .called(1);
         },
       );
 
@@ -277,6 +283,8 @@ void main() {
         await movementCubit.attachOpen('file1');
 
         verify(() => mockRemoteStorageService.getData('file1')).called(1);
+        verify(() => mockAnalyticsService.logEvent(name: 'attachment_open'))
+            .called(1);
       });
 
       test('opens attachment and handles null data', () async {

@@ -45,6 +45,8 @@ class MockCrashService extends Mock implements CrashService;
 
 class MockAiService extends Mock implements AiService;
 
+class MockAnalyticsService extends Mock implements AnalyticsService;
+
 void main() {
   late MockAuthService mockAuthService;
   late MockAppCubit mockAppCubit;
@@ -57,6 +59,7 @@ void main() {
   late MockPerformanceService mockPerformanceService;
   late MockCrashService mockCrashService;
   late MockAiService mockAiService;
+  late MockAnalyticsService mockAnalyticsService;
   late MockTrace mockTrace;
 
   setUpAll(() {
@@ -105,6 +108,7 @@ void main() {
     mockPerformanceService = MockPerformanceService();
     mockCrashService = MockCrashService();
     mockAiService = MockAiService();
+    mockAnalyticsService = MockAnalyticsService();
     mockTrace = MockTrace();
 
     getIt
@@ -115,7 +119,15 @@ void main() {
       ..registerSingleton<RemoteStorageService>(mockRemoteStorageService)
       ..registerSingleton<PerformanceService>(mockPerformanceService)
       ..registerSingleton<CrashService>(mockCrashService)
-      ..registerSingleton<AiService>(mockAiService);
+      ..registerSingleton<AiService>(mockAiService)
+      ..registerSingleton<AnalyticsService>(mockAnalyticsService);
+
+    when(
+      () => mockAnalyticsService.logEvent(
+        name: any(named: 'name'),
+        parameters: any(named: 'parameters'),
+      ),
+    ).thenAnswer((_) {});
 
     when(() => mockAppCubit.state).thenReturn(const AppState());
     when(() => mockHomeCubit.state)
@@ -144,6 +156,7 @@ void main() {
     when(() => mockRemoteConfigService.geminiPromptExtractReceiptData)
         .thenReturn('prompt');
     when(() => mockRemoteConfigService.summaryLastMonths).thenReturn(4);
+    when(() => mockRemoteConfigService.summaryLastYears).thenReturn(2);
     when(() => mockRemoteConfigService.paginationLimit).thenReturn(10);
     when(() => mockAiService.isLocalModelAvailable).thenReturn(true);
     when(
@@ -170,7 +183,10 @@ void main() {
     ).thenAnswer((_) async {});
   });
 
-  tearDown(getIt.reset);
+  tearDown(() async {
+    AppFunctions.internetConnectionTestValue = null;
+    await getIt.reset();
+  });
 
   Future<void> pumpRouterSubject(
     WidgetTester tester, {
@@ -222,9 +238,11 @@ void main() {
   Future<void> pumpSubject(
     WidgetTester tester, {
     List<Category>? categories,
+    ThemeData? theme,
   }) async {
     await tester.pumpWidget(
       MaterialApp(
+        theme: theme,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         builder: (context, child) => MultiBlocProvider(
@@ -423,6 +441,12 @@ void main() {
 
           expect(find.byType(AddMovementBottomSheet), findsNothing);
           expect(find.text('Movement Page'), findsOneWidget);
+          verify(
+            () => mockAnalyticsService.logEvent(
+              name: 'add_movement_method',
+              parameters: {'method': 'manual', 'movement_type': 'EXPENSE'},
+            ),
+          ).called(1);
         });
       },
     );
@@ -548,6 +572,16 @@ void main() {
 
           expect(find.byType(AddMovementBottomSheet), findsNothing);
           expect(find.text('Movement Page'), findsOneWidget);
+          verify(
+            () => mockAnalyticsService.logEvent(
+              name: 'receipt_ai_extraction',
+              parameters: {
+                'source': 'scan',
+                'model_type': 'CLOUD',
+                'movement_type': 'EXPENSE',
+              },
+            ),
+          ).called(1);
         });
       });
     });
@@ -668,6 +702,7 @@ void main() {
             expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
             verify(() => mockRemoteStorageService.deleteFile(any<String>()))
                 .called(1);
+            verify(() => mockPerformanceService.stopTrace(mockTrace)).called(3);
           });
         });
       },
@@ -829,6 +864,394 @@ void main() {
               ),
             ).called(1);
           });
+        });
+      },
+    );
+
+    testWidgets('profile image errorBuilder renders fallback user icon', (
+      tester,
+    ) async {
+      when(() => mockAppUser.photoURL)
+          .thenReturn('https://example.com/photo.png');
+      await mockNetworkImagesFor(() async {
+        await pumpSubject(tester);
+        await tester.pumpAndSettle();
+
+        final imageFinder = find.byType(Image).first;
+        final image = tester.widget<Image>(imageFinder);
+        final element = tester.element(imageFinder);
+        final fallback = image.errorBuilder!(
+          element,
+          Exception('Load failed'),
+          StackTrace.empty,
+        );
+        expect(fallback, isA<HugeIcon>());
+      });
+    });
+
+    testWidgets('AppBar MonthSelector callbacks update month on Expenses tab', (
+      tester,
+    ) async {
+      when(() => mockHomeCubit.state)
+          .thenReturn(const HomeState(selectedIndex: 0));
+      await mockNetworkImagesFor(() async {
+        await pumpSubject(tester);
+        await tester.pumpAndSettle();
+
+        final selector = tester.widget<MonthSelector>(
+          find.byType(MonthSelector),
+        );
+        selector.onBack();
+        await tester.pump();
+        selector.onForward();
+        await tester.pump();
+
+        expect(find.byType(ExpensesHomePage), findsOneWidget);
+      });
+    });
+
+    testWidgets('AppBar MonthSelector callbacks update month on Income tab', (
+      tester,
+    ) async {
+      when(() => mockHomeCubit.state)
+          .thenReturn(const HomeState(selectedIndex: 3));
+      await mockNetworkImagesFor(() async {
+        await pumpSubject(tester);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(IncomeHomePage), findsOneWidget);
+        final selector = tester.widget<MonthSelector>(
+          find.byType(MonthSelector),
+        );
+        selector.onBack();
+        await tester.pump();
+        selector.onForward();
+        await tester.pump();
+      });
+    });
+
+    testWidgets('renders Movements tab in light and dark theme with logo', (
+      tester,
+    ) async {
+      when(() => mockHomeCubit.state)
+          .thenReturn(const HomeState(selectedIndex: 1));
+      await mockNetworkImagesFor(() async {
+        await pumpSubject(tester);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(MovementsHomePage), findsOneWidget);
+        final lightImage = tester.widget<Image>(find.byType(Image).first);
+        expect(
+          (lightImage.image as AssetImage).assetName,
+          equals('assets/images/logo-no-bg-light.png'),
+        );
+
+        await pumpSubject(tester, theme: ThemeData.dark());
+        await tester.pumpAndSettle();
+
+        final darkImage = tester.widget<Image>(find.byType(Image).first);
+        expect(
+          (darkImage.image as AssetImage).assetName,
+          equals('assets/images/logo-no-bg-dark.png'),
+        );
+      });
+    });
+
+    testWidgets('renders empty body for unknown selectedIndex', (tester) async {
+      var stateReads = 0;
+      when(() => mockHomeCubit.state).thenAnswer(
+        (_) => stateReads++ == 0
+            ? const HomeState(selectedIndex: 99)
+            : const HomeState(selectedIndex: 0),
+      );
+      await mockNetworkImagesFor(() async {
+        await pumpSubject(tester);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(ExpensesHomePage), findsNothing);
+        expect(find.byType(MovementsHomePage), findsNothing);
+        expect(find.byType(SummaryHomePage), findsNothing);
+        expect(find.byType(IncomeHomePage), findsNothing);
+        expect(find.byType(ExpressiveFab), findsNothing);
+      });
+    });
+
+    testWidgets('Summary tab MonthRangeSelector handles month and year modes', (
+      tester,
+    ) async {
+      const testCategories = [
+        Category(
+          id: '1',
+          name: 'Food',
+          type: CategoryType.expense,
+          icon: '',
+          color: '#FF0000',
+        ),
+      ];
+      when(() => mockHomeCubit.state)
+          .thenReturn(const HomeState(selectedIndex: 2));
+      when(() => mockDatabaseService.getCategoriesStream())
+          .thenAnswer((_) => Stream.value(testCategories));
+
+      await mockNetworkImagesFor(() async {
+        await pumpSubject(tester, categories: testCategories);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(SummaryHomePage), findsOneWidget);
+        final monthSelector = tester.widget<MonthRangeSelector>(
+          find.byType(MonthRangeSelector),
+        );
+        expect(monthSelector.isYear, isFalse);
+        monthSelector.onChangeStartMonth(DateTime(2024));
+        monthSelector.onChangeEndMonth(DateTime(2024, 2));
+        await tester.pump();
+
+        tester
+            .element(find.byType(SummaryHomePage))
+            .read<SummaryHomeCubit>()
+            .changePeriodType(SummaryPeriodType.year);
+        await tester.pump();
+
+        final yearSelector = tester.widget<MonthRangeSelector>(
+          find.byType(MonthRangeSelector),
+        );
+        expect(yearSelector.isYear, isTrue);
+        yearSelector.onChangeStartMonth(DateTime(2023));
+        yearSelector.onChangeEndMonth(DateTime(2024));
+        await tester.pump();
+      });
+    });
+
+    testWidgets('tapping drag handle dismisses AddMovementBottomSheet', (
+      tester,
+    ) async {
+      await mockNetworkImagesFor(() async {
+        await pumpSubject(tester);
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byType(ExpressiveFab));
+        await tester.pumpAndSettle();
+        expect(find.byType(AddMovementBottomSheet), findsOneWidget);
+
+        final handle = find
+            .descendant(
+              of: find.byType(AddMovementBottomSheet),
+              matching: find.byType(GestureDetector),
+            )
+            .first;
+        await tester.tap(handle);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(AddMovementBottomSheet), findsNothing);
+      });
+    });
+
+    testWidgets(
+      'handleFilePick uses local model and rejects non-image locally',
+      (tester) async {
+        final mockFilePicker = MockFilePicker();
+        FilePickerPlatform.instance = mockFilePicker;
+
+        final mockFile = FakePlatformFile(
+          name: 'test.pdf',
+          path: '/tmp/test.pdf',
+          bytes: Uint8List.fromList([1, 2, 3]),
+        );
+
+        whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
+        AppFunctions.internetConnectionTestValue = false;
+
+        await mockNetworkImagesFor(() async {
+          await pumpSubject(tester);
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byType(ExpressiveFab));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('File'));
+          for (var i = 0; i < 5; i++) {
+            await tester.pump(const Duration(milliseconds: 500));
+          }
+
+          verify(
+            () =>
+                mockCrashService.setCustomKey('file_pick_model_type', 'LOCAL'),
+          ).called(1);
+          expect(
+            find.text('Invalid file type for Gemini Nano'),
+            findsOneWidget,
+          );
+        });
+      },
+    );
+
+    testWidgets(
+      'handleFilePick uses fallback mimeType for unknown file extension',
+      (tester) async {
+        await tester.runAsync(() async {
+          final mockFilePicker = MockFilePicker();
+          FilePickerPlatform.instance = mockFilePicker;
+
+          final mockFile = FakePlatformFile(
+            name: 'test.unknown',
+            path: '/tmp/test.unknown',
+            bytes: Uint8List.fromList([1, 2, 3]),
+          );
+
+          whenPickFile(mockFilePicker).thenAnswer((_) async => mockFile);
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => 'upload_name');
+
+          AppFunctions.internetConnectionTestValue = true;
+
+          await mockNetworkImagesFor(() async {
+            await pumpRouterSubject(tester);
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.byType(ExpressiveFab));
+            await tester.pumpAndSettle();
+
+            await tester.tap(find.text('File'));
+
+            for (var i = 0; i < 15; i++) {
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+              await tester.pump(const Duration(milliseconds: 500));
+            }
+
+            expect(find.byType(AddMovementBottomSheet), findsNothing);
+            expect(find.text('Movement Page'), findsOneWidget);
+          });
+        });
+      },
+    );
+
+    Future<void> triggerDocumentScan(
+      WidgetTester tester, {
+      required String filePath,
+      bool useRouter = false,
+    }) async {
+      final tempFile = File(filePath);
+      if (!tempFile.existsSync()) {
+        tempFile
+          ..createSync(recursive: true)
+          ..writeAsBytesSync([1, 2, 3]);
+      }
+
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        const MethodChannel('cunning_document_scanner'),
+        (message) async {
+          if (message.method == 'scanDocuments' ||
+              message.method == 'getPictures') {
+            return {
+              'images': [filePath],
+            };
+          }
+          return null;
+        },
+      );
+
+      await mockNetworkImagesFor(() async {
+        if (useRouter) {
+          await pumpRouterSubject(tester);
+        } else {
+          await pumpSubject(tester);
+        }
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byType(ExpressiveFab));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Scan'));
+
+        for (var i = 0; i < 10; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 100));
+          await tester.pump(const Duration(milliseconds: 500));
+        }
+      });
+    }
+
+    testWidgets(
+      'handleDocumentScan uses fallback mimeType for unknown extension',
+      (tester) async {
+        await tester.runAsync(() async {
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => 'upload_name');
+
+          AppFunctions.internetConnectionTestValue = true;
+
+          await triggerDocumentScan(
+            tester,
+            filePath: '/tmp/test_scan.unknown',
+            useRouter: true,
+          );
+
+          expect(find.byType(AddMovementBottomSheet), findsNothing);
+          expect(find.text('Movement Page'), findsOneWidget);
+        });
+      },
+    );
+
+    testWidgets(
+      'handleDocumentScan catches ParallelWaitError and deletes uploaded file',
+      (tester) async {
+        await tester.runAsync(() async {
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => 'upload_name');
+          when(() => mockRemoteStorageService.deleteFile(any<String>()))
+              .thenAnswer((_) async => true);
+          when(
+            () => mockAiService.generateContentRemote(
+              prompt: any<List<PromptPart>>(named: 'prompt'),
+              responseMimeType: any<String>(named: 'responseMimeType'),
+            ),
+          ).thenThrow(Exception('AI failed'));
+
+          AppFunctions.internetConnectionTestValue = true;
+
+          await triggerDocumentScan(tester, filePath: '/tmp/test_scan_err.png');
+
+          expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+          verify(() => mockRemoteStorageService.deleteFile(any<String>()))
+              .called(1);
+          verify(() => mockPerformanceService.stopTrace(mockTrace)).called(3);
+        });
+      },
+    );
+
+    testWidgets(
+      'handleDocumentScan shows upload error snackbar when uploadFile throws',
+      (tester) async {
+        await tester.runAsync(() async {
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenThrow(Exception('Upload failed'));
+
+          AppFunctions.internetConnectionTestValue = true;
+
+          await triggerDocumentScan(
+            tester,
+            filePath: '/tmp/test_scan_upload_throw.png',
+            useRouter: true,
+          );
+
+          expect(find.byType(AddMovementBottomSheet), findsNothing);
+          expect(find.text('Movement Page'), findsNothing);
+          expect(find.text('Error uploading attachment file'), findsOneWidget);
         });
       },
     );
