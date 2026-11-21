@@ -12,7 +12,12 @@ part 'movement_state.dart';
 class MovementCubit extends Cubit<MovementState> {
   new() : super(const MovementState());
 
+  bool _isSaved = false;
+  bool _attachmentsDiscarded = false;
+
   void init(Movement movement, List<Category> categories) {
+    _isSaved = false;
+    _attachmentsDiscarded = false;
     emit(
       state.copyWith(
         id: movement.id,
@@ -114,6 +119,7 @@ class MovementCubit extends Cubit<MovementState> {
       user: userId,
     );
     getIt<DatabaseService>().saveMovement(movement: movement);
+    _isSaved = true;
 
     getIt<AnalyticsService>().logEvent(
       name: state.id.isEmpty ? 'add_movement' : 'edit_movement',
@@ -148,5 +154,16 @@ class MovementCubit extends Cubit<MovementState> {
         'type': state.category!.type.value,
       },
     );
+  }
+
+  void discardUnsavedAttachments() {
+    if (_isSaved || _attachmentsDiscarded || state.attachments.isEmpty) {
+      return;
+    }
+    _attachmentsDiscarded = true;
+    final storage = getIt<RemoteStorageService>();
+    for (final attachment in List<String>.from(state.attachments)) {
+      unawaited(storage.deleteFile(attachment).catchError((Object _) => false));
+    }
   }
 }

@@ -19,6 +19,7 @@ void main() {
       expect(getIt.isRegistered<DatabaseService>(), isTrue);
       expect(getIt.isRegistered<RemoteStorageService>(), isTrue);
       expect(getIt.isRegistered<AiService>(), isTrue);
+      expect(getIt.isRegistered<ShareIntentService>(), isTrue);
 
       expect(getIt<CrashService>(), isA<CrashService>());
       expect(getIt<PerformanceService>(), isA<PerformanceService>());
@@ -29,6 +30,7 @@ void main() {
       expect(getIt<DatabaseService>(), isA<DatabaseService>());
       expect(getIt<RemoteStorageService>(), isA<RemoteStorageService>());
       expect(getIt<AiService>(), isA<AiService>());
+      expect(getIt<ShareIntentService>(), isA<ShareIntentService>());
     });
 
     test('registers all services for Environment.prod', () {
@@ -43,6 +45,7 @@ void main() {
       expect(getIt.isRegistered<DatabaseService>(), isTrue);
       expect(getIt.isRegistered<RemoteStorageService>(), isTrue);
       expect(getIt.isRegistered<AiService>(), isTrue);
+      expect(getIt.isRegistered<ShareIntentService>(), isTrue);
     });
   });
 
@@ -84,6 +87,10 @@ void main() {
         ServiceFactory.getAiRepository(Environment.mock),
         isA<MockAiRepository>(),
       );
+      expect(
+        ServiceFactory.getShareIntentRepository(Environment.mock),
+        isA<MockShareIntentRepository>(),
+      );
     });
 
     test('returns prod repositories for Environment.prod', () {
@@ -102,6 +109,7 @@ void main() {
       hit(() => ServiceFactory.getDatabaseRepository(Environment.prod));
       hit(() => ServiceFactory.getRemoteStorageRepository(Environment.prod));
       hit(() => ServiceFactory.getAiRepository(Environment.prod));
+      hit(() => ServiceFactory.getShareIntentRepository(Environment.prod));
     });
   });
 }

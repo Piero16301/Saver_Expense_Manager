@@ -53,6 +53,7 @@ Future<void> main() async {
     getIt<LocalStorageService>().initialize(),
     getIt<RemoteConfigService>().initialize(),
     getIt<AiService>().initialize(),
+    getIt<ShareIntentService>().initialize(),
   ]);
   performance.stopTrace(trace);
 

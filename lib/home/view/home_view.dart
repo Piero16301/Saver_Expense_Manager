@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:expressive_kit/expressive_kit.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -41,96 +41,106 @@ class HomeView extends StatelessWidget {
             BlocProvider(create: (_) => SummaryHomeCubit()),
             BlocProvider(create: (_) => IncomeHomeCubit()..init()),
           ],
-          child: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) => Scaffold(
-              appBar: ExpressiveTopAppBar(
-                showBackButton: false,
-                title: _getAppBarTitle(
-                  context,
-                  selectedIndex: state.selectedIndex,
-                  darkTheme: darkTheme,
-                ),
-                leading: Center(
-                  child: ExpressiveIconButton.circle(
-                    icon: const HugeIcon(
-                      icon: HugeIcons.strokeRoundedSettings02,
-                      strokeWidth: 2,
-                    ),
-                    onPressed: () => context.pushNamed(AppRoute.settings.name),
+          child: _ShareIntentListener(
+            categories: categories,
+            child: BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) => Scaffold(
+                appBar: ExpressiveTopAppBar(
+                  showBackButton: false,
+                  title: _getAppBarTitle(
+                    context,
+                    selectedIndex: state.selectedIndex,
+                    darkTheme: darkTheme,
                   ),
-                ),
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: IconButton(
-                      padding: EdgeInsets.zero,
-                      icon: snapshot.data?.photoURL == null
-                          ? Container(
-                              width: 34,
-                              height: 34,
-                              foregroundDecoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 2,
-                                ),
-                              ),
-                              padding: const EdgeInsets.all(2),
-                              child: HugeIcon(
-                                icon: HugeIcons.strokeRoundedUser,
-                                strokeWidth: 2,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            )
-                          : Container(
-                              width: 34,
-                              height: 34,
-                              foregroundDecoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  width: 2,
-                                ),
-                              ),
-                              padding: const EdgeInsets.all(2),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(17),
-                                child: Image.network(
-                                  AppFunctions.highResPicture(
-                                    url: snapshot.data!.photoURL,
+                  leading: Center(
+                    child: ExpressiveIconButton.circle(
+                      icon: const HugeIcon(
+                        icon: HugeIcons.strokeRoundedSettings02,
+                        strokeWidth: 2,
+                      ),
+                      onPressed: () =>
+                          context.pushNamed(AppRoute.settings.name),
+                    ),
+                  ),
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: snapshot.data?.photoURL == null
+                            ? Container(
+                                width: 34,
+                                height: 34,
+                                foregroundDecoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary,
+                                    width: 2,
                                   ),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      HugeIcon(
-                                        icon: HugeIcons.strokeRoundedUser,
-                                        strokeWidth: 2,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                      ),
+                                ),
+                                padding: const EdgeInsets.all(2),
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedUser,
+                                  strokeWidth: 2,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              )
+                            : Container(
+                                width: 34,
+                                height: 34,
+                                foregroundDecoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary,
+                                    width: 2,
+                                  ),
+                                ),
+                                padding: const EdgeInsets.all(2),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(17),
+                                  child: Image.network(
+                                    AppFunctions.highResPicture(
+                                      url: snapshot.data!.photoURL,
+                                    ),
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            HugeIcon(
+                                              icon: HugeIcons.strokeRoundedUser,
+                                              strokeWidth: 2,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
+                                  ),
                                 ),
                               ),
-                            ),
-                      onPressed: () => context.pushNamed(AppRoute.profile.name),
+                        onPressed: () =>
+                            context.pushNamed(AppRoute.profile.name),
+                      ),
+                    ),
+                  ],
+                ),
+                body: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: AnimatedSwitcher(
+                      duration: AppVariables.animationDuration,
+                      transitionBuilder: (child, animation) =>
+                          FadeTransition(opacity: animation, child: child),
+                      child: _getSelectedBody(state.selectedIndex),
                     ),
                   ),
-                ],
-              ),
-              body: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: AnimatedSwitcher(
-                    duration: AppVariables.animationDuration,
-                    transitionBuilder: (child, animation) =>
-                        FadeTransition(opacity: animation, child: child),
-                    child: _getSelectedBody(state.selectedIndex),
-                  ),
                 ),
-              ),
-              bottomNavigationBar: const BottomNavigationBarHome(),
-              floatingActionButton: _getFloatingActionButton(
-                context,
-                state.selectedIndex,
+                bottomNavigationBar: const BottomNavigationBarHome(),
+                floatingActionButton: _getFloatingActionButton(
+                  context,
+                  state.selectedIndex,
+                ),
               ),
             ),
           ),
@@ -307,13 +317,89 @@ class BottomNavigationBarHome extends StatelessWidget {
   }
 }
 
+class _ShareIntentListener extends StatefulWidget {
+  const new({required this.categories, required this.child});
+
+  final List<Category> categories;
+  final Widget child;
+
+  @override
+  State<_ShareIntentListener> createState() => _ShareIntentListenerState();
+}
+
+class _ShareIntentListenerState extends State<_ShareIntentListener> {
+  StreamSubscription<SharedFile>? _shareSubscription;
+  bool _isProcessingShare = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb || !getIt.isRegistered<ShareIntentService>()) return;
+
+    final shareService = getIt<ShareIntentService>();
+    _shareSubscription = shareService.sharedFileStream.listen(
+      (sharedFile) => unawaited(_handleSharedFile(sharedFile)),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final pending = shareService.consumePendingSharedFile();
+      if (pending != null) {
+        unawaited(_handleSharedFile(pending));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    unawaited(_shareSubscription?.cancel());
+    super.dispose();
+  }
+
+  Future<void> _handleSharedFile(SharedFile sharedFile) async {
+    if (_isProcessingShare || !mounted || !sharedFile.isSupported) return;
+    _isProcessingShare = true;
+
+    try {
+      final router = GoRouter.maybeOf(context);
+      if (router != null && router.canPop()) {
+        while (router.canPop()) {
+          router.pop();
+        }
+        await WidgetsBinding.instance.endOfFrame;
+        if (!mounted) return;
+      }
+
+      final targetIndex = sharedFile.movementType.isExpense ? 0 : 3;
+      final homeCubit = context.read<HomeCubit>();
+      if (homeCubit.state.selectedIndex != targetIndex) {
+        homeCubit.toggleSelectedIndex(targetIndex);
+      }
+
+      await AddMovementBottomSheet(
+        categories: widget.categories,
+        movementType: sharedFile.movementType,
+      ).handleFilePick(context, sharedFile: sharedFile, closeSheet: false);
+    } finally {
+      _isProcessingShare = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
 class AddMovementBottomSheet extends StatelessWidget {
   const new({required this.categories, required this.movementType, super.key});
 
   final List<Category> categories;
   final CategoryType movementType;
 
-  Future<void> handleFilePick(BuildContext context) async {
+  Future<void> handleFilePick(
+    BuildContext context, {
+    SharedFile? sharedFile,
+    bool closeSheet = true,
+  }) async {
     final l10n = AppLocalizations.of(context);
     final language = context.read<AppCubit>().state.language;
     final selectedCategories = categories
@@ -322,12 +408,26 @@ class AddMovementBottomSheet extends StatelessWidget {
     final loader = AppLoader(context);
 
     try {
-      final file = await FilePicker.pickFile(
-        type: FileType.custom,
-        allowedExtensions: AppVariables.allowedExtensions,
-      );
+      final String fileName;
+      final Future<Uint8List> Function() readBytes;
 
-      if (file == null) return;
+      if (sharedFile != null) {
+        fileName = sharedFile.name.isNotEmpty
+            ? sharedFile.name
+            : sharedFile.path.split('/').last;
+        readBytes = sharedFile.bytes != null
+            ? () async => sharedFile.bytes!
+            : () => File(sharedFile.path).readAsBytes();
+      } else {
+        final file = await FilePicker.pickFile(
+          type: FileType.custom,
+          allowedExtensions: AppVariables.allowedExtensions,
+        );
+
+        if (file == null) return;
+        fileName = file.name;
+        readBytes = file.readAsBytes;
+      }
 
       unawaited(loader.showLoading(message: l10n.checkInternetConnection));
 
@@ -354,22 +454,32 @@ class AddMovementBottomSheet extends StatelessWidget {
       getIt<AnalyticsService>().logEvent(
         name: 'receipt_ai_extraction',
         parameters: {
-          'source': 'file',
+          'source': sharedFile != null ? 'share' : 'file',
           'model_type': modelType.name,
           'movement_type': movementType.value,
         },
       );
 
-      final ext = file.name.split('.').last.toLowerCase();
+      final ext = fileName.split('.').last.toLowerCase();
+      if (sharedFile != null && !AppVariables.allowedExtensions.contains(ext)) {
+        throw Exception('UNSUPPORTED_FILE_EXTENSION');
+      }
       if (modelType.isLocal && !AppVariables.imageExtensions.contains(ext)) {
         throw Exception(AppVariables.unsupportedLocalModelFile);
       }
 
       final userId = getIt<AuthService>().currentUser?.uid ?? 'anonymous';
       final path = 'users/$userId/attachments/${const Uuid().v4()}.$ext';
-      final bytes = await file.readAsBytes();
+      final bytes = await readBytes();
+      if (sharedFile != null &&
+          sharedFile.bytes == null &&
+          sharedFile.path.contains('shared_files')) {
+        try {
+          File(sharedFile.path).deleteSync();
+        } on Object catch (_) {}
+      }
       final mimeType =
-          lookupMimeType(file.name, headerBytes: bytes) ??
+          lookupMimeType(fileName, headerBytes: bytes) ??
           (AppVariables.imageExtensions.contains(ext)
               ? 'image/$ext'
               : 'application/pdf');
@@ -435,7 +545,10 @@ class AddMovementBottomSheet extends StatelessWidget {
       if (loader.isLoading) {
         loader.hideLoading();
       }
-      Navigator.of(context).pop();
+      if (!context.mounted) return;
+      if (closeSheet) {
+        Navigator.of(context).pop();
+      }
       unawaited(
         context.pushNamed(
           AppRoute.movement.name,
@@ -455,7 +568,10 @@ class AddMovementBottomSheet extends StatelessWidget {
       if (loader.isLoading) {
         loader.hideLoading();
       }
-      Navigator.of(context).pop();
+      if (!context.mounted) return;
+      if (closeSheet) {
+        Navigator.of(context).pop();
+      }
       if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
         AppFunctions.showSnackBar(
           context,

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="share_add_expense">Ajouter une dépense</string>
+    <string name="share_add_income">Ajouter un revenu</string>
+</resources>

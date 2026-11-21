@@ -22,6 +22,17 @@ class AppRoutes {
         AppRouteObserver(analyticsService: getIt<AnalyticsService>()),
       ],
       redirect: redirect,
+      onException: kIsWeb
+          ? null
+          : (context, state, router) {
+              if (router.routerDelegate.currentConfiguration.isEmpty) {
+                router.go(
+                  authService.isLoggedIn
+                      ? AppRoute.home.path
+                      : AppRoute.login.path,
+                );
+              }
+            },
       initialLocation: authService.isLoggedIn
           ? AppRoute.home.path
           : AppRoute.login.path,

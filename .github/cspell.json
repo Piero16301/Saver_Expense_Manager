@@ -28,6 +28,12 @@
     "Jetpack",
     "sqflite",
     "subcollections",
-    "venv"
+    "venv",
+    "hugeicons",
+    "snackbars",
+    "lookback",
+    "pmorales",
+    "lproj",
+    "Multimodal"
   ]
 }

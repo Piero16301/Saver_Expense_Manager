@@ -403,5 +403,79 @@ void main() {
         verify(() => mockRemoteStorageService.deleteFile('file1')).called(1);
       });
     });
+
+    group('discardUnsavedAttachments', () {
+      test('deletes all attachments silently in background when not saved', () {
+        when(() => mockRemoteStorageService.deleteFile(any()))
+            .thenAnswer((_) async => true);
+
+        movementCubit
+          ..init(
+            movement.copyWith(id: '', attachments: const ['file1', 'file2']),
+            categories,
+          )
+          ..discardUnsavedAttachments();
+
+        verify(() => mockRemoteStorageService.deleteFile('file1')).called(1);
+        verify(() => mockRemoteStorageService.deleteFile('file2')).called(1);
+      });
+
+      test('only deletes once if called multiple times', () {
+        when(() => mockRemoteStorageService.deleteFile(any()))
+            .thenAnswer((_) async => true);
+
+        movementCubit
+          ..init(
+            movement.copyWith(id: '', attachments: const ['file1']),
+            categories,
+          )
+          ..discardUnsavedAttachments()
+          ..discardUnsavedAttachments();
+
+        verify(() => mockRemoteStorageService.deleteFile('file1')).called(1);
+      });
+
+      test('does not delete attachments if movement was already saved', () {
+        final mockFormState = MockFormState();
+        final mockFormKey = MockGlobalKey();
+        when(() => mockFormKey.currentState).thenReturn(mockFormState);
+        when(mockFormState.validate).thenReturn(true);
+
+        movementCubit
+          ..init(
+            movement.copyWith(id: '', attachments: const ['file1']),
+            categories,
+          )
+          ..emit(movementCubit.state.copyWith(formKey: mockFormKey))
+          ..saveMovement('userId', mockL10n)
+          ..discardUnsavedAttachments();
+
+        verifyNever(() => mockRemoteStorageService.deleteFile(any()));
+      });
+
+      test('does nothing when attachments list is empty', () {
+        movementCubit
+          ..init(movement.copyWith(id: '', attachments: const []), categories)
+          ..discardUnsavedAttachments();
+
+        verifyNever(() => mockRemoteStorageService.deleteFile(any()));
+      });
+
+      test('silently ignores storage deletion errors', () {
+        when(() => mockRemoteStorageService.deleteFile(any()))
+            .thenAnswer((_) => Future.error(Exception('Storage error')));
+
+        movementCubit.init(
+          movement.copyWith(id: '', attachments: const ['file1']),
+          categories,
+        );
+
+        expect(
+          () => movementCubit.discardUnsavedAttachments(),
+          returnsNormally,
+        );
+        verify(() => mockRemoteStorageService.deleteFile('file1')).called(1);
+      });
+    });
   });
 }
