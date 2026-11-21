@@ -13,13 +13,16 @@ class AppLoader {
   late double _size;
   bool _isLoading = false;
   int _loadingSessionId = 0;
+  NavigatorState? _navigator;
 
   Future<void> showLoading({String? message, double size = 120}) async {
+    if (!context.mounted) return;
     final l10n = AppLocalizations.of(context);
 
     _message = message ?? l10n.loading;
     _size = size;
     _isLoading = true;
+    _navigator = Navigator.of(context, rootNavigator: true);
     final sessionId = ++_loadingSessionId;
 
     await showGeneralDialog<void>(
@@ -58,15 +61,20 @@ class AppLoader {
     ).then((_) {
       if (_loadingSessionId == sessionId) {
         _isLoading = false;
+        _navigator = null;
       }
     });
   }
 
   void hideLoading() {
-    if (Navigator.of(context).canPop() && _isLoading) {
-      Navigator.of(context).pop();
-      _isLoading = false;
+    if (!_isLoading) return;
+    final navigator =
+        _navigator ?? (context.mounted ? Navigator.of(context) : null);
+    if (navigator != null && navigator.mounted && navigator.canPop()) {
+      navigator.pop();
     }
+    _isLoading = false;
+    _navigator = null;
   }
 
   bool get isLoading => _isLoading;

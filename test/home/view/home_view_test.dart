@@ -47,6 +47,8 @@ class MockAiService extends Mock implements AiService;
 
 class MockAnalyticsService extends Mock implements AnalyticsService;
 
+class MockShareIntentService extends Mock implements ShareIntentService;
+
 void main() {
   late MockAuthService mockAuthService;
   late MockAppCubit mockAppCubit;
@@ -1252,6 +1254,255 @@ void main() {
           expect(find.byType(AddMovementBottomSheet), findsNothing);
           expect(find.text('Movement Page'), findsNothing);
           expect(find.text('Error uploading attachment file'), findsOneWidget);
+        });
+      },
+    );
+  });
+
+  group('HomeView ShareIntent handling', () {
+    late MockShareIntentService mockShareIntentService;
+
+    setUp(() {
+      mockShareIntentService = MockShareIntentService();
+      getIt.registerSingleton<ShareIntentService>(mockShareIntentService);
+      when(() => mockShareIntentService.consumePendingSharedFile())
+          .thenReturn(null);
+      when(() => mockShareIntentService.sharedFileStream)
+          .thenAnswer((_) => const Stream.empty());
+    });
+
+    Future<GoRouter> pumpShareRouterSubject(
+      WidgetTester tester, {
+      required HomeCubit homeCubit,
+      List<Category>? categories,
+    }) async {
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            name: AppRoute.home.name,
+            builder: (context, state) =>
+                HomeView(categories: categories ?? const []),
+            routes: [
+              GoRoute(
+                path: 'settings',
+                name: AppRoute.settings.name,
+                builder: (context, state) =>
+                    const Scaffold(body: Text('Settings Page')),
+              ),
+              GoRoute(
+                path: 'movement/:type/:screenType',
+                name: AppRoute.movement.name,
+                builder: (context, state) => Scaffold(
+                  body: Column(
+                    children: [
+                      Text('Movement:${state.pathParameters['type']}'),
+                      ElevatedButton(
+                        onPressed: () => context.pop(),
+                        child: const Text('Back'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+          builder: (context, child) => MultiBlocProvider(
+            providers: [
+              BlocProvider<AppCubit>.value(value: mockAppCubit),
+              BlocProvider<HomeCubit>.value(value: homeCubit),
+            ],
+            child: child!,
+          ),
+        ),
+      );
+      return router;
+    }
+
+    testWidgets(
+      'handles cold-start shared expense PDF, switches to expenses tab, '
+      'navigates to Movement, and back returns to expenses home',
+      (tester) async {
+        await tester.runAsync(() async {
+          when(() => mockRemoteConfigService.homeInitialTab)
+              .thenReturn(AppVariables.summaryTab);
+          final realHomeCubit = HomeCubit();
+
+          final sharedFile = SharedFile(
+            path: '/tmp/receipt.pdf',
+            name: 'receipt.pdf',
+            movementType: CategoryType.expense,
+            bytes: Uint8List.fromList([0x25, 0x50, 0x44, 0x46]),
+          );
+          when(() => mockShareIntentService.consumePendingSharedFile())
+              .thenReturn(sharedFile);
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => 'uploaded.pdf');
+          AppFunctions.internetConnectionTestValue = true;
+
+          const testCategories = [
+            Category(
+              id: '1',
+              name: 'Test',
+              type: CategoryType.expense,
+              icon: '',
+              color: '',
+            ),
+          ];
+
+          await mockNetworkImagesFor(() async {
+            await pumpShareRouterSubject(
+              tester,
+              homeCubit: realHomeCubit,
+              categories: testCategories,
+            );
+
+            for (var i = 0; i < 15; i++) {
+              await Future<void>.delayed(const Duration(milliseconds: 50));
+              await tester.pump(const Duration(milliseconds: 200));
+            }
+
+            expect(find.text('Movement:EXPENSE'), findsOneWidget);
+            expect(realHomeCubit.state.selectedIndex, equals(0));
+            verify(
+              () => mockAnalyticsService.logEvent(
+                name: 'receipt_ai_extraction',
+                parameters: {
+                  'source': 'share',
+                  'model_type': 'CLOUD',
+                  'movement_type': 'EXPENSE',
+                },
+              ),
+            ).called(1);
+
+            await tester.tap(find.text('Back'));
+            await tester.pumpAndSettle();
+
+            expect(find.byType(ExpensesHomePage), findsOneWidget);
+            expect(realHomeCubit.state.selectedIndex, equals(0));
+          });
+
+          await realHomeCubit.close();
+        });
+      },
+    );
+
+    testWidgets(
+      'handles warm-start shared income image from sub-route, switches to '
+      'incomes tab, and back returns to incomes home',
+      (tester) async {
+        await tester.runAsync(() async {
+          when(() => mockRemoteConfigService.homeInitialTab)
+              .thenReturn(AppVariables.expensesTab);
+          final realHomeCubit = HomeCubit();
+          final shareController = StreamController<SharedFile>.broadcast();
+
+          when(() => mockShareIntentService.sharedFileStream)
+              .thenAnswer((_) => shareController.stream);
+          when(
+            () => mockRemoteStorageService.uploadFile(
+              any<Uint8List>(),
+              any<String>(),
+            ),
+          ).thenAnswer((_) async => 'uploaded.png');
+          AppFunctions.internetConnectionTestValue = true;
+
+          const testCategories = [
+            Category(
+              id: '2',
+              name: 'Salary',
+              type: CategoryType.income,
+              icon: '',
+              color: '',
+            ),
+          ];
+
+          await mockNetworkImagesFor(() async {
+            final router = await pumpShareRouterSubject(
+              tester,
+              homeCubit: realHomeCubit,
+              categories: testCategories,
+            );
+            await tester.pumpAndSettle();
+
+            unawaited(router.pushNamed(AppRoute.settings.name));
+            await tester.pumpAndSettle();
+            expect(find.text('Settings Page'), findsOneWidget);
+
+            shareController.add(
+              SharedFile(
+                path: '/tmp/voucher.png',
+                name: 'voucher.png',
+                movementType: CategoryType.income,
+                bytes: Uint8List.fromList([137, 80, 78, 71]),
+              ),
+            );
+
+            for (var i = 0; i < 15; i++) {
+              await Future<void>.delayed(const Duration(milliseconds: 50));
+              await tester.pump(const Duration(milliseconds: 200));
+            }
+
+            expect(find.text('Movement:INCOME'), findsOneWidget);
+            expect(realHomeCubit.state.selectedIndex, equals(3));
+
+            await tester.tap(find.text('Back'));
+            await tester.pumpAndSettle();
+
+            expect(find.text('Settings Page'), findsNothing);
+            expect(find.byType(IncomeHomePage), findsOneWidget);
+            expect(realHomeCubit.state.selectedIndex, equals(3));
+          });
+
+          await shareController.close();
+          await realHomeCubit.close();
+        });
+      },
+    );
+
+    testWidgets(
+      'shows error snackbar and keeps HomeView mounted when shared file fails',
+      (tester) async {
+        await tester.runAsync(() async {
+          when(() => mockRemoteConfigService.homeInitialTab)
+              .thenReturn(AppVariables.expensesTab);
+          final realHomeCubit = HomeCubit();
+
+          final sharedFile = SharedFile(
+            path: '/tmp/receipt.pdf',
+            name: 'receipt.pdf',
+            movementType: CategoryType.expense,
+            bytes: Uint8List.fromList([1, 2, 3]),
+          );
+          when(() => mockShareIntentService.consumePendingSharedFile())
+              .thenReturn(sharedFile);
+          AppFunctions.internetConnectionTestValue = false;
+
+          await mockNetworkImagesFor(() async {
+            await pumpShareRouterSubject(tester, homeCubit: realHomeCubit);
+
+            for (var i = 0; i < 10; i++) {
+              await Future<void>.delayed(const Duration(milliseconds: 50));
+              await tester.pump(const Duration(milliseconds: 200));
+            }
+
+            expect(find.byType(HomeView), findsOneWidget);
+            expect(find.byType(SnackBar, skipOffstage: false), findsOneWidget);
+          });
+
+          await realHomeCubit.close();
         });
       },
     );

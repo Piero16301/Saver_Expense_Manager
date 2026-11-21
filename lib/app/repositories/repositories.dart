@@ -7,3 +7,4 @@ export 'local_storage_repository.dart';
 export 'performance_repository.dart';
 export 'remote_config_repository.dart';
 export 'remote_storage_repository.dart';
+export 'share_intent_repository.dart';

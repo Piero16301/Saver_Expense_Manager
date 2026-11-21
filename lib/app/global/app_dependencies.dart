@@ -50,6 +50,12 @@ void setupServiceLocator(Environment env) {
     // 5. Servicios de Lógica de Negocio / IA
     ..registerLazySingleton<AiService>(
       () => AiService(aiRepository: ServiceFactory.getAiRepository(env)),
+    )
+    // 6. Servicios de Integración Nativa (Android / iOS)
+    ..registerLazySingleton<ShareIntentService>(
+      () => ShareIntentService(
+        shareIntentRepository: ServiceFactory.getShareIntentRepository(env),
+      ),
     );
 }
 
@@ -137,6 +143,18 @@ class ServiceFactory {
         return MockAiRepository();
       case Environment.prod:
         return FirebaseAiRepository();
+    }
+  }
+
+  static ShareIntentRepository getShareIntentRepository(Environment env) {
+    if (kIsWeb) {
+      return MockShareIntentRepository();
+    }
+    switch (env) {
+      case Environment.mock:
+        return MockShareIntentRepository();
+      case Environment.prod:
+        return MethodChannelShareIntentRepository();
     }
   }
 }

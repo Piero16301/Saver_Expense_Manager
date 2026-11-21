@@ -260,5 +260,58 @@ void main() {
 
       verifyNever(() => movementCubit.removeMovement());
     });
+
+    testWidgets(
+      'discards unsaved attachments silently when navigating back on add '
+      'screen',
+      (tester) async {
+        when(() => movementCubit.discardUnsavedAttachments()).thenReturn(null);
+
+        await pumpMovementView(tester);
+
+        final backButton = find.byWidgetPredicate(
+          (widget) =>
+              widget is HugeIcon &&
+              widget.icon == HugeIcons.strokeRoundedArrowLeft01,
+        );
+        await tester.tap(backButton);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Home'), findsOneWidget);
+        verify(() => movementCubit.discardUnsavedAttachments()).called(1);
+      },
+    );
+
+    testWidgets(
+      'does not discard attachments when navigating back on edit screen',
+      (tester) async {
+        await pumpMovementView(tester, screenType: MovementScreenType.edit);
+
+        final backButton = find.byWidgetPredicate(
+          (widget) =>
+              widget is HugeIcon &&
+              widget.icon == HugeIcons.strokeRoundedArrowLeft01,
+        );
+        await tester.tap(backButton);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Home'), findsOneWidget);
+        verifyNever(() => movementCubit.discardUnsavedAttachments());
+      },
+    );
+
+    testWidgets('does not discard attachments when movement is saved', (
+      tester,
+    ) async {
+      when(() => movementCubit.saveMovement(any(), any()))
+          .thenAnswer((_) async => true);
+
+      await pumpMovementView(tester);
+      await tester.tap(find.byType(ExpressiveFab));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Home'), findsOneWidget);
+      verifyNever(() => movementCubit.discardUnsavedAttachments());
+    });
   });
 }
