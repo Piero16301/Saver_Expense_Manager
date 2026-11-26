@@ -1,0 +1,58 @@
+App name (max 30 chars):
+Saver: KI-Ausgabenmanager
+
+Short description (max 80 chars):
+Ausgaben tracken, Belege scannen & KI-Spartipps erhalten. Gratis & offline!
+
+Full description:
+💸 WOHIN IST DEIN GELD VERSCHWUNDEN? SAVER ZEIGT ES DIR – UND WIE DU MEHR DAVON BEHÄLTST.
+
+Saver ist der kostenlose Ausgabenmanager mit integrierter Gemini-KI. Erfasse Ausgaben in Sekunden, sieh genau, wohin jeder Euro fließt, und erhalte persönliche Tipps, um vermeidbare Ausgaben zu senken – sogar ohne Internet.
+
+Keine Abos. Keine Werbung. Keine Paywalls. Kein Verkauf deiner Daten. Nur du, dein Geld und ein smarter Assistent an deiner Seite.
+
+🤖 KI-SPARTIPPS MIT GEMINI
+Dein eigener Finanzcoach, basierend auf deinen echten Ausgaben:
+• Erkenne vermeidbare Ausgaben (der „kleine“ Kaffee und der Lieferdienst läppern sich!)
+• Erhalte Budgetempfehlungen, die zu deinem Lebensstil passen
+• Entdecke Ausgabentrends, bevor sie zum Problem werden
+• ☁️ Online: Gemini in der Cloud für tiefere Einblicke
+• 📴 Offline: Gemini Nano direkt auf dem Gerät – KI-Tipps ohne WLAN oder mobile Daten
+
+📷 BELEG FOTOGRAFIEREN, TIPPEN SPAREN
+Mach ein Foto deines Belegs und lass die KI Betrag und Details für dich ausfüllen.
+
+📊 DEINE FINANZEN AUF EINEN BLICK
+• Monats- und Jahresübersicht von Einnahmen, Ausgaben und Saldo
+• Interaktive Diagramme und Kategorietrends im Zeitverlauf
+• Kategorieaufteilung mit Prozentwerten – sofort sehen, wofür du am meisten ausgibst
+• Verlauf nach Datum, Kategorie oder Betrag filtern
+
+🎨 GANZ NACH DEINEM GESCHMACK
+• Unbegrenzt eigene Kategorien mit eigenen Symbolen und Farben
+• Einnahmen und Ausgaben erfassen
+• Helles und dunkles Design, passend zu deinem System
+• Verfügbar auf Englisch, Spanisch und Italienisch
+• Klare, schnelle Material-Design-Oberfläche
+
+📴 FUNKTIONIERT ZU 100 % OFFLINE
+Im Flugzeug, in der U-Bahn, ohne Empfang? Erfasse weiter Buchungen und erhalte KI-Tipps. Melde dich an, um zu synchronisieren, wann du willst – das ist optional.
+
+🔒 DATENSCHUTZ ZUERST
+• Wir erfassen, verkaufen oder teilen deine Finanzdaten NICHT
+• Deine Transaktionen bleiben auf deinem Gerät
+• KI auf dem Gerät bedeutet: Für Tipps müssen deine Daten dein Handy nicht verlassen
+• Sichere Anmeldung mit E-Mail/Passwort oder Google
+
+🆓 WIRKLICH KOSTENLOS
+Alle Funktionen von Anfang an: unbegrenzte Transaktionen, unbegrenzte Kategorien, KI-Tipps und Belegscan. Keine Werbung. Keine Abos. Nie.
+
+👥 PERFEKT FÜR
+✔ Alle, die sparen wollen, aber nicht wissen, wo sie anfangen sollen
+✔ Alle, die sich fragen, wo ihr Gehalt geblieben ist
+✔ Studierende, Selbstständige und Familien, die klüger mit Geld umgehen wollen
+✔ Datenschutzbewusste, die volle Kontrolle über ihre Daten möchten
+
+🚀 LADE SAVER HERUNTER UND BEHALTE MEHR VON DEINEM GELD – DIE ERSTE AUSGABE ERFASST DU IN WENIGER ALS EINER MINUTE.
+
+Dein Geld. Deine Regeln. Dein Saver. 💚
