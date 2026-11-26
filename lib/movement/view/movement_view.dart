@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/l10n/l10n.dart';
@@ -22,6 +23,9 @@ class MovementView extends StatelessWidget {
     final auth = getIt<AuthService>();
     final user = auth.currentUser!;
     final l10n = AppLocalizations.of(context);
+    final language = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.language,
+    );
 
     return BlocBuilder<MovementCubit, MovementState>(
       builder: (context, state) => PopScope(
@@ -85,39 +89,61 @@ class MovementView extends StatelessWidget {
                           child: Column(
                             spacing: 20,
                             children: [
-                              AppTextField(
-                                label: l10n.movementTitle,
+                              ExpressiveTextFormField.outlined(
+                                labelText: l10n.movementTitle,
                                 hintText: l10n.movementTitleHint,
-                                errorText: l10n.movementTitleError,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (value) =>
+                                    (value == null || value.isEmpty)
+                                    ? l10n.movementTitleError
+                                    : null,
                                 onChanged: context
                                     .read<MovementCubit>()
                                     .titleChanged,
-                                prefix: const HugeIcon(
+                                prefixIcon: const HugeIcon(
                                   icon: HugeIcons.strokeRoundedTextFont,
                                 ),
                                 initialValue: state.title,
                                 maxLength: 50,
                               ),
-                              AppTextField(
-                                label: l10n.movementDescription,
+                              ExpressiveTextFormField.outlined(
+                                labelText: l10n.movementDescription,
                                 hintText: l10n.movementDescriptionHint,
-                                errorText: l10n.movementDescriptionError,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (value) =>
+                                    (value == null || value.isEmpty)
+                                    ? l10n.movementDescriptionError
+                                    : null,
                                 onChanged: context
                                     .read<MovementCubit>()
                                     .descriptionChanged,
-                                prefix: const HugeIcon(
+                                prefixIcon: const HugeIcon(
                                   icon: HugeIcons.strokeRoundedNote,
                                 ),
                                 initialValue: state.description,
                                 maxLines: 7,
                                 maxLength: 300,
                               ),
-                              AppDateField(
-                                label: l10n.movementDate,
-                                initialDate: state.date!,
-                                onDateChanged: context
-                                    .read<MovementCubit>()
-                                    .dateChanged,
+                              ExpressiveTextFormField.outlined(
+                                labelText: l10n.movementDate,
+                                readOnly: true,
+                                controller: TextEditingController(
+                                  text: DateFormat.yMMMMd(language.toString())
+                                      .format(state.date!),
+                                ),
+                                onTap: () =>
+                                    _pickDate(context, state.date!, language),
+                                prefixIcon: ExpressiveIconButton.circle(
+                                  size: ExpressiveIconButtonSize.small,
+                                  icon: const HugeIcon(
+                                    icon: HugeIcons.strokeRoundedCalendar01,
+                                    size: 20,
+                                  ),
+                                  onPressed: () =>
+                                      _pickDate(context, state.date!, language),
+                                ),
                               ),
                             ],
                           ),
@@ -128,51 +154,50 @@ class MovementView extends StatelessWidget {
                           child: Column(
                             spacing: 20,
                             children: [
-                              AppDropdownField<Category>(
+                              ExpressiveDropdownButton<Category>(
                                 label: l10n.movementCategory,
-                                options: state.categories
+                                modalTitle: l10n.movementCategory,
+                                items: state.categories
                                     .map(
-                                      (category) => DropdownMenuItem<Category>(
-                                        value: category,
-                                        child: Row(
-                                          spacing: 12,
-                                          children: [
-                                            HugeIcon(
+                                      (category) =>
+                                          ExpressiveDropdownItem<Category>(
+                                            value: category,
+                                            label: AppFunctions.getCategoryName(
+                                              category.name,
+                                              l10n,
+                                            ),
+                                            icon: HugeIcon(
                                               icon:
                                                   AppFunctions.getCategoryIcon(
                                                     category.icon,
                                                   ),
                                             ),
-                                            Text(
-                                              AppFunctions.getCategoryName(
-                                                category.name,
-                                                l10n,
-                                              ),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                          ),
                                     )
                                     .toList(),
-                                selected: state.category,
-                                leadingIcon: AppFunctions.getCategoryIcon(
-                                  state.category!.icon,
-                                ),
+                                value: state.category,
+                                maxHeightFraction:
+                                    AppVariables.modalBottomSheetMaxHeightPct,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHigh,
                                 onChanged: context
                                     .read<MovementCubit>()
                                     .categoryChanged,
                               ),
-                              AppTextField(
-                                label: l10n.movementAmount,
+                              ExpressiveTextFormField.outlined(
+                                labelText: l10n.movementAmount,
                                 hintText: l10n.movementAmountHint,
-                                errorText: l10n.movementAmountError,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (value) =>
+                                    (value == null || value.isEmpty)
+                                    ? l10n.movementAmountError
+                                    : null,
                                 onChanged: context
                                     .read<MovementCubit>()
                                     .priceChanged,
-                                prefix: const HugeIcon(
+                                prefixIcon: const HugeIcon(
                                   icon: HugeIcons.strokeRoundedMoney01,
                                 ),
                                 initialValue: state.price == 0
@@ -185,14 +210,19 @@ class MovementView extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              AppTextField(
-                                label: l10n.movementCompany,
+                              ExpressiveTextFormField.outlined(
+                                labelText: l10n.movementCompany,
                                 hintText: l10n.movementCompanyHint,
-                                errorText: l10n.movementCompanyError,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (value) =>
+                                    (value == null || value.isEmpty)
+                                    ? l10n.movementCompanyError
+                                    : null,
                                 onChanged: context
                                     .read<MovementCubit>()
                                     .companyChanged,
-                                prefix: const HugeIcon(
+                                prefixIcon: const HugeIcon(
                                   icon: HugeIcons.strokeRoundedBuilding01,
                                 ),
                                 initialValue: state.company,
@@ -236,6 +266,24 @@ class MovementView extends StatelessWidget {
     );
   }
 
+  Future<void> _pickDate(
+    BuildContext context,
+    DateTime initialDate,
+    Locale locale,
+  ) async {
+    final cubit = context.read<MovementCubit>();
+    final date = await ExpressiveDatePicker.showDayPicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: AppVariables.minDate,
+      lastDate: DateTime.now(),
+      locale: locale,
+    );
+    if (date != null) {
+      cubit.dateChanged(date);
+    }
+  }
+
   Future<void> _onSaveButtonPressed(
     BuildContext context,
     DateTime selectedDate,
@@ -247,16 +295,14 @@ class MovementView extends StatelessWidget {
         const Duration(days: AppVariables.maxDaysWarning),
       ),
     )) {
-      showDialog<void>(
+      await showExpressiveAlertDialog<void>(
         context: context,
-        builder: (dialogContext) => AppAlertDialog(
-          title: l10n.movementDateWarningTitle,
-          content: l10n.movementDateWarningContent(AppVariables.maxDaysWarning),
-          cancelLabel: l10n.cancel,
-          confirmLabel: l10n.confirm,
-          onCancel: () => context.pop(),
-          onConfirm: () => _onConfirmDialog(context, uid, l10n),
-        ),
+        title: l10n.movementDateWarningTitle,
+        content: l10n.movementDateWarningContent(AppVariables.maxDaysWarning),
+        cancelLabel: l10n.cancel,
+        confirmLabel: l10n.confirm,
+        onCancel: () => context.pop(),
+        onConfirm: () => _onConfirmDialog(context, uid, l10n),
       );
     } else {
       context.read<MovementCubit>().saveMovement(uid, l10n);
@@ -326,11 +372,12 @@ class MovementView extends StatelessWidget {
   void _showDeleteDialog(BuildContext context, AppLocalizations l10n) {
     showDialog<void>(
       context: context,
-      builder: (dialogContext) => AppAlertDialog(
+      builder: (dialogContext) => ExpressiveAlertDialog(
         title: l10n.confirmDeleteMovementTitle,
         content: l10n.confirmDeleteMovementMessage,
         confirmLabel: l10n.deleteMovementConfirm,
         cancelLabel: l10n.deleteMovementCancel,
+        isDestructive: true,
         onConfirm: () {
           Navigator.of(dialogContext).pop();
           context.read<MovementCubit>().removeMovement();

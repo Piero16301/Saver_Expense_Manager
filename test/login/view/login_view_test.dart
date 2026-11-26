@@ -215,6 +215,8 @@ void main() {
       );
       expect(registerButton, findsOneWidget);
 
+      await tester.ensureVisible(registerButton);
+      await tester.pumpAndSettle();
       await tester.tap(registerButton);
       await tester.pumpAndSettle();
 

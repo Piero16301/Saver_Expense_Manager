@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:expressive_kit/expressive_kit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
@@ -153,7 +154,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.cancel));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
+      expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
 
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();

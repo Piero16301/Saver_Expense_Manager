@@ -16,23 +16,23 @@ class MovementsHomePage extends StatelessWidget {
     return StreamBuilder<List<Category>>(
       stream: database.getCategoriesStream(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Scaffold(
-            body: Center(
-              child: ExpressiveCircularProgressIndicator(
-                size: 40,
-                strokeWidth: 4,
-              ),
-            ),
-          );
-        }
-
         if (snapshot.hasError) {
           return Scaffold(
             body: Center(
               child: Text(
                 l10n.errorLoadingCategories,
                 style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return const Scaffold(
+            body: Center(
+              child: ExpressiveCircularProgressIndicator(
+                size: 40,
+                strokeWidth: 4,
               ),
             ),
           );

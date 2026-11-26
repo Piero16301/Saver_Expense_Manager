@@ -54,6 +54,7 @@ void main() {
       registerFallbackValue(const MovementState());
       registerFallbackValue(const AppState());
       registerFallbackValue(FakeAppLocalizations());
+      registerFallbackValue(DateTime.now());
     });
 
     setUp(() async {
@@ -130,7 +131,10 @@ void main() {
 
     testWidgets('calls titleChanged when title changes', (tester) async {
       await pumpMovementView(tester);
-      await tester.enterText(find.byType(AppTextField).first, 'New Title');
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).first,
+        'New Title',
+      );
       verify(() => movementCubit.titleChanged('New Title')).called(1);
     });
 
@@ -165,7 +169,7 @@ void main() {
         await tester.tap(deleteButton);
         await tester.pumpAndSettle();
 
-        expect(find.byType(AppAlertDialog), findsOneWidget);
+        expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
 
         await tester.tap(find.text('Delete'));
         await tester.pumpAndSettle();
@@ -200,7 +204,7 @@ void main() {
       await tester.tap(find.byType(ExpressiveFab));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
+      expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
 
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
@@ -230,7 +234,7 @@ void main() {
       await tester.tap(find.byType(ExpressiveFab));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
+      expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
 
       await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
@@ -253,7 +257,7 @@ void main() {
       await tester.tap(deleteButton);
       await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
+      expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
 
       await tester.tap(find.text('Cancel'));
       await tester.pumpAndSettle();
@@ -312,6 +316,82 @@ void main() {
 
       expect(find.text('Home'), findsOneWidget);
       verifyNever(() => movementCubit.discardUnsavedAttachments());
+    });
+
+    testWidgets('validates empty required fields and clears when filled', (
+      tester,
+    ) async {
+      final formKey = GlobalKey<FormState>();
+      final emptyState = MovementState(
+        id: '1',
+        date: DateTime.now(),
+        categories: const [category],
+        category: category,
+        formKey: formKey,
+      );
+      when(() => movementCubit.state).thenReturn(emptyState);
+
+      await pumpMovementView(tester);
+
+      expect(formKey.currentState!.validate(), isFalse);
+      await tester.pump();
+
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      expect(find.text(l10n.movementTitleError), findsOneWidget);
+      expect(find.text(l10n.movementDescriptionError), findsOneWidget);
+      expect(find.text(l10n.movementAmountError), findsOneWidget);
+      expect(find.text(l10n.movementCompanyError), findsOneWidget);
+
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(0),
+        'Lunch',
+      );
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(1),
+        'Food',
+      );
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(3),
+        '12.50',
+      );
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(4),
+        'Cafe',
+      );
+      expect(formKey.currentState!.validate(), isTrue);
+    });
+
+    testWidgets('picks date via date field tap and calendar icon button', (
+      tester,
+    ) async {
+      when(() => movementCubit.dateChanged(any())).thenReturn(null);
+
+      await pumpMovementView(tester);
+
+      final dateField = find.byType(ExpressiveTextFormField).at(2);
+      await tester.ensureVisible(dateField);
+      await tester.tap(dateField);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ExpressiveDatePickerDialog), findsOneWidget);
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      verify(() => movementCubit.dateChanged(any())).called(1);
+
+      final calendarIcon = find.byWidgetPredicate(
+        (widget) =>
+            widget is HugeIcon &&
+            widget.icon == HugeIcons.strokeRoundedCalendar01,
+      );
+      await tester.tap(calendarIcon);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ExpressiveDatePickerDialog), findsOneWidget);
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      verify(() => movementCubit.dateChanged(any())).called(1);
     });
   });
 }

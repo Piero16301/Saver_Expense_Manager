@@ -158,7 +158,9 @@ void main() {
       );
     });
 
-    testWidgets('shows AppTextField when editing name', (tester) async {
+    testWidgets('shows ExpressiveTextFormField when editing name', (
+      tester,
+    ) async {
       await pumpProfileView(
         tester,
         state: const ProfileState(
@@ -169,7 +171,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(AppTextField), findsOneWidget);
+      expect(find.byType(ExpressiveTextFormField), findsOneWidget);
 
       expect(
         find.byWidgetPredicate(
@@ -198,7 +200,7 @@ void main() {
         ),
       );
 
-      await tester.enterText(find.byType(AppTextField), 'New Name');
+      await tester.enterText(find.byType(ExpressiveTextFormField), 'New Name');
       verify(() => profileCubit.nameChanged('New Name')).called(1);
     });
 
@@ -282,7 +284,7 @@ void main() {
       await tester.tap(logoutButton);
       await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
+      expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
     });
 
     testWidgets('calls logout when dialog is confirmed', (tester) async {
@@ -307,7 +309,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(AppAlertDialog)),
+        tester.element(find.byType(ExpressiveAlertDialog)),
       );
       await tester.tap(find.text(l10n.logoutConfirm).last);
       await tester.pumpAndSettle();
@@ -335,15 +337,15 @@ void main() {
       await tester.ensureVisible(logoutButton);
       await tester.tap(logoutButton);
       await tester.pumpAndSettle();
-      expect(find.byType(AppAlertDialog), findsOneWidget);
+      expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(AppAlertDialog)),
+        tester.element(find.byType(ExpressiveAlertDialog)),
       );
       await tester.tap(find.text(l10n.logoutCancel));
       await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsNothing);
+      expect(find.byType(ExpressiveAlertDialog), findsNothing);
       verifyNever(() => profileCubit.logout(any()));
     });
 
@@ -368,7 +370,7 @@ void main() {
       await tester.tap(deleteButton);
       await tester.pumpAndSettle();
 
-      expect(find.byType(AppAlertDialog), findsOneWidget);
+      expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
     });
 
     testWidgets('calls deleteAccount when dialog is confirmed', (tester) async {
@@ -393,7 +395,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(AppAlertDialog)),
+        tester.element(find.byType(ExpressiveAlertDialog)),
       );
       await tester.tap(find.text(l10n.deleteAccountConfirm));
       await tester.pumpAndSettle();
@@ -458,7 +460,7 @@ void main() {
         await tester.tap(deleteButtons.first);
         await tester.pumpAndSettle();
 
-        expect(find.byType(AppAlertDialog), findsOneWidget);
+        expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
       },
     );
 
@@ -491,7 +493,7 @@ void main() {
         await tester.tap(deleteButton.first);
         await tester.pumpAndSettle();
 
-        expect(find.byType(AppAlertDialog), findsNothing);
+        expect(find.byType(ExpressiveAlertDialog), findsNothing);
       },
     );
 
@@ -516,7 +518,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(AppAlertDialog)),
+        tester.element(find.byType(ExpressiveAlertDialog)),
       );
       await tester.tap(find.text(l10n.unlinkProviderConfirm));
       await tester.pumpAndSettle();
@@ -538,8 +540,8 @@ void main() {
         await tester.tap(find.text('Connect').last);
         await tester.pumpAndSettle();
 
-        expect(find.byType(AppAlertDialog), findsOneWidget);
-        expect(find.byType(AppTextField), findsWidgets);
+        expect(find.byType(ExpressiveAlertDialog), findsOneWidget);
+        expect(find.byType(ExpressiveTextFormField), findsWidgets);
       },
     );
 
@@ -580,7 +582,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(AppAlertDialog)),
+        tester.element(find.byType(ExpressiveAlertDialog)),
       );
 
       await tester.tap(find.text(l10n.linkEmailButton));
@@ -588,21 +590,33 @@ void main() {
       expect(find.text(l10n.emailRequired), findsOneWidget);
       expect(find.text(l10n.passwordRequired), findsOneWidget);
 
-      await tester.enterText(find.byType(AppTextField).at(0), 'invalid');
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(0),
+        'invalid',
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text(l10n.linkEmailButton));
       await tester.pumpAndSettle();
       expect(find.text(l10n.invalidEmailFormat), findsOneWidget);
 
-      await tester.enterText(find.byType(AppTextField).at(0), 'test@test.com');
-      await tester.enterText(find.byType(AppTextField).at(1), '123');
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(0),
+        'test@test.com',
+      );
+      await tester.enterText(find.byType(ExpressiveTextFormField).at(1), '123');
       await tester.pumpAndSettle();
       await tester.tap(find.text(l10n.linkEmailButton));
       await tester.pumpAndSettle();
       expect(find.text(l10n.invalidPasswordFormat), findsOneWidget);
 
-      await tester.enterText(find.byType(AppTextField).at(1), 'Password123!');
-      await tester.enterText(find.byType(AppTextField).at(2), 'Password123');
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(1),
+        'Password123!',
+      );
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(2),
+        'Password123',
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text(l10n.linkEmailButton));
       await tester.pumpAndSettle();
@@ -659,12 +673,21 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(AppAlertDialog)),
+        tester.element(find.byType(ExpressiveAlertDialog)),
       );
 
-      await tester.enterText(find.byType(AppTextField).at(0), 'test@test.com');
-      await tester.enterText(find.byType(AppTextField).at(1), 'Password123!');
-      await tester.enterText(find.byType(AppTextField).at(2), 'Password123!');
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(0),
+        'test@test.com',
+      );
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(1),
+        'Password123!',
+      );
+      await tester.enterText(
+        find.byType(ExpressiveTextFormField).at(2),
+        'Password123!',
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text(l10n.linkEmailButton));
@@ -695,13 +718,13 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(AppAlertDialog)),
+        tester.element(find.byType(ExpressiveAlertDialog)),
       );
       await tester.tap(find.text(l10n.unlinkProviderCancel));
       await tester.pumpAndSettle();
 
       verifyNever(() => profileCubit.unlinkProvider(any(), any()));
-      expect(find.byType(AppAlertDialog), findsNothing);
+      expect(find.byType(ExpressiveAlertDialog), findsNothing);
     });
 
     testWidgets('cancels link email dialog', (tester) async {
@@ -717,7 +740,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final l10n = AppLocalizations.of(
-        tester.element(find.byType(AppAlertDialog)),
+        tester.element(find.byType(ExpressiveAlertDialog)),
       );
       await tester.tap(find.text(l10n.cancel));
       await tester.pumpAndSettle();
@@ -729,7 +752,7 @@ void main() {
           password: any(named: 'password'),
         ),
       );
-      expect(find.byType(AppAlertDialog), findsNothing);
+      expect(find.byType(ExpressiveAlertDialog), findsNothing);
     });
   });
 }

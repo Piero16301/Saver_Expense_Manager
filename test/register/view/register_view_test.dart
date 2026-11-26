@@ -97,7 +97,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final field = find.widgetWithText(
-        AppTextField,
+        ExpressiveTextFormField,
         (await AppLocalizations.delegate.load(const Locale('en'))).nameLabel,
       );
       await tester.enterText(
@@ -114,7 +114,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final field = find.widgetWithText(
-        AppTextField,
+        ExpressiveTextFormField,
         (await AppLocalizations.delegate.load(const Locale('en'))).emailLabel,
       );
       await tester.enterText(
@@ -132,7 +132,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final field = find.widgetWithText(
-        AppTextField,
+        ExpressiveTextFormField,
         (await AppLocalizations.delegate.load(const Locale('en')))
             .passwordLabel,
       );
@@ -151,7 +151,7 @@ void main() {
 
         final l10n = await AppLocalizations.delegate.load(const Locale('en'));
         final field = find.widgetWithText(
-          AppTextField,
+          ExpressiveTextFormField,
           l10n.confirmPasswordLabel,
         );
         await tester.ensureVisible(field);
@@ -171,7 +171,10 @@ void main() {
         await tester.pumpAndSettle();
 
         final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-        final field = find.widgetWithText(AppTextField, l10n.passwordLabel);
+        final field = find.widgetWithText(
+          ExpressiveTextFormField,
+          l10n.passwordLabel,
+        );
         await tester.tap(
           find.descendant(of: field, matching: find.byType(IconButton)),
         );
@@ -188,7 +191,7 @@ void main() {
 
         final l10n = await AppLocalizations.delegate.load(const Locale('en'));
         final field = find.widgetWithText(
-          AppTextField,
+          ExpressiveTextFormField,
           l10n.confirmPasswordLabel,
         );
         await tester.ensureVisible(field);
@@ -282,5 +285,84 @@ void main() {
 
       expect(find.text('Login Page'), findsOneWidget);
     });
+
+    testWidgets('shows invalid field error texts when state flags are false', (
+      tester,
+    ) async {
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      when(() => mockRegisterCubit.state).thenReturn(
+        const RegisterState(
+          isNameValid: false,
+          isEmailValid: false,
+          isPasswordValid: false,
+          isConfirmPasswordValid: false,
+        ),
+      );
+
+      await tester.pumpWidget(buildView());
+      await tester.pumpAndSettle();
+
+      expect(find.text(l10n.invalidNameFormat), findsOneWidget);
+      expect(find.text(l10n.invalidEmailFormat), findsOneWidget);
+      expect(find.text(l10n.invalidPasswordFormat), findsOneWidget);
+      expect(find.text(l10n.passwordMismatchError), findsOneWidget);
+    });
+
+    testWidgets(
+      'validates required empty fields for name, email, and password',
+      (tester) async {
+        final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+        await tester.pumpWidget(buildView());
+        await tester.pumpAndSettle();
+
+        final nameField = find.widgetWithText(
+          ExpressiveTextFormField,
+          l10n.nameLabel,
+        );
+        await tester.ensureVisible(nameField);
+        await tester.enterText(
+          find.descendant(of: nameField, matching: find.byType(TextField)),
+          'a',
+        );
+        await tester.enterText(
+          find.descendant(of: nameField, matching: find.byType(TextField)),
+          '',
+        );
+        await tester.pump();
+        expect(find.text(l10n.nameRequired), findsOneWidget);
+
+        final emailField = find.widgetWithText(
+          ExpressiveTextFormField,
+          l10n.emailLabel,
+        );
+        await tester.ensureVisible(emailField);
+        await tester.enterText(
+          find.descendant(of: emailField, matching: find.byType(TextField)),
+          'a',
+        );
+        await tester.enterText(
+          find.descendant(of: emailField, matching: find.byType(TextField)),
+          '',
+        );
+        await tester.pump();
+        expect(find.text(l10n.emailRequired), findsOneWidget);
+
+        final passwordField = find.widgetWithText(
+          ExpressiveTextFormField,
+          l10n.passwordLabel,
+        );
+        await tester.ensureVisible(passwordField);
+        await tester.enterText(
+          find.descendant(of: passwordField, matching: find.byType(TextField)),
+          'a',
+        );
+        await tester.enterText(
+          find.descendant(of: passwordField, matching: find.byType(TextField)),
+          '',
+        );
+        await tester.pump();
+        expect(find.text(l10n.passwordRequired), findsOneWidget);
+      },
+    );
   });
 }

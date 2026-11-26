@@ -41,6 +41,13 @@ void main() {
     const categories = [
       Category(
         id: '1',
+        name: 'Transport',
+        icon: 'transport',
+        color: 'blue',
+        type: CategoryType.expense,
+      ),
+      Category(
+        id: '2',
         name: 'Food',
         icon: 'food',
         color: 'red',

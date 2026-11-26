@@ -160,13 +160,15 @@ class ProfileView extends StatelessWidget {
                               children: [
                                 if (state.isEditingName)
                                   Expanded(
-                                    child: AppTextField(
+                                    child: ExpressiveTextFormField.outlined(
                                       key: ValueKey(state.isEditingName),
-                                      label: l10n.nameLabel,
+                                      labelText: l10n.nameLabel,
                                       initialValue: state.userName.isEmpty
                                           ? user.displayName
                                           : state.userName,
                                       hintText: l10n.enterNameHint,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                       onChanged: (value) => context
                                           .read<ProfileCubit>()
                                           .nameChanged(value),
@@ -305,10 +307,10 @@ class ProfileView extends StatelessWidget {
                         child: ExpressiveButton.text(
                           isExpanded: true,
                           onPressed: () => _deleteAccount(context),
-                          icon: const HugeIcon(
+                          icon: HugeIcon(
                             icon: HugeIcons.strokeRoundedDelete02,
                             size: 20,
-                            color: Colors.redAccent,
+                            color: Theme.of(context).colorScheme.error,
                           ),
                           label: l10n.deleteAccountButton,
                         ),
@@ -326,16 +328,12 @@ class ProfileView extends StatelessWidget {
 
   Future<void> _logout(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final shouldLogout = await showDialog<bool>(
+    final shouldLogout = await showExpressiveAlertDialog<bool>(
       context: context,
-      builder: (context) => AppAlertDialog(
-        title: l10n.confirmLogoutTitle,
-        content: l10n.confirmLogoutMessage,
-        onConfirm: () => Navigator.of(context).pop(true),
-        onCancel: () => Navigator.of(context).pop(false),
-        confirmLabel: l10n.logoutConfirm,
-        cancelLabel: l10n.logoutCancel,
-      ),
+      title: l10n.confirmLogoutTitle,
+      content: l10n.confirmLogoutMessage,
+      confirmLabel: l10n.logoutConfirm,
+      cancelLabel: l10n.logoutCancel,
     );
 
     if ((shouldLogout ?? false) && context.mounted) {
@@ -345,16 +343,13 @@ class ProfileView extends StatelessWidget {
 
   Future<void> _deleteAccount(BuildContext context) async {
     final l10n = AppLocalizations.of(context);
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete = await showExpressiveAlertDialog<bool>(
       context: context,
-      builder: (context) => AppAlertDialog(
-        title: l10n.confirmDeleteAccountTitle,
-        content: l10n.confirmDeleteAccountMessage,
-        onConfirm: () => Navigator.of(context).pop(true),
-        onCancel: () => Navigator.of(context).pop(false),
-        confirmLabel: l10n.deleteAccountConfirm,
-        cancelLabel: l10n.deleteAccountCancel,
-      ),
+      title: l10n.confirmDeleteAccountTitle,
+      content: l10n.confirmDeleteAccountMessage,
+      confirmLabel: l10n.deleteAccountConfirm,
+      cancelLabel: l10n.deleteAccountCancel,
+      isDestructive: true,
     );
 
     if ((shouldDelete ?? false) && context.mounted) {
@@ -378,16 +373,13 @@ class ProfileView extends StatelessWidget {
       return;
     }
 
-    final shouldUnlink = await showDialog<bool>(
+    final shouldUnlink = await showExpressiveAlertDialog<bool>(
       context: context,
-      builder: (context) => AppAlertDialog(
-        title: l10n.confirmUnlinkProviderTitle,
-        content: l10n.confirmUnlinkProviderMessage,
-        onConfirm: () => Navigator.of(context).pop(true),
-        onCancel: () => Navigator.of(context).pop(false),
-        confirmLabel: l10n.unlinkProviderConfirm,
-        cancelLabel: l10n.unlinkProviderCancel,
-      ),
+      title: l10n.confirmUnlinkProviderTitle,
+      content: l10n.confirmUnlinkProviderMessage,
+      confirmLabel: l10n.unlinkProviderConfirm,
+      cancelLabel: l10n.unlinkProviderCancel,
+      isDestructive: true,
     );
 
     if ((shouldUnlink ?? false) && context.mounted) {
@@ -407,7 +399,7 @@ class ProfileView extends StatelessWidget {
     await showDialog<void>(
       context: context,
       builder: (childContext) => StatefulBuilder(
-        builder: (stfulContext, setState) => AppAlertDialog(
+        builder: (stfulContext, setState) => ExpressiveAlertDialog(
           isForm: true,
           title: l10n.linkEmailTitle,
           onCancel: () => Navigator.of(context).pop(),
@@ -430,12 +422,15 @@ class ProfileView extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                AppTextField(
+                ExpressiveTextFormField.outlined(
                   controller: emailController,
-                  label: l10n.emailLabel,
+                  labelText: l10n.emailLabel,
                   hintText: l10n.emailHint,
                   keyboardType: TextInputType.emailAddress,
-                  prefix: const HugeIcon(icon: HugeIcons.strokeRoundedMail01),
+                  prefixIcon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedMail01,
+                  ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return l10n.emailRequired;
@@ -448,15 +443,15 @@ class ProfileView extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 16),
-                AppTextField(
+                ExpressiveTextFormField.outlined(
                   controller: passwordController,
-                  label: l10n.passwordLabel,
+                  labelText: l10n.passwordLabel,
                   hintText: l10n.passwordHint,
                   obscureText: !isPasswordVisible,
-                  prefix: const HugeIcon(
+                  prefixIcon: const HugeIcon(
                     icon: HugeIcons.strokeRoundedLockPassword,
                   ),
-                  suffix: ExpressiveIconButton.circle(
+                  suffixIcon: ExpressiveIconButton.circle(
                     size: ExpressiveIconButtonSize.small,
                     onPressed: () => setState(() {
                       isPasswordVisible = !isPasswordVisible;
@@ -468,6 +463,7 @@ class ProfileView extends StatelessWidget {
                       size: 20,
                     ),
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return l10n.passwordRequired;
@@ -480,15 +476,15 @@ class ProfileView extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 16),
-                AppTextField(
+                ExpressiveTextFormField.outlined(
                   controller: confirmPasswordController,
-                  label: l10n.confirmPasswordLabel,
+                  labelText: l10n.confirmPasswordLabel,
                   hintText: l10n.passwordHint,
                   obscureText: !isConfirmPasswordVisible,
-                  prefix: const HugeIcon(
+                  prefixIcon: const HugeIcon(
                     icon: HugeIcons.strokeRoundedLockPassword,
                   ),
-                  suffix: ExpressiveIconButton.circle(
+                  suffixIcon: ExpressiveIconButton.circle(
                     size: ExpressiveIconButtonSize.small,
                     onPressed: () => setState(() {
                       isConfirmPasswordVisible = !isConfirmPasswordVisible;
@@ -500,6 +496,7 @@ class ProfileView extends StatelessWidget {
                       size: 20,
                     ),
                   ),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
                     if (value != passwordController.text) {
                       return l10n.passwordMismatchError;

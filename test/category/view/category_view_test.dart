@@ -241,25 +241,13 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pump();
 
-      final monthRangeSelector = tester.widget<MonthRangeSelector>(
-        find.byType(MonthRangeSelector),
-      );
-
-      monthRangeSelector.onChangeStartMonth(DateTime(2023, 5));
+      await tester.tap(find.text('-').first);
       await tester.pump();
-
-      final r2 = tester.widget<MonthRangeSelector>(
-        find.byType(MonthRangeSelector),
-      );
-      r2.onChangeEndMonth(DateTime(2023, 6));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.byType(ExpressiveDatePickerDialog), findsOneWidget);
+      await tester.tap(find.text('OK'));
       await tester.pump();
-
-      final r3 = tester.widget<MonthRangeSelector>(
-        find.byType(MonthRangeSelector),
-      );
-      r3.onChangeStartMonth(null);
-      r3.onChangeEndMonth(null);
-      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
       await streamController.close();
     });
@@ -273,37 +261,15 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
 
-      expect(find.byType(MonthSelector), findsOneWidget);
-
-      final monthSelector = tester.widget<MonthSelector>(
-        find.byType(MonthSelector),
+      final buttons = find.descendant(
+        of: find.byType(TabMovementsCategory),
+        matching: find.byType(ExpressiveIconButton),
       );
+      expect(buttons, findsNWidgets(2));
 
-      monthSelector.onBack();
+      await tester.tap(buttons.first);
       await tester.pump();
-
-      final m2 = tester.widget<MonthSelector>(find.byType(MonthSelector));
-      m2.onForward();
-      await tester.pump();
-
-      final m3 = tester.widget<MonthSelector>(find.byType(MonthSelector));
-      m3.onChangeMonth(DateTime(2023));
-      await tester.pump();
-
-      final m4 = tester.widget<MonthSelector>(find.byType(MonthSelector));
-      m4.onBack();
-      await tester.pump();
-
-      final m5 = tester.widget<MonthSelector>(find.byType(MonthSelector));
-      m5.onChangeMonth(DateTime(2023, 12));
-      await tester.pump();
-
-      final m6 = tester.widget<MonthSelector>(find.byType(MonthSelector));
-      m6.onForward();
-      await tester.pump();
-
-      final m7 = tester.widget<MonthSelector>(find.byType(MonthSelector));
-      m7.onChangeMonth(null);
+      await tester.tap(buttons.last);
       await tester.pump();
     });
   });

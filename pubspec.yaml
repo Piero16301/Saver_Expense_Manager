@@ -8,13 +8,13 @@ environment:
   flutter: ">=3.50.0"
 
 dependencies:
-  bloc: ^9.2.1
+  bloc: ^9.2.2
   cloud_firestore: ^7.2.0
   country_flags: ^4.1.2
   cunning_document_scanner: ^3.1.0
   equatable: ^3.0.0
-  expressive_kit: ^0.0.11
-  file_picker: ^13.4.0
+  expressive_kit: ^0.1.2
+  file_picker: ^13.4.1
   firebase_ai: ^5.2.0
   firebase_analytics: ^13.1.0
   firebase_app_check: ^0.5.2
@@ -26,7 +26,7 @@ dependencies:
   firebase_storage: ^14.1.0
   flutter:
     sdk: flutter
-  flutter_bloc: ^9.1.1
+  flutter_bloc: ^9.1.2
   flutter_localizations:
     sdk: flutter
   flutter_markdown_plus: ^1.0.12
@@ -43,13 +43,13 @@ dependencies:
   package_info_plus: ^10.2.2
   path_provider: ^2.1.6
   shared_preferences: ^2.5.6
-  syncfusion_flutter_charts: ^35.2.12
-  syncfusion_flutter_core: ^35.2.12
+  syncfusion_flutter_charts: ^35.2.13
+  syncfusion_flutter_core: ^35.2.13
   uuid: ^4.6.0
   web: ^1.1.2
 
 dev_dependencies:
-  bloc_test: ^10.0.0
+  bloc_test: ^10.0.1
   flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter

@@ -900,12 +900,19 @@ void main() {
         await pumpSubject(tester);
         await tester.pumpAndSettle();
 
-        final selector = tester.widget<MonthSelector>(
-          find.byType(MonthSelector),
+        final backArrow = find.byWidgetPredicate(
+          (widget) =>
+              widget is HugeIcon &&
+              widget.icon == HugeIcons.strokeRoundedArrowLeft01,
         );
-        selector.onBack();
+        final forwardArrow = find.byWidgetPredicate(
+          (widget) =>
+              widget is HugeIcon &&
+              widget.icon == HugeIcons.strokeRoundedArrowRight01,
+        );
+        await tester.tap(backArrow);
         await tester.pump();
-        selector.onForward();
+        await tester.tap(forwardArrow);
         await tester.pump();
 
         expect(find.byType(ExpensesHomePage), findsOneWidget);
@@ -922,12 +929,19 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(IncomeHomePage), findsOneWidget);
-        final selector = tester.widget<MonthSelector>(
-          find.byType(MonthSelector),
+        final backArrow = find.byWidgetPredicate(
+          (widget) =>
+              widget is HugeIcon &&
+              widget.icon == HugeIcons.strokeRoundedArrowLeft01,
         );
-        selector.onBack();
+        final forwardArrow = find.byWidgetPredicate(
+          (widget) =>
+              widget is HugeIcon &&
+              widget.icon == HugeIcons.strokeRoundedArrowRight01,
+        );
+        await tester.tap(backArrow);
         await tester.pump();
-        selector.onForward();
+        await tester.tap(forwardArrow);
         await tester.pump();
       });
     });
@@ -1000,13 +1014,11 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.byType(SummaryHomePage), findsOneWidget);
-        final monthSelector = tester.widget<MonthRangeSelector>(
-          find.byType(MonthRangeSelector),
-        );
-        expect(monthSelector.isYear, isFalse);
-        monthSelector.onChangeStartMonth(DateTime(2024));
-        monthSelector.onChangeEndMonth(DateTime(2024, 2));
-        await tester.pump();
+        await tester.tap(find.text('-').first);
+        await tester.pumpAndSettle();
+        expect(find.byType(ExpressiveDatePickerDialog), findsOneWidget);
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
 
         tester
             .element(find.byType(SummaryHomePage))
@@ -1014,13 +1026,11 @@ void main() {
             .changePeriodType(SummaryPeriodType.year);
         await tester.pump();
 
-        final yearSelector = tester.widget<MonthRangeSelector>(
-          find.byType(MonthRangeSelector),
-        );
-        expect(yearSelector.isYear, isTrue);
-        yearSelector.onChangeStartMonth(DateTime(2023));
-        yearSelector.onChangeEndMonth(DateTime(2024));
-        await tester.pump();
+        await tester.tap(find.text('-').first);
+        await tester.pumpAndSettle();
+        expect(find.byType(ExpressiveDatePickerDialog), findsOneWidget);
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
       });
     });
 
