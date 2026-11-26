@@ -2,6 +2,7 @@ import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:saver_expense_manager/app/app.dart';
 import 'package:saver_expense_manager/category/category.dart';
@@ -198,23 +199,50 @@ class _TabTrendCategoryState extends State<TabTrendCategory> {
           constraints: const BoxConstraints(
             maxWidth: AppVariables.tabletMaxWidth,
           ),
-          child: MonthRangeSelector(
-            startMonth: startMonth,
-            endMonth: endMonth,
-            onChangeStartMonth: (date) {
-              if (date != null) {
-                setState(() {
-                  startMonth = date;
-                });
-              }
-            },
-            onChangeEndMonth: (date) {
-              if (date != null) {
-                setState(() {
-                  endMonth = date;
-                });
-              }
-            },
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: ExpressiveCard(
+              margin: EdgeInsets.zero,
+              borderRadius: BorderRadius.circular(25),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              onTap: () async {
+                final range = await ExpressiveDatePicker.showMonthRangePicker(
+                  context: context,
+                  initialStartDate: startMonth,
+                  initialEndDate: endMonth,
+                  firstDate: AppVariables.minDate,
+                  lastDate: DateTime.now(),
+                  locale: language,
+                );
+                if (range != null && mounted) {
+                  setState(() {
+                    startMonth = range.start;
+                    endMonth = range.end;
+                  });
+                }
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 8,
+                children: [
+                  Text(
+                    DateFormat(
+                      'MMM yyyy',
+                      language.toString(),
+                    ).format(startMonth).capitalize(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Text('-', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    DateFormat(
+                      'MMM yyyy',
+                      language.toString(),
+                    ).format(endMonth).capitalize(),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 10),
@@ -284,6 +312,19 @@ class _TabMovementsCategoryState extends State<TabMovementsCategory> {
     final category = context.select<CategoryCubit, Category>(
       (cubit) => cubit.state.category,
     );
+    final language = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.language,
+    );
+    final previousMonth = monthSelected.month == 1
+        ? DateTime(monthSelected.year - 1, 12)
+        : DateTime(monthSelected.year, monthSelected.month - 1);
+    final backEnabled =
+        previousMonth.isAfter(AppVariables.minDate) ||
+        previousMonth.isAtSameMomentAs(AppVariables.minDate);
+    final nextMonth = monthSelected.month == 12
+        ? DateTime(monthSelected.year + 1)
+        : DateTime(monthSelected.year, monthSelected.month + 1);
+    final forwardEnabled = nextMonth.isBefore(DateTime.now());
 
     return Column(
       children: [
@@ -292,41 +333,74 @@ class _TabMovementsCategoryState extends State<TabMovementsCategory> {
           constraints: const BoxConstraints(
             maxWidth: AppVariables.tabletMaxWidth,
           ),
-          child: MonthSelector(
-            monthSelected: monthSelected,
-            onBack: () {
-              if (monthSelected.month == 1) {
-                setState(() {
-                  monthSelected = DateTime(monthSelected.year - 1, 12);
-                });
-              } else {
-                setState(() {
-                  monthSelected = DateTime(
-                    monthSelected.year,
-                    monthSelected.month - 1,
-                  );
-                });
-              }
-            },
-            onForward: () {
-              if (monthSelected.month == 12) {
-                setState(() {
-                  monthSelected = DateTime(monthSelected.year + 1);
-                });
-              } else {
-                setState(() {
-                  monthSelected = DateTime(
-                    monthSelected.year,
-                    monthSelected.month + 1,
-                  );
-                });
-              }
-            },
-            onChangeMonth: (month) => setState(() {
-              if (month != null) {
-                monthSelected = DateTime(month.year, month.month);
-              }
-            }),
+          child: ExpressiveCard(
+            margin: EdgeInsets.zero,
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+            borderRadius: BorderRadius.circular(25),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ExpressiveIconButton.circle(
+                  size: ExpressiveIconButtonSize.small,
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedArrowLeft01,
+                    size: 20,
+                  ),
+                  onPressed: backEnabled
+                      ? () {
+                          setState(() {
+                            monthSelected = previousMonth;
+                          });
+                        }
+                      : null,
+                ),
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () async {
+                    final month = await ExpressiveDatePicker.showMonthPicker(
+                      context: context,
+                      initialDate: monthSelected,
+                      firstDate: AppVariables.minDate,
+                      lastDate: DateTime.now(),
+                      locale: language,
+                    );
+                    if (month != null && mounted) {
+                      setState(() {
+                        monthSelected = DateTime(month.year, month.month);
+                      });
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        DateFormat(
+                          'MMM yyyy',
+                          language.toString(),
+                        ).format(monthSelected).capitalize(),
+                        style: Theme.of(context).textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ),
+                ExpressiveIconButton.circle(
+                  size: ExpressiveIconButtonSize.small,
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedArrowRight01,
+                    size: 20,
+                  ),
+                  onPressed: forwardEnabled
+                      ? () {
+                          setState(() {
+                            monthSelected = nextMonth;
+                          });
+                        }
+                      : null,
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 20),

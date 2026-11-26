@@ -79,34 +79,41 @@ class LoginView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   // Email Field
-                                  AppTextField(
+                                  ExpressiveTextFormField.outlined(
                                     enabled: !state.status.isLoading,
-                                    label: l10n.emailLabel,
+                                    labelText: l10n.emailLabel,
                                     hintText: l10n.emailHint,
                                     keyboardType: TextInputType.emailAddress,
-                                    prefix: const HugeIcon(
+                                    prefixIcon: const HugeIcon(
                                       icon: HugeIcons.strokeRoundedMail01,
                                     ),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
                                     onChanged: (value) => context
                                         .read<LoginCubit>()
                                         .emailChanged(value),
-                                    errorText: l10n.emailRequired,
-                                    overrideErrorText: !state.isEmailValid
+                                    errorText: !state.isEmailValid
                                         ? l10n.invalidEmailFormat
                                         : null,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return l10n.emailRequired;
+                                      }
+                                      return null;
+                                    },
                                   ),
                                   const SizedBox(height: 20),
 
                                   // Password Field
-                                  AppTextField(
+                                  ExpressiveTextFormField.outlined(
                                     enabled: !state.status.isLoading,
-                                    label: l10n.passwordLabel,
+                                    labelText: l10n.passwordLabel,
                                     hintText: l10n.passwordHint,
                                     obscureText: !state.isPasswordVisible,
-                                    prefix: const HugeIcon(
+                                    prefixIcon: const HugeIcon(
                                       icon: HugeIcons.strokeRoundedLockPassword,
                                     ),
-                                    suffix: ExpressiveIconButton.circle(
+                                    suffixIcon: ExpressiveIconButton.circle(
                                       size: ExpressiveIconButtonSize.small,
                                       onPressed: state.status.isLoading
                                           ? null
@@ -120,13 +127,20 @@ class LoginView extends StatelessWidget {
                                         size: 20,
                                       ),
                                     ),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
                                     onChanged: (value) => context
                                         .read<LoginCubit>()
                                         .passwordChanged(value),
-                                    errorText: l10n.passwordRequired,
-                                    overrideErrorText: !state.isPasswordValid
+                                    errorText: !state.isPasswordValid
                                         ? l10n.invalidPasswordFormat
                                         : null,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return l10n.passwordRequired;
+                                      }
+                                      return null;
+                                    },
                                   ),
                                   const SizedBox(height: 32),
 

@@ -1,15 +1,17 @@
-// ignore_for_file: use_build_context_synchronously // To dismiss bottom sheet
-
 import 'dart:async';
 import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:expressive_kit/expressive_kit.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, Uint8List, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/services.dart'
+    show MethodChannel, MissingPluginException;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mime/mime.dart';
 import 'package:saver_expense_manager/app/app.dart';
@@ -161,7 +163,8 @@ class HomeView extends StatelessWidget {
             if (expensesState.monthSelected == null) {
               return const SizedBox.shrink();
             }
-            return MonthSelector(
+            return _buildMonthSelectorPill(
+              context,
               monthSelected: expensesState.monthSelected!,
               onBack: () => context.read<ExpensesHomeCubit>().previousMonth(),
               onForward: () => context.read<ExpensesHomeCubit>().nextMonth(),
@@ -182,7 +185,8 @@ class HomeView extends StatelessWidget {
             if (startDate == null || endDate == null) {
               return const SizedBox.shrink();
             }
-            return MonthRangeSelector(
+            return _buildMonthRangePill(
+              context,
               startMonth: startDate,
               endMonth: endDate,
               isYear: isYear,
@@ -201,7 +205,8 @@ class HomeView extends StatelessWidget {
             if (incomeState.monthSelected == null) {
               return const SizedBox.shrink();
             }
-            return MonthSelector(
+            return _buildMonthSelectorPill(
+              context,
               monthSelected: incomeState.monthSelected!,
               onBack: () => context.read<IncomeHomeCubit>().previousMonth(),
               onForward: () => context.read<IncomeHomeCubit>().nextMonth(),
@@ -219,13 +224,163 @@ class HomeView extends StatelessWidget {
     }
   }
 
+  Widget _buildMonthSelectorPill(
+    BuildContext context, {
+    required DateTime monthSelected,
+    required VoidCallback onBack,
+    required VoidCallback onForward,
+    required void Function(DateTime?) onChangeMonth,
+  }) {
+    final language = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.language,
+    );
+    final previousMonth = monthSelected.month == 1
+        ? DateTime(monthSelected.year - 1, 12)
+        : DateTime(monthSelected.year, monthSelected.month - 1);
+    final backEnabled =
+        previousMonth.isAfter(AppVariables.minDate) ||
+        previousMonth.isAtSameMomentAs(AppVariables.minDate);
+    final nextMonth = monthSelected.month == 12
+        ? DateTime(monthSelected.year + 1)
+        : DateTime(monthSelected.year, monthSelected.month + 1);
+    final forwardEnabled = nextMonth.isBefore(DateTime.now());
+
+    return ExpressiveCard(
+      margin: EdgeInsets.zero,
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      borderRadius: BorderRadius.circular(25),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ExpressiveIconButton.circle(
+            size: ExpressiveIconButtonSize.small,
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowLeft01,
+              size: 20,
+            ),
+            onPressed: backEnabled ? onBack : null,
+          ),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () async {
+              final picked = await ExpressiveDatePicker.showMonthPicker(
+                context: context,
+                initialDate: monthSelected,
+                firstDate: AppVariables.minDate,
+                lastDate: DateTime.now(),
+                locale: language,
+              );
+              if (picked != null) {
+                onChangeMonth(picked);
+              }
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  DateFormat(
+                    'MMM yyyy',
+                    language.toString(),
+                  ).format(monthSelected).capitalize(),
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+          ExpressiveIconButton.circle(
+            size: ExpressiveIconButtonSize.small,
+            icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              size: 20,
+            ),
+            onPressed: forwardEnabled ? onForward : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonthRangePill(
+    BuildContext context, {
+    required DateTime startMonth,
+    required DateTime endMonth,
+    required bool isYear,
+    required void Function(DateTime?) onChangeStartMonth,
+    required void Function(DateTime?) onChangeEndMonth,
+  }) {
+    final language = context.select<AppCubit, Locale>(
+      (cubit) => cubit.state.language,
+    );
+
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: ExpressiveCard(
+        margin: EdgeInsets.zero,
+        borderRadius: BorderRadius.circular(25),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        onTap: () async {
+          final value = isYear
+              ? await ExpressiveDatePicker.showYearRangePicker(
+                  context: context,
+                  initialStartDate: startMonth,
+                  initialEndDate: endMonth,
+                  firstDate: AppVariables.minDate,
+                  lastDate: DateTime.now(),
+                  locale: language,
+                )
+              : await ExpressiveDatePicker.showMonthRangePicker(
+                  context: context,
+                  initialStartDate: startMonth,
+                  initialEndDate: endMonth,
+                  firstDate: AppVariables.minDate,
+                  lastDate: DateTime.now(),
+                  locale: language,
+                );
+          if (value != null) {
+            onChangeStartMonth(value.start);
+            onChangeEndMonth(value.end);
+          }
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 8,
+          children: [
+            Text(
+              isYear
+                  ? '${startMonth.year}'
+                  : DateFormat(
+                      'MMM yyyy',
+                      language.toString(),
+                    ).format(startMonth).capitalize(),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text('-', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              isYear
+                  ? '${endMonth.year}'
+                  : DateFormat(
+                      'MMM yyyy',
+                      language.toString(),
+                    ).format(endMonth).capitalize(),
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget? _getFloatingActionButton(BuildContext context, int selectedIndex) {
+    final l10n = AppLocalizations.of(context);
     switch (selectedIndex) {
       case 0:
         return ExpressiveFab(
-          onPressed: () => showModalBottomSheet<void>(
+          onPressed: () => showExpressiveModalBottomSheet<void>(
             context: context,
-            builder: (context) => AddMovementBottomSheet(
+            title: l10n.homeAddExpense,
+            builder: (modalContext) => AddMovementBottomSheet(
               categories: categories,
               movementType: CategoryType.expense,
             ),
@@ -237,9 +392,10 @@ class HomeView extends StatelessWidget {
         );
       case 3:
         return ExpressiveFab(
-          onPressed: () => showModalBottomSheet<void>(
+          onPressed: () => showExpressiveModalBottomSheet<void>(
             context: context,
-            builder: (context) => AddMovementBottomSheet(
+            title: l10n.homeAddIncome,
+            builder: (modalContext) => AddMovementBottomSheet(
               categories: categories,
               movementType: CategoryType.income,
             ),
@@ -392,8 +548,26 @@ class _ShareIntentListenerState extends State<_ShareIntentListener> {
 class AddMovementBottomSheet extends StatelessWidget {
   const new({required this.categories, required this.movementType, super.key});
 
+  static const _documentScannerChannel = MethodChannel(
+    'com.pmorales.saver.expense.manager/document_scanner',
+  );
+
   final List<Category> categories;
   final CategoryType movementType;
+
+  Future<bool> _isGmsDocumentScannerAvailable() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return true;
+    }
+    try {
+      return await _documentScannerChannel.invokeMethod<bool>(
+            'isGmsScannerAvailable',
+          ) ??
+          true;
+    } on MissingPluginException {
+      return true;
+    }
+  }
 
   Future<void> handleFilePick(
     BuildContext context, {
@@ -606,8 +780,12 @@ class AddMovementBottomSheet extends StatelessWidget {
     final loader = AppLoader(context);
 
     try {
+      final isGmsAvailable = await _isGmsDocumentScannerAvailable();
       final scanResult = await CunningDocumentScanner.scanDocuments(
         noOfPages: 1,
+        scannerSource: isGmsAvailable
+            ? ScannerSource.camera
+            : ScannerSource.gallery,
       );
       final files = scanResult?.images ?? [];
 
@@ -721,6 +899,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       if (loader.isLoading) {
         loader.hideLoading();
       }
+      if (!context.mounted) return;
       Navigator.of(context).pop();
       unawaited(
         context.pushNamed(
@@ -741,6 +920,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       if (loader.isLoading) {
         loader.hideLoading();
       }
+      if (!context.mounted) return;
       Navigator.of(context).pop();
       if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
         AppFunctions.showSnackBar(
@@ -771,76 +951,45 @@ class AddMovementBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return Container(
-      width: double.infinity,
-      height: 250,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        spacing: 16,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        spacing: 10,
         children: [
-          Center(
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).pop(),
-              child: Container(
-                width: 40,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                  borderRadius: const BorderRadius.all(Radius.circular(2)),
-                ),
-              ),
+          TonalButtonActionHome(
+            title: l10n.homeFile,
+            icon: HugeIcons.strokeRoundedUpload04,
+            onPressed: () => handleFilePick(context),
+          ),
+          if (!kIsWeb)
+            TonalButtonActionHome(
+              title: l10n.homeScan,
+              icon: HugeIcons.strokeRoundedCamera01,
+              onPressed: () => handleDocumentScan(context),
             ),
-          ),
-          Text(
-            movementType == CategoryType.expense
-                ? l10n.homeAddExpense
-                : l10n.homeAddIncome,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          Row(
-            spacing: 10,
-            children: [
-              TonalButtonActionHome(
-                title: l10n.homeFile,
-                icon: HugeIcons.strokeRoundedUpload04,
-                onPressed: () => handleFilePick(context),
-              ),
-              if (!kIsWeb)
-                TonalButtonActionHome(
-                  title: l10n.homeScan,
-                  icon: HugeIcons.strokeRoundedCamera01,
-                  onPressed: () => handleDocumentScan(context),
-                ),
-              TonalButtonActionHome(
-                title: l10n.homeEnter,
-                icon: HugeIcons.strokeRoundedEdit02,
-                onPressed: () {
-                  getIt<AnalyticsService>().logEvent(
-                    name: 'add_movement_method',
-                    parameters: {
-                      'method': 'manual',
-                      'movement_type': movementType.value,
-                    },
-                  );
-                  Navigator.of(context).pop();
-                  unawaited(
-                    context.pushNamed(
-                      AppRoute.movement.name,
-                      pathParameters: {
-                        'type': movementType.value,
-                        'screenType': MovementScreenType.add.name.toUpperCase(),
-                      },
-                      extra: Movement.empty,
-                    ),
-                  );
+          TonalButtonActionHome(
+            title: l10n.homeEnter,
+            icon: HugeIcons.strokeRoundedEdit02,
+            onPressed: () {
+              getIt<AnalyticsService>().logEvent(
+                name: 'add_movement_method',
+                parameters: {
+                  'method': 'manual',
+                  'movement_type': movementType.value,
                 },
-              ),
-            ],
+              );
+              Navigator.of(context).pop();
+              unawaited(
+                context.pushNamed(
+                  AppRoute.movement.name,
+                  pathParameters: {
+                    'type': movementType.value,
+                    'screenType': MovementScreenType.add.name.toUpperCase(),
+                  },
+                  extra: Movement.empty,
+                ),
+              );
+            },
           ),
         ],
       ),

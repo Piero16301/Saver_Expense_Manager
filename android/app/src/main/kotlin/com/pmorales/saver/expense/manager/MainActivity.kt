@@ -1,6 +1,7 @@
 package com.pmorales.saver.expense.manager
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +19,11 @@ import java.util.UUID
 class MainActivity : FlutterFragmentActivity() {
     companion object {
         private const val SHARE_CHANNEL = "com.pmorales.saver.expense.manager/share"
+        private const val DOCUMENT_SCANNER_CHANNEL =
+            "com.pmorales.saver.expense.manager/document_scanner"
+        private const val GMS_SCAN_DOCUMENT_ACTION =
+            "com.google.android.gms.mlkit.ACTION_SCAN_DOCUMENT"
+        private const val GMS_PACKAGE = "com.google.android.gms"
         private const val SHARE_EXPENSE_ALIAS = ".ShareExpenseActivity"
         private const val SHARE_INCOME_ALIAS = ".ShareIncomeActivity"
         private val ALLOWED_EXTENSIONS = setOf("pdf", "png", "jpg", "jpeg")
@@ -51,6 +57,27 @@ class MainActivity : FlutterFragmentActivity() {
                 }
             }
         }
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            DOCUMENT_SCANNER_CHANNEL,
+        ).setMethodCallHandler { call, result ->
+            if (call.method == "isGmsScannerAvailable") {
+                result.success(isGmsDocumentScannerAvailable())
+            } else {
+                result.notImplemented()
+            }
+        }
+    }
+
+    private fun isGmsDocumentScannerAvailable(): Boolean {
+        val scanIntent = Intent(GMS_SCAN_DOCUMENT_ACTION).setPackage(GMS_PACKAGE)
+        val resolved = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.resolveActivity(scanIntent, PackageManager.ResolveInfoFlags.of(0))
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.resolveActivity(scanIntent, 0)
+        }
+        return resolved != null
     }
 
     override fun onNewIntent(intent: Intent) {

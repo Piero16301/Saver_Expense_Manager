@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:expressive_kit/expressive_kit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
@@ -228,154 +230,141 @@ class FilterMovementsAntResumeHome extends StatelessWidget {
 
   void _showFilterTypeMenu(BuildContext context, CategoryType? filterType) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.4,
-        minChildSize: 0.3,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) => Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                    borderRadius: const BorderRadius.all(Radius.circular(2)),
-                  ),
-                ),
+    final options = [
+      (null, l10n.movementTypeAll, HugeIcons.strokeRoundedTaskDaily01),
+      (
+        CategoryType.expense,
+        l10n.expenseName,
+        HugeIcons.strokeRoundedMoneyRemove01,
+      ),
+      (CategoryType.income, l10n.incomeName, HugeIcons.strokeRoundedMoneyAdd01),
+    ];
+
+    unawaited(
+      showExpressiveModalBottomSheet<void>(
+        context: context,
+        title: l10n.movementTypeTitle,
+        maxHeightFraction: AppVariables.modalBottomSheetMaxHeightPct,
+        itemsBuilder: (modalContext) => options.map((option) {
+          final value = option.$1;
+          final title = option.$2;
+          final icon = option.$3;
+          final isSelected = filterType == value;
+
+          return ListTile(
+            leading: HugeIcon(
+              icon: icon,
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+              strokeWidth: 2,
+            ),
+            title: Text(
+              title,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? colorScheme.primary : colorScheme.onSurface,
               ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.movementTypeTitle,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: RadioGroup<CategoryType?>(
-                    groupValue: filterType,
-                    onChanged: (value) {
-                      onFilterTypeChanged(value);
-                      Navigator.pop(context);
-                    },
-                    child: Column(
-                      children: [
-                        RadioListTile<CategoryType?>(
-                          title: Text(l10n.movementTypeAll),
-                          value: null,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        RadioListTile<CategoryType?>(
-                          title: Text(l10n.expenseName),
-                          value: CategoryType.expense,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        RadioListTile<CategoryType?>(
-                          title: Text(l10n.incomeName),
-                          value: CategoryType.income,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
+            ),
+            trailing: isSelected
+                ? HugeIcon(
+                    icon: HugeIcons.strokeRoundedCheckmarkCircle02,
+                    color: colorScheme.primary,
+                    strokeWidth: 2,
+                  )
+                : null,
+            onTap: () {
+              onFilterTypeChanged(value);
+              Navigator.pop(modalContext);
+            },
+          );
+        }).toList(),
       ),
     );
   }
 
   void _showFilterCategoryMenu(BuildContext context, Category? filterCategory) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        minChildSize: 0.3,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) => Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+    final filteredCategories = categories
+        .where((category) => category.type == filterType)
+        .toList();
+
+    unawaited(
+      showExpressiveModalBottomSheet<void>(
+        context: context,
+        title: l10n.movementCategoryTitle,
+        maxHeightFraction: AppVariables.modalBottomSheetMaxHeightPct,
+        itemsBuilder: (modalContext) => [
+          ListTile(
+            leading: HugeIcon(
+              icon: HugeIcons.strokeRoundedGridView,
+              color: filterCategory == null
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
+              strokeWidth: 2,
+            ),
+            title: Text(
+              l10n.movementCategoryAll,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: filterCategory == null
+                    ? FontWeight.w700
+                    : FontWeight.w500,
+                color: filterCategory == null
+                    ? colorScheme.primary
+                    : colorScheme.onSurface,
+              ),
+            ),
+            trailing: filterCategory == null
+                ? HugeIcon(
+                    icon: HugeIcons.strokeRoundedCheckmarkCircle02,
+                    color: colorScheme.primary,
+                    strokeWidth: 2,
+                  )
+                : null,
+            onTap: () {
+              onFilterCategoryChanged(null);
+              Navigator.pop(modalContext);
+            },
           ),
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).buttonTheme.colorScheme!.primary,
-                    borderRadius: const BorderRadius.all(Radius.circular(2)),
-                  ),
+          ...filteredCategories.map((category) {
+            final isSelected = filterCategory == category;
+            return ListTile(
+              leading: HugeIcon(
+                icon: AppFunctions.getCategoryIcon(category.icon),
+                color: isSelected
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
+                strokeWidth: 2,
+              ),
+              title: Text(
+                AppFunctions.getCategoryName(category.name, l10n),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected
+                      ? colorScheme.primary
+                      : colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(height: 16),
-              Text(
-                l10n.movementCategoryTitle,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: RadioGroup<Category?>(
-                    groupValue: filterCategory,
-                    onChanged: (value) {
-                      onFilterCategoryChanged(value);
-                      Navigator.pop(context);
-                    },
-                    child: Column(
-                      children: [
-                        RadioListTile<Category?>(
-                          title: Text(l10n.movementCategoryAll),
-                          value: null,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                        ...categories
-                            .where((category) => category.type == filterType)
-                            .map(
-                              (category) => RadioListTile<Category?>(
-                                title: Text(
-                                  AppFunctions.getCategoryName(
-                                    category.name,
-                                    l10n,
-                                  ),
-                                ),
-                                value: category,
-                                contentPadding: EdgeInsets.zero,
-                              ),
-                            ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
+              trailing: isSelected
+                  ? HugeIcon(
+                      icon: HugeIcons.strokeRoundedCheckmarkCircle02,
+                      color: colorScheme.primary,
+                      strokeWidth: 2,
+                    )
+                  : null,
+              onTap: () {
+                onFilterCategoryChanged(category);
+                Navigator.pop(modalContext);
+              },
+            );
+          }),
+        ],
       ),
     );
   }

@@ -29,6 +29,8 @@ class MockCrashService extends Mock implements CrashService;
 
 class MockPerformanceService extends Mock implements PerformanceService;
 
+class FakeAppLocalizations extends Fake implements AppLocalizations;
+
 const _testCategories = [
   Category(
     id: 'cat1',
@@ -63,6 +65,7 @@ void main() {
     registerFallbackValue(DateTime.now());
     registerFallbackValue(CategoryType.expense);
     registerFallbackValue(Category.empty);
+    registerFallbackValue(FakeAppLocalizations());
   });
 
   setUp(() async {
@@ -193,7 +196,7 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(find.byType(Scaffold), findsAtLeast(1));
+      expect(find.text('Error loading categories'), findsOneWidget);
     });
   });
 
@@ -356,7 +359,7 @@ void main() {
       await tester.tap(chip);
       await tester.pumpAndSettle();
 
-      expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+      expect(find.byType(ListTile), findsAtLeast(3));
 
       while (tester.takeException() != null) {}
     });
@@ -474,6 +477,110 @@ void main() {
       final aiButton = buttons.first;
       expect(aiButton.onPressed, isNull);
     });
+
+    testWidgets(
+      'shows error snackbar and resets status when recommendations fail',
+      (tester) async {
+        final stateController = StreamController<MovementsHomeState>();
+        whenListen(
+          mockCubit,
+          stateController.stream,
+          initialState: const MovementsHomeState(),
+        );
+        when(() => mockCubit.resetRecommendationsStatus()).thenReturn(null);
+
+        await tester.pumpWidget(buildView());
+        await tester.pump();
+
+        stateController.add(
+          const MovementsHomeState(
+            recommendationsStatus: RecommendationsStatus.failure,
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.byType(SnackBar), findsOneWidget);
+        verify(() => mockCubit.resetRecommendationsStatus()).called(1);
+        await stateController.close();
+      },
+    );
+
+    testWidgets('AI button triggers getRecommendations when initial', (
+      tester,
+    ) async {
+      final movement = Movement(
+        id: '1',
+        title: 'T',
+        description: 'D',
+        price: 1,
+        date: DateTime(2024),
+        category: _testCategories.first,
+        user: 'user123',
+      );
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value([movement]));
+      when(() => mockCubit.getRecommendations(l10n: any(named: 'l10n')))
+          .thenAnswer((_) async {});
+
+      await tester.pumpWidget(buildView());
+      await tester.pump();
+      await tester.pump();
+
+      await tester.tap(find.byType(ExpressiveIconButton).first);
+      await tester.pump();
+      verify(() => mockCubit.getRecommendations(l10n: any(named: 'l10n')))
+          .called(1);
+    });
+
+    testWidgets('AI button triggers changeShowRecommendations when success', (
+      tester,
+    ) async {
+      final movement = Movement(
+        id: '1',
+        title: 'T',
+        description: 'D',
+        price: 1,
+        date: DateTime(2024),
+        category: _testCategories.first,
+        user: 'user123',
+      );
+      when(
+        () => mockDatabase.getMovementsStream(
+          userId: any(named: 'userId'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          type: any(named: 'type'),
+          categoryId: any(named: 'categoryId'),
+          limit: any(named: 'limit'),
+          orderByDate: any(named: 'orderByDate'),
+        ),
+      ).thenAnswer((_) => Stream.value([movement]));
+      when(() => mockCubit.changeShowRecommendations()).thenReturn(null);
+
+      await tester.pumpWidget(
+        buildView(
+          state: const MovementsHomeState(
+            recommendationsStatus: RecommendationsStatus.success,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+
+      await tester.tap(find.byType(ExpressiveIconButton).first);
+      await tester.pump();
+      verify(() => mockCubit.changeShowRecommendations()).called(1);
+    });
   });
 
   group('FilterMovementsAntResumeHome', () {
@@ -536,9 +643,96 @@ void main() {
       await tester.tap(chips.last);
       await tester.pumpAndSettle();
 
-      expect(find.byType(DraggableScrollableSheet), findsOneWidget);
+      expect(find.byType(ListTile), findsAtLeast(2));
 
       while (tester.takeException() != null) {}
+    });
+
+    testWidgets('renders with income filterType', (tester) async {
+      await tester.pumpWidget(buildFilter(filterType: CategoryType.income));
+      await tester.pump();
+
+      expect(find.text('Income'), findsOneWidget);
+    });
+
+    testWidgets('selecting option in type filter modal invokes callback', (
+      tester,
+    ) async {
+      CategoryType? selectedType;
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<MovementsHomeCubit>.value(value: mockCubit),
+            ],
+            child: Scaffold(
+              body: FilterMovementsAntResumeHome(
+                categories: mutableTestCategories,
+                onFilterTypeChanged: (value) => selectedType = value,
+                onFilterCategoryChanged: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.byType(Chip).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, 'Expense'));
+      await tester.pumpAndSettle();
+
+      expect(selectedType, CategoryType.expense);
+    });
+
+    testWidgets('selecting options in category filter modal invokes callback', (
+      tester,
+    ) async {
+      Category? selectedCategory = _testCategories.first;
+      var callbackCount = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: MultiBlocProvider(
+            providers: [
+              BlocProvider<MovementsHomeCubit>.value(value: mockCubit),
+            ],
+            child: Scaffold(
+              body: FilterMovementsAntResumeHome(
+                categories: mutableTestCategories,
+                filterType: CategoryType.expense,
+                filterCategory: _testCategories.first,
+                onFilterTypeChanged: (_) {},
+                onFilterCategoryChanged: (value) {
+                  selectedCategory = value;
+                  callbackCount++;
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.byType(Chip).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byType(ListTile).first);
+      await tester.pumpAndSettle();
+
+      expect(callbackCount, 1);
+      expect(selectedCategory, isNull);
+
+      await tester.tap(find.byType(Chip).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(ListTile, 'Feeding'));
+      await tester.pumpAndSettle();
+
+      expect(callbackCount, 2);
+      expect(selectedCategory, _testCategories.first);
     });
   });
 }
