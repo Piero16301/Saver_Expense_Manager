@@ -1,0 +1,58 @@
+App name (max 30 chars):
+Saver: AI Expense Manager
+
+Short description (max 80 chars):
+Track spending, scan receipts & get AI savings tips. Free, private & offline!
+
+Full description:
+💸 WHERE DID YOUR MONEY GO? SAVER TELLS YOU — AND SHOWS YOU HOW TO KEEP MORE OF IT.
+
+Saver is the free expense manager with built-in Gemini AI. Log spending in seconds, see exactly where every dollar goes, and get personalized tips to cut avoidable expenses — even with no internet.
+
+No subscriptions. No ads. No paywalls. No selling your data. Just you, your money, and a smart assistant on your side.
+
+🤖 AI SAVINGS TIPS, POWERED BY GEMINI
+Your own money coach, based on your real spending:
+• Spot avoidable expenses (that "small" coffee and delivery adds up!)
+• Get budget recommendations tailored to your lifestyle
+• Catch spending trends before they become a problem
+• ☁️ Online: Gemini in the cloud for richer insights
+• 📴 Offline: Gemini Nano on-device — AI tips with no Wi-Fi or mobile data
+
+📷 SNAP A RECEIPT, SKIP THE TYPING
+Take a photo of your receipt and let AI fill in the amount and details for you.
+
+📊 SEE YOUR FINANCES AT A GLANCE
+• Monthly and yearly summary of incomes, expenses and balance
+• Beautiful interactive charts and category trends over time
+• Category breakdown with percentages — know your biggest spending areas instantly
+• Filter your history by date, category or amount
+
+🎨 MAKE IT YOURS
+• Create unlimited custom categories with your own icons and colors
+• Track both income and expenses
+• Light & dark theme that follows your system
+• Available in English, Spanish and Italian
+• Clean, fast Material Design interface
+
+📴 WORKS 100% OFFLINE
+On a plane, on the subway, with no signal? Keep logging transactions and getting AI tips. Sign in to sync across sessions whenever you want — it's optional.
+
+🔒 PRIVACY FIRST
+• We do NOT collect, sell or share your financial data
+• Your transactions live on your device
+• On-device AI means your data doesn't need to leave your phone for tips
+• Secure sign-in with Email/Password or Google
+
+🆓 TRULY FREE
+Every feature, from day one: unlimited transactions, unlimited categories, AI tips and receipt scanning. No ads. No subscriptions. Ever.
+
+👥 PERFECT FOR
+✔ Anyone who wants to save but doesn't know where to start
+✔ People tired of wondering where their paycheck went
+✔ Students, freelancers and families who want to be smarter with money
+✔ Privacy-minded users who want full control of their data
+
+🚀 DOWNLOAD SAVER AND START KEEPING MORE OF YOUR MONEY — IT TAKES LESS THAN A MINUTE TO ADD YOUR FIRST EXPENSE.
+
+Your money. Your rules. Your Saver. 💚

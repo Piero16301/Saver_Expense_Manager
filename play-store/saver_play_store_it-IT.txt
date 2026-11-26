@@ -1,0 +1,58 @@
+App name (max 30 chars):
+Saver: Gestione Spese con IA
+
+Short description (max 80 chars):
+Monitora le spese, scansiona scontrini e ricevi consigli IA. Gratis e offline!
+
+Full description:
+💸 DOVE SONO FINITI I TUOI SOLDI? SAVER TE LO DICE – E TI AIUTA A TENERNE DI PIÙ.
+
+Saver è il gestore di spese gratuito con IA Gemini integrata. Registra le spese in pochi secondi, scopri dove va ogni euro e ricevi consigli personalizzati per ridurre le spese evitabili, anche senza internet.
+
+Nessun abbonamento. Nessuna pubblicità. Nessun paywall. Nessuna vendita dei tuoi dati. Solo tu, i tuoi soldi e un assistente intelligente dalla tua parte.
+
+🤖 CONSIGLI DI RISPARMIO IA, CON GEMINI
+Il tuo coach finanziario personale, basato sulle tue spese reali:
+• Individua le spese evitabili (quel caffè "piccolo" e il delivery si sommano!)
+• Ricevi consigli di budget adatti al tuo stile di vita
+• Scopri le tendenze di spesa prima che diventino un problema
+• ☁️ Online: Gemini nel cloud per analisi più ricche
+• 📴 Offline: Gemini Nano sul dispositivo, consigli IA senza Wi-Fi né dati mobili
+
+📷 FOTOGRAFA LO SCONTRINO, SALTA LA DIGITAZIONE
+Scatta una foto allo scontrino e lascia che l'IA compili importo e dettagli per te.
+
+📊 LE TUE FINANZE A COLPO D'OCCHIO
+• Riepilogo mensile e annuale di entrate, spese e saldo
+• Grafici interattivi e andamento per categoria nel tempo
+• Ripartizione per categoria con percentuali: scopri subito dove spendi di più
+• Filtra la cronologia per data, categoria o importo
+
+🎨 PERSONALIZZALA
+• Crea categorie illimitate con icone e colori a tua scelta
+• Registra sia entrate che spese
+• Tema chiaro e scuro in base al sistema
+• Disponibile in inglese, spagnolo e italiano
+• Interfaccia Material Design pulita e veloce
+
+📴 FUNZIONA AL 100% OFFLINE
+In aereo, in metro, senza segnale? Continua a registrare movimenti e a ricevere consigli IA. Accedi per sincronizzare quando vuoi: è facoltativo.
+
+🔒 PRIMA DI TUTTO, LA PRIVACY
+• NON raccogliamo, vendiamo né condividiamo i tuoi dati finanziari
+• Le tue transazioni restano sul tuo dispositivo
+• L'IA sul dispositivo permette di avere consigli senza che i dati lascino il telefono
+• Accesso sicuro con e-mail/password o Google
+
+🆓 DAVVERO GRATUITA
+Tutte le funzioni fin dal primo giorno: transazioni illimitate, categorie illimitate, consigli IA e scansione scontrini. Niente pubblicità. Niente abbonamenti. Mai.
+
+👥 PERFETTA PER
+✔ Chi vuole risparmiare ma non sa da dove iniziare
+✔ Chi si chiede dove sia finito lo stipendio
+✔ Studenti, freelance e famiglie che vogliono gestire meglio il denaro
+✔ Chi tiene alla privacy e vuole il pieno controllo dei propri dati
+
+🚀 SCARICA SAVER E TIENI DI PIÙ I TUOI SOLDI: AGGIUNGERE LA PRIMA SPESA RICHIEDE MENO DI UN MINUTO.
+
+I tuoi soldi. Le tue regole. Il tuo Saver. 💚
