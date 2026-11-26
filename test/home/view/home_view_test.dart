@@ -5,6 +5,8 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:expressive_kit/expressive_kit.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_performance/firebase_performance.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, debugDefaultTargetPlatformOverride;
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -1267,6 +1269,56 @@ void main() {
         });
       },
     );
+
+    testWidgets('handleDocumentScan falls back to gallery when GMS scanner is '
+        'unavailable on Android', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        Map<Object?, Object?>? scanArguments;
+
+        const docScannerChannel = MethodChannel(
+          'com.pmorales.saver.expense.manager/document_scanner',
+        );
+        const cunningChannel = MethodChannel('cunning_document_scanner');
+
+        tester.binding.defaultBinaryMessenger
+          ..setMockMethodCallHandler(docScannerChannel, (message) async {
+            if (message.method == 'isGmsScannerAvailable') {
+              return false;
+            }
+            return null;
+          })
+          ..setMockMethodCallHandler(cunningChannel, (message) async {
+            if (message.method == 'scanDocuments') {
+              scanArguments = message.arguments as Map<Object?, Object?>?;
+              return {'images': <String>[]};
+            }
+            return null;
+          });
+
+        addTearDown(() {
+          tester.binding.defaultBinaryMessenger
+            ..setMockMethodCallHandler(docScannerChannel, null)
+            ..setMockMethodCallHandler(cunningChannel, null);
+        });
+
+        await mockNetworkImagesFor(() async {
+          await pumpRouterSubject(tester);
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.byType(ExpressiveFab));
+          await tester.pumpAndSettle();
+
+          await tester.tap(find.text('Scan'));
+          await tester.pumpAndSettle();
+        });
+
+        expect(scanArguments, isNotNull);
+        expect(scanArguments?['scannerSource'], 'gallery');
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    });
   });
 
   group('HomeView ShareIntent handling', () {

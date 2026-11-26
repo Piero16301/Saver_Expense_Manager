@@ -1,12 +1,13 @@
-// ignore_for_file: use_build_context_synchronously // To dismiss bottom sheet
-
 import 'dart:async';
 import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:expressive_kit/expressive_kit.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, Uint8List, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/services.dart'
+    show MethodChannel, MissingPluginException;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -547,8 +548,26 @@ class _ShareIntentListenerState extends State<_ShareIntentListener> {
 class AddMovementBottomSheet extends StatelessWidget {
   const new({required this.categories, required this.movementType, super.key});
 
+  static const _documentScannerChannel = MethodChannel(
+    'com.pmorales.saver.expense.manager/document_scanner',
+  );
+
   final List<Category> categories;
   final CategoryType movementType;
+
+  Future<bool> _isGmsDocumentScannerAvailable() async {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return true;
+    }
+    try {
+      return await _documentScannerChannel.invokeMethod<bool>(
+            'isGmsScannerAvailable',
+          ) ??
+          true;
+    } on MissingPluginException {
+      return true;
+    }
+  }
 
   Future<void> handleFilePick(
     BuildContext context, {
@@ -761,8 +780,12 @@ class AddMovementBottomSheet extends StatelessWidget {
     final loader = AppLoader(context);
 
     try {
+      final isGmsAvailable = await _isGmsDocumentScannerAvailable();
       final scanResult = await CunningDocumentScanner.scanDocuments(
         noOfPages: 1,
+        scannerSource: isGmsAvailable
+            ? ScannerSource.camera
+            : ScannerSource.gallery,
       );
       final files = scanResult?.images ?? [];
 
@@ -876,6 +899,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       if (loader.isLoading) {
         loader.hideLoading();
       }
+      if (!context.mounted) return;
       Navigator.of(context).pop();
       unawaited(
         context.pushNamed(
@@ -896,6 +920,7 @@ class AddMovementBottomSheet extends StatelessWidget {
       if (loader.isLoading) {
         loader.hideLoading();
       }
+      if (!context.mounted) return;
       Navigator.of(context).pop();
       if (e.toString().contains(AppVariables.unsupportedLocalModelFile)) {
         AppFunctions.showSnackBar(
