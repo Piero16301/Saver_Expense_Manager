@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -30,65 +32,254 @@ abstract class AuthRepository {
 }
 
 class MockAuthRepository implements AuthRepository {
+  new({AppUser? initialUser = defaultUser}) : _currentUser = initialUser;
+
+  static const AppUser defaultUser = AppUser(
+    uid: '1',
+    email: 'demo@saver.app',
+    displayName: 'Saver Demo',
+    providerData: [
+      AppUserInfo(
+        uid: '1',
+        providerId: AppVariables.emailProvider,
+        email: 'demo@saver.app',
+        displayName: 'Saver Demo',
+      ),
+    ],
+  );
+
+  final StreamController<AppUser?> _controller =
+      StreamController<AppUser?>.broadcast();
+  AppUser? _currentUser;
+  String _lastDisplayName = 'Saver Demo';
+
+  void _emitUser(AppUser? user) {
+    _currentUser = user;
+    if (user?.displayName != null && user!.displayName!.isNotEmpty) {
+      _lastDisplayName = user.displayName!;
+    }
+    if (!_controller.isClosed) {
+      _controller.add(user);
+    }
+  }
+
   @override
   Future<void> initialize() async {}
 
   @override
-  Stream<AppUser?> get userChanges => Stream.value(const AppUser(uid: '1'));
+  Stream<AppUser?> get userChanges async* {
+    yield _currentUser;
+    yield* _controller.stream;
+  }
 
   @override
-  Stream<AppUser?> get authStateChanges =>
-      Stream.value(const AppUser(uid: '1'));
+  Stream<AppUser?> get authStateChanges async* {
+    yield _currentUser;
+    yield* _controller.stream;
+  }
 
   @override
-  AppUser? get currentUser => const AppUser(uid: '1');
+  AppUser? get currentUser => _currentUser;
 
   @override
-  bool get isLoggedIn => true;
+  bool get isLoggedIn => _currentUser != null;
 
   @override
-  Future<bool> updateDisplayName(String newName) async => true;
+  Future<bool> updateDisplayName(String newName) async {
+    final user = _currentUser;
+    if (user == null) return false;
+    final updatedProviders = user.providerData
+        .map(
+          (p) => AppUserInfo(
+            uid: p.uid,
+            providerId: p.providerId,
+            email: p.email,
+            displayName: newName,
+            photoURL: p.photoURL,
+            phoneNumber: p.phoneNumber,
+          ),
+        )
+        .toList();
+    _emitUser(
+      AppUser(
+        uid: user.uid,
+        email: user.email,
+        displayName: newName,
+        photoURL: user.photoURL,
+        phoneNumber: user.phoneNumber,
+        providerData: updatedProviders,
+      ),
+    );
+    return true;
+  }
 
   @override
-  Future<bool> signOut() async => true;
+  Future<bool> signOut() async {
+    _emitUser(null);
+    return true;
+  }
 
   @override
-  Future<bool> unlinkProvider(String providerId) async => true;
+  Future<bool> unlinkProvider(String providerId) async {
+    final user = _currentUser;
+    if (user == null) return false;
+    final updatedProviders = user.providerData
+        .where((p) => p.providerId != providerId)
+        .toList();
+    _emitUser(
+      AppUser(
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        phoneNumber: user.phoneNumber,
+        providerData: updatedProviders,
+      ),
+    );
+    return true;
+  }
 
   @override
-  Future<bool> reloadUser() async => true;
+  Future<bool> reloadUser() async {
+    _emitUser(_currentUser);
+    return true;
+  }
 
   @override
-  Future<bool> linkWithGoogle() async => true;
+  Future<bool> linkWithGoogle() async {
+    final user = _currentUser;
+    if (user == null) return false;
+    final hasGoogle = user.providerData.any(
+      (p) => p.providerId == AppVariables.googleProvider,
+    );
+    if (!hasGoogle) {
+      final updatedProviders = List<AppUserInfo>.from(user.providerData)
+        ..add(
+          AppUserInfo(
+            uid: user.uid,
+            providerId: AppVariables.googleProvider,
+            email: user.email ?? 'demo.google@saver.app',
+            displayName: user.displayName ?? _lastDisplayName,
+          ),
+        );
+      _emitUser(
+        AppUser(
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          phoneNumber: user.phoneNumber,
+          providerData: updatedProviders,
+        ),
+      );
+    }
+    return true;
+  }
 
   @override
   Future<bool> linkWithEmailPassword({
     required String email,
     required String password,
-  }) async => true;
+  }) async {
+    final user = _currentUser;
+    if (user == null) return false;
+    final hasEmail = user.providerData.any(
+      (p) => p.providerId == AppVariables.emailProvider,
+    );
+    if (!hasEmail) {
+      final updatedProviders = List<AppUserInfo>.from(user.providerData)
+        ..add(
+          AppUserInfo(
+            uid: user.uid,
+            providerId: AppVariables.emailProvider,
+            email: email,
+            displayName: user.displayName ?? _lastDisplayName,
+          ),
+        );
+      _emitUser(
+        AppUser(
+          uid: user.uid,
+          email: user.email ?? email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          phoneNumber: user.phoneNumber,
+          providerData: updatedProviders,
+        ),
+      );
+    }
+    return true;
+  }
 
   @override
-  Future<bool> signInWithGoogle() async => true;
+  Future<bool> signInWithGoogle() async {
+    _emitUser(
+      AppUser(
+        uid: '1',
+        email: 'demo.google@saver.app',
+        displayName: _lastDisplayName,
+        providerData: [
+          AppUserInfo(
+            uid: '1',
+            providerId: AppVariables.googleProvider,
+            email: 'demo.google@saver.app',
+            displayName: _lastDisplayName,
+          ),
+        ],
+      ),
+    );
+    return true;
+  }
 
   @override
-  Future<bool> signInWithEmailAndPassword(
-    String email,
-    String password,
-  ) async => true;
+  Future<bool> signInWithEmailAndPassword(String email, String password) async {
+    _emitUser(
+      AppUser(
+        uid: '1',
+        email: email,
+        displayName: _lastDisplayName,
+        providerData: [
+          AppUserInfo(
+            uid: '1',
+            providerId: AppVariables.emailProvider,
+            email: email,
+            displayName: _lastDisplayName,
+          ),
+        ],
+      ),
+    );
+    return true;
+  }
 
   @override
-  Future<bool> signUpWithEmailAndPassword(
-    String email,
-    String password,
-  ) async => true;
+  Future<bool> signUpWithEmailAndPassword(String email, String password) async {
+    _emitUser(
+      AppUser(
+        uid: '1',
+        email: email,
+        displayName: _lastDisplayName,
+        providerData: [
+          AppUserInfo(
+            uid: '1',
+            providerId: AppVariables.emailProvider,
+            email: email,
+            displayName: _lastDisplayName,
+          ),
+        ],
+      ),
+    );
+    return true;
+  }
 
   @override
-  Future<bool> updateUserName(String newName) async => true;
+  Future<bool> updateUserName(String newName) => updateDisplayName(newName);
 
   @override
   Future<bool> deleteAccount({
     void Function(Object error, StackTrace stackTrace)? onCloudFunctionError,
-  }) async => true;
+  }) async {
+    _emitUser(null);
+    return true;
+  }
 }
 
 class FirebaseAuthRepository implements AuthRepository {

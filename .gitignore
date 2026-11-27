@@ -131,3 +131,7 @@ functions/venv/
 functions/.venv/
 __pycache__/
 *.pyc
+
+# Play Store video build & generated outputs
+play-store/_build/
+play-store/video/*.mp4

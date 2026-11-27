@@ -7,24 +7,43 @@ import 'package:saver_expense_manager/app/repositories/performance_repository.da
 
 class MockFirebasePerformance extends Mock implements FirebasePerformance;
 
-class MockTrace extends Mock implements Trace;
+class MockFirebaseTrace extends Mock implements Trace;
 
 void main() {
   late MockFirebasePerformance mockPerformance;
-  late MockTrace mockTrace;
+  late MockFirebaseTrace mockTrace;
   late FirebasePerformanceRepository repository;
 
   setUp(() {
     mockPerformance = MockFirebasePerformance();
-    mockTrace = MockTrace();
+    mockTrace = MockFirebaseTrace();
     repository = FirebasePerformanceRepository(performance: mockPerformance);
   });
 
   group('MockPerformanceRepository', () {
-    test('throws UnimplementedError', () {
+    test('starts and stops MockTrace in memory', () async {
       final mock = MockPerformanceRepository();
-      expect(() => mock.startTrace('name'), throwsUnimplementedError);
-      expect(() => mock.stopTrace(mockTrace), throwsUnimplementedError);
+      final trace = mock.startTrace('name') as MockTrace;
+      expect(trace.name, equals('name'));
+      expect(trace.isStarted, isTrue);
+      expect(trace.isStopped, isFalse);
+      expect(mock.activeTraces, contains(trace));
+
+      trace
+        ..setMetric('count', 2)
+        ..incrementMetric('count', 3)
+        ..putAttribute('env', 'mock');
+      expect(trace.getMetric('count'), equals(5));
+      expect(trace.getAttribute('env'), equals('mock'));
+      expect(trace.getAttributes(), equals({'env': 'mock'}));
+      trace.removeAttribute('env');
+      expect(trace.getAttribute('env'), isNull);
+
+      mock.stopTrace(trace);
+      await Future<void>.delayed(Duration.zero);
+      expect(trace.isStopped, isTrue);
+      expect(mock.activeTraces, isEmpty);
+      expect(mock.completedTraces, contains(trace));
     });
   });
 

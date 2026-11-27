@@ -17,21 +17,39 @@ void main() {
   });
 
   group('MockLocalStorageRepository', () {
-    test('Mock tests for coverage', () async {
+    test('persists values in memory across reads and writes', () async {
       final mock = MockLocalStorageRepository();
       await mock.initialize();
-      mock.saveLanguage(language: const Locale('en'));
-      expect(mock.getLanguage(), isA<Locale>());
+
+      expect(mock.getLanguage(), equals(const Locale('en', 'US')));
+      mock.saveLanguage(language: const Locale('es', 'PE'));
+      expect(mock.getLanguage(), equals(const Locale('es', 'PE')));
+
+      expect(mock.getTheme(), equals(ExpressiveTheme.defaultTheme));
       mock.saveTheme(theme: ThemeMode.dark);
-      expect(mock.getTheme(), equals(ThemeMode.light));
+      expect(mock.getTheme(), equals(ThemeMode.dark));
+
+      expect(mock.getBaseColor(), equals(ExpressiveColors.defaultColor));
       mock.saveBaseColor(baseColor: Colors.red);
-      expect(mock.getBaseColor(), equals(Colors.blue));
-      mock.saveFontFamily(fontFamily: 'font');
-      expect(mock.getFontFamily(), equals('default'));
-      mock.saveRecommendationsDate(date: DateTime.now());
-      expect(mock.getRecommendationsDate(), isNotNull);
-      mock.saveRecommendations(recommendations: ['r1']);
-      expect(mock.getRecommendations(), isEmpty);
+      expect(mock.getBaseColor(), equals(Colors.red));
+
+      expect(mock.getFontFamily(), equals(ExpressiveFonts.defaultFont));
+      mock.saveFontFamily(fontFamily: 'Roboto');
+      expect(mock.getFontFamily(), equals('Roboto'));
+
+      expect(mock.getRecommendationsDate(userId: '1'), isNull);
+      expect(mock.getRecommendations(userId: '1'), isNull);
+
+      final now = DateTime(2026, 3, 23);
+      mock
+        ..saveRecommendationsDate(date: now, userId: '1')
+        ..saveRecommendations(recommendations: ['r1', 'r2'], userId: '1');
+      expect(mock.getRecommendationsDate(userId: '1'), equals(now));
+      expect(mock.getRecommendations(userId: '1'), equals(['r1', 'r2']));
+
+      mock.clearRecommendations(userId: '1');
+      expect(mock.getRecommendationsDate(userId: '1'), isNull);
+      expect(mock.getRecommendations(userId: '1'), isNull);
     });
   });
 

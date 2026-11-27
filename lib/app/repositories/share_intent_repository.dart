@@ -11,17 +11,36 @@ abstract class ShareIntentRepository {
 }
 
 class MockShareIntentRepository implements ShareIntentRepository {
+  final StreamController<SharedFile> _controller =
+      StreamController<SharedFile>.broadcast();
+  SharedFile? _pendingSharedFile;
+
   @override
   Future<void> initialize() async {}
 
-  @override
-  SharedFile? consumePendingSharedFile() => null;
+  void simulateSharedFile(SharedFile file) {
+    if (!file.isSupported) return;
+    if (_controller.hasListener) {
+      _controller.add(file);
+    } else {
+      _pendingSharedFile = file;
+    }
+  }
 
   @override
-  Stream<SharedFile> get sharedFileStream => const Stream.empty();
+  SharedFile? consumePendingSharedFile() {
+    final file = _pendingSharedFile;
+    _pendingSharedFile = null;
+    return file;
+  }
 
   @override
-  Future<void> dispose() async {}
+  Stream<SharedFile> get sharedFileStream => _controller.stream;
+
+  @override
+  Future<void> dispose() async {
+    await _controller.close();
+  }
 }
 
 class MethodChannelShareIntentRepository implements ShareIntentRepository {

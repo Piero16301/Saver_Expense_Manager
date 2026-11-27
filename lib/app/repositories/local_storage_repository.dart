@@ -31,62 +31,84 @@ abstract class LocalStorageRepository {
 }
 
 class MockLocalStorageRepository implements LocalStorageRepository {
+  Locale _language = const Locale('en', 'US');
+  ThemeMode _theme = ExpressiveTheme.defaultTheme;
+  Color _baseColor = ExpressiveColors.defaultColor;
+  String _fontFamily = ExpressiveFonts.defaultFont;
+  final Map<String, DateTime> _recommendationsDates = {};
+  final Map<String, List<String>> _recommendations = {};
+
+  String _recKey(String? userId) =>
+      userId != null && userId.isNotEmpty ? userId : '__default__';
+
   @override
   Future<void> initialize() async {}
 
   @override
-  void saveLanguage({required Locale language}) {}
-
-  @override
-  Locale? getLanguage() {
-    return const Locale('en', 'US');
+  void saveLanguage({required Locale language}) {
+    _language = language;
   }
 
   @override
-  void saveTheme({required ThemeMode theme}) {}
+  Locale? getLanguage() => _language;
 
   @override
-  ThemeMode? getTheme() {
-    return ThemeMode.light;
+  void saveTheme({required ThemeMode theme}) {
+    _theme = theme;
   }
 
   @override
-  void saveBaseColor({required Color baseColor}) {}
+  ThemeMode? getTheme() => _theme;
 
   @override
-  Color? getBaseColor() {
-    return Colors.blue;
+  void saveBaseColor({required Color baseColor}) {
+    _baseColor = baseColor;
   }
 
   @override
-  void saveFontFamily({required String fontFamily}) {}
+  Color? getBaseColor() => _baseColor;
 
   @override
-  String? getFontFamily() {
-    return 'default';
+  void saveFontFamily({required String fontFamily}) {
+    _fontFamily = fontFamily;
   }
 
   @override
-  void saveRecommendationsDate({required DateTime date, String? userId}) {}
+  String? getFontFamily() => _fontFamily;
 
   @override
-  DateTime? getRecommendationsDate({String? userId}) {
-    return DateTime.now();
+  void saveRecommendationsDate({required DateTime date, String? userId}) {
+    _recommendationsDates[_recKey(userId)] = date;
   }
+
+  @override
+  DateTime? getRecommendationsDate({String? userId}) =>
+      _recommendationsDates[_recKey(userId)];
 
   @override
   void saveRecommendations({
     required List<String> recommendations,
     String? userId,
-  }) {}
-
-  @override
-  List<String>? getRecommendations({String? userId}) {
-    return [];
+  }) {
+    _recommendations[_recKey(userId)] = List<String>.from(recommendations);
   }
 
   @override
-  void clearRecommendations({String? userId}) {}
+  List<String>? getRecommendations({String? userId}) {
+    final recs = _recommendations[_recKey(userId)];
+    return recs == null ? null : List<String>.from(recs);
+  }
+
+  @override
+  void clearRecommendations({String? userId}) {
+    final key = _recKey(userId);
+    _recommendations.remove(key);
+    _recommendationsDates.remove(key);
+    if (userId == null) {
+      _recommendations.remove('__default__');
+      _recommendationsDates.remove('__default__');
+    }
+  }
 }
 
 class SharedPrefsLocalStorageRepository implements LocalStorageRepository {

@@ -43,11 +43,15 @@ class MockRemoteConfigRepository implements RemoteConfigRepository {
 
   @override
   String get geminiPromptDetectAntExpense =>
-      'config_gemini_prompt_detect_ant_expense';
+      'Analyze the following transactions from the last {{lookbackDays}} days '
+      'and provide 3 concise ant-expense recommendations in {{language}} '
+      'separated by |||:\n{{transactions_list}}';
 
   @override
   String get geminiPromptExtractReceiptData =>
-      'config_gemini_prompt_extract_receipt_data';
+      'Extract receipt data for a {{type}} movement on {{today}} in '
+      '{{language}} choosing one category from [{{categories}}] and return '
+      'JSON.';
 
   @override
   int get paginationLimit => 10;

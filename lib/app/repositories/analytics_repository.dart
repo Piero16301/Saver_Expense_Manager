@@ -8,15 +8,37 @@ abstract class AnalyticsRepository {
   void setUserId({required String id});
 }
 
+class MockAnalyticsEvent {
+  const new({required this.name, this.parameters});
+
+  final String name;
+  final Map<String, Object>? parameters;
+}
+
 class MockAnalyticsRepository implements AnalyticsRepository {
-  @override
-  void logEvent({required String name, Map<String, Object>? parameters}) {}
+  final List<MockAnalyticsEvent> _loggedEvents = [];
+  String? _currentScreen;
+  String? _userId;
+
+  List<MockAnalyticsEvent> get loggedEvents => List.unmodifiable(_loggedEvents);
+  String? get currentScreen => _currentScreen;
+  String? get userId => _userId;
 
   @override
-  void setCurrentScreen({required String screenName}) {}
+  void logEvent({required String name, Map<String, Object>? parameters}) {
+    _loggedEvents.add(MockAnalyticsEvent(name: name, parameters: parameters));
+  }
 
   @override
-  void setUserId({required String id}) {}
+  void setCurrentScreen({required String screenName}) {
+    _currentScreen = screenName;
+    logEvent(name: 'screen_view', parameters: {'screen_name': screenName});
+  }
+
+  @override
+  void setUserId({required String id}) {
+    _userId = id;
+  }
 }
 
 class FirebaseAnalyticsRepository implements AnalyticsRepository {

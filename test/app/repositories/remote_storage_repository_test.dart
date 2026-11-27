@@ -46,15 +46,20 @@ void main() {
   });
 
   group('MockRemoteStorageRepository', () {
-    test('Mock tests for coverage', () async {
+    test('stores, retrieves, and deletes files in memory', () async {
       final mock = MockRemoteStorageRepository();
-      expect(await mock.deleteFile('path'), isTrue);
-      expect(await mock.getData('path'), isA<Uint8List>());
-      expect(await mock.uploadFile(Uint8List(0), 'path'), equals('path'));
+      final preloaded = await mock.getData('1/mock_receipt_metro.png');
+      expect(preloaded, isNotEmpty);
+
+      final bytes = Uint8List.fromList([1, 2, 3, 4]);
+      expect(await mock.uploadFile(bytes, '1/test.png'), equals('1/test.png'));
+      expect(await mock.getData('1/test.png'), equals(bytes));
       expect(
-        await mock.getDownloadURL('path'),
-        equals('https://example.com/path'),
+        await mock.getDownloadURL('1/test.png'),
+        equals('https://example.com/1/test.png'),
       );
+      expect(await mock.deleteFile('1/test.png'), isTrue);
+      expect(await mock.getData('1/test.png'), isEmpty);
     });
   });
 

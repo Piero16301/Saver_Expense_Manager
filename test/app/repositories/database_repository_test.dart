@@ -48,15 +48,66 @@ void main() {
   });
 
   group('MockDatabaseRepository', () {
-    test('Mock tests for coverage', () async {
-      final mock = MockDatabaseRepository();
-      expect(mock.newId, isNotEmpty);
-      await mock.saveMovement(movement: Movement.empty);
-      expect(await mock.getCategoriesStream().first, isNotEmpty);
-      expect(await mock.getMovementsStream(userId: '1').first, isNotEmpty);
-      expect(await mock.getMovements(userId: '1'), isNotEmpty);
-      await mock.deleteMovement(movementId: '1');
-    });
+    test(
+      'provides 25 categories, filtered reactive streams, and CRUD',
+      () async {
+        final mock = MockDatabaseRepository();
+        expect(mock.newId, isNotEmpty);
+
+        final categories = await mock.getCategoriesStream().first;
+        expect(categories, hasLength(25));
+        expect(
+          () => categories.sort((a, b) => a.name.compareTo(b.name)),
+          returnsNormally,
+        );
+
+        final allMovements = await mock.getMovements(userId: '1');
+        expect(allMovements.length, greaterThanOrEqualTo(20));
+
+        final limited = await mock
+            .getMovementsStream(userId: '1', limit: 5, orderByDate: true)
+            .first;
+        expect(limited, hasLength(5));
+        expect(
+          limited.first.date.isAfter(limited.last.date) ||
+              limited.first.date.isAtSameMomentAs(limited.last.date),
+          isTrue,
+        );
+
+        final expenseOnly = await mock
+            .getMovementsStream(userId: '1', type: CategoryType.expense)
+            .first;
+        expect(
+          expenseOnly.every((m) => m.category.type == CategoryType.expense),
+          isTrue,
+        );
+
+        final newId = mock.newId;
+        final added = Movement(
+          id: newId,
+          title: 'Test movement',
+          description: 'Desc',
+          date: DateTime.now(),
+          category: categories.first,
+          price: 42,
+          user: '1',
+        );
+        await mock.saveMovement(movement: added);
+        final afterAdd = await mock.getMovements(userId: '1');
+        expect(afterAdd.any((m) => m.id == newId && m.price == 42), isTrue);
+
+        await mock.saveMovement(movement: added.copyWith(price: 99));
+        final afterUpdate = await mock.getMovements(userId: '1');
+        expect(
+          afterUpdate.where((m) => m.id == newId).single.price,
+          equals(99),
+        );
+
+        await mock.deleteMovement(movementId: newId);
+        final afterDelete = await mock.getMovements(userId: '1');
+        expect(afterDelete.any((m) => m.id == newId), isFalse);
+      },
+    );
   });
 
   group('FirestoreDatabaseRepository', () {
