@@ -40,9 +40,7 @@ class MockAiRepository implements AiRepository {
       final isIncome = promptText.toLowerCase().contains('income');
       final today = DateFormat('dd/MM/yyyy').format(DateTime.now());
       return jsonEncode({
-        'title': isIncome
-            ? 'Freelance services payment'
-            : 'Grocery shopping',
+        'title': isIncome ? 'Freelance services payment' : 'Grocery shopping',
         'description': isIncome
             ? 'Transfer received for professional services.'
             : 'Purchase of groceries and beverages at Metro.',
