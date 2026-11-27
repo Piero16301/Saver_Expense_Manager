@@ -67,25 +67,60 @@ void main() {
   });
 
   group('MockAiRepository', () {
-    test('Mock tests for coverage', () async {
-      final mock = MockAiRepository();
-      await mock.initialize();
-      expect(mock.isLocalModelAvailable, isFalse);
-      expect(
-        await mock.generateContentRemote(
-          prompt: [PromptPart.text(text: 'test')],
-          model: 'gemini-1.5-flash',
-        ),
-        isNull,
-      );
-      expect(
-        await mock.generateContentLocal(
-          textPrompt: const PromptPart(text: 't', type: PromptPartType.text),
+    test(
+      'returns realistic mock responses for remote and local flows',
+      () async {
+        final mock = MockAiRepository();
+        await mock.initialize();
+        expect(mock.isLocalModelAvailable, isTrue);
+
+        expect(
+          await mock.generateContentRemote(
+            prompt: [],
+            model: 'gemini-1.5-flash',
+          ),
+          isNull,
+        );
+
+        final recommendations = await mock.generateContentRemote(
+          prompt: [PromptPart.text(text: 'recommendations in es-PE')],
+          model: 'gemini-3.5-flash-lite',
+        );
+        expect(recommendations, isNotNull);
+        expect(recommendations!.split('|||'), hasLength(3));
+
+        final receiptJson = await mock.generateContentRemote(
+          prompt: [
+            PromptPart.text(text: 'extract expense receipt'),
+            PromptPart.file(
+              mimeType: 'image/png',
+              bytes: Uint8List.fromList([1]),
+            ),
+          ],
+          model: 'gemini-3.5-flash-lite',
+          responseMimeType: 'application/json',
+        );
+        expect(receiptJson, contains('"category":"FEEDING"'));
+
+        final localRecommendations = await mock.generateContentLocal(
+          textPrompt: const PromptPart(
+            text: 'en-US',
+            type: PromptPartType.text,
+          ),
+        );
+        expect(localRecommendations, isNotNull);
+        expect(localRecommendations!.split('|||'), hasLength(3));
+
+        final localReceiptJson = await mock.generateContentLocal(
+          textPrompt: const PromptPart(
+            text: 'extract income',
+            type: PromptPartType.text,
+          ),
           imagePrompt: const PromptPart(type: PromptPartType.file),
-        ),
-        isNull,
-      );
-    });
+        );
+        expect(localReceiptJson, contains('"category":"FREELANCE"'));
+      },
+    );
   });
 
   group('FirebaseAiRepository', () {

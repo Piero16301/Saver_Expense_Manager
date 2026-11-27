@@ -6,11 +6,39 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('MockShareIntentRepository', () {
-    test('is a safe no-op implementation', () async {
+    test('is a safe no-op implementation by default', () async {
       final repo = MockShareIntentRepository();
       await repo.initialize();
       expect(repo.consumePendingSharedFile(), isNull);
       expect(repo.sharedFileStream, emitsDone);
+      await repo.dispose();
+    });
+
+    test('supports simulating shared files for mock mode testing', () async {
+      final repo = MockShareIntentRepository();
+      await repo.initialize();
+
+      const pendingFile = SharedFile(
+        path: '/tmp/receipt.pdf',
+        name: 'receipt.pdf',
+        movementType: CategoryType.expense,
+      );
+      repo.simulateSharedFile(pendingFile);
+      expect(repo.consumePendingSharedFile(), equals(pendingFile));
+      expect(repo.consumePendingSharedFile(), isNull);
+
+      final received = <SharedFile>[];
+      final sub = repo.sharedFileStream.listen(received.add);
+      const streamedFile = SharedFile(
+        path: '/tmp/voucher.png',
+        name: 'voucher.png',
+        movementType: CategoryType.income,
+      );
+      repo.simulateSharedFile(streamedFile);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(received, equals([streamedFile]));
+      await sub.cancel();
       await repo.dispose();
     });
   });

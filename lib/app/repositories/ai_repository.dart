@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:gemini_nano_android/gemini_nano_android.dart';
+import 'package:intl/intl.dart';
 import 'package:saver_expense_manager/app/app.dart';
 
 typedef TemplateContentGenerator = Future<GenerateContentResponse> Function(
@@ -27,20 +30,67 @@ class MockAiRepository implements AiRepository {
   Future<void> initialize() async {}
 
   @override
-  bool get isLocalModelAvailable => false;
+  bool get isLocalModelAvailable => true;
+
+  String _generateMockResponse({
+    required String promptText,
+    required bool isReceiptExtraction,
+  }) {
+    if (isReceiptExtraction) {
+      final isIncome = promptText.toLowerCase().contains('income');
+      final today = DateFormat('dd/MM/yyyy').format(DateTime.now());
+      return jsonEncode({
+        'title': isIncome
+            ? 'Freelance services payment'
+            : 'Grocery shopping',
+        'description': isIncome
+            ? 'Transfer received for professional services.'
+            : 'Purchase of groceries and beverages at Metro.',
+        'date': today,
+        'category': isIncome ? 'FREELANCE' : 'FEEDING',
+        'price': isIncome ? 450.00 : 64.50,
+        'company': isIncome ? 'bcp' : 'metro',
+      });
+    }
+
+    return '☕ **Daily coffee runs:** Cutting back on frequent cafe visits '
+        r'could save you around **$25 per month**. ||| '
+        '🚗 **Short ride-shares:** Grouping errands or taking public transit '
+        'for short trips can lower your transport spend by **15%**. ||| '
+        '📱 **Digital subscriptions:** Review recurring streaming and music '
+        'plans to avoid overlapping charges.';
+  }
 
   @override
   Future<String?> generateContentRemote({
     required List<PromptPart> prompt,
     required String model,
     String responseMimeType = 'text/plain',
-  }) async => null;
+  }) async {
+    if (prompt.isEmpty) {
+      return null;
+    }
+    final promptText = prompt
+        .where((p) => p.type.isText && p.text != null)
+        .map((p) => p.text!)
+        .join('\n');
+    final hasFile = prompt.any((p) => p.type.isFile);
+    return _generateMockResponse(
+      promptText: promptText,
+      isReceiptExtraction: responseMimeType == 'application/json' || hasFile,
+    );
+  }
 
   @override
   Future<String?> generateContentLocal({
     required PromptPart textPrompt,
     PromptPart? imagePrompt,
-  }) async => null;
+  }) async {
+    return _generateMockResponse(
+      promptText: textPrompt.text ?? '',
+      isReceiptExtraction: imagePrompt != null,
+    );
+  }
 }
 
 class FirebaseAiRepository implements AiRepository {

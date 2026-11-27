@@ -50,18 +50,36 @@ void main() {
       expect(await mock.userChanges.first, isNotNull);
       expect(await mock.authStateChanges.first, isNotNull);
       expect(await mock.signOut(), isTrue);
-      expect(await mock.unlinkProvider('provider_id'), isTrue);
-      expect(await mock.updateDisplayName('name'), isTrue);
-      expect(await mock.reloadUser(), isTrue);
+      expect(mock.isLoggedIn, isFalse);
+      expect(mock.currentUser, isNull);
+
+      expect(await mock.signInWithEmailAndPassword('e@saver.app', 'p'), isTrue);
+      expect(mock.isLoggedIn, isTrue);
+      expect(mock.currentUser?.email, equals('e@saver.app'));
+
       expect(await mock.linkWithGoogle(), isTrue);
+      expect(
+        mock.currentUser?.providerData.any(
+          (p) => p.providerId == AppVariables.googleProvider,
+        ),
+        isTrue,
+      );
+
+      expect(await mock.unlinkProvider('provider_id'), isTrue);
+      expect(await mock.unlinkProvider(AppVariables.googleProvider), isTrue);
+      expect(await mock.updateDisplayName('name'), isTrue);
+      expect(mock.currentUser?.displayName, equals('name'));
+      expect(await mock.reloadUser(), isTrue);
       expect(
         await mock.linkWithEmailPassword(email: 'e', password: 'p'),
         isTrue,
       );
       expect(await mock.signInWithGoogle(), isTrue);
-      expect(await mock.signInWithEmailAndPassword('e', 'p'), isTrue);
       expect(await mock.signUpWithEmailAndPassword('e', 'p'), isTrue);
-      expect(await mock.updateUserName('name'), isTrue);
+      expect(await mock.updateUserName('updated'), isTrue);
+      expect(mock.currentUser?.displayName, equals('updated'));
+      expect(await mock.deleteAccount(), isTrue);
+      expect(mock.isLoggedIn, isFalse);
     });
   });
 
